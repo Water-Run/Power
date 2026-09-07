@@ -31,7 +31,9 @@ dotnet run --file tools/Build.cs -- verify
 
 这里的检查是会在 Release 执行断言的控制台验收程序，并非依赖 `Debug.Assert` 的空测试。它们不需要 Unity、Python 或原 C 库。MCP 项目使用官方 NuGet 包，`packages.lock.json` 固定解析结果。
 
-GitHub Actions 已配置 Windows/macOS/Linux 的同一组托管验收；本工作区尚未获得远程 CI 运行证据，因此这里只声明 Linux 实际结果。
+GitHub Actions 已在 Windows、macOS、Linux 上完成同一组托管验收：各平台均为 30/30、19/19、5/5。证据对应代码提交 [`aea6136`](https://github.com/Water-Run/Power/commit/aea6136bbdcbeaea91d63836d947637e7eac730e) 和 [运行 34087686661](https://github.com/Water-Run/Power/actions/runs/34087686661)。本地保存了 `artifacts/reports/github-actions-34087686661.log` 与 `.json`，包含实际作业输出和终态；另外从不含缓存及生成程序集的干净源码副本完成了一轮本地验收，日志为 `github-clean-checkout.log`。
+
+仓库为私有，远程证据链接需要仓库访问权限。本次收尾提交仅更新验证记录与暂停状态；按用户要求，仓库建立后暂停开发。
 
 ## 尚未取得的证据
 
