@@ -1,0 +1,445 @@
+schema_version = 1
+sample_id = "power.sample.ea211_djs_dq200"
+display_name = "EA211 DJS + DQ200 complete powertrain"
+asset_state = "research_skeleton"
+scope = "complete_transverse_front_wheel_drive_powertrain"
+last_reviewed = "2026-08-27"
+default_parameter_status = "needs_verification"
+numeric_fallback_policy = "forbidden"
+
+[evidence_policy]
+confirmed = "Directly supported for the stated scope by an OEM source, an OEM self-study publication, or an authoritative government record."
+needs_verification = "Missing DJS/selected-0CW evidence, or supported only at engine/transmission-family level; no value may be silently supplied."
+provisional = "A Power! integration or modelling decision, not an OEM fact; it must remain visible in capability and result metadata."
+family_data_rule = "EA211 or 0AM/DQ200 family data must not be promoted to DJS or 0CW.C-specific data without an explicit applicability bridge."
+derived_data_rule = "Derived values must retain the source values, formula, units, uncertainty, and a derived flag; no derived numeric values are frozen in this skeleton."
+
+[system_boundary]
+contract_id = "power.complete_powertrain.v1"
+shared_with = ["power.sample.psa_ec5_at8_4at"]
+inlets = ["air_and_ambient", "fuel_and_evap_boundary", "12_v_supply", "driver_commands", "vehicle_network", "wheel_speed_and_road_load_feedback"]
+included = ["engine_and_cranktrain", "intake_and_air_path", "fuel_and_ignition", "exhaust_aftertreatment_and_tailpipe", "cooling_lubrication_and_accessories", "low_voltage_electrics", "ECU_TCU_sensors_actuators_and_diagnostics", "engine_transmission_coupling", "transmission", "final_drive_and_differential", "left_and_right_halfshafts"]
+outlets = ["left_and_right_halfshaft_torque", "tailpipe_mass_species_and_thermal_state", "heat_rejection", "electrical_load", "diagnostics", "NVH_and_audio_events"]
+external = ["tyres", "service_brakes", "vehicle_body_and_aerodynamics", "road_and_grade"]
+completeness_rule = "All listed included domains remain inside every complete-powertrain sample; samples may differ in component topology, parameters, and controls but may not omit electronics, exhaust/aftertreatment, thermal/fluid systems, or final-drive/halfshaft dynamics."
+
+[baseline]
+selection_status = "provisional"
+vehicle_make = "SAIC Volkswagen"
+vehicle_line = "T-Cross / 途铠 2019"
+vehicle_model_code = "SVW64010DT"
+engine_code = "DJS"
+engine_basic_type = "04E.H"
+transmission_family = "DQ200"
+transmission_type = "0CW.C"
+layout = "transverse_front_engine_front_wheel_drive"
+selection_reason = "The OEM owner/service documents and VIN rules provide a directly cross-checkable DJS plus seven-speed/DQ200 0CW.C integration. The donor VIN, PR codes, emissions package, part numbers, and software versions are not yet frozen."
+
+observed_djs_dq200_variants = ["0CW.C", "0CW.M", "0CW.P"]
+variant_warning = "The OEM VIN rules show multiple DJS/DQ200 variants across vehicle lines. The string 'DJS + DQ200' does not determine ratios, final drives, emissions hardware, or control software."
+
+[[sources]]
+id = "svw_tcross_service_2024"
+authority = "primary_oem"
+publisher = "SAIC Volkswagen Automotive Co., Ltd."
+title = "上汽大众 T-Cross 2019 保养手册/保养操作指南，版本 03.2024"
+url = "https://brand2.svw-volkswagen.com/temp/pdf/clwh/2024/%E9%80%94%E9%93%A0%E4%BF%9D%E5%85%BB%E6%93%8D%E4%BD%9C%E6%8C%87%E5%8D%97.pdf"
+accessed = "2026-08-27"
+locator = "A00 车型发动机, 1.1 A01 发动机信息; D09-D11; D43"
+applicability = "DJS as installed in the T-Cross 2019 service-document scope"
+supports = [
+  "DJS displacement, power, torque, bore, stroke, compression ratio, RON entry, direct injection, firing order",
+  "Presence/absence entries for knock control, boost, EGR, variable intake, camshaft adjustment, and secondary air",
+  "C6 emissions entry",
+  "DJS applicability of the cam timing-belt and coolant-pump-belt service procedures",
+  "A vehicle-level particulate-filter diagnostic procedure exists in this manual"
+]
+limitations = "The DJS table does not give the power/torque speed ranges, detailed control calibration, or complete component topology. The particulate-filter procedure is not by itself proof of the exact aftertreatment configuration for every DJS VIN."
+redistribution = "link_only"
+
+[[sources]]
+id = "svw_vin_rules_4_45"
+authority = "primary_oem"
+publisher = "SAIC Volkswagen Automotive Co., Ltd."
+title = "上汽大众汽车有限公司车辆识别代号系统，版本 4.45"
+url = "https://techcare.svw-volkswagen.com/pdf-1/vin/2023/VIN%E7%A0%81%E7%BC%96%E7%A0%81%E8%A7%84%E5%88%99.pdf"
+accessed = "2026-08-27"
+locator = "发动机/变速器表；PDF page 4, lines for T-Cross (VW216/0), plus other DJS rows"
+applicability = "OEM engine/transmission pairing identity"
+supports = [
+  "T-Cross (VW216/0) lists DJS (04E.H) with DQ200 (0CW.C)",
+  "DJS is also paired with FD7CW001 variants carrying 0CW.C, 0CW.M, or 0CW.P identifiers in other vehicle lines",
+  "Engine code alone does not uniquely identify the transmission or emissions package"
+]
+limitations = "The VIN coding table identifies combinations but does not publish gear ratios, final-drive ratios, component dynamics, or software calibration."
+redistribution = "link_only"
+
+[[sources]]
+id = "svw_tcross_owner_manual_2019"
+authority = "primary_oem"
+publisher = "SAIC Volkswagen Automotive Co., Ltd."
+title = "T-Cross 使用维护说明书"
+url = "https://techcare.svw-volkswagen.com/pdf-1/sywh/14%20%E9%80%94%E9%93%A0%E4%BD%BF%E7%94%A8%E7%BB%B4%E6%8A%A4%E8%AF%B4%E6%98%8E%E4%B9%A6.pdf"
+accessed = "2026-08-27"
+locator = "Applicable-model table near front matter; engine-data table near printed user-manual p. 198"
+applicability = "T-Cross vehicle model identity"
+supports = [
+  "SVW64010DT is listed with engine DJS and a seven-speed automatic transmission",
+  "The SVW64010DT engine-data table gives 110 kW at 5000 ± 200 r/min and 250 N.m at (1750-3000) ± 200 r/min",
+  "The SVW64010DT engine-data table describes a water-cooled inline four-cylinder, four-stroke, four-valve, turbocharged gasoline direct-injection engine with 1.395 L displacement"
+]
+limitations = "The owner manual does not name DQ200 or its 0CW suffix; the VIN rules provide that separate bridge. It does not provide the part-load map, control calibration, turbo identity, or aftertreatment bill of materials."
+redistribution = "link_only"
+
+[[sources]]
+id = "mee_environmental_disclosure_2019_01"
+authority = "government"
+publisher = "Ministry of Ecology and Environment of the People's Republic of China"
+title = "2019年1月机动车环保信息公开工作"
+url = "https://www.mee.gov.cn/ywgz/dqhjbh/ydyhjgl/201902/P020190225635459688562.pdf"
+accessed = "2026-08-27"
+locator = "PDF page 55, SAIC Volkswagen vehicle list"
+applicability = "Vehicle-model existence and environmental-disclosure cross-check"
+supports = [
+  "SVW64010DT appears in the January 2019 environmental-information disclosure list as a SAIC Volkswagen multipurpose passenger vehicle"
+]
+limitations = "This summary list does not expose the engine, transmission, emissions component, or calibration details required by the simulation asset."
+redistribution = "link_only"
+
+[[sources]]
+id = "vw_ssp_390_dq200_0am"
+authority = "official_oem_publication_third_party_mirror"
+publisher = "Volkswagen AG Service Training"
+title = "Self-study Programme 390: The 7-speed Double-clutch Gearbox 0AM — Design and Function"
+url = "https://www.vag-perf.fr/wp-content/uploads/2019/08/sp390-dsg-7-gearbox-0am.pdf"
+accessed = "2026-08-27"
+locator = "pp. 4-5, 12-17, 28-35"
+applicability = "DQ200/0AM family architecture; not a direct 0CW.C calibration source"
+supports = [
+  "Seven forward gears, dry double clutch, and family torque class",
+  "Dual-mass flywheel to double-clutch torque path",
+  "K1 drives input shaft 1 and gears 1/3/5/7; K2 drives input shaft 2 and gears 2/4/6/R",
+  "Gears 1-4 use output shaft 1, gears 5-7 use output shaft 2, and reverse uses output shaft 3; all feed the differential",
+  "Preselection principle, synchronisers, mechatronic electrohydraulic control, pump, accumulator, sensors, solenoid valves, and separate mechanical/mechatronic oil circuits"
+]
+limitations = "The publication describes early 0AM and states that its contents are not updated. Its weights, fluid quantities, thresholds, and component details must not be assumed for the selected Chinese 0CW.C variant. The linked host is not an OEM host."
+redistribution = "link_only"
+
+[[sources]]
+id = "vw_ssp_513_dq200_0cw_bridge"
+authority = "official_oem_publication_third_party_mirror"
+publisher = "Volkswagen Group of America / Volkswagen AG Service Training"
+title = "Self-Study Program 891143C / SSP 513: The Golf 2013"
+url = "https://www.vaglinks.com/docs/ssp/VWUSA.COM_SSP_891143C_2014_Golf.pdf"
+accessed = "2026-08-27"
+locator = "PDF pp. 14-16, engine/transmission combinations"
+applicability = "DQ200 family designation bridge from 0AM to MQB-era 0CW"
+supports = [
+  "DQ200-7F is identified as transmission type 0CW",
+  "The document says 0AM became 0CW with MQB-related installation-position and mechatronic/data-bus communication changes"
+]
+limitations = "This document does not identify the Chinese DJS/0CW.C ratios or calibration and does not prove that every early 0AM detail is unchanged. The linked host is not an OEM host."
+redistribution = "link_only"
+
+[[sources]]
+id = "vw_ea211_technical_overview_2012"
+authority = "primary_oem"
+publisher = "Volkswagen AG"
+title = "Petrol engines of the EA211 engine series in technical detail"
+url = "https://uploads.vw-mms.de/system/production/files/vwn/002/650/file/61cfbd1b40420c5c406d561bdcaf2209f9c6a276/THENEWGOLF_DASAUTO.PDF?1530365575="
+accessed = "2026-08-27"
+locator = "The New Golf presentation, EA211 technical-detail section"
+applicability = "EA211 family context only"
+supports = [
+  "EA211 is a modular petrol-engine family and includes three- and four-cylinder members",
+  "Family-level architecture and technology topics to investigate"
+]
+limitations = "The document predates DJS and describes other EA211 variants. No numeric or component claim from it may be labelled DJS-specific without a separate DJS source."
+redistribution = "link_only"
+
+[[confirmed_parameters]]
+id = "engine.identity.code"
+value_text = "DJS"
+unit = "none"
+scope = "DJS"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024", "svw_vin_rules_4_45", "svw_tcross_owner_manual_2019"]
+
+[[confirmed_parameters]]
+id = "engine.identity.basic_type"
+value_text = "04E.H"
+unit = "none"
+scope = "DJS pairings in SVW VIN rules"
+evidence_kind = "direct"
+sources = ["svw_vin_rules_4_45"]
+
+[[confirmed_parameters]]
+id = "engine.displacement"
+value = 1.395
+unit = "L"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024"]
+
+[[confirmed_parameters]]
+id = "engine.rated_power"
+value = 110.0
+unit = "kW"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024", "svw_tcross_owner_manual_2019"]
+
+[[confirmed_parameters]]
+id = "engine.rated_power_speed"
+value = 5000
+tolerance = 200
+unit = "r/min"
+scope = "SVW64010DT with DJS"
+evidence_kind = "direct"
+sources = ["svw_tcross_owner_manual_2019"]
+
+[[confirmed_parameters]]
+id = "engine.maximum_torque"
+value = 250.0
+unit = "N.m"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024", "svw_tcross_owner_manual_2019"]
+
+[[confirmed_parameters]]
+id = "engine.maximum_torque_speed_range"
+minimum = 1750
+maximum = 3000
+tolerance = 200
+unit = "r/min"
+scope = "SVW64010DT with DJS"
+evidence_kind = "direct"
+sources = ["svw_tcross_owner_manual_2019"]
+note = "The tolerance is preserved exactly as associated with the range in the OEM table; this skeleton does not reinterpret how it applies to the two endpoints."
+
+[[confirmed_parameters]]
+id = "engine.bore"
+value = 74.5
+unit = "mm"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024"]
+
+[[confirmed_parameters]]
+id = "engine.stroke"
+value = 80.0
+unit = "mm"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024"]
+
+[[confirmed_parameters]]
+id = "engine.compression_ratio"
+value = 10.0
+unit = "ratio"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024"]
+
+[[confirmed_parameters]]
+id = "engine.fuel_ron_entry"
+value = 92
+unit = "RON"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024"]
+note = "The source table says RON 92. This manifest does not reinterpret it as a universal minimum or define a simulation fuel surrogate."
+
+[[confirmed_parameters]]
+id = "engine.injection_type"
+value_text = "gasoline_direct_injection"
+unit = "none"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024"]
+
+[[confirmed_parameters]]
+id = "engine.architecture_source_description"
+value_text = "water-cooled inline four-cylinder, four-stroke, four-valve, turbocharged gasoline direct-injection engine"
+unit = "none"
+scope = "SVW64010DT with DJS"
+evidence_kind = "direct_translation"
+sources = ["svw_tcross_owner_manual_2019"]
+note = "Stored as a translation of the OEM source description; it does not add valve geometry, turbo identity, or subsystem calibration."
+
+[[confirmed_parameters]]
+id = "engine.firing_order"
+value_text = "1-3-4-2"
+unit = "none"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024"]
+
+[[confirmed_parameters]]
+id = "engine.feature_presence"
+value_text = "knock_control=yes; boost=yes; variable_intake=yes; camshaft_adjustment=yes; EGR=no; secondary_air=no"
+unit = "none"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024"]
+note = "Presence flags do not supply topology, ranges, actuator dynamics, or control calibration."
+
+[[confirmed_parameters]]
+id = "engine.emissions_entry"
+value_text = "C6"
+unit = "none"
+scope = "DJS in T-Cross service-document scope"
+evidence_kind = "direct"
+sources = ["svw_tcross_service_2024"]
+note = "Do not infer a particular China-6 substage or aftertreatment bill of materials from this abbreviated entry."
+
+[[confirmed_parameters]]
+id = "integration.tcross_pairing"
+value_text = "T-Cross (VW216/0): DJS (04E.H) + DQ200 (0CW.C)"
+unit = "none"
+scope = "SAIC Volkswagen VIN rules version 4.45"
+evidence_kind = "direct"
+sources = ["svw_vin_rules_4_45"]
+
+[[confirmed_parameters]]
+id = "transmission.family_designation"
+value_text = "DQ200-7F / 0CW"
+unit = "none"
+scope = "DQ200 family designation"
+evidence_kind = "direct_family"
+sources = ["vw_ssp_513_dq200_0cw_bridge"]
+
+[[confirmed_parameters]]
+id = "transmission.clutch_topology"
+value_text = "two dry clutches; K1=1/3/5/7 via input shaft 1; K2=2/4/6/R via input shaft 2"
+unit = "none"
+scope = "DQ200/0AM family architecture, bridged to the 0CW DQ200 family"
+evidence_kind = "family_synthesis"
+sources = ["vw_ssp_390_dq200_0am", "vw_ssp_513_dq200_0cw_bridge"]
+note = "Selected-variant dimensions, capacities, actuation parameters, and calibration remain needs_verification."
+
+[[confirmed_parameters]]
+id = "transmission.output_shaft_topology"
+value_text = "output shaft 1=gears 1/2/3/4; output shaft 2=gears 5/6/7; output shaft 3=reverse and parking lock; all feed final drive/differential"
+unit = "none"
+scope = "DQ200/0AM family architecture, bridged to the 0CW DQ200 family"
+evidence_kind = "family_synthesis"
+sources = ["vw_ssp_390_dq200_0am", "vw_ssp_513_dq200_0cw_bridge"]
+
+[[confirmed_parameters]]
+id = "transmission.control_architecture"
+value_text = "integrated electronic/electrohydraulic mechatronic unit with electric pump, pressure accumulator, sensors and solenoid valves; separate mechatronic and mechanical oil circuits in the documented 0AM design"
+unit = "none"
+scope = "DQ200/0AM family architecture reference"
+evidence_kind = "direct_family"
+sources = ["vw_ssp_390_dq200_0am"]
+note = "Specific 0CW.C circuit details, fluids, quantities, pressure thresholds, timing, and software require current variant evidence."
+
+[[needs_verification]]
+id = "identity.donor_configuration"
+required = ["full VIN", "PR-code label", "engine and transmission serials", "ECU/TCU hardware and software IDs", "production date", "emissions information sheet"]
+reason = "A complete calibrated powertrain must be variant- and revision-specific."
+
+[[needs_verification]]
+id = "engine.power_torque_speed_curves"
+required = ["DJS-specific homologation or OEM curve", "corrected engine-dynamometer map with uncertainty"]
+reason = "The confirmed owner-manual table gives one rated-power point and a maximum-torque speed range, not full-load shape, part-load efficiency, limits, or transient behavior."
+
+[[needs_verification]]
+id = "engine.geometry_gas_exchange_combustion"
+required = ["connecting-rod and chamber geometry", "valve lift/duration/phasing", "port flow", "crank-angle cylinder pressure", "friction and heat-transfer data"]
+reason = "EA211 family descriptions are not DJS calibration data."
+
+[[needs_verification]]
+id = "engine_air_fuel_boost_control"
+required = ["compressor and turbine maps", "turbo inertia", "charge-air-cooler data", "injector and rail-pressure dynamics", "actuator maps", "DJS ECU control traces"]
+reason = "Feature-presence flags do not define dynamic behavior."
+
+[[needs_verification]]
+id = "engine_cooling_lubrication_accessories"
+required = ["circuit topology", "pump maps", "thermostat behavior", "thermal masses and conductances", "oil pressure/temperature data", "starter, alternator and accessory loads"]
+reason = "Required for cold start, heat soak, friction, and 12 V energy accounting."
+
+[[needs_verification]]
+id = "exhaust_aftertreatment"
+required = ["VIN-specific component and sensor part numbers", "manifold/turbine/pipe/catalyst/GPF/muffler topology", "volumes and flow restrictions", "species conversion/storage/filter and thermal data"]
+reason = "The C6 entry and vehicle-level filter diagnostic procedure do not uniquely define the DJS aftertreatment hardware."
+
+[[needs_verification]]
+id = "transmission_ratios_final_drives"
+required = ["0CW.C gearbox code or build sheet", "measured input/output ratios for 1-7 and R", "each output-shaft final-drive ratio", "differential ratio"]
+reason = "DQ200 family identity does not determine the selected gearset."
+
+[[needs_verification]]
+id = "transmission_mechanics"
+required = ["shaft/gear/differential inertias", "mesh and bearing efficiency maps", "synchroniser capacities", "backlash", "halfshaft stiffness and damping"]
+reason = "Needed for shift transient, loss, torsional, and axle-output simulation."
+
+[[needs_verification]]
+id = "transmission_dmf_clutches"
+required = ["DMF inertia/stiffness/damping/hysteresis/stops", "K1/K2 clamp-force and travel maps", "friction versus slip/temperature/wear", "thermal capacity and cooling", "kiss-point adaptation traces"]
+reason = "A dry DCT cannot be represented by ideal switches without losing launch, creep, judder, heat, and wear behavior."
+
+[[needs_verification]]
+id = "transmission_mechatronics_tcu"
+required = ["0CW.C hydraulic diagram and component revision", "pump/accumulator/leak/valve dynamics", "sensor accuracy", "TCU schedules and state machines", "CAN signal definitions", "ECU torque-intervention traces", "fault and thermal-protection behavior"]
+reason = "The early 0AM self-study publication is only an architectural reference."
+
+[[needs_verification]]
+id = "integrated_nvhe_and_audio"
+required = ["crank and exhaust pressure pulsation", "input/output torsional speed", "gear-mesh orders", "case/mount accelerometers", "transfer functions to game audio events"]
+reason = "Sound and vibration must be generated from the same physical state rather than a decorative RPM loop."
+
+[[provisional_assumptions]]
+id = "baseline.vehicle_choice"
+statement = "Use SVW64010DT T-Cross DJS + DQ200 0CW.C as the initial integration target until a lawful donor VIN and PR-code set is selected."
+sources = ["svw_tcross_owner_manual_2019", "svw_vin_rules_4_45", "mee_environmental_disclosure_2019_01"]
+exit_condition = "Freeze a donor identity and update all component applicability records."
+
+[[provisional_assumptions]]
+id = "model.transmission_resolution"
+statement = "Represent K1/K2, both input shafts, three output shafts, synchronisers, final drive, differential, mechatronic pressure, and clutch/selector actuators as dynamic components."
+sources = ["vw_ssp_390_dq200_0am", "vw_ssp_513_dq200_0cw_bridge"]
+exit_condition = "Replace any architecture-only defaults with 0CW.C-specific evidence and validate against rig traces."
+
+[[provisional_assumptions]]
+id = "model.controller_strategy"
+statement = "Use transparent behavioural ECU/TCU surrogate controllers until lawful DJS/0CW.C timing and signal data are available; never embed unknown OEM maps as claimed facts."
+sources = []
+exit_condition = "Validate each controller path against documented or measured timing, saturation, fault, and torque-intervention behavior."
+
+[[provisional_assumptions]]
+id = "model.aftertreatment_strategy"
+statement = "Reserve a configurable exhaust-aftertreatment graph from exhaust valves to tailpipe, but do not select catalyst/GPF topology until the donor emissions information and part numbers are known."
+sources = ["svw_tcross_service_2024"]
+exit_condition = "Freeze VIN-specific aftertreatment hardware and calibrate flow, species, and thermal states from measurements."
+
+[measurement_program]
+identity_and_teardown = [
+  "VIN/PR codes and all relevant part/software IDs",
+  "gear and final-drive tooth-count or ratio measurements",
+  "3D flow-path and volume survey",
+  "rotating inertia, mass, torsional stiffness, damping, and backlash"
+]
+engine_dyno = [
+  "steady speed/load torque, air, fuel, lambda, rail pressure, ignition, injection, boost, and exhaust pressure/temperature",
+  "motoring friction and accessory power",
+  "crank-angle cylinder and port pressure with instantaneous crank speed",
+  "coolant/oil flows, pressures, temperatures, and heat rejection",
+  "cold-start, warm-up, transient tip-in/tip-out, knock-limit, and fault cases"
+]
+emissions_and_exhaust = [
+  "engine-out and tailpipe gaseous species plus applicable particle mass/number",
+  "pressure, temperature, mass flow, lambda, and sensor delay at each aftertreatment boundary",
+  "light-off, oxygen storage, conversion efficiency, filter loading/regeneration, pressure drop, and thermal soak"
+]
+transmission_and_integration = [
+  "synchronised engine/input/output/wheel speeds, axle torque, clutch positions/torque, selector positions, hydraulic pressure, pump current, and temperatures",
+  "launch, creep, all up/down shifts, skip shifts, coastdown, reverse changes, hill start, cold/hot operation, protection, and faults",
+  "ECU/TCU/ABS/gateway bus traces with a shared hardware time base",
+  "clutch friction/thermal/wear and dual-mass-flywheel torsional identification"
+]
+data_governance = [
+  "raw channels, calibration certificates, sample rates, filters, clock alignment, environment, uncertainty, and processing lineage",
+  "lawful acquisition and redistribution metadata for every dataset"
+]

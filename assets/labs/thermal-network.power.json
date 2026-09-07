@@ -1,0 +1,23 @@
+{
+  "schema": "power.model.v1",
+  "description": "Two isolated synthetic heat capacities exchange energy. Analytic benchmark, no external inputs or vehicle calibration.",
+  "step_ns": 7000000,
+  "nodes": [
+    {"id": 42, "domain": "thermal", "storage": {"value": 100, "unit": "j_k"}, "initial": {"value": 360, "unit": "k"}},
+    {"id": 77, "domain": "thermal", "storage": {"value": 200, "unit": "j_k"}, "initial": {"value": 300, "unit": "k"}}
+  ],
+  "components": [
+    {"id": 101, "kind": "thermal_link", "node_a": 42, "node_b": 77,
+      "parameters": {"conductance": {"value": 5, "unit": "w_k"}}}
+  ],
+  "experiment": {
+    "duration_ns": 7000000000,
+    "sample_every_ns": 700000000,
+    "events": [],
+    "checks": [
+      {"object_id": 42, "field": "temperature", "min": 343.66, "max": 343.67},
+      {"object_id": 77, "field": "temperature", "min": 308.16, "max": 308.17},
+      {"object_id": 0, "field": "energy_residual", "abs_max": 0.0000001}
+    ]
+  }
+}

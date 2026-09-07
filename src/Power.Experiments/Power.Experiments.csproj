@@ -1,0 +1,4 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../Power.Core/Power.Core.csproj" /><ProjectReference Include="../Power.Assets/Power.Assets.csproj" /></ItemGroup>
+</Project>

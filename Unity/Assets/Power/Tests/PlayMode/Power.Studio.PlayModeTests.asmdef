@@ -1,0 +1,7 @@
+{
+  "name": "Power.Studio.PlayModeTests",
+  "references": ["Power.Studio.Runtime"],
+  "overrideReferences": true,
+  "precompiledReferences": ["Power.Core.dll", "Power.Assets.dll", "nunit.framework.dll"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

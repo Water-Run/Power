@@ -1,0 +1,8 @@
+{
+  "name": "Power.Studio.EditModeTests",
+  "references": ["Power.Studio.Runtime", "Power.Studio.Editor"],
+  "includePlatforms": ["Editor"],
+  "overrideReferences": true,
+  "precompiledReferences": ["Power.Core.dll", "Power.Assets.dll", "nunit.framework.dll"],
+  "optionalUnityReferences": ["TestAssemblies"]
+}

@@ -1,0 +1,9 @@
+{
+  "name": "Power.Studio.Editor",
+  "rootNamespace": "Power.Studio.Editor",
+  "references": ["Power.Studio.Runtime", "Unity.RenderPipelines.Universal.Runtime", "Unity.RenderPipelines.Core.Runtime"],
+  "includePlatforms": ["Editor"],
+  "overrideReferences": true,
+  "precompiledReferences": ["Power.Core.dll", "Power.Assets.dll"],
+  "autoReferenced": true
+}

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFrameworks>net10.0;netstandard2.1</TargetFrameworks></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../Power.Core/Power.Core.csproj" /></ItemGroup>
+  <ItemGroup><Compile Include="../Power.Core/Compatibility.cs" Link="Compatibility.cs" /></ItemGroup>
+  <Target Name="CopyUnityAssetAssembly" AfterTargets="Build" Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildThisFileDirectory)../../Unity/Assets/Plugins" />
+  </Target>
+</Project>

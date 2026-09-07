@@ -1,0 +1,6 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup><ProjectReference Include="../../src/Power.Experiments/Power.Experiments.csproj" /></ItemGroup>
+  <ItemGroup><ProjectReference Include="../../src/Power.Agent/Power.Agent.csproj" /></ItemGroup>
+  <ItemGroup><None Include="../../assets/labs/*.power.json" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
+</Project>

@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;netstandard2.1</TargetFrameworks>
+    <Description>Deterministic cross-platform powertrain model compiler and solver.</Description>
+  </PropertyGroup>
+  <Target Name="CopyUnityAssembly" AfterTargets="Build" Condition="'$(TargetFramework)' == 'netstandard2.1'">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MSBuildThisFileDirectory)../../Unity/Assets/Plugins" />
+  </Target>
+</Project>

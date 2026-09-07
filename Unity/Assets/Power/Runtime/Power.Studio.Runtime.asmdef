@@ -1,0 +1,14 @@
+{
+  "name": "Power.Studio.Runtime",
+  "rootNamespace": "Power.Studio",
+  "references": [],
+  "includePlatforms": [],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": true,
+  "precompiledReferences": ["Power.Core.dll", "Power.Assets.dll"],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

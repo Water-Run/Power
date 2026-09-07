@@ -1,0 +1,41 @@
+{
+  "schema": "power.model.v1",
+  "description": "Synthetic DC motor, elastic 3:1 transmission and two thermal nodes. Research parameters; no vehicle calibration.",
+  "step_ns": 100000,
+  "nodes": [
+    {"id": 1, "domain": "rotational", "storage": {"value": 0.2, "unit": "kg_m2"}, "initial": {"value": 0, "unit": "rpm"}, "position": {"value": 0, "unit": "rad"}},
+    {"id": 2, "domain": "rotational", "storage": {"value": 1, "unit": "kg_m2"}, "initial": {"value": 0, "unit": "rad_s"}, "position": {"value": 0, "unit": "rad"}},
+    {"id": 3, "domain": "thermal", "storage": {"value": 100, "unit": "j_k"}, "initial": {"value": 300, "unit": "k"}},
+    {"id": 4, "domain": "thermal", "storage": {"value": 200, "unit": "j_k"}, "initial": {"value": 300, "unit": "k"}}
+  ],
+  "components": [
+    {"id": 10, "kind": "dc_motor", "node_a": 1, "heat_node": 3, "input_channel": 100,
+      "initial_input": {"value": 24, "unit": "v"}, "parameters": {
+        "resistance": {"value": 0.5, "unit": "ohm"}, "inductance": {"value": 0.02, "unit": "h"},
+        "coupling": {"value": 0.8, "unit": "nm_a"}, "initial_current": {"value": 0, "unit": "a"}}},
+    {"id": 11, "kind": "shaft", "node_a": 1, "node_b": 2, "heat_node": 4, "parameters": {
+      "stiffness": {"value": 100, "unit": "nm_rad"}, "damping": {"value": 1, "unit": "nm_s_rad"},
+      "rest_angle": {"value": 0, "unit": "rad"}, "ratio": 3}},
+    {"id": 12, "kind": "shaft", "node_a": 2, "parameters": {
+      "stiffness": {"value": 0, "unit": "nm_rad"}, "damping": {"value": 0.1, "unit": "nm_s_rad"},
+      "rest_angle": {"value": 0, "unit": "rad"}, "ratio": 1}},
+    {"id": 13, "kind": "thermal_link", "node_a": 3, "node_b": 4,
+      "parameters": {"conductance": {"value": 5, "unit": "w_k"}}},
+    {"id": 14, "kind": "thermal_link", "node_a": 4, "parameters": {
+      "conductance": {"value": 2, "unit": "w_k"}, "ambient_temperature": {"value": 300, "unit": "k"}}}
+  ],
+  "experiment": {
+    "duration_ns": 10000000000,
+    "sample_every_ns": 1000000000,
+    "events": [
+      {"time_ns": 5000000000, "values": [{"channel": 100, "value": 4}]},
+      {"time_ns": 6000000000, "values": [{"channel": 100, "value": 24}]}
+    ],
+    "checks": [
+      {"object_id": 1, "field": "speed", "min": 25, "max": 31},
+      {"object_id": 2, "field": "speed", "min": 8, "max": 11},
+      {"object_id": 3, "field": "temperature", "min": 300, "max": 310},
+      {"object_id": 0, "field": "energy_residual", "abs_max": 0.00001}
+    ]
+  }
+}

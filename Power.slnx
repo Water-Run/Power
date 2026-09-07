@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Power.Core/Power.Core.csproj" />
+    <Project Path="src/Power.Assets/Power.Assets.csproj" />
+    <Project Path="src/Power.Experiments/Power.Experiments.csproj" />
+    <Project Path="src/Power.Cli/Power.Cli.csproj" />
+    <Project Path="src/Power.Agent/Power.Agent.csproj" />
+    <Project Path="src/Power.Mcp/Power.Mcp.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Power.Tests/Power.Tests.csproj" />
+    <Project Path="tests/Power.UnityCompatibility/Power.UnityCompatibility.csproj" />
+    <Project Path="tests/Power.Mcp.Tests/Power.Mcp.Tests.csproj" />
+  </Folder>
+</Solution>

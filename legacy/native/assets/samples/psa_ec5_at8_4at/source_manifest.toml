@@ -1,0 +1,405 @@
+schema_version = 1
+sample_id = "power.sample.psa_ec5_at8_4at"
+display_name = "PSA EC5 + AT8 4AT complete powertrain"
+asset_state = "research_skeleton"
+scope = "complete_transverse_front_wheel_drive_powertrain"
+last_reviewed = "2026-08-27"
+default_parameter_status = "needs_verification"
+numeric_fallback_policy = "forbidden"
+
+[evidence_policy]
+confirmed = "Directly supported for the stated vehicle, version, or family scope by an OEM publication or OEM technical/training material."
+needs_verification = "Missing selected-donor evidence, or supported only for AL4, TU5, Flex Fuel EC5, another market, or another transmission pairing; no value may be silently supplied."
+provisional = "A Power! integration or modelling decision, not an OEM fact; it must remain visible in capability and result metadata."
+family_data_rule = "AL4 or generic EC5/TU5 data must not be promoted to the selected EC5 plus AT8 donor without an explicit applicability bridge."
+derived_data_rule = "Derived values must retain source values, formula, units, uncertainty, and a derived flag; no derived numeric values are frozen in this skeleton."
+
+[system_boundary]
+contract_id = "power.complete_powertrain.v1"
+shared_with = ["power.sample.ea211_djs_dq200"]
+inlets = ["air_and_ambient", "fuel_and_evap_boundary", "12_v_supply", "driver_commands", "vehicle_network", "wheel_speed_and_road_load_feedback"]
+included = ["engine_and_cranktrain", "intake_and_air_path", "fuel_and_ignition", "exhaust_aftertreatment_and_tailpipe", "cooling_lubrication_and_accessories", "low_voltage_electrics", "ECU_TCU_sensors_actuators_and_diagnostics", "engine_transmission_coupling", "transmission", "final_drive_and_differential", "left_and_right_halfshafts"]
+outlets = ["left_and_right_halfshaft_torque", "tailpipe_mass_species_and_thermal_state", "heat_rejection", "electrical_load", "diagnostics", "NVH_and_audio_events"]
+external = ["tyres", "service_brakes", "vehicle_body_and_aerodynamics", "road_and_grade"]
+completeness_rule = "All listed included domains remain inside every complete-powertrain sample; samples may differ in component topology, parameters, and controls but may not omit electronics, exhaust/aftertreatment, thermal/fluid systems, or final-drive/halfshaft dynamics."
+
+[baseline]
+selection_status = "provisional"
+vehicle_make = "Citroen"
+vehicle_line = "C-Elysee, launch-era training configuration"
+vehicle_document_reference = "C_15473, 2012-07-24"
+market_and_build_code = "unfrozen"
+engine_code = "EC5"
+engine_variant_descriptor = "115 Ch in the cited training publication; complete type and market calibration unfrozen"
+transmission_family = "BVA AT8"
+transmission_forward_gears = 4
+layout = "transverse_front_engine_front_wheel_drive"
+selection_reason = "The Citroen C-Elysee training publication directly pairs its EC5 115 Ch version with the four-speed AT8, while the Peugeot Citroen Moteurs sheet independently identifies AT8 as a transverse four-gear hydraulic automatic compatible with EC5."
+
+variant_warning = "EC5 is not a single globally interchangeable calibration: a documented Flex Fuel L6 EC5 has E22/E100-specific data, and later official vehicle material pairs EC5 with EAT6. AT8 here means the four-forward-gear PSA BVA AT8, not the later eight-speed EAT8."
+lineage_warning = "Citroen technical material describes AT8 as replacing/evolving AL4 with changes to the torque converter and management software. This supports a shared lineage, not identity of every part, ratio, hydraulic value, or control map."
+
+[[sources]]
+id = "citroen_c_elysee_training_c15473_2012"
+authority = "official_oem_training_third_party_mirror"
+publisher = "Citroen Technical After-Sales Training"
+title = "Citroen C-Elysee Presentacion, ref. C_15473"
+url = "https://es.scribd.com/document/915097129/Citroen-C-elysee-Presentacion-c-15473-Es"
+accessed = "2026-08-27"
+locator = "cover: ref. C_15473 and date 24/07/2012; presentation section around source pp. 7-8"
+applicability = "Launch-era C-Elysee training configuration"
+supports = [
+  "EC5 is described as an evolution of TU5",
+  "The documented EC5 version is described as 115 Ch",
+  "The EC5 version can be associated with a five-speed MA manual or a four-speed AT8 automatic",
+  "The publication distinguishes international production context, including a planned Wuhan Chinese-market version"
+]
+limitations = "The public host is not an OEM host. The excerpt does not freeze a donor market/build code, complete engine type, rated-speed standard, emissions bill of materials, transmission manufacturing number, or calibration. The 115 Ch wording is retained without conversion."
+redistribution = "link_only"
+
+[[sources]]
+id = "pcm_at8_datasheet_2018"
+authority = "official_oem_publication_third_party_mirror"
+publisher = "Peugeot Citroen Moteurs"
+title = "AT8 Automatic Gearbox technical data sheet"
+url = "https://fr.scribd.com/document/398216864/PSA-BVA-AT8"
+accessed = "2026-08-27"
+locator = "two-page sheet, last update 07/03/2018"
+applicability = "AT8 product family; not a selected donor calibration"
+supports = [
+  "AT8 is a transverse automatic gearbox with four forward gears",
+  "The family maximum-torque entry is 200 N.m",
+  "The general-control entry is hydraulic",
+  "EC5 appears in the engine/application portfolio, including Europe/China and China program rows",
+  "The product sheet distinguishes the AT8 family name from a gear-count inference"
+]
+limitations = "The public host is not an OEM host. The ratio portfolio has multiple vehicle/engine and final-drive variants and does not identify the selected donor; no listed ratio is frozen in this asset. Weight, dimensions, commands, and compatibility flags are family data only."
+redistribution = "link_only"
+
+[[sources]]
+id = "citroen_al4_at8_after_sales_2011"
+authority = "official_oem_after_sales_training_third_party_mirror"
+publisher = "Citroen After-Sales / APV-AC Brazil"
+title = "BVA Automatic Gearbox AL4/AT8 — CVA presentation and diagnosis"
+url = "https://www.scribd.com/document/953509968/BOX-AL4"
+accessed = "2026-08-27"
+locator = "AL4/AT8 title; CVA presentation 01/2010 and 05/2011; mechanism and gear-engagement diagrams"
+applicability = "Combined AL4/AT8 after-sales family topology"
+supports = [
+  "Torque converter, engine-driven oil pump, hydraulic block, two epicyclic gear sets, step-down gear, output path, and differential are shown",
+  "E1 and E2 clutches, F1 disc brake, and F2/F3 band brakes are identified",
+  "Family engagement table: reverse E1+F2; first E1+F3; second E2+F3; third E1+E2; fourth E2+F1",
+  "Input/turbine and output speed sensing, pressure regulation fault handling, electrovalves, software updating, and hydraulic-third emergency operation are represented"
+]
+limitations = "The public host is not an OEM host and exposes an automatically translated text layer. Applicability is the combined AL4/AT8 after-sales family, not a specific C-Elysee manufacturing number. Diagrams must be checked against the original-language pages and a donor teardown before dimensions, part revisions, or calibration are frozen."
+redistribution = "link_only"
+
+[[sources]]
+id = "citroen_technical_meeting_2012"
+authority = "official_oem_technical_material_third_party_mirror"
+publisher = "Citroen Technical Assistance, Argentina"
+title = "Reunion Tecnica 2012 / Asistencia Tecnica Vehicular"
+url = "https://es.scribd.com/document/311137780/Tecnica-Citroen"
+accessed = "2026-08-27"
+locator = "BVA AL4 Fallas generales section"
+applicability = "AL4-to-AT8 service-lineage statement"
+supports = [
+  "The material says AL4 was replaced by AT8",
+  "It explicitly describes evolution of the torque converter and management software"
+]
+limitations = "The public host is not an OEM host. The statement establishes an evolution relationship but does not prove unchanged gearsets, ratios, valve bodies, fluids, or software between every AL4 and AT8 variant."
+redistribution = "link_only"
+
+[[sources]]
+id = "citroen_al4_training_reference"
+authority = "official_oem_training_third_party_mirror"
+publisher = "Citroen UK Ltd / Automobiles Citroen"
+title = "Technical Training: Presentation of the AL4 Automatic Transmission"
+url = "https://manualzz.com/doc/en/25358845/citro%C3%ABn-al4-automatic-transmission-technical-training"
+accessed = "2026-08-27"
+locator = "chapters 1, 4-7"
+applicability = "AL4 ancestor architecture reference only"
+supports = [
+  "AL4 reference architecture includes a lock-up torque converter, oil pump, Simpson-type coupled epicyclic gearsets, E1/E2 clutches, F1/F2/F3 brakes, step-down gear, hydraulic control, ECU, and differential",
+  "The reference explains the dynamic states that require measurement if an AT8 donor retains them"
+]
+limitations = "This is AL4, not AT8. No AL4 tooth count, ratio, lock-up range, oil quantity, pressure, controller, or part value may be imported into AT8 without an AT8-specific applicability bridge. The public host is not an OEM host."
+redistribution = "link_only"
+
+[[sources]]
+id = "pcm_ec5_flexfuel_datasheet_2018"
+authority = "official_oem_publication_third_party_mirror"
+publisher = "Peugeot Citroen Moteurs"
+title = "EC5 Flex Fuel L6 Petrol Engine technical data sheet"
+url = "https://fr.scribd.com/document/378123794/EC5FlexFuel"
+accessed = "2026-08-27"
+locator = "two-page sheet, last update 26/03/2018"
+applicability = "EC5 Flex Fuel L6 E22/E100 variant; variant-warning source only"
+supports = [
+  "A separately documented EC5 Flex Fuel L6 version exists",
+  "Its output is explicitly fuel-dependent between E22 and E100",
+  "EC5-labelled data can be version-, fuel-, and market-specific"
+]
+limitations = "This is not the launch-era C-Elysee 115 Ch donor definition. None of its displacement, geometry, output, controller, fuel, thermal, fluid, or installation values is promoted to the baseline by this manifest."
+redistribution = "link_only"
+
+[[sources]]
+id = "stellantis_peugeot_301_ec5_eat6_2017"
+authority = "primary_oem"
+publisher = "Peugeot / Stellantis Media Argentina"
+title = "Nuevo Peugeot 301: confiabilidad, tecnologia y practicidad"
+url = "https://www.media.stellantis.com/ar-es/peugeot/press/nuevo-peugeot-301-confiabilidad-tecnologia-y-practicidad"
+accessed = "2026-08-27"
+locator = "powertrain section"
+applicability = "Later Argentina-market EC5 vehicle variant; variant-warning source only"
+supports = [
+  "A later official vehicle publication identifies an EC5 1.6-litre 115-cv engine",
+  "That vehicle offers EC5 with a five-speed manual or six-speed EAT6, demonstrating that EC5 does not uniquely identify AT8"
+]
+limitations = "This is a later Argentina-market EAT6 configuration and is not evidence for the selected AT8 donor's engine calibration or transmission parameters."
+redistribution = "link_only"
+
+[[confirmed_parameters]]
+id = "integration.candidate_pairing"
+value_text = "launch-era C-Elysee: EC5 115 Ch + four-speed AT8 automatic"
+unit = "none"
+scope = "Citroen training publication C_15473 dated 2012-07-24"
+evidence_kind = "direct"
+sources = ["citroen_c_elysee_training_c15473_2012"]
+note = "Vehicle market/build identity remains provisional; 115 Ch is stored as source wording, not converted into a calibration value."
+
+[[confirmed_parameters]]
+id = "engine.identity.code"
+value_text = "EC5"
+unit = "none"
+scope = "candidate C-Elysee training configuration"
+evidence_kind = "direct"
+sources = ["citroen_c_elysee_training_c15473_2012"]
+
+[[confirmed_parameters]]
+id = "engine.lineage_description"
+value_text = "evolution of the TU5 engine"
+unit = "none"
+scope = "candidate C-Elysee training configuration"
+evidence_kind = "direct_translation"
+sources = ["citroen_c_elysee_training_c15473_2012"]
+note = "Lineage does not authorize copying TU5 geometry, maps, parts, or control values."
+
+[[confirmed_parameters]]
+id = "engine.variant_output_label"
+value_text = "115 Ch"
+unit = "source_text"
+scope = "candidate C-Elysee training configuration"
+evidence_kind = "direct_unconverted"
+sources = ["citroen_c_elysee_training_c15473_2012"]
+note = "Rated speed, test standard, tolerance, and exact donor applicability are not supplied; no kW value is frozen."
+
+[[confirmed_parameters]]
+id = "transmission.identity.family_name"
+value_text = "BVA AT8"
+unit = "none"
+scope = "PSA four-forward-gear AT8 family"
+evidence_kind = "direct"
+sources = ["pcm_at8_datasheet_2018", "citroen_c_elysee_training_c15473_2012"]
+
+[[confirmed_parameters]]
+id = "transmission.forward_gear_count"
+value = 4
+unit = "gear"
+scope = "AT8 family and candidate C-Elysee pairing"
+evidence_kind = "direct"
+sources = ["pcm_at8_datasheet_2018", "citroen_c_elysee_training_c15473_2012"]
+
+[[confirmed_parameters]]
+id = "transmission.layout"
+value_text = "transverse_powertrain"
+unit = "none"
+scope = "AT8 family"
+evidence_kind = "direct"
+sources = ["pcm_at8_datasheet_2018"]
+
+[[confirmed_parameters]]
+id = "transmission.control_class"
+value_text = "hydraulic_automatic_control"
+unit = "none"
+scope = "AT8 family"
+evidence_kind = "direct"
+sources = ["pcm_at8_datasheet_2018"]
+note = "This does not define valve-body revision, pressure dynamics, command hardware, or TCU calibration."
+
+[[confirmed_parameters]]
+id = "transmission.family_maximum_input_torque"
+value = 200.0
+unit = "N.m"
+scope = "AT8 product-family technical sheet"
+evidence_kind = "direct_family"
+sources = ["pcm_at8_datasheet_2018"]
+note = "A family rating is not the EC5 output curve and does not determine torque limits for a selected aged donor."
+
+[[confirmed_parameters]]
+id = "transmission.engine_compatibility"
+value_text = "EC5 appears in AT8 application/program rows"
+unit = "none"
+scope = "AT8 product-family portfolio"
+evidence_kind = "direct_family"
+sources = ["pcm_at8_datasheet_2018"]
+note = "The sheet contains multiple EC5 programs/final-drive entries; none is selected without donor identity."
+
+[[confirmed_parameters]]
+id = "transmission.al4_at8_lineage"
+value_text = "AT8 replaced/evolved AL4; cited evolution areas are the torque converter and management software"
+unit = "none"
+scope = "Citroen technical-assistance lineage statement"
+evidence_kind = "direct_translation"
+sources = ["citroen_technical_meeting_2012"]
+note = "Do not interpret 'evolved' as part or calibration identity."
+
+[[confirmed_parameters]]
+id = "transmission.family_mechanical_topology"
+value_text = "torque converter -> turbine/input shaft -> two coupled epicyclic gear sets controlled by E1/E2 clutches and F1/F2/F3 brakes -> central step-down/output path -> final drive/differential"
+unit = "none"
+scope = "combined AL4/AT8 after-sales family presentation"
+evidence_kind = "direct_family"
+sources = ["citroen_al4_at8_after_sales_2011"]
+note = "The exact AT8 donor gear connections, component revisions, inertias, efficiencies, and dimensions require teardown verification."
+
+[[confirmed_parameters]]
+id = "transmission.family_friction_elements"
+value_text = "E1 and E2 clutches; F1 disc brake; F2 and F3 band brakes"
+unit = "none"
+scope = "combined AL4/AT8 after-sales family presentation"
+evidence_kind = "direct_family"
+sources = ["citroen_al4_at8_after_sales_2011"]
+
+[[confirmed_parameters]]
+id = "transmission.family_element_engagements"
+value_text = "R=E1+F2; 1=E1+F3; 2=E2+F3; 3=E1+E2; 4=E2+F1"
+unit = "none"
+scope = "combined AL4/AT8 after-sales family presentation"
+evidence_kind = "direct_family"
+sources = ["citroen_al4_at8_after_sales_2011"]
+note = "No gear or final-drive ratio is asserted. Confirm the table against original-language pages and the selected donor."
+
+[[confirmed_parameters]]
+id = "transmission.family_hydraulic_and_control_topology"
+value_text = "engine-driven oil pump, hydraulic block, electrovalves, pressure regulation, transmission controller/software, turbine/input and output speed sensing, and degraded hydraulic-third operation"
+unit = "none"
+scope = "combined AL4/AT8 after-sales family presentation"
+evidence_kind = "direct_family"
+sources = ["citroen_al4_at8_after_sales_2011"]
+note = "Selected AT8 pump, valve, sensor, pressure, fail-safe, and software values remain needs_verification."
+
+[[needs_verification]]
+id = "identity.donor_configuration"
+required = ["full VIN", "DAM/OPR", "market and vehicle project/build code", "engine full type and serial", "AT8 manufacturing number and serial", "ECU/TCU hardware and software IDs", "production date", "emissions information"]
+reason = "EC5 plus AT8 and a 115 Ch label do not uniquely identify a calibrated powertrain."
+
+[[needs_verification]]
+id = "engine.version_and_rated_output"
+required = ["donor-specific OEM or homologation data", "fuel specification", "rated power and speed", "maximum torque and speed range", "dynamometer curve with uncertainty"]
+reason = "The candidate source gives only the code and 115 Ch descriptor; other EC5 versions use different fuels, outputs, controllers, and transmissions."
+
+[[needs_verification]]
+id = "engine.geometry_gas_exchange_combustion"
+required = ["displacement/bore/stroke/compression verification", "connecting-rod and chamber geometry", "valve lift/duration/phasing", "port flow", "crank-angle cylinder pressure", "friction and heat-transfer data"]
+reason = "Flex Fuel EC5 and TU5 family values are not selected-donor evidence."
+
+[[needs_verification]]
+id = "engine_air_fuel_ignition_control"
+required = ["intake and throttle topology", "injector and fuel-pressure dynamics", "fuel properties", "ignition hardware and dwell", "EC5 ECU identity and control traces", "idle, knock, protection, and fault behavior"]
+reason = "Required for a dynamic engine model and not specified by the pairing source."
+
+[[needs_verification]]
+id = "engine_cooling_lubrication_accessories"
+required = ["circuit topology", "pump maps", "thermostat behavior", "thermal masses and conductances", "oil pressure/temperature data", "starter, alternator, air-conditioning, steering, and other accessory loads"]
+reason = "Required for cold start, heat soak, friction, and 12 V energy accounting."
+
+[[needs_verification]]
+id = "exhaust_aftertreatment"
+required = ["VIN-specific manifold/catalyst/sensor/muffler part numbers", "topology and volumes", "flow restrictions", "species conversion/oxygen-storage and thermal data"]
+reason = "No selected-donor emissions package is established."
+
+[[needs_verification]]
+id = "transmission.identity_ratios_final_drive"
+required = ["AT8 manufacturing type/number", "measured 1-4 and reverse ratios", "step-down ratio", "final-drive ratio", "differential and halfshaft identity"]
+reason = "The AT8 product sheet contains multiple application and final-drive rows; no ratio is selected or guessed."
+
+[[needs_verification]]
+id = "transmission.torque_converter_and_lockup"
+required = ["AT8 converter part identity", "capacity-factor and torque-ratio curves", "stator one-way-clutch behavior", "lock-up hardware confirmation", "lock-up friction/thermal maps", "application and slip-control schedule"]
+reason = "AT8 is documented as having an evolved torque converter, but AL4 converter and lock-up values cannot be assumed unchanged."
+
+[[needs_verification]]
+id = "transmission_planetary_and_friction_dynamics"
+required = ["AT8 gearset connection and tooth-count verification", "shaft/gear/differential inertias and efficiency", "E1/E2/F1/F2/F3 capacity, clearance, friction, return, fill, and thermal data", "parking mechanism"]
+reason = "Family diagrams define topology but not selected-donor dynamic parameters."
+
+[[needs_verification]]
+id = "transmission_hydraulics_atf_thermal"
+required = ["ATF specification and fill for the donor", "pump displacement/efficiency", "main-pressure map", "valve and solenoid flow/force dynamics", "leakage and fill volumes", "heat-exchanger topology", "temperature-viscosity and friction relationships"]
+reason = "A four-speed hydraulic automatic needs pressure and thermal state to reproduce launch, shifting, protection, wear, and faults."
+
+[[needs_verification]]
+id = "transmission_controller_and_network"
+required = ["TCU/transmission-ECU identity", "shift/lock-up/creep/protection/fail-safe state machines", "adaptation data", "ECU torque-intervention handshake", "BSI/ABS/gateway message IDs, scaling, periods, and timeouts"]
+reason = "The documented software evolution makes donor-specific control evidence essential."
+
+[[needs_verification]]
+id = "integrated_nvhe_and_audio"
+required = ["crank/exhaust pressure pulsation", "converter/input/output torsional speed", "lock-up shudder", "gear-mesh orders", "case/mount accelerometers", "transfer functions to game audio events"]
+reason = "Sound and vibration must be generated from the same physical state rather than a decorative RPM loop."
+
+[[provisional_assumptions]]
+id = "baseline.vehicle_choice"
+statement = "Use the launch-era C-Elysee EC5 115 Ch plus four-speed AT8 configuration in training document C_15473 as the initial integration target until a lawful donor identity is frozen."
+sources = ["citroen_c_elysee_training_c15473_2012", "pcm_at8_datasheet_2018"]
+exit_condition = "Freeze VIN, DAM/OPR, market/build code, complete engine type, AT8 manufacturing number, emissions package, and software identities."
+
+[[provisional_assumptions]]
+id = "model.transmission_resolution"
+statement = "Represent the torque converter and optional lock-up path, oil pump, hydraulic pressure/valve dynamics, both epicyclic gearsets, E1/E2, F1/F2/F3, step-down/output path, final drive, differential, and halfshafts as dynamic components."
+sources = ["citroen_al4_at8_after_sales_2011", "citroen_technical_meeting_2012", "citroen_al4_training_reference"]
+exit_condition = "Replace architecture-only placeholders with AT8 donor evidence and validate all states against rig traces."
+
+[[provisional_assumptions]]
+id = "model.controller_strategy"
+statement = "Use transparent behavioural ECU/TCU surrogate controllers until lawful donor timing and signal data are available; never embed unknown OEM maps as claimed facts."
+sources = []
+exit_condition = "Validate each controller path against documented or measured timing, saturation, adaptation, fault, shift, lock-up, and torque-intervention behavior."
+
+[[provisional_assumptions]]
+id = "model.aftertreatment_strategy"
+statement = "Reserve a configurable exhaust-aftertreatment graph from exhaust valves to tailpipe, but do not select catalyst/sensor topology until donor emissions information and part numbers are known."
+sources = []
+exit_condition = "Freeze VIN-specific aftertreatment hardware and calibrate flow, species, and thermal states from measurements."
+
+[measurement_program]
+identity_and_teardown = [
+  "VIN, DAM/OPR, market/build code, all relevant part/manufacturing/software IDs, and emissions information",
+  "measured 1-4, reverse, step-down, and final-drive ratios without relying on internet tables",
+  "converter, gearset, friction-element, hydraulic, differential, halfshaft, intake, cooling, lubrication, electrical, and exhaust connection survey",
+  "rotating inertia, mass, torsional stiffness, damping, backlash, and critical flow volumes"
+]
+engine_dyno = [
+  "steady speed/load torque, air, fuel, lambda, manifold pressure/temperature, ignition, injection, and exhaust pressure/temperature",
+  "motoring friction and accessory power",
+  "crank-angle cylinder and port pressure with instantaneous crank speed",
+  "coolant/oil flows, pressures, temperatures, and heat rejection",
+  "cold-start, warm-up, transient tip-in/tip-out, knock-limit, and fault cases"
+]
+emissions_and_exhaust = [
+  "engine-out and tailpipe gaseous species plus applicable particle metrics",
+  "pressure, temperature, mass flow, lambda, and sensor delay at each aftertreatment boundary",
+  "light-off, oxygen storage, conversion efficiency, pressure drop, and thermal soak"
+]
+transmission_and_integration = [
+  "synchronised engine, converter turbine/input, output, and wheel speeds; axle torque; selector/gear; friction-element and solenoid commands; main pressure; ATF temperature",
+  "converter capacity factor, torque ratio, stator transition, lock-up slip/friction/thermal identification",
+  "launch, creep, all up/down shifts, coastdown, reverse changes, hill start, cold/hot operation, protection, and hydraulic/electrical faults",
+  "pressure-based clutch/brake fill and torque-transfer identification plus geartrain efficiency, backlash, and halfshaft torsion",
+  "ECU/TCU/BSI/ABS/gateway traces with a shared hardware time base"
+]
+data_governance = [
+  "raw channels, calibration certificates, sample rates, filters, clock alignment, environment, uncertainty, and processing lineage",
+  "lawful acquisition and redistribution metadata for every dataset"
+]
