@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Power! contributors
+# Licensed under GPL-3.0-or-later with the Unity Linking Exception.
+# See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
+
 if(NOT DEFINED POWER_LIBRARY OR NOT DEFINED POWER_NM)
     message(FATAL_ERROR "POWER_LIBRARY and POWER_NM are required")
 endif()

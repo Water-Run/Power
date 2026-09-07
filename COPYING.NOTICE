@@ -1,0 +1,21 @@
+Power! — cross-platform powertrain modeling and experimentation
+Copyright (C) 2026 Power! contributors
+
+Power!-owned material in this repository is licensed under the GNU General
+Public License as published by the Free Software Foundation, either version 3
+of the License, or (at your option) any later version.
+
+The copyright holders additionally grant the permission described in
+UNITY-LINKING-EXCEPTION.md. Read that permission together with LICENSE.
+
+This notice covers original Power! source code, tests, tools, schemas,
+documentation, sample definitions, and Unity project files, including the
+original Power! prototypes preserved in legacy/native. It does not relicense
+third-party materials. Existing third-party notices and licenses remain in
+effect. Dependencies and upstream reference checkouts retain their own terms.
+
+Power! is provided without any warranty, including the implied warranties of
+merchantability or fitness for a particular purpose. See LICENSE for details.
+
+A copy of the GNU General Public License accompanies this program in LICENSE.
+It is also available at https://www.gnu.org/licenses/.

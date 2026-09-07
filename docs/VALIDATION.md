@@ -35,6 +35,8 @@ GitHub Actions 已在 Windows、macOS、Linux 上完成同一组托管验收：�
 
 The repository and CI evidence links are now public. Development remains paused at the owner's request; the visibility update does not change the verified code baseline.
 
+The GPL publication update added license notices without changing executable source content; a comparison against the preceding commit confirmed all 90 source/build edits were notice-only. A fresh serial verification passed 30/30 managed checks, 19/19 Unity-facing assembly checks, and 5/5 MCP integration groups, with zero build warnings or errors. Its log is `artifacts/reports/license-verification.log`. This does not add Unity Editor or Player validation evidence.
+
 ## 尚未取得的证据
 
 当前环境没有安装 Unity Editor。本次没有运行编辑器导入、EditMode/PlayMode 测试、场景画面检查或 IL2CPP 构建。对应项目、场景、测试与自动化入口已提供：

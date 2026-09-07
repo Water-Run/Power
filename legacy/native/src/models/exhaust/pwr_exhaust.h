@@ -1,3 +1,7 @@
+// Copyright (C) 2026 Power! contributors
+// Licensed under GPL-3.0-or-later with the Unity Linking Exception.
+// See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
+
 #ifndef PWR_MODELS_EXHAUST_PWR_EXHAUST_H
 #define PWR_MODELS_EXHAUST_PWR_EXHAUST_H
 

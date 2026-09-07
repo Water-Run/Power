@@ -1,3 +1,7 @@
+# Copyright (C) 2026 Power! contributors
+# Licensed under GPL-3.0-or-later with the Unity Linking Exception.
+# See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
+
 function(power_enable_strict_warnings target_name)
     if(MSVC)
         target_compile_options(

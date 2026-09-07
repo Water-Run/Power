@@ -1,5 +1,7 @@
 # Working on Power!
 
+- Use English for new code, comments, documentation, commit messages and user-facing updates. Preserve source quotations and provenance when retaining historical material.
+- Original Power! material is GPL-3.0-or-later with the Unity Linking Exception. Preserve COPYING.NOTICE, LICENSE, UNITY-LINKING-EXCEPTION.md and applicable source-file notices; third-party materials retain their own licenses.
 - The active stack is C# 14 / .NET 10 plus Unity 6.6. Start with README.md, docs/ARCHITECTURE.md, docs/ROADMAP.md and docs/AGENT_API.md. `legacy/native` is historical reference, not the current implementation target.
 - Keep the full powertrain objective. A passing electrothermal demo does not mean the engine, transmission, controls or calibrated vehicle samples are complete.
 - Core code must target both net10.0 and netstandard2.1 and remain free of Unity, transport, model-provider and third-party dependencies. Unity Assets scripts must compile as C# 9. Do not claim Unity supports .NET 10 or C# 14 source compilation.

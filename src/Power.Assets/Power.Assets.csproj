@@ -1,3 +1,9 @@
+<!--
+Copyright (C) 2026 Power! contributors
+Licensed under GPL-3.0-or-later with the Unity Linking Exception.
+See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
+-->
+
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFrameworks>net10.0;netstandard2.1</TargetFrameworks></PropertyGroup>
   <ItemGroup><ProjectReference Include="../Power.Core/Power.Core.csproj" /></ItemGroup>

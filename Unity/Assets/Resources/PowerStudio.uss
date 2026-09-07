@@ -1,3 +1,9 @@
+/*
+Copyright (C) 2026 Power! contributors
+Licensed under GPL-3.0-or-later with the Unity Linking Exception.
+See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
+*/
+
 .studio { flex-grow: 1; color: rgb(222, 234, 241); }
 .viewport { position: absolute; left: 0; right: 0; top: 0; bottom: 0; }
 .header { position: absolute; top: 0; left: 0; right: 0; height: 96px; padding: 22px 40px; flex-direction: row; align-items: center; background-color: rgba(8, 15, 21, 0.94); border-bottom-width: 1px; border-bottom-color: rgb(39, 53, 62); }

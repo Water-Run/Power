@@ -1,3 +1,7 @@
+// Copyright (C) 2026 Power! contributors
+// Licensed under GPL-3.0-or-later with the Unity Linking Exception.
+// See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
+
 // Cross-platform .NET 10 file-based app: dotnet run --file tools/Build.cs -- verify
 using System.Diagnostics;
 using System.Runtime.CompilerServices;

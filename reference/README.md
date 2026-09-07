@@ -32,4 +32,4 @@ git -C reference/engine-sim-community-edition checkout \
 - 经典主仓库的 `LICENSE` 是 MIT；如果未来例外复用其受版权保护的代码，必须保留许可和版权声明并登记来源。
 - 子模块各有独立许可状态；当前测绘发现 `csv-io`、`delta-studio`、`simple-2d-constraint-solver` 带 MIT 文件，而 `piranha` 与 `direct-to-video` 仍需单独法务确认。
 - Power! 采用完整重写策略，不链接旧仓库或旧子模块，也不把旧行为兼容作为验收目标。
-- Power! 自身的发布许可尚未由项目所有者决定，不能因为参考项目是 MIT 就自动推定。
+- Power!-owned material is now GPL-3.0-or-later with the [Unity Linking Exception](../UNITY-LINKING-EXCEPTION.md); see [COPYING.NOTICE](../COPYING.NOTICE). Upstream references retain their original licenses.

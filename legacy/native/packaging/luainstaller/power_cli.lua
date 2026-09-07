@@ -1,3 +1,7 @@
+-- Copyright (C) 2026 Power! contributors
+-- Licensed under GPL-3.0-or-later with the Unity Linking Exception.
+-- See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
+
 -- Trusted application entry for a future LuaInstaller distribution.
 -- User-authored *.power.lua files are never executed in this Lua state; the
 -- native bridge passes them to libpower's separate sandboxed Model VM.

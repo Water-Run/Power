@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Copyright (C) 2026 Power! contributors
+# Licensed under GPL-3.0-or-later with the Unity Linking Exception.
+# See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
+
 """Offline JSON experiment host for libpower. Uses only the public C ABI.
 
 This tool is a development frontend, not the planned Lua asset sandbox.
