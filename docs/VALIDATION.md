@@ -33,7 +33,7 @@ dotnet run --file tools/Build.cs -- verify
 
 GitHub Actions 已在 Windows、macOS、Linux 上完成同一组托管验收：各平台均为 30/30、19/19、5/5。证据对应代码提交 [`aea6136`](https://github.com/Water-Run/Power/commit/aea6136bbdcbeaea91d63836d947637e7eac730e) 和 [运行 34087686661](https://github.com/Water-Run/Power/actions/runs/34087686661)。本地保存了 `artifacts/reports/github-actions-34087686661.log` 与 `.json`，包含实际作业输出和终态；另外从不含缓存及生成程序集的干净源码副本完成了一轮本地验收，日志为 `github-clean-checkout.log`。
 
-仓库为私有，远程证据链接需要仓库访问权限。本次收尾提交仅更新验证记录与暂停状态；按用户要求，仓库建立后暂停开发。
+The repository and CI evidence links are now public. Development remains paused at the owner's request; the visibility update does not change the verified code baseline.
 
 ## 尚未取得的证据
 
