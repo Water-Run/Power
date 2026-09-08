@@ -2,7 +2,7 @@
 
 用户目标是实现完整的 Power!，主线使用现代 C# 和 Unity 3D，并让核心可由 Agent 直接操作。当前电热实验是迁移基座，不能代表整个目标已经完成。
 
-**2026-09-08: Development resumed at the owner’s request.** [Water-Run/Power](https://github.com/Water-Run/Power) is now public. The C# baseline including sealed-cylinder physics passed [remote verification](https://github.com/Water-Run/Power/actions/runs/34176008291) on Windows, macOS, and Linux. Unity Editor validation and the remaining work below are pending.
+**2026-09-08: Development is paused at the owner’s request.** [Water-Run/Power](https://github.com/Water-Run/Power) is now public. The C# baseline including sealed-cylinder physics passed [remote verification](https://github.com/Water-Run/Power/actions/runs/34176008291) on Windows, macOS, and Linux. Unity Editor validation and the remaining work below are pending.
 
 | 阶段 | 交付与验收 | 当前状态 |
 |---|---|---|
@@ -15,7 +15,7 @@
 | 7. 控制与整机 | ECU/TCU 周期、传感器/执行器、扭矩协调、电源、附件、故障闭环 | 尚未完成 |
 | 8. 证据与发布 | 两套完整动力总成、实测标定、参数来源、误差预算、长时稳定、桌面包 | 研究资料已保留，发布条件未满足 |
 
-Current sequence: establish conservative nonlinear engine components while actual Unity verification awaits an Editor environment; then add gas exchange, combustion and wall heat transfer, followed by transmission and control components with appropriate solver contracts. Complete Unity import/Play validation, selectable plots, graph editing and saving as separate deliverables. The current plot still shows the first two rotor speeds; all other channels are available in the output list. CLI, MCP and Unity must continue to consume the same model semantics.
+On explicit resumption, follow the [next engine-step notes](NEXT_ENGINE_STEP.md). Planned sequence: establish conservative nonlinear engine components while actual Unity verification awaits an Editor environment; then add gas exchange, combustion and wall heat transfer, followed by transmission and control components with appropriate solver contracts. Complete Unity import/Play validation, selectable plots, graph editing and saving as separate deliverables. The current plot still shows the first two rotor speeds; all other channels are available in the output list. CLI, MCP and Unity must continue to consume the same model semantics.
 
 The first engine increment is the [sealed-cylinder foundation](SEALED_CYLINDER.md). It covers geometry, trapped ideal gas, crank pressure work and a bounded nonlinear solve. It does not complete the engine milestone. Per the owner’s 2026-09-08 instruction, future refactoring of the archived C portion will use **Zig**; preserve the C sources as reference and define the native boundary before migration.
 

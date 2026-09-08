@@ -2,7 +2,7 @@
 
 Power! is a powertrain modeling and experimentation project built around a **cross-platform C# physics core, a Unity 3D studio, and agent-friendly MCP interfaces**. Models, solvers, experiments, and presentation have separate responsibilities. Agents can construct models, inspect diagnostics, branch experiments, and evaluate physical evidence through explicit contracts.
 
-The public repository is [Water-Run/Power](https://github.com/Water-Run/Power). Development resumed on 2026-09-08; the implemented baseline and remaining work are recorded in the [roadmap](docs/ROADMAP.md).
+The public repository is [Water-Run/Power](https://github.com/Water-Run/Power). Development is paused at the owner’s request as of 2026-09-08; the implemented baseline and remaining work are recorded in the [roadmap](docs/ROADMAP.md).
 
 ## Technology
 

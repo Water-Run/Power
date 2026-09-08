@@ -12,6 +12,10 @@ The synthetic cylinder experiment passed its final KPIs and replayed exactly at 
 
 Unity importer and Play tests now include the cylinder asset and schematic piston motion, but were **not executed**. Unity Editor, Mono, rendering and IL2CPP evidence remains pending. The active stack remains C#/Unity; the future Zig rewrite direction introduces no native runtime in this increment.
 
+## Pause checkpoint: 2026-09-08
+
+The owner requested wrap-up and a development pause after the cylinder increment. Executable source remains at verified code commit `6209df2`; the later commits update documentation only. The prospective gas-exchange extension was not applied, built or published. Its [resume notes](NEXT_ENGINE_STEP.md) distinguish proposed work from implemented capabilities. No further build was needed for this documentation-only checkpoint. Resume development only after an explicit owner instruction.
+
 ## Historical baseline: 2026-09-07
 
 
