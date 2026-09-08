@@ -30,7 +30,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 
 This builds the solution serially, exports Unity model assets, runs the core and agent checks, exercises an actual MCP server process, and writes experiment reports under `artifacts/reports`. Build servers and concurrent compilation are disabled inside the build tool to reduce memory pressure. The local `.cache/dotnet/dotnet` executable can also be used when the pinned SDK is installed there; caches are excluded from Git.
 
-The current increment passed **38/38 managed checks, 26/26 Unity-facing assembly checks, and 6/6 MCP integration groups on Linux**. The preceding baseline also passed on Windows and macOS; see the [earlier CI run](https://github.com/Water-Run/Power/actions/runs/34087686661) and [validation record](docs/VALIDATION.md). The assembly checks run under .NET 10; actual Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending.
+The current increment passed **38/38 managed checks, 26/26 Unity-facing assembly checks, and 6/6 MCP integration groups on Windows, macOS, and Linux**. See the [CI run](https://github.com/Water-Run/Power/actions/runs/34176008291) and [validation record](docs/VALIDATION.md). The assembly checks run under .NET 10; actual Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending.
 
 Run an experiment directly:
 

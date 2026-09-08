@@ -2,7 +2,7 @@
 
 用户目标是实现完整的 Power!，主线使用现代 C# 和 Unity 3D，并让核心可由 Agent 直接操作。当前电热实验是迁移基座，不能代表整个目标已经完成。
 
-**2026-09-08: Development resumed at the owner’s request.** [Water-Run/Power](https://github.com/Water-Run/Power) is now public. The current C# baseline passed remote verification on Windows, macOS, and Linux. Unity Editor validation and the remaining work below are pending.
+**2026-09-08: Development resumed at the owner’s request.** [Water-Run/Power](https://github.com/Water-Run/Power) is now public. The C# baseline including sealed-cylinder physics passed [remote verification](https://github.com/Water-Run/Power/actions/runs/34176008291) on Windows, macOS, and Linux. Unity Editor validation and the remaining work below are pending.
 
 | 阶段 | 交付与验收 | 当前状态 |
 |---|---|---|
