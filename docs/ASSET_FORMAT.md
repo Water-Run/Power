@@ -4,7 +4,24 @@
 
 CLI 的 `export` 命令和 MCP 的 `export_model_asset` 使用同一个编码器。Unity `ScriptedImporter` 把文件导入为 `PowerModelAsset`，仅序列化数据字节；运行时解码后重新编译模型，不加载任意代码或预存 LU 分解。默认资产由 `tools/Build.cs` 生成，可从 JSON 重建。
 
-## 版本 1 布局
+## Current version 2 and version 1 compatibility
+
+The encoder writes `power.asset.v2`; the decoder accepts versions 1 and 2. Version 2 preserves the base node/component tables and adds a fifth int32 count after the original four counts: the number of cylinder extensions. After the base component table, each extension occupies 116 bytes:
+
+| Data | Encoding |
+|---|---|
+| Component table index | int32, unique, within bounds, referring to a sealed cylinder |
+| Bore, stroke, rod length, phase | Four quantities, each double value + int32 unit |
+| Compression ratio | double |
+| Initial pressure, initial temperature, specific gas constant | Three quantities |
+| Gamma | double |
+| Back pressure | One quantity |
+
+Inputs, checks and the SHA-256 trailer follow the extensions. The decoder validates bounded counts and exact length before allocating descriptor arrays; it rejects duplicate or mismatched extensions. Compilation requires exactly one parameter record for each sealed cylinder. The extended unit and field enums append values without changing existing identifiers.
+
+Version 1 has no extension count or extension records. Models using only existing linear components retain solver version 2 and their fingerprints, so existing v1 assets can be decoded and replayed. Models with sealed cylinders use solver version 3. The immutable [v1 fixture](../tests/Power.Tests/Fixtures/README.md) checks compatibility against a real pre-change export.
+
+## Retained version 1 layout
 
 所有整数和 IEEE 754 binary64 都采用小端序。文件最多 1 MiB；字符串为严格 UTF-8。
 

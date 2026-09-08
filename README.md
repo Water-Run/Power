@@ -2,7 +2,7 @@
 
 Power! is a powertrain modeling and experimentation project built around a **cross-platform C# physics core, a Unity 3D studio, and agent-friendly MCP interfaces**. Models, solvers, experiments, and presentation have separate responsibilities. Agents can construct models, inspect diagnostics, branch experiments, and evaluate physical evidence through explicit contracts.
 
-The public repository is [Water-Run/Power](https://github.com/Water-Run/Power). Development is currently paused at the owner's request; the implemented baseline and remaining work are recorded in the [roadmap](docs/ROADMAP.md).
+The public repository is [Water-Run/Power](https://github.com/Water-Run/Power). Development resumed on 2026-09-08; the implemented baseline and remaining work are recorded in the [roadmap](docs/ROADMAP.md).
 
 ## Technology
 
@@ -30,7 +30,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 
 This builds the solution serially, exports Unity model assets, runs the core and agent checks, exercises an actual MCP server process, and writes experiment reports under `artifacts/reports`. Build servers and concurrent compilation are disabled inside the build tool to reduce memory pressure. The local `.cache/dotnet/dotnet` executable can also be used when the pinned SDK is installed there; caches are excluded from Git.
 
-The baseline passed **30/30 managed checks, 19/19 Unity-facing assembly checks, and 5/5 MCP integration groups on all three desktop operating systems**. See the [CI run](https://github.com/Water-Run/Power/actions/runs/34087686661) and [validation record](docs/VALIDATION.md). The assembly checks run under .NET 10; actual Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending.
+The current increment passed **38/38 managed checks, 26/26 Unity-facing assembly checks, and 6/6 MCP integration groups on Linux**. The preceding baseline also passed on Windows and macOS; see the [earlier CI run](https://github.com/Water-Run/Power/actions/runs/34087686661) and [validation record](docs/VALIDATION.md). The assembly checks run under .NET 10; actual Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending.
 
 Run an experiment directly:
 
@@ -42,12 +42,14 @@ CLI exit codes are `0` for a passing experiment, `2` for failed KPIs or replay c
 
 ## Unity studio
 
-1. Run `dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- build`. This creates the Core and Assets assemblies in `Unity/Assets/Plugins` and two sample `.powerasset` files in `Unity/Assets/Generated/Resources`.
+1. Run `dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- build`. This creates the Core and Assets assemblies in `Unity/Assets/Plugins` and three sample `.powerasset` files in `Unity/Assets/Generated/Resources`.
 2. Add the repository's `Unity` directory to Unity Hub and select **6000.6.0f1**.
 3. Allow package resolution and script import to finish. Initial project preparation generates URP and material assets.
 4. Open `Assets/Scenes/PowerLab.unity`, or choose **Power > Open laboratory**, then enter Play Mode.
 
 The scene code builds rotors, thermal nodes, connections, and input controls from the imported model. It supports pause, reset, and saved experiments with events applied at exact simulation ticks. The default electrothermal experiment runs a ten-second braking and recovery sequence; `ThermalNetwork.powerasset` contains a thermal exchange experiment with no external inputs. Use **Open in Studio** in a model asset's Inspector to select it.
+
+`SealedCylinder.powerasset` adds a compression/expansion experiment and a schematic moving piston. Its gas state, crank torque and energy channels use the same model semantics as CLI and MCP. The [cylinder documentation](docs/SEALED_CYLINDER.md) records equations, solver limits and missing engine behavior.
 
 Export another model after building:
 
@@ -79,9 +81,11 @@ The [agent API](docs/AGENT_API.md) documents client configuration and operation 
 
 ## Scope
 
-The current executable C# models include rotational inertia, elastic shafts with positive or negative ratios, RL DC motors, torque sources, thermal capacities, and heat-conduction networks. They share coupled electromechanical integration and an energy ledger. All sample parameters are marked `unverified`.
+The current executable C# models include rotational inertia, elastic shafts with positive or negative ratios, RL DC motors, torque sources, thermal capacities, heat-conduction networks, and sealed adiabatic cylinders with slider-crank geometry. They share coupled integration and an energy ledger. All sample parameters are marked `unverified`.
 
 The complete engine, intake, combustion, exhaust, DCT/AT, hydraulic, ECU/TCU, and calibrated powertrain objectives remain open. Earlier C prototypes and tests are preserved in [legacy/native](legacy/native/ARCHIVE.md); their functionality has not all been migrated to C#. Research for EA211 DJS + DQ200 and PSA EC5 + AT8 remains in [assets/samples](assets/samples), with its evidence and calibration boundaries intact.
+
+Any future rewrite of the archived C portion will use **Zig**, following the owner's direction. The active implementation remains C#/.NET and Unity; the Zig migration boundary will be defined before that work starts.
 
 See the [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), and [validation record](docs/VALIDATION.md). Existing documents may retain their original language; new documentation and updates use English.
 

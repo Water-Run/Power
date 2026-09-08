@@ -11,6 +11,8 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Reference Include="Power.Assets"><HintPath>../../Unity/Assets/Plugins/Power.Assets.dll</HintPath></Reference>
     <Compile Include="../Power.Tests/CoreChecks.cs" Link="CoreChecks.cs" />
     <Compile Include="../Power.Tests/AssetChecks.cs" Link="AssetChecks.cs" />
+    <Compile Include="../Power.Tests/EngineChecks.cs" Link="EngineChecks.cs" />
+    <None Include="../Power.Tests/Fixtures/*.powerasset" Link="Fixtures/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <Target Name="BuildUnityCore" BeforeTargets="ResolveAssemblyReferences">
     <MSBuild Projects="../../src/Power.Assets/Power.Assets.csproj" Targets="Build" Properties="Configuration=$(Configuration);TargetFramework=netstandard2.1" />

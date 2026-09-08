@@ -11,8 +11,27 @@ using static Power.Tests.CoreChecks;
 
 string sample = Path.Combine(AppContext.BaseDirectory, "electrothermal.power.json");
 string source = File.ReadAllText(sample);
-var checks = CoreChecks.All.Concat(AssetChecks.All).Concat(AgentChecks.All).Concat(new (string, Action)[]
+var checks = CoreChecks.All.Concat(AssetChecks.All).Concat(EngineChecks.All).Concat(AgentChecks.All).Concat(new (string, Action)[]
 {
+    ("cylinder JSON / all replay boundaries / strict parameters / pressure checks", () =>
+    {
+        string cylinderSource = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, "sealed-cylinder.power.json"));
+        var document = ModelDocument.Parse(cylinderSource);
+        var report = ExperimentRunner.Evaluate(document);
+        Require(report.Passed && report.Replay.SampleHashesMatch && report.Replay.BoundariesChecked == 21);
+        Require(report.Model.Fidelity == "sealed_adiabatic_gas");
+        var asset = AssetCodec.Decode(AssetCodec.Encode(document.ToAsset("Cylinder boundary replay")));
+        var playback = asset.CreatePlayback(); var values = new Scalar[asset.Model.OutputCount];
+        foreach (var boundary in report.Samples)
+        {
+            if (boundary.TimeNs > 0) Require(playback.Advance(boundary.TimeNs - playback.TimeNanoseconds) == SimulationStatus.Ok);
+            Require(playback.ReadSnapshot(values).StateHash.ToString("x16") == boundary.StateHash);
+            Require(values.All(v => v.Value == boundary.Values[v.Channel.ToString()]));
+        }
+        Throws<ArgumentException>(() => ModelDocument.Parse(cylinderSource.Replace("\"bore\":", "\"bore_typo\":")));
+        Throws<ArgumentException>(() => ModelDocument.Parse(cylinderSource.Replace("\"gamma\": 1.4", "\"gamma\": 1.4, \"gamma\": 1.3")));
+        Require(!ExperimentRunner.Evaluate(document with { Checks = [new(10, Field.Pressure, null, 1, null)] }).Passed);
+    }),
     ("JSON experiment / replay / reference values", () =>
     {
         var document = ModelDocument.Parse(source);

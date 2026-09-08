@@ -1,5 +1,8 @@
 # C# / Unity / Agent 架构
 
+The active implementation remains C#/.NET with Unity. Per the owner’s 2026-09-08 direction, any future rewrite of the archived C portion will use **Zig**. Keep `legacy/native` as a provenance-preserving reference; select bounded native responsibilities and an explicit interoperable boundary before starting that migration. No Zig runtime dependency is introduced by the current engine work.
+
+
 架构决策日期：2026-09-07。主线从旧 C 原型迁至托管 C#；Unity 提供三维工作室，物理模型与 Agent 自动化可以独立运行。
 
 ```mermaid
@@ -41,6 +44,8 @@ Unity 直接引用 Core、Assets 的标准库程序集。场景代码按节点�
 `CompiledModel` 保存不变的拓扑、通道表、模型指纹与 LU 分解。多个 `Simulation` 共享模型，各自拥有完整状态及工作区。调用者在编译之后修改原始描述数组不会改变已编译模型。
 
 ## 当前求解器
+
+Models containing sealed cylinders add a bounded nonlinear discrete-gradient solve around the existing electromechanical midpoint system. Gas pressure work is coupled to crank motion and included in the energy ledger. The original linear path retains solver version 2 and its model fingerprints; cylinder models use solver version 3. See [the equations, limits and evidence](SEALED_CYLINDER.md). This first cylinder component derives constant-mass gas state from crank angle; future gas exchange and combustion require independent mass and energy states.
 
 机械与电机使用一个耦合线性系统，避免把反电动势、轴扭矩和转速当作互不相关的单向信号：
 

@@ -43,7 +43,7 @@ try
         string temporary = absolute + "." + Guid.NewGuid().ToString("N") + ".tmp";
         try { File.WriteAllBytes(temporary, bytes); File.Move(temporary, absolute, true); }
         finally { if (File.Exists(temporary)) File.Delete(temporary); }
-        Console.WriteLine(JsonSerializer.Serialize(new { exported = true, format = "power.asset.v1", path = absolute,
+        Console.WriteLine(JsonSerializer.Serialize(new { exported = true, format = AssetCodec.FormatName, path = absolute,
             name = asset.Name, byte_count = bytes.Length, model_fingerprint = asset.Model.Fingerprint.ToString("x16"),
             source_sha256 = asset.SourceSha256, asset_sha256 = Convert.ToHexStringLower(SHA256.HashData(bytes)) }, options));
         return 0;

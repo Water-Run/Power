@@ -26,12 +26,14 @@ public sealed class Simulation
     private State _state, _scratch;
     private readonly double[] _mid, _temperature, _inputCandidate;
     private readonly bool[] _inputSeen;
+    private readonly CylinderSolver? _cylinderSolver;
     private int _busy;
     public CompiledModel Model => _model;
 
     internal Simulation(CompiledModel model)
     {
         _model = model;
+        if (model.CylinderCoupling is not null) _cylinderSolver = new(model);
         _state = new(model.DynamicCount, model.ThermalCount, model.ComponentCount);
         _scratch = new(model.DynamicCount, model.ThermalCount, model.ComponentCount);
         _mid = new double[model.DynamicCount]; _temperature = new double[model.ThermalCount];
@@ -156,6 +158,7 @@ public sealed class Simulation
             else if (c.Kind == ComponentKind.DcMotor) _mid[c.Index] += 0.5 * dt * s.Inputs[i] / c.P1;
         }
         if (!_model.Dynamics.Solve(_mid)) return false;
+        if (_cylinderSolver is not null && !_cylinderSolver.Solve(s.X, _mid)) return false;
         foreach (var n in _model.Nodes)
             if (n.Domain == Domain.Thermal)
                 _temperature[n.Index] = n.Storage * s.Temperature[n.Index] + _model.AmbientForce[n.Index];
@@ -175,6 +178,11 @@ public sealed class Simulation
                 work += dt * s.Inputs[i] * current;
             }
             else if (c.Kind == ComponentKind.TorqueSource) work += dt * s.Inputs[i] * _mid[_model.Nodes[c.A].Index + 1];
+            else if (c.Kind == ComponentKind.SealedCylinder)
+            {
+                int angle = _model.Nodes[c.A].Index;
+                work += _model.Cylinders[i]!.BackPressureWork(s.X[angle], (2 * _mid[angle] - s.X[angle]) - s.X[angle]);
+            }
             if (c.Heat < 0) heat += loss;
             else _temperature[_model.Nodes[c.Heat].Index] += loss;
         }
@@ -225,6 +233,9 @@ public sealed class Simulation
             else if (c.Kind == ComponentKind.DcMotor)
                 energy += 0.5 * c.P1 * s.X[c.Index] * s.X[c.Index];
         }
+        for (int i = 0; i < _model.ComponentCount; ++i)
+            if (_model.Cylinders[i] is { } cylinder)
+                energy += cylinder.EnergyChange(s.X[_model.Nodes[_model.Components[i].A].Index]);
         return energy;
     }
 
@@ -239,6 +250,8 @@ public sealed class Simulation
             }
             else if (c.Kind == ComponentKind.DcMotor && !Numeric.Finite(c.P2 * s.X[c.Index])) return false;
         }
+        for (int i = 0; i < _model.ComponentCount; ++i)
+            if (_model.Cylinders[i] is { } cylinder && !cylinder.Finite(s.X[_model.Nodes[_model.Components[i].A].Index])) return false;
         return true;
     }
 
@@ -264,16 +277,23 @@ public sealed class Simulation
             {
                 var b = _model.Outputs[i];
                 double value;
+                var cylinder = b.IsComponent ? _model.Cylinders[b.Index] : null;
+                double crank = cylinder is null ? 0 : _state.X[_model.Nodes[_model.Components[b.Index].A].Index];
                 switch (b.Field)
                 {
                     case Field.Angle: value = _state.X[_model.Nodes[b.Index].Index]; break;
                     case Field.Speed: value = _state.X[_model.Nodes[b.Index].Index + 1]; break;
-                    case Field.Temperature: value = _state.Temperature[_model.Nodes[b.Index].Index]; break;
+                    case Field.Temperature: value = cylinder is not null ? cylinder.Temperature(crank) : _state.Temperature[_model.Nodes[b.Index].Index]; break;
+                    case Field.Pressure: value = cylinder!.Pressure(crank); break;
+                    case Field.Volume: value = cylinder!.GeometryAt(crank).VolumeCubicMeters; break;
+                    case Field.Mass: value = cylinder!.Mass; break;
+                    case Field.InternalEnergy: value = cylinder!.Energy(crank); break;
+                    case Field.PistonDisplacement: value = cylinder!.GeometryAt(crank).DisplacementMeters; break;
                     case Field.Current: value = _state.X[_model.Components[b.Index].Index]; break;
                     case Field.Twist: value = Relative(_model.Components[b.Index], _state.X, 0); break;
                     case Field.Torque:
                         var c = _model.Components[b.Index];
-                        value = c.Kind == ComponentKind.DcMotor ? c.P2 * _state.X[c.Index] :
+                        value = cylinder is not null ? cylinder.Torque(crank) : c.Kind == ComponentKind.DcMotor ? c.P2 * _state.X[c.Index] :
                             -c.P0 * Relative(c, _state.X, 0) - c.P1 * Relative(c, _state.X, 1);
                         break;
                     case Field.SourceWork: value = _state.Work; break;

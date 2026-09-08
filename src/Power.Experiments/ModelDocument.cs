@@ -29,12 +29,16 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
         ["rad_s"] = Unit.RadianPerSecond, ["nm"] = Unit.NewtonMeter, ["nm_rad"] = Unit.NewtonMeterPerRadian,
         ["nm_s_rad"] = Unit.NewtonMeterSecondPerRadian, ["k"] = Unit.Kelvin, ["j_k"] = Unit.JoulePerKelvin,
         ["w_k"] = Unit.WattPerKelvin, ["ohm"] = Unit.Ohm, ["h"] = Unit.Henry, ["nm_a"] = Unit.NewtonMeterPerAmpere,
-        ["a"] = Unit.Ampere, ["v"] = Unit.Volt, ["j"] = Unit.Joule, ["rpm"] = Unit.Rpm, ["deg"] = Unit.Degree
+        ["a"] = Unit.Ampere, ["v"] = Unit.Volt, ["j"] = Unit.Joule, ["rpm"] = Unit.Rpm, ["deg"] = Unit.Degree,
+        ["m"] = Unit.Meter, ["mm"] = Unit.Millimeter, ["m3"] = Unit.CubicMeter, ["pa"] = Unit.Pascal,
+        ["bar"] = Unit.Bar, ["kg"] = Unit.Kilogram, ["j_kg_k"] = Unit.JoulePerKilogramKelvin
     };
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
         ["angle"] = Field.Angle, ["speed"] = Field.Speed, ["temperature"] = Field.Temperature,
         ["current"] = Field.Current, ["twist"] = Field.Twist, ["torque"] = Field.Torque,
+        ["pressure"] = Field.Pressure, ["volume"] = Field.Volume, ["mass"] = Field.Mass,
+        ["internal_energy"] = Field.InternalEnergy, ["piston_displacement"] = Field.PistonDisplacement,
         ["source_work"] = Field.SourceWork, ["heat_rejected"] = Field.HeatRejected,
         ["stored_energy_change"] = Field.StoredEnergyChange, ["energy_residual"] = Field.EnergyResidual
     };
@@ -104,6 +108,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             {
                 "shaft" => ComponentKind.Shaft, "dc_motor" => ComponentKind.DcMotor,
                 "torque_source" => ComponentKind.TorqueSource, "thermal_link" => ComponentKind.ThermalLink,
+                "sealed_cylinder" => ComponentKind.SealedCylinder,
                 _ => throw new ArgumentException("Unknown component kind.")
             };
             var result = new ComponentDefinition
@@ -119,6 +124,19 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 return result;
             }
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
+            if (kind == ComponentKind.SealedCylinder)
+            {
+                Object(parameters, ["bore", "stroke", "rod_length", "phase", "compression_ratio", "initial_pressure",
+                    "initial_temperature", "gas_constant", "gamma", "back_pressure"]);
+                return result with { Cylinder = new()
+                {
+                    Bore = Quantity(parameters.GetProperty("bore")), Stroke = Quantity(parameters.GetProperty("stroke")),
+                    RodLength = Quantity(parameters.GetProperty("rod_length")), Phase = Quantity(parameters.GetProperty("phase")),
+                    CompressionRatio = Number(parameters.GetProperty("compression_ratio")), InitialPressure = Quantity(parameters.GetProperty("initial_pressure")),
+                    InitialTemperature = Quantity(parameters.GetProperty("initial_temperature")), GasConstant = Quantity(parameters.GetProperty("gas_constant")),
+                    Gamma = Number(parameters.GetProperty("gamma")), BackPressure = Quantity(parameters.GetProperty("back_pressure"))
+                } };
+            }
             if (kind == ComponentKind.Shaft)
             {
                 Object(parameters, ["stiffness", "damping", "rest_angle", "ratio"]);

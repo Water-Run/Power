@@ -14,7 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 1, MaxBytes = 1_048_576;
+    public const int FormatVersion = 2, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v2";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -22,8 +23,9 @@ public static class AssetCodec
     {
         if (asset is null) throw new ArgumentNullException(nameof(asset));
         // Check the exact maximum allocation before writing caller-provided data.
-        long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 4 * 4 +
-            44L * asset.Nodes.Count + 156L * asset.Components.Count + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
+        int cylinders = asset.Components.Count(c => c.Kind == ComponentKind.SealedCylinder);
+        long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 5 * 4 +
+            44L * asset.Nodes.Count + 156L * asset.Components.Count + 116L * cylinders + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
         if (size > MaxBytes) throw new AssetFormatException("Asset exceeds 1 MiB.");
         using var stream = new MemoryStream((int)size);
         using var writer = new BinaryWriter(stream, Utf8, true);
@@ -32,6 +34,7 @@ public static class AssetCodec
         byte[] name = Utf8.GetBytes(asset.Name); writer.Write((ushort)name.Length); writer.Write(name);
         for (int i = 0; i < 32; ++i) writer.Write(Convert.ToByte(asset.SourceSha256.Substring(i * 2, 2), 16));
         writer.Write(asset.Nodes.Count); writer.Write(asset.Components.Count); writer.Write(asset.Inputs.Count); writer.Write(asset.Checks.Count);
+        writer.Write(cylinders);
         void Quantity(Quantity quantity) { writer.Write(quantity.Value); writer.Write((int)quantity.Unit); }
         foreach (var n in asset.Nodes)
         {
@@ -44,6 +47,14 @@ public static class AssetCodec
             writer.Write(c.Ratio); Quantity(c.Resistance); Quantity(c.Inductance); Quantity(c.Coupling); Quantity(c.InitialCurrent);
             Quantity(c.Conductance); Quantity(c.AmbientTemperature);
         }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].Cylinder is { } cylinder)
+            {
+                writer.Write(i);
+                Quantity(cylinder.Bore); Quantity(cylinder.Stroke); Quantity(cylinder.RodLength); Quantity(cylinder.Phase);
+                writer.Write(cylinder.CompressionRatio); Quantity(cylinder.InitialPressure); Quantity(cylinder.InitialTemperature);
+                Quantity(cylinder.GasConstant); writer.Write(cylinder.Gamma); Quantity(cylinder.BackPressure);
+            }
         foreach (var input in asset.Inputs) { writer.Write(input.TimeNanoseconds); writer.Write(input.Channel); writer.Write(input.Value); }
         foreach (var c in asset.Checks)
         {
@@ -72,7 +83,8 @@ public static class AssetCodec
             using var stream = new MemoryStream(bytes, 0, contentLength, false);
             using var reader = new BinaryReader(stream, Utf8);
             if (!reader.ReadBytes(8).AsSpan().SequenceEqual(Magic)) throw new AssetFormatException("Unknown asset signature.");
-            if (reader.ReadInt32() != FormatVersion) throw new AssetFormatException("Unsupported asset format version.");
+            int version = reader.ReadInt32();
+            if (version is not (1 or FormatVersion)) throw new AssetFormatException("Unsupported asset format version; supported versions are 1 and 2.");
             ulong fingerprint = reader.ReadUInt64(), step = reader.ReadUInt64(), duration = reader.ReadUInt64(), sample = reader.ReadUInt64();
             int nameLength = reader.ReadUInt16();
             if (nameLength is < 1 or > 512 || stream.Length - stream.Position < nameLength + 32) throw new AssetFormatException("Invalid asset name length.");
@@ -85,7 +97,8 @@ public static class AssetCodec
             }
             int nodes = Count(CompiledModel.MaxNodes, 1), components = Count(CompiledModel.MaxComponents),
                 inputs = Count(PowerAsset.MaxScheduledInputs), checks = Count(PowerAsset.MaxChecks);
-            if (stream.Length - stream.Position != 44L * nodes + 156L * components + 24L * inputs + 33L * checks)
+            int cylinders = version >= 2 ? Count(components) : 0;
+            if (stream.Length - stream.Position != 44L * nodes + 156L * components + 116L * cylinders + 24L * inputs + 33L * checks)
                 throw new AssetFormatException("Asset length does not match its declared counts.");
             Quantity Quantity() => new(reader.ReadDouble(), (Unit)reader.ReadInt32());
             var ns = new NodeDefinition[nodes]; var cs = new ComponentDefinition[components];
@@ -99,6 +112,17 @@ public static class AssetCodec
                     Ratio = reader.ReadDouble(), Resistance = Quantity(), Inductance = Quantity(), Coupling = Quantity(),
                     InitialCurrent = Quantity(), Conductance = Quantity(), AmbientTemperature = Quantity()
                 };
+            for (int i = 0; i < cylinders; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.SealedCylinder || cs[index].Cylinder is not null)
+                    throw new AssetFormatException("Cylinder extension must reference a distinct sealed-cylinder component.");
+                cs[index] = cs[index] with { Cylinder = new()
+                {
+                    Bore = Quantity(), Stroke = Quantity(), RodLength = Quantity(), Phase = Quantity(), CompressionRatio = reader.ReadDouble(),
+                    InitialPressure = Quantity(), InitialTemperature = Quantity(), GasConstant = Quantity(), Gamma = reader.ReadDouble(), BackPressure = Quantity()
+                } };
+            }
             var schedule = new ScheduledInput[inputs];
             for (int i = 0; i < inputs; ++i) schedule[i] = new(reader.ReadUInt64(), reader.ReadUInt64(), reader.ReadDouble());
             var conditions = new AssetCheck[checks];

@@ -23,6 +23,13 @@ namespace Power.Studio
         [SerializeField] private PowerModelAsset modelAsset;
         private readonly List<Material> _materials = new List<Material>();
         private readonly Dictionary<uint, Transform> _rotors = new Dictionary<uint, Transform>();
+        private sealed class PistonVisual
+        {
+            internal Transform Piston;
+            internal Vector3 Top;
+            internal double StrokeMeters;
+        }
+        private readonly Dictionary<uint, PistonVisual> _pistons = new Dictionary<uint, PistonVisual>();
         private readonly Dictionary<uint, Material> _thermalMaterials = new Dictionary<uint, Material>();
         private readonly Dictionary<ulong, TextField> _inputFields = new Dictionary<ulong, TextField>();
         private readonly Dictionary<ulong, double> _inputValues = new Dictionary<ulong, double>();
@@ -114,7 +121,7 @@ namespace Power.Studio
             if (_panel != null) Destroy(_panel);
             foreach (var material in _materials) if (material != null) Destroy(material);
             _materials.Clear();
-            _rotors.Clear(); _thermalMaterials.Clear(); _inputFields.Clear(); _inputValues.Clear();
+            _rotors.Clear(); _pistons.Clear(); _thermalMaterials.Clear(); _inputFields.Clear(); _inputValues.Clear();
             _valueIndices.Clear(); _outputLabels.Clear();
             _plot = null;
         }
@@ -273,6 +280,9 @@ namespace Power.Studio
             // Reduce in double before converting to Unity's float transforms.
             foreach (var rotor in _rotors)
                 rotor.Value.localRotation = Quaternion.Euler((float)(Value(rotor.Key, Field.Angle) % (2 * Math.PI) * Mathf.Rad2Deg), 0, 0);
+            foreach (var piston in _pistons)
+                piston.Value.Piston.localPosition = piston.Value.Top - Vector3.up *
+                    (float)(Value(piston.Key, Field.PistonDisplacement) / piston.Value.StrokeMeters);
             foreach (var heat in _thermalMaterials)
                 heat.Value.SetColor("_BaseColor", Color.Lerp(new Color(0.12f, 0.40f, 0.46f), new Color(1, 0.35f, 0.12f),
                     Mathf.Clamp01((float)(Value(heat.Key, Field.Temperature) - 290) / 80)));
@@ -362,9 +372,25 @@ namespace Power.Studio
                 }
                 positions.Add(node.Id, position);
             }
+            var cylinderCounts = new Dictionary<uint, int>();
             foreach (var component in _asset.Components)
             {
                 Vector3 a = positions[component.NodeA];
+                if (component.Kind == ComponentKind.SealedCylinder)
+                {
+                    cylinderCounts.TryGetValue(component.NodeA, out int ordinal);
+                    cylinderCounts[component.NodeA] = ordinal + 1;
+                    // Schematic travel is normalized to one scene unit; the physics channels remain SI.
+                    Vector3 top = a + new Vector3(0, 1.8f, ordinal * 0.85f);
+                    Shape("Cylinder head " + component.Id, PrimitiveType.Cube, top + Vector3.up * 0.25f, new Vector3(0.8f, 0.15f, 0.7f), steel);
+                    for (int side = -1; side <= 1; side += 2)
+                        Shape("Cylinder wall " + component.Id, PrimitiveType.Cube, top + new Vector3(side * 0.42f, -0.5f, 0), new Vector3(0.06f, 1.3f, 0.7f), steel);
+                    var piston = Shape("Piston " + component.Id, PrimitiveType.Cube, top, new Vector3(0.7f, 0.15f, 0.6f), copper);
+                    Quantity stroke = component.Cylinder.Stroke;
+                    _pistons.Add(component.Id, new PistonVisual { Piston = piston.transform, Top = top,
+                        StrokeMeters = stroke.Unit == Unit.Millimeter ? stroke.Value / 1000 : stroke.Value });
+                    Connection("Crank connection " + component.Id, a, top - Vector3.up * 1.2f, steel, 0.08f);
+                }
                 if (component.Kind == ComponentKind.Shaft || component.Kind == ComponentKind.ThermalLink)
                     Connection("Component " + component.Id, a, component.NodeB == 0 ? new Vector3(a.x, 0.05f, a.z + 1) : positions[component.NodeB],
                         component.Kind == ComponentKind.Shaft ? steel : copper, component.Kind == ComponentKind.Shaft ? 0.15f : 0.07f);

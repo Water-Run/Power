@@ -9,6 +9,7 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
   <ItemGroup><ProjectReference Include="../Power.Experiments/Power.Experiments.csproj" /></ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="../../assets/labs/electrothermal.power.json" LogicalName="power.template.json" />
+    <EmbeddedResource Include="../../assets/labs/sealed-cylinder.power.json" LogicalName="power.cylinder.template.json" />
     <EmbeddedResource Include="../../schemas/power.model.v1.schema.json" LogicalName="power.model.schema.json" />
   </ItemGroup>
 </Project>

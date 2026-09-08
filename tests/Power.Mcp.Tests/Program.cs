@@ -89,4 +89,17 @@ Require(playback.Advance(imported.DurationNanoseconds) == Power.Core.SimulationS
 var snapshot = playback.ReadSnapshot(new Power.Core.Scalar[playback.Model.OutputCount]);
 Require(snapshot.StateHash.ToString("x16") == report.GetProperty("final_sample").GetProperty("state_hash").GetString(), "Asset and MCP experiment differ");
 Console.WriteLine("PASS MCP portable asset / digest / imported replay");
-Console.WriteLine("5/5 MCP integration groups passed against an actual child server process.");
+var cylinder = (await Call("get_example_model", new() { ["name"] = "sealed-cylinder" })).GetProperty("data");
+var cylinderReport = (await Call("run_experiment", new() { ["document"] = cylinder })).GetProperty("data");
+Require(cylinderReport.GetProperty("passed").GetBoolean(), "Cylinder experiment failed over MCP");
+Require(cylinderReport.GetProperty("model").GetProperty("fidelity").GetString() == "sealed_adiabatic_gas", "Cylinder fidelity missing");
+var cylinderExport = (await Call("export_model_asset", new() { ["document"] = cylinder, ["name"] = "Sealed cylinder" })).GetProperty("data");
+Require(cylinderExport.GetProperty("format").GetString() == "power.asset.v2", "Wrong cylinder asset version");
+var cylinderAsset = AssetCodec.Decode(Convert.FromBase64String(cylinderExport.GetProperty("content").GetString()!));
+var cylinderPlayback = cylinderAsset.CreatePlayback();
+Require(cylinderPlayback.Advance(cylinderAsset.DurationNanoseconds) == Power.Core.SimulationStatus.Ok, "Cylinder playback failed");
+Require(cylinderPlayback.ReadSnapshot(new Power.Core.Scalar[cylinderAsset.Model.OutputCount]).StateHash.ToString("x16") ==
+    cylinderReport.GetProperty("final_sample").GetProperty("state_hash").GetString(), "Cylinder asset differs from MCP report");
+await Call("get_example_model", new() { ["name"] = "unknown" }, true);
+Console.WriteLine("PASS MCP cylinder discovery / nonlinear experiment / portable replay / unknown example");
+Console.WriteLine("6/6 MCP integration groups passed against an actual child server process.");

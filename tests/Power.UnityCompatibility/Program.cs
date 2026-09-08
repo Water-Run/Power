@@ -12,7 +12,7 @@ string? framework = typeof(Simulation).Assembly.GetCustomAttribute<TargetFramewo
 CoreChecks.Require(framework == ".NETStandard,Version=v2.1", $"Wrong assembly under test: {framework}");
 CoreChecks.Require(typeof(AssetCodec).Assembly.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName == ".NETStandard,Version=v2.1");
 int failed = 0, total = 0;
-foreach (var (name, run) in CoreChecks.All.Concat(AssetChecks.All))
+foreach (var (name, run) in CoreChecks.All.Concat(AssetChecks.All).Concat(EngineChecks.All))
 {
     ++total;
     try { run(); Console.WriteLine($"PASS {name}"); }

@@ -38,6 +38,7 @@ namespace Power.Studio.Tests
 
         [TestCase("Electrothermal")]
         [TestCase("ThermalNetwork")]
+        [TestCase("SealedCylinder")]
         public void ScriptedImportPreservesPortablePayloadAndReplay(string resource)
         {
             var imported = Resources.Load<PowerModelAsset>(resource);

@@ -39,14 +39,15 @@ try
     await Run(dotnet, "build", "Power.slnx", "-c", "Release", "--nologo", "--disable-build-servers", "-m:1", "-p:UseSharedCompilation=false");
     string cli = Path.Combine(root, "src", "Power.Cli", "bin", "Release", "net10.0", "Power.Cli.dll");
     foreach (var lab in new[] { (File: "electrothermal", Asset: "Electrothermal", Name: "Electrothermal laboratory"),
-        (File: "thermal-network", Asset: "ThermalNetwork", Name: "Thermal exchange laboratory") })
+        (File: "thermal-network", Asset: "ThermalNetwork", Name: "Thermal exchange laboratory"),
+        (File: "sealed-cylinder", Asset: "SealedCylinder", Name: "Sealed cylinder laboratory") })
         await Run(dotnet, cli, "export", $"assets/labs/{lab.File}.power.json", "--name", lab.Name,
             "--output", $"Unity/Assets/Generated/Resources/{lab.Asset}.powerasset");
     if (mode == "verify")
     {
         foreach (string project in new[] { "Power.Tests", "Power.UnityCompatibility", "Power.Mcp.Tests" })
             await Run(dotnet, Path.Combine(root, "tests", project, "bin", "Release", "net10.0", project + ".dll"));
-        foreach (string lab in new[] { "electrothermal", "thermal-network" })
+        foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder" })
             await Run(dotnet, cli, $"assets/labs/{lab}.power.json", "--output", $"artifacts/reports/{lab}.json");
         Console.WriteLine("Managed verification passed. Unity Editor/Play/IL2CPP require separate Unity validation.");
     }

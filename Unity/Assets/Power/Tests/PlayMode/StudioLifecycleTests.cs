@@ -66,6 +66,31 @@ namespace Power.Studio.Tests
         }
 
         [UnityTest]
+        public IEnumerator ImportedCylinderMovesPistonAndReplaysTheExperiment()
+        {
+            _host = new GameObject("Cylinder model test");
+            var studio = _host.AddComponent<PowerStudio>();
+            var source = Resources.Load<PowerModelAsset>("SealedCylinder");
+            Assert.That(source, Is.Not.Null);
+            studio.SetModelAsset(source); studio.SetRunning(false);
+            yield return null;
+            var piston = _host.transform.Find("Power generated lab/Piston 10");
+            Assert.That(piston, Is.Not.Null);
+            float initialHeight = piston.localPosition.y;
+            studio.AdvanceOnePresentationStep();
+            yield return null;
+            Assert.That(piston.localPosition.y, Is.GreaterThan(initialHeight + 0.5f));
+            studio.RunReferenceExperiment(); studio.SetRunning(false);
+            for (int i = 0; i < 10; ++i) studio.AdvanceOnePresentationStep();
+            var asset = source.Load(); var playback = asset.CreatePlayback();
+            Assert.That(playback.Advance(asset.DurationNanoseconds), Is.EqualTo(SimulationStatus.Ok));
+            Assert.That(studio.StateHash, Is.EqualTo(playback.ReadSnapshot(new Scalar[asset.Model.OutputCount]).StateHash));
+            studio.enabled = false;
+            yield return null;
+            Assert.That(_host.transform.childCount, Is.EqualTo(0));
+        }
+
+        [UnityTest]
         public IEnumerator ImportedThermalTopologyCanReplaceARunningStudio()
         {
             _host = new GameObject("Imported model test");

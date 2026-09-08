@@ -75,7 +75,7 @@ namespace Power.Studio.Editor
         public static void Validate()
         {
             Prepare();
-            foreach (string resource in new[] { "Electrothermal", "ThermalNetwork" })
+            foreach (string resource in new[] { "Electrothermal", "ThermalNetwork", "SealedCylinder" })
             {
                 var source = Resources.Load<PowerModelAsset>(resource);
                 if (source == null) throw new BuildFailedException("Missing imported model " + resource + ". Run tools/Build.cs build first.");

@@ -8,14 +8,16 @@ public enum Unit
 {
     None, KilogramMeterSquared, Radian, RadianPerSecond, NewtonMeter,
     NewtonMeterPerRadian, NewtonMeterSecondPerRadian, Kelvin, JoulePerKelvin,
-    WattPerKelvin, Ohm, Henry, NewtonMeterPerAmpere, Ampere, Volt, Joule, Rpm, Degree
+    WattPerKelvin, Ohm, Henry, NewtonMeterPerAmpere, Ampere, Volt, Joule, Rpm, Degree,
+    Meter, Millimeter, CubicMeter, Pascal, Bar, Kilogram, JoulePerKilogramKelvin
 }
 
 public enum Domain { Rotational = 1, Thermal = 2 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
+    Pressure, Volume, Mass, InternalEnergy, PistonDisplacement,
     SourceWork = 16, HeatRejected, StoredEnergyChange, EnergyResidual
 }
 public enum SimulationStatus { Ok, InvalidTimeStep, InvalidInput, UnknownChannel, NumericalFailure, Busy, Cancelled }
@@ -37,6 +39,20 @@ public sealed record NodeDefinition(uint Id, Domain Domain, Quantity Storage, Qu
         new(id, Domain.Thermal, new(capacity, Unit.JoulePerKelvin), new(temperature, Unit.Kelvin), default);
 }
 
+public sealed record SealedCylinderDefinition
+{
+    public Quantity Bore { get; init; }
+    public Quantity Stroke { get; init; }
+    public Quantity RodLength { get; init; }
+    public Quantity Phase { get; init; }
+    public double CompressionRatio { get; init; }
+    public Quantity InitialPressure { get; init; }
+    public Quantity InitialTemperature { get; init; }
+    public Quantity GasConstant { get; init; }
+    public double Gamma { get; init; }
+    public Quantity BackPressure { get; init; }
+}
+
 public sealed record ComponentDefinition
 {
     public uint Id { get; init; }
@@ -56,6 +72,12 @@ public sealed record ComponentDefinition
     public Quantity InitialCurrent { get; init; }
     public Quantity Conductance { get; init; }
     public Quantity AmbientTemperature { get; init; }
+    public SealedCylinderDefinition? Cylinder { get; init; }
+
+    public static ComponentDefinition SealedCylinder(uint id, uint crank, SealedCylinderDefinition cylinder) => new()
+    {
+        Id = id, Kind = ComponentKind.SealedCylinder, NodeA = crank, Cylinder = cylinder
+    };
 
     public static ComponentDefinition Shaft(uint id, uint a, uint b, double stiffness,
         double damping, double ratio = 1, uint heat = 0, double rest = 0) => new()

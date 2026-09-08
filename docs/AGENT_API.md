@@ -26,6 +26,8 @@ Windows 同样使用 `dotnet` 和 DLL 的绝对路径。生产连接应直接运
 
 ## 工具与结果
 
+As of version 0.4.0, `get_example_model` accepts an optional `name`: `electrothermal` (default) or `sealed-cylinder`. `get_capabilities` advertises supported fidelity levels, readable asset versions and cylinder solver limits. Exports use `power.asset.v2`; v1 assets remain readable. Cylinder output channels and their SI units are returned by model validation and session creation. The [sealed-cylinder contract](SEALED_CYLINDER.md) defines its physical limits and numerical recovery procedure; passing its KPIs does not establish a complete or calibrated engine.
+
 | 工具 | 用途 |
 |---|---|
 | `get_capabilities` | 版本、模型能力、规模限制、时间语义与工作流 |

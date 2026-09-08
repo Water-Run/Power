@@ -53,6 +53,9 @@
           },
           {
             "$ref": "#/$defs/thermal_link"
+          },
+          {
+            "$ref": "#/$defs/sealed_cylinder"
           }
         ]
       },
@@ -717,7 +720,12 @@
             "source_work",
             "heat_rejected",
             "stored_energy_change",
-            "energy_residual"
+            "energy_residual",
+            "pressure",
+            "volume",
+            "mass",
+            "internal_energy",
+            "piston_displacement"
           ]
         },
         "min": {
@@ -748,6 +756,207 @@
           ]
         }
       ]
+    },
+    "sealed_cylinder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "sealed_cylinder"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bore",
+            "stroke",
+            "rod_length",
+            "phase",
+            "initial_pressure",
+            "initial_temperature",
+            "gas_constant",
+            "back_pressure",
+            "compression_ratio",
+            "gamma"
+          ],
+          "properties": {
+            "bore": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "stroke": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "rod_length": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "phase": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "rad",
+                    "deg"
+                  ]
+                }
+              }
+            },
+            "initial_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "initial_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "gas_constant": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "back_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "compression_ratio": {
+              "type": "number",
+              "exclusiveMinimum": 1
+            },
+            "gamma": {
+              "type": "number",
+              "exclusiveMinimum": 1
+            }
+          }
+        }
+      }
     }
   }
 }

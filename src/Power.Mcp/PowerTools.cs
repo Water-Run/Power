@@ -25,8 +25,8 @@ public sealed class PowerTools(AgentWorkspace workspace)
     [McpServerTool(Name = "get_model_schema", ReadOnly = true, OpenWorld = false, UseStructuredContent = true, OutputSchemaType = typeof(AgentReply)), Description("Get JSON Schema 2020-12 for power.model.v1. The compiler additionally checks dimensions, topology and numerical feasibility.")]
     public CallToolResult ModelSchema() => Reply(AgentWorkspace.ModelSchema());
 
-    [McpServerTool(Name = "get_example_model", ReadOnly = true, OpenWorld = false, UseStructuredContent = true, OutputSchemaType = typeof(AgentReply)), Description("Get an editable electrothermal model document with a 10-second regenerative experiment and KPI checks. Parameters are synthetic.")]
-    public CallToolResult ExampleModel() => Reply(AgentWorkspace.ExampleModel());
+    [McpServerTool(Name = "get_example_model", ReadOnly = true, OpenWorld = false, UseStructuredContent = true, OutputSchemaType = typeof(AgentReply)), Description("Get an editable synthetic model and experiment. Names: electrothermal, sealed-cylinder. Parameters are uncalibrated.")]
+    public CallToolResult ExampleModel(string name = "electrothermal") => Reply(AgentWorkspace.ExampleModel(name));
 
     [McpServerTool(Name = "validate_model", ReadOnly = true, OpenWorld = false, UseStructuredContent = true, OutputSchemaType = typeof(AgentReply)), Description("Validate a model document and experiment without running it. Returns fingerprint, channel IDs/units and structured repair diagnostics.")]
     public CallToolResult ValidateModel([Description("Complete power.model.v1 JSON object, including experiment. Get an example and schema first.")] JsonElement document) => Reply(AgentWorkspace.ValidateModel(document));

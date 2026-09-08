@@ -1,5 +1,18 @@
 # 验证记录
 
+## 2026-09-08: sealed-cylinder increment
+
+Serial `tools/Build.cs verify` passed on Linux x64 with SDK 10.0.400 and runtime 10.0.11: **38/38 managed checks, 26/26 checks against the actual .NET Standard 2.1 assemblies, and 6/6 MCP process integration groups**. Release compilation reported zero warnings and errors. The log is `artifacts/reports/cylinder-verify.log`; all three laboratory JSON documents also passed the published JSON Schema using the local `jsonschema` validator.
+
+The new checks cover analytic slider-crank geometry and derivatives, ideal-gas state identities, two-second conservation runs with and without back pressure, second-order convergence under step refinement, reverse rotation, tiny steps and dead centers, shared/coupled cranks with electrical and thermal components, nonlinear failure rollback, cancellation, forks, units, malformed cylinder extensions, and zero managed allocations in steady-state stepping/snapshots. A preserved v1 fixture decodes, retains its original linear fingerprint and replays identically after v2 export.
+
+The synthetic cylinder experiment passed its final KPIs and replayed exactly at 21 boundaries through JSON, asset playback and an actual MCP child server. Linux results: fingerprint `c64b61efdb827680`, final speed `153.00340249454544 rad/s`, pressure `118835.36885412445 Pa`, temperature `315.16234058802814 K`, final energy residual `8.7464e-10 J`, and maximum sampled absolute residual `8.9570e-10 J`. Full report: `artifacts/reports/sealed-cylinder.json`. These values establish numerical evidence for this sealed ideal-gas benchmark, not engine calibration.
+
+Unity importer and Play tests now include the cylinder asset and schematic piston motion, but were **not executed**. Unity Editor, Mono, rendering and IL2CPP evidence remains pending. The active stack remains C#/Unity; the future Zig rewrite direction introduces no native runtime in this increment.
+
+## Historical baseline: 2026-09-07
+
+
 环境：2026-09-07，Linux x64，.NET SDK 10.0.400，运行时 .NET 10.0.11。实际执行结果以 `tools/Build.cs verify` 输出和生成报告为准。
 
 当前托管基线：30/30 核心、资产与 Agent 检查，19/19 标准库程序集检查，5/5 MCP 进程联调组通过；Release 构建为 0 警告、0 错误。实际 MCP 进程完成 12 个工具发现和输入/输出 Schema 检查，成功与错误响应均检查必填输出字段和文本兼容结果。原始执行日志保存于 `artifacts/reports/managed-verification.log`。
@@ -33,7 +46,7 @@ dotnet run --file tools/Build.cs -- verify
 
 GitHub Actions 已在 Windows、macOS、Linux 上完成同一组托管验收：各平台均为 30/30、19/19、5/5。证据对应代码提交 [`aea6136`](https://github.com/Water-Run/Power/commit/aea6136bbdcbeaea91d63836d947637e7eac730e) 和 [运行 34087686661](https://github.com/Water-Run/Power/actions/runs/34087686661)。本地保存了 `artifacts/reports/github-actions-34087686661.log` 与 `.json`，包含实际作业输出和终态；另外从不含缓存及生成程序集的干净源码副本完成了一轮本地验收，日志为 `github-clean-checkout.log`。
 
-The repository and CI evidence links are now public. Development remains paused at the owner's request; the visibility update does not change the verified code baseline.
+The repository and CI evidence links are public. Development resumed on 2026-09-08; the earlier records below identify their own verified baselines.
 
 The GPL publication update added license notices without changing executable source content; a comparison against the preceding commit confirmed all 90 source/build edits were notice-only. A fresh serial verification passed 30/30 managed checks, 19/19 Unity-facing assembly checks, and 5/5 MCP integration groups, with zero build warnings or errors. Its log is `artifacts/reports/license-verification.log`. This does not add Unity Editor or Player validation evidence.
 

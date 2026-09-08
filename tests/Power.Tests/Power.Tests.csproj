@@ -9,4 +9,5 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
   <ItemGroup><ProjectReference Include="../../src/Power.Experiments/Power.Experiments.csproj" /></ItemGroup>
   <ItemGroup><ProjectReference Include="../../src/Power.Agent/Power.Agent.csproj" /></ItemGroup>
   <ItemGroup><None Include="../../assets/labs/*.power.json" Link="%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
+  <ItemGroup><None Update="Fixtures/*.powerasset" CopyToOutputDirectory="PreserveNewest" /></ItemGroup>
 </Project>

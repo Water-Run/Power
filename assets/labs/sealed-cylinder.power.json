@@ -1,0 +1,158 @@
+{
+  "schema": "power.model.v1",
+  "description": "Synthetic sealed-cylinder compression and expansion benchmark. Constant trapped mass, ideal gas and adiabatic walls; no combustion, gas exchange, piston inertia or OEM calibration. Back-pressure work is external source work.",
+  "step_ns": 100000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.1,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 1500,
+        "unit": "rpm"
+      },
+      "position": {
+        "value": 180,
+        "unit": "deg"
+      }
+    },
+    {
+      "id": 2,
+      "domain": "thermal",
+      "storage": {
+        "value": 500,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "sealed_cylinder",
+      "node_a": 1,
+      "parameters": {
+        "bore": {
+          "value": 86,
+          "unit": "mm"
+        },
+        "stroke": {
+          "value": 86,
+          "unit": "mm"
+        },
+        "rod_length": {
+          "value": 143,
+          "unit": "mm"
+        },
+        "phase": {
+          "value": 0,
+          "unit": "rad"
+        },
+        "initial_pressure": {
+          "value": 1,
+          "unit": "bar"
+        },
+        "initial_temperature": {
+          "value": 300,
+          "unit": "k"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "back_pressure": {
+          "value": 1,
+          "unit": "bar"
+        },
+        "compression_ratio": 10,
+        "gamma": 1.4
+      }
+    },
+    {
+      "id": 11,
+      "kind": "torque_source",
+      "node_a": 1,
+      "input_channel": 100,
+      "initial_input": {
+        "value": 2,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 12,
+      "kind": "shaft",
+      "node_a": 1,
+      "heat_node": 2,
+      "parameters": {
+        "stiffness": {
+          "value": 0,
+          "unit": "nm_rad"
+        },
+        "damping": {
+          "value": 0.02,
+          "unit": "nm_s_rad"
+        },
+        "rest_angle": {
+          "value": 0,
+          "unit": "rad"
+        },
+        "ratio": 1
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 200000000,
+    "sample_every_ns": 10000000,
+    "events": [
+      {
+        "time_ns": 100000000,
+        "values": [
+          {
+            "channel": 100,
+            "value": -2
+          }
+        ]
+      },
+      {
+        "time_ns": 150000000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 2
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 10,
+        "field": "pressure",
+        "min": 100000,
+        "max": 2520000
+      },
+      {
+        "object_id": 10,
+        "field": "temperature",
+        "min": 300,
+        "max": 754
+      },
+      {
+        "object_id": 1,
+        "field": "speed",
+        "min": 120,
+        "max": 170
+      },
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 1e-05
+      }
+    ]
+  }
+}

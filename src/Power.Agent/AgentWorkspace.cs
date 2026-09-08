@@ -26,13 +26,18 @@ public sealed class AgentWorkspace
 
     public static AgentReply Capabilities() => AgentReply.Success(new
     {
-        version = "0.3.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = "power.asset.v1",
+        version = "0.4.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
+        readable_asset_formats = new[] { "power.asset.v1", AssetCodec.FormatName },
         domains = new[] { "rotational", "thermal" },
-        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link" },
+        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder" },
+        examples = new[] { "electrothermal", "sealed-cylinder" },
         limits = new { nodes = CompiledModel.MaxNodes, components = CompiledModel.MaxComponents, states = CompiledModel.MaxStates,
             sessions = MaxSessions, ticks_per_step = 1_000_000, experiment_ticks = 10_000_000, document_bytes = 1_048_576, asset_bytes = AssetCodec.MaxBytes },
         determinism = "Exact replay within the same binary/runtime/architecture. Compare tolerances across platforms.",
-        fidelity = "linear_lumped", calibration = "unverified",
+        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas" }, calibration = "unverified",
+        cylinder_solver = new { max_angle_step_rad = 0.25, max_iterations = 16,
+            recovery = "On numerical_failure, reduce step_ns and recreate the model/session; inspect speed, inertia and gas parameters. The failed call commits nothing.",
+            scope = "Sealed ideal gas, constant mass and gamma, adiabatic compression/expansion. No combustion, valves, wall heat transfer or piston inertia." },
         workflow = new[] { "get_model_schema", "get_example_model", "validate_model", "run_experiment", "export_model_asset",
             "create_session", "set_inputs", "step_session", "read_snapshot", "fork_session", "close_session" },
         semantics = new
@@ -52,7 +57,12 @@ public sealed class AgentWorkspace
         return document.RootElement.Clone();
     }
     public static AgentReply ModelSchema() => AgentReply.Success(Resource("power.model.schema.json"));
-    public static AgentReply ExampleModel() => AgentReply.Success(Resource("power.template.json"));
+    public static AgentReply ExampleModel(string name = "electrothermal") => name switch
+    {
+        "electrothermal" => AgentReply.Success(Resource("power.template.json")),
+        "sealed-cylinder" => AgentReply.Success(Resource("power.cylinder.template.json")),
+        _ => AgentReply.Failure("unknown_example", "Available examples: electrothermal, sealed-cylinder.", field: "name")
+    };
 
     private static AgentReply Guard(Func<AgentReply> work)
     {
@@ -100,7 +110,7 @@ public sealed class AgentWorkspace
         byte[] bytes = AssetCodec.Encode(asset);
         return AgentReply.Success(new
         {
-            format = "power.asset.v1", file_name = "model.powerasset", asset.Name, byte_count = bytes.Length,
+            format = AssetCodec.FormatName, file_name = "model.powerasset", asset.Name, byte_count = bytes.Length,
             model_fingerprint = asset.Model.Fingerprint.ToString("x16"), source_sha256 = asset.SourceSha256,
             asset_sha256 = Convert.ToHexStringLower(SHA256.HashData(bytes)), encoding = "base64", content = Convert.ToBase64String(bytes),
             use = "Decode content to a .powerasset file inside Unity/Assets, then select it in the Studio. The service has not written a file.",
@@ -183,7 +193,9 @@ public sealed class AgentWorkspace
 
     private static AgentReply Status(SimulationStatus status, Session s) => AgentReply.Failure(
         JsonNamingPolicy.SnakeCaseLower.ConvertName(status.ToString()),
-        "Operation rejected; session state and revision are unchanged. Inspect capabilities, channels and fixed step before retrying.",
+        status == SimulationStatus.NumericalFailure
+            ? "Numerical solve failed; state and revision are unchanged. Reduce step_ns and recreate the model/session. For cylinders keep crank travel below 0.25 rad per tick; inspect speed, inertia and gas parameters."
+            : "Operation rejected; session state and revision are unchanged. Inspect capabilities, channels and fixed step before retrying.",
         status is SimulationStatus.Cancelled or SimulationStatus.Busy, revision: s.Revision.ToString(CultureInfo.InvariantCulture));
 
     public AgentReply ForkSession(string id, string expectedRevision) => Use(id, expectedRevision, s =>

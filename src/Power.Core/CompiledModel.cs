@@ -9,7 +9,7 @@ namespace Power.Core;
 internal readonly record struct GraphNode(uint Id, Domain Domain, int Index, double Storage, double Initial, double Position);
 internal readonly record struct GraphComponent(uint Id, ComponentKind Kind, int A, int B, int Heat, int Index,
     ulong InputChannel, double InitialInput, double P0, double P1, double P2, double P3);
-internal readonly record struct OutputBinding(uint ObjectId, Field Field, int Index);
+internal readonly record struct OutputBinding(uint ObjectId, Field Field, int Index, bool IsComponent = false);
 
 /// <summary>Immutable, validated topology and solver factors shared by independent simulations.</summary>
 public sealed class CompiledModel
@@ -21,11 +21,13 @@ public sealed class CompiledModel
     public int ComponentCount => Components.Length;
     public int StateCount => DynamicCount + ThermalCount;
     public int OutputCount => Outputs.Length;
-    public string Fidelity => "linear_lumped";
+    public string Fidelity => Cylinders.Any(c => c is not null) ? "sealed_adiabatic_gas" : "linear_lumped";
     public string Calibration => "unverified";
     public ReadOnlyCollection<ChannelInfo> Channels { get; }
     internal GraphNode[] Nodes { get; }
     internal GraphComponent[] Components { get; }
+    internal CylinderPhysics?[] Cylinders { get; }
+    internal CylinderCoupling? CylinderCoupling { get; }
     internal OutputBinding[] Outputs { get; }
     internal Dictionary<ulong, int> InputIndices { get; } = [];
     internal double Dt { get; }
@@ -60,16 +62,18 @@ public sealed class CompiledModel
         if (!condition) throw new ModelCompileException(code, id, field, message);
     }
 
-    private static double Convert(Quantity q, Unit expected, uint id, string field)
+    internal static double Convert(Quantity q, Unit expected, uint id, string field)
     {
         double scale = 1;
         if (q.Unit != expected)
         {
             if (q.Unit == Unit.Rpm && expected == Unit.RadianPerSecond) scale = 0.10471975511965977462;
             else if (q.Unit == Unit.Degree && expected == Unit.Radian) scale = 0.01745329251994329577;
+            else if (q.Unit == Unit.Millimeter && expected == Unit.Meter) scale = 0.001;
+            else if (q.Unit == Unit.Bar && expected == Unit.Pascal) scale = 100_000;
             else throw new ModelCompileException(DiagnosticCode.Unit, id, field, $"Expected {expected}, received {q.Unit}.");
         }
-        double value = q.Value * scale;
+        double value = q.Unit == Unit.Millimeter && expected == Unit.Meter ? q.Value / 1000 : q.Value * scale;
         Require(Numeric.Finite(value) && (expected != Unit.None || value == 0), DiagnosticCode.Range,
             id, field, "Value must be finite; unused quantities must be zero/None.");
         return value == 0 ? 0 : value;
@@ -111,12 +115,15 @@ public sealed class CompiledModel
         }
         int FindNode(uint id) => Array.FindIndex(Nodes, n => n.Id == id);
         Components = new GraphComponent[cs.Length];
+        Cylinders = new CylinderPhysics?[cs.Length];
         for (int i = 0; i < cs.Length; ++i)
         {
             var c = cs[i];
             Require(c.Id != 0 && ids.Add(c.Id), DiagnosticCode.Id, c.Id, "id", "IDs must be nonzero and globally unique.");
-            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.ThermalLink,
+            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.SealedCylinder,
                 DiagnosticCode.Schema, c.Id, "kind", "Unknown component kind.");
+            Require((c.Kind == ComponentKind.SealedCylinder) == (c.Cylinder is not null),
+                DiagnosticCode.Schema, c.Id, "cylinder", "Cylinder parameters are required only for sealed cylinders.");
             bool pair = c.Kind is ComponentKind.Shaft or ComponentKind.ThermalLink;
             bool input = c.Kind is ComponentKind.DcMotor or ComponentKind.TorqueSource;
             Domain domain = c.Kind == ComponentKind.ThermalLink ? Domain.Thermal : Domain.Rotational;
@@ -135,6 +142,9 @@ public sealed class CompiledModel
             int state = -1;
             switch (c.Kind)
             {
+                case ComponentKind.SealedCylinder:
+                    Cylinders[i] = new(c.Cylinder!, c.Id, Nodes[a].Position);
+                    break;
                 case ComponentKind.Shaft:
                     p0 = Convert(c.Stiffness, Unit.NewtonMeterPerRadian, c.Id, "stiffness");
                     p1 = Convert(c.Damping, Unit.NewtonMeterSecondPerRadian, c.Id, "damping");
@@ -166,10 +176,10 @@ public sealed class CompiledModel
         ConstantForce = new double[dynamics]; AmbientForce = new double[thermal];
         var channels = new List<ChannelInfo>();
         var outputs = new List<OutputBinding>();
-        void Output(uint id, Field field, int index, Unit unit, string quantity)
+        void Output(uint id, Field field, int index, Unit unit, string quantity, bool component = false)
         {
             channels.Add(new(Core.Channels.Output(id, field), id, false, unit, quantity));
-            outputs.Add(new(id, field, index));
+            outputs.Add(new(id, field, index, component));
         }
         for (int i = 0; i < Nodes.Length; ++i)
         {
@@ -221,12 +231,22 @@ public sealed class CompiledModel
             }
             else if (c.Kind == ComponentKind.TorqueSource)
                 channels.Add(new(c.InputChannel, c.Id, true, Unit.NewtonMeter, "torque"));
-            else
+            else if (c.Kind == ComponentKind.ThermalLink)
             {
                 double gh = Dt * c.P0;
                 heatMatrix[a, a] += gh;
                 if (b < 0) AmbientForce[a] += gh * c.P1;
                 else { heatMatrix[a, b] -= gh; heatMatrix[b, a] -= gh; heatMatrix[b, b] += gh; }
+            }
+            else if (c.Kind == ComponentKind.SealedCylinder)
+            {
+                Output(c.Id, Field.Pressure, i, Unit.Pascal, "cylinder_pressure", true);
+                Output(c.Id, Field.Temperature, i, Unit.Kelvin, "gas_temperature", true);
+                Output(c.Id, Field.Volume, i, Unit.CubicMeter, "cylinder_volume", true);
+                Output(c.Id, Field.Mass, i, Unit.Kilogram, "trapped_gas_mass", true);
+                Output(c.Id, Field.InternalEnergy, i, Unit.Joule, "gas_internal_energy", true);
+                Output(c.Id, Field.PistonDisplacement, i, Unit.Meter, "piston_displacement_from_tdc", true);
+                Output(c.Id, Field.Torque, i, Unit.NewtonMeter, "gas_torque_at_crank", true);
             }
         }
         for (int row = 0; row < dynamics; ++row)
@@ -239,6 +259,7 @@ public sealed class CompiledModel
         Require(ConstantForce.All(Numeric.Finite) && AmbientForce.All(Numeric.Finite), DiagnosticCode.Solver,
             0, "forcing", "Compiled force overflows binary64.");
         Dynamics = new(matrix); Thermal = new(heatMatrix);
+        if (Cylinders.Any(c => c is not null)) CylinderCoupling = new(this);
         Fingerprint = ComputeFingerprint();
         _ = CreateSimulation(); // Validate initial energy and derived observables before publishing.
     }
@@ -246,7 +267,7 @@ public sealed class CompiledModel
     private ulong ComputeFingerprint()
     {
         ulong h = Numeric.Hash(14695981039346656037UL, 1UL);
-        h = Numeric.Hash(h, 2UL); // Managed solver version, distinct from the native prototype.
+        h = Numeric.Hash(h, CylinderCoupling is null ? 2UL : 3UL); // Preserve existing linear asset fingerprints.
         h = Numeric.Hash(h, StepNanoseconds);
         h = Numeric.Hash(h, (ulong)NodeCount); h = Numeric.Hash(h, (ulong)ComponentCount);
         foreach (var n in Nodes)
@@ -262,6 +283,9 @@ public sealed class CompiledModel
             h = Numeric.Hash(h, c.InitialInput); h = Numeric.Hash(h, c.P0); h = Numeric.Hash(h, c.P1);
             h = Numeric.Hash(h, c.P2); h = Numeric.Hash(h, c.P3);
         }
+        foreach (var cylinder in Cylinders)
+            if (cylinder is not null)
+                foreach (double parameter in cylinder.Parameters) h = Numeric.Hash(h, parameter);
         return h;
     }
 }
