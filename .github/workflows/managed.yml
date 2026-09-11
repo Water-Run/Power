@@ -2,7 +2,7 @@
 # Licensed under GPL-3.0-or-later with the Unity Linking Exception.
 # See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
 
-name: Managed core and agent interface
+name: Managed core, native Zig and agent interface
 on: [push, pull_request]
 permissions:
   contents: read
@@ -19,7 +19,7 @@ jobs:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-latest]
     runs-on: ${{ matrix.os }}
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -28,4 +28,5 @@ jobs:
         with:
           global-json-file: global.json
       - run: dotnet restore Power.slnx --locked-mode --disable-parallel --disable-build-servers -p:UseSharedCompilation=false
+      - run: python tools/InstallZig.py
       - run: dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify

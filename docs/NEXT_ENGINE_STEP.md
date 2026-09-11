@@ -21,4 +21,4 @@ Research starting points: [NASA mass-flow choking](https://www.grc.nasa.gov/www/
 
 A pre-change cylinder v2 asset was saved locally under `artifacts/drafts/gas-exchange/sealed-cylinder-v2.powerasset` for a future compatibility test. It is outside the active test suite and is not published as new functionality. It can be reproduced from the verified baseline before changing the encoder.
 
-The full engine cycle, combustion, valve timing, transmissions, controls and calibrated vehicle samples remain open. Preserve all sample evidence boundaries. Any future rewrite of the archived C portion will use **Zig**; the active C#/Unity implementation remains in place.
+The full engine cycle, combustion, valve timing, transmissions, controls and calibrated vehicle samples remain open. Preserve all sample evidence boundaries. The archived native prototypes have been ported to **Zig** under [the native boundary](NATIVE_ZIG.md); the active C#/Unity implementation remains in place.

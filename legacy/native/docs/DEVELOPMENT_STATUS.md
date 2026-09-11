@@ -1,3 +1,5 @@
+> Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+
 # Power! 开发状态与整机集成基线
 
 状态日期：2026-09-07  
@@ -21,7 +23,7 @@
 | DCT7 | K1 奇数挡、K2 偶数/R、双轴预选、夹紧动态、滑摩、热衰退、换挡拒绝、功率/热账本 | 默认拒绝缺失齿比；尚无 DQ200 供体齿比、DMF、泵/蓄压器/阀体详细模型和 TCU 标定 |
 | 液力 4AT | 变矩器容量/扭矩比、泵/涡轮/输出惯量、锁止滑摩与热、液压压力、换挡执行器、连续速比迁移、ATF 热与诊断 | 当前摩擦元件为聚合换挡骨架；没有冒充 AT8 的行星齿数、E/F 元件容量、液压图或控制标定 |
 
-严格构建中的单元/场景测试检查确定性、事务性输入失败、守恒残差、故障后果、换挡连续性、热状态和 ABI 导出面。新图另有解析解、机电二阶/热一阶收敛、再生功、数值失败整调用回滚、模型生命周期和真实 JSON 宿主测试。Release 测试显式保留断言。具体契约见 [模型运行时](MODEL_RUNTIME.md)。
+严格构建中的单元/场景测试检查确定性、事务性输入失败、守恒残差、故障后果、换挡连续性、热状态和 ABI 导出面。新图另有解析解、机电二阶/热一阶收敛、再生功、数值失败整调用回滚、模型生命周期和真实 JSON 宿主测试。Release 测试显式保留断言。具体契约见 [模型运行时](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/MODEL_RUNTIME.md)。
 
 ## 2. “完整动力总成”的不可缩减边界
 
@@ -69,11 +71,11 @@
 
 ### EA211 DJS + DQ200
 
-样例已建立身份候选、完整边界、证据等级和测量清单。运行时代码已有通用 SI 发动机、排气网络和 DCT7 物理骨架；尚缺 DJS 专属充量/燃烧/增压/ECU/热标定、确切后处理，以及所选 0CW 供体的齿比、DMF、机电液压和 TCU 数据。详见 [样例说明](../assets/samples/ea211_djs_dq200/README.md) 与 [机器可读证据清单](../assets/samples/ea211_djs_dq200/source_manifest.toml)。
+样例已建立身份候选、完整边界、证据等级和测量清单。运行时代码已有通用 SI 发动机、排气网络和 DCT7 物理骨架；尚缺 DJS 专属充量/燃烧/增压/ECU/热标定、确切后处理，以及所选 0CW 供体的齿比、DMF、机电液压和 TCU 数据。详见 [样例说明](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/assets/samples/ea211_djs_dq200/README.md) 与 [机器可读证据清单](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/assets/samples/ea211_djs_dq200/source_manifest.toml)。
 
 ### PSA EC5 + AT8 4AT
 
-样例已建立 EC5 115 Ch + 四挡 BVA AT8 候选组合、AL4/AT8 谱系适用边界、完整取证清单和 E1/E2/F1/F2/F3 家族级作用拓扑。运行时代码已有通用 SI 发动机、排气网络以及变矩器、锁止、四挡换挡、液压和 ATF 热骨架；尚缺供体身份、EC5 标定、AT8 齿比/行星几何/摩擦元件/阀体/TCU 数据。详见 [样例说明](../assets/samples/psa_ec5_at8_4at/README.md) 与 [机器可读证据清单](../assets/samples/psa_ec5_at8_4at/source_manifest.toml)。
+样例已建立 EC5 115 Ch + 四挡 BVA AT8 候选组合、AL4/AT8 谱系适用边界、完整取证清单和 E1/E2/F1/F2/F3 家族级作用拓扑。运行时代码已有通用 SI 发动机、排气网络以及变矩器、锁止、四挡换挡、液压和 ATF 热骨架；尚缺供体身份、EC5 标定、AT8 齿比/行星几何/摩擦元件/阀体/TCU 数据。详见 [样例说明](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/assets/samples/psa_ec5_at8_4at/README.md) 与 [机器可读证据清单](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/assets/samples/psa_ec5_at8_4at/source_manifest.toml)。
 
 这里的 `AT8` 是 PSA 四前进挡 BVA 型号名，不按字符串误判为八挡 `EAT8`。
 

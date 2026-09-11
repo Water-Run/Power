@@ -33,8 +33,14 @@ async Task Run(string executable, params string[] arguments)
 
 try
 {
-    if (mode is not ("build" or "verify" or "unity-validate" or "unity-test"))
-        throw new ArgumentException("Usage: dotnet run --file tools/Build.cs -- [build|verify|unity-validate|unity-test]");
+    if (mode is not ("build" or "verify" or "native-verify" or "unity-validate" or "unity-test"))
+        throw new ArgumentException("Usage: dotnet run --file tools/Build.cs -- [build|verify|native-verify|unity-validate|unity-test]");
+    string python = Environment.GetEnvironmentVariable("POWER_PYTHON") ?? (OperatingSystem.IsWindows() ? "python" : "python3");
+    if (mode == "native-verify")
+    {
+        await Run(python, "tools/VerifyNative.py");
+        return 0;
+    }
     // Deliberately serialize compilation and tests to keep desktop memory pressure bounded.
     await Run(dotnet, "build", "Power.slnx", "-c", "Release", "--nologo", "--disable-build-servers", "-m:1", "-p:UseSharedCompilation=false");
     string cli = Path.Combine(root, "src", "Power.Cli", "bin", "Release", "net10.0", "Power.Cli.dll");
@@ -50,6 +56,7 @@ try
         foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder" })
             await Run(dotnet, cli, $"assets/labs/{lab}.power.json", "--output", $"artifacts/reports/{lab}.json");
         Console.WriteLine("Managed verification passed. Unity Editor/Play/IL2CPP require separate Unity validation.");
+        await Run(python, "tools/VerifyNative.py");
     }
     if (mode.StartsWith("unity-", StringComparison.Ordinal))
     {

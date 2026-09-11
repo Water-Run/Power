@@ -1,6 +1,6 @@
 # C# / Unity / Agent 架构
 
-The active implementation remains C#/.NET with Unity. Per the owner’s 2026-09-08 direction, any future rewrite of the archived C portion will use **Zig**. Keep `legacy/native` as a provenance-preserving reference; select bounded native responsibilities and an explicit interoperable boundary before starting that migration. No Zig runtime dependency is introduced by the current engine work.
+The active application remains C#/.NET with Unity. The archived native prototypes now use **Zig 0.15.2**, with original C provenance preserved in Git and a source-hash manifest. The [native boundary](NATIVE_ZIG.md) defines a separate shared library and the existing versioned binary ABI. No native runtime dependency is introduced into the managed core or Unity assemblies.
 
 
 架构决策日期：2026-09-07。主线从旧 C 原型迁至托管 C#；Unity 提供三维工作室，物理模型与 Agent 自动化可以独立运行。

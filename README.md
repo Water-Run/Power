@@ -2,11 +2,11 @@
 
 Power! is a powertrain modeling and experimentation project built around a **cross-platform C# physics core, a Unity 3D studio, and agent-friendly MCP interfaces**. Models, solvers, experiments, and presentation have separate responsibilities. Agents can construct models, inspect diagnostics, branch experiments, and evaluate physical evidence through explicit contracts.
 
-The public repository is [Water-Run/Power](https://github.com/Water-Run/Power). Development is paused at the owner’s request as of 2026-09-08; the implemented baseline and remaining work are recorded in the [roadmap](docs/ROADMAP.md).
+The public repository is [Water-Run/Power](https://github.com/Water-Run/Power). The owner resumed the native migration on 2026-09-10. The archived native prototypes now use Zig; the managed application baseline and remaining full-powertrain work are recorded in the [roadmap](docs/ROADMAP.md).
 
 ## Technology
 
-Release versions verified and pinned on 2026-09-07:
+Managed versions were pinned on 2026-09-07; the separate native Zig toolchain was pinned on 2026-09-11:
 
 | Layer | Version and responsibility |
 |---|---|
@@ -15,6 +15,7 @@ Release versions verified and pinned on 2026-09-07:
 | C# tooling | **.NET 10 SDK 10.0.400 / C# 14**, core, CLI, agent services, and build tools |
 | Unity-facing assemblies | **.NET Standard 2.1**, compiled from the same core and asset source |
 | Agent transport | Official **MCP C# SDK 2.2.0**, stdio, committed dependency lock files |
+| Native prototypes | **Zig 0.15.2**, separate research library with the preserved binary ABI |
 
 Sources: [Unity release notes](https://unity.com/releases/editor/whats-new/6000.6.0f1), [.NET 10 downloads](https://dotnet.microsoft.com/en-us/download/dotnet/10.0), [MCP SDK](https://www.nuget.org/packages/ModelContextProtocol/2.2.0).
 
@@ -22,13 +23,14 @@ Unity's own compiler supports C# 9, with .NET Standard 2.1 as its default API pr
 
 ## Build and verify
 
-Install the pinned SDK and run from the repository root on Windows, macOS, or Linux:
+Install the pinned .NET SDK and Python 3.12 or newer, then install Zig and run from the repository root on Windows, macOS, or Linux (`python` on Windows):
 
 ```sh
+python3 tools/InstallZig.py
 dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 ```
 
-This builds the solution serially, exports Unity model assets, runs the core and agent checks, exercises an actual MCP server process, and writes experiment reports under `artifacts/reports`. Build servers and concurrent compilation are disabled inside the build tool to reduce memory pressure. The local `.cache/dotnet/dotnet` executable can also be used when the pinned SDK is installed there; caches are excluded from Git.
+This builds the solution serially, exports Unity model assets, runs the core and agent checks, exercises an actual MCP server process, and verifies the Zig runtime, shared-library hosts, Python ABI and original numerical baseline. It writes experiment and migration reports under `artifacts/reports`. The source audit rejects C/C++ implementation files and headers. Build servers and concurrent compilation are disabled inside the build tool to reduce memory pressure. The local `.cache/dotnet/dotnet` executable can also be used when the pinned SDK is installed there; caches are excluded from Git.
 
 The current increment passed **38/38 managed checks, 26/26 Unity-facing assembly checks, and 6/6 MCP integration groups on Windows, macOS, and Linux**. See the [CI run](https://github.com/Water-Run/Power/actions/runs/34176008291) and [validation record](docs/VALIDATION.md). The assembly checks run under .NET 10; actual Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending.
 
@@ -83,9 +85,9 @@ The [agent API](docs/AGENT_API.md) documents client configuration and operation 
 
 The current executable C# models include rotational inertia, elastic shafts with positive or negative ratios, RL DC motors, torque sources, thermal capacities, heat-conduction networks, and sealed adiabatic cylinders with slider-crank geometry. They share coupled integration and an energy ledger. All sample parameters are marked `unverified`.
 
-The complete engine, intake, combustion, exhaust, DCT/AT, hydraulic, ECU/TCU, and calibrated powertrain objectives remain open. Earlier C prototypes and tests are preserved in [legacy/native](legacy/native/ARCHIVE.md); their functionality has not all been migrated to C#. Research for EA211 DJS + DQ200 and PSA EC5 + AT8 remains in [assets/samples](assets/samples), with its evidence and calibration boundaries intact.
+The complete engine, intake, combustion, exhaust, DCT/AT, hydraulic, ECU/TCU, and calibrated powertrain objectives remain open. Earlier native prototypes and tests have been ported to Zig in [legacy/native](legacy/native/README.md); their functionality has not all been migrated to C#. All 38 C source/header files were replaced, with original hashes and Git provenance in the [migration manifest](legacy/native/migration-manifest.json). Research for EA211 DJS + DQ200 and PSA EC5 + AT8 remains in [assets/samples](assets/samples), with its evidence and calibration boundaries intact.
 
-Any future rewrite of the archived C portion will use **Zig**, following the owner's direction. The active implementation remains C#/.NET and Unity; the Zig migration boundary will be defined before that work starts.
+The [native Zig boundary](docs/NATIVE_ZIG.md) retains the versioned binary ABI without introducing a native dependency into the C#/Unity application. Native migration completion is separate from full powertrain functionality, vehicle calibration and Unity Editor validation.
 
 See the [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), and [validation record](docs/VALIDATION.md). Existing documents may retain their original language; new documentation and updates use English.
 

@@ -1,3 +1,0 @@
-LIBRARY power
-EXPORTS
-    pwr_get_api

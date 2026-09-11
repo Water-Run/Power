@@ -1,5 +1,47 @@
 # 验证记录
 
+## 2026-09-11: native Zig migration
+
+The owner resumed the native language migration on 2026-09-10. All **26 C
+implementation/test/host files and 12 headers** were replaced with Zig. The
+[migration manifest](../legacy/native/migration-manifest.json) records original
+Git revision, file paths and SHA-256 hashes. No C/C++ source or headers remain
+in the repository source inventory; the root verification command enforces
+that constraint. License/exception files and sample evidence are preserved.
+
+Full serial `dotnet run --file tools/Build.cs -- verify` passed on Linux x64
+using the cached pinned .NET SDK 10.0.400 and Zig 0.15.2: **38/38 managed
+checks, 26/26 checks against the Unity-facing .NET Standard 2.1 assemblies,
+6/6 MCP process groups, 16/16 native Zig groups and 6/6 Python foreign-ABI
+tests**. The native suite also passed all 16 groups in Debug with safety checks enabled. Both Zig hosts ran against the actual shared library. The library
+exports only `pwr_get_api` and has no unresolved ELF symbols. All **176 values
+at 11 electrothermal sample times exactly matched** the original C binary on
+this host, with the same model fingerprint and channel contracts. The
+cross-toolchain fixture comparison still uses explicit tolerances, and
+same-binary replay must match exactly. Reports are in
+`artifacts/reports/zig-migration-verify.log`, `native-verification.json` and
+`native-electrothermal.json`.
+
+ReleaseSafe library/host cross-compilation also passed for **x86_64 Windows**
+and **aarch64 macOS**. Cross-compilation is not execution evidence for those
+systems; the updated three-platform CI runs the native suite alongside managed
+verification. Local logs are `artifacts/reports/zig-cross-windows.log` and
+`zig-cross-macos.log`.
+
+The native suite additionally covers the previously unbuilt automatic-powertrain
+module, including replay, energy accounting, brownout and transaction rollback,
+plus concurrent SDK lifetime handling. Three historical test entry points
+silently returned success on failed checks; the port fixes propagation and
+separates the engine's steady combustion, limiter and backpressure scenarios.
+See [the migration notes](NATIVE_ZIG.md) for the preserved equations and
+corrected experimental setup. The original CTest result alone was insufficient
+because of those hidden failures.
+
+This migration does not complete the managed engine/transmission objectives or
+establish vehicle calibration. Unity Editor, Play Mode, rendering, Mono and
+IL2CPP were not exercised. All sample calibration remains `unverified`.
+
+
 ## 2026-09-08: sealed-cylinder increment
 
 Serial `tools/Build.cs verify` passed on Linux x64 with SDK 10.0.400 and runtime 10.0.11: **38/38 managed checks, 26/26 checks against the actual .NET Standard 2.1 assemblies, and 6/6 MCP process integration groups**. Release compilation reported zero warnings and errors. The log is `artifacts/reports/cylinder-verify.log`; all three laboratory JSON documents also passed the published JSON Schema using the local `jsonschema` validator.

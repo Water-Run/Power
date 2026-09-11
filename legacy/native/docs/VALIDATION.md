@@ -1,9 +1,11 @@
+> Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+
 # 验证、精度声明与性能基线
 
 状态：验证计划 v0
 原则：在数据和误差范围没有公开前，不使用“工程级精度”作为宣传语。
 
-2026-09-07 实现增量：新增图运行时已有单位/拓扑负测、惯量/RL 解析解、机电二阶/热一阶收敛、损耗路由与再生能量、失败回滚、ABI 生命周期及 JSON 场景/采样回放测试。运行命令与精确物理范围见 [模型运行时](MODEL_RUNTIME.md)。以下仍是覆盖全产品的目标验证计划。
+2026-09-07 实现增量：新增图运行时已有单位/拓扑负测、惯量/RL 解析解、机电二阶/热一阶收敛、损耗路由与再生能量、失败回滚、ABI 生命周期及 JSON 场景/采样回放测试。运行命令与精确物理范围见 [模型运行时](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/MODEL_RUNTIME.md)。以下仍是覆盖全产品的目标验证计划。
 
 ## 1. 如何证明“比原版模拟级别更高”
 

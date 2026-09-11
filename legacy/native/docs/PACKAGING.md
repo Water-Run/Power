@@ -1,3 +1,5 @@
+> Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+
 # Power! 发行与 LuaInstaller 打包设计
 
 状态：发行架构已选定；LuaInstaller 接入骨架已加入，`power_native` Lua 5.5 桥接模块尚未实现  

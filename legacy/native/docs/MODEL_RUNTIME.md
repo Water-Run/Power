@@ -1,3 +1,5 @@
+> Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+
 # 可组合模型运行时与面向未来模型的开发架构
 
 日期：2026-09-07；实现版本：0.2.0；C ABI：1（追加函数表）；模型 IR：1。
@@ -88,7 +90,7 @@ energy_residual = source_work - heat_rejected - stored_energy_change
 
 ## 4. 数据、编译与生命周期
 
-公开定义见 [`include/power/model.h`](../include/power/model.h)。`pwr_model_desc` 包含 ABI/结构大小、IR 版本、固定整数纳秒步长、节点数组和部件数组。
+公开定义见 [`include/power/model.h`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/include/power/model.h)。`pwr_model_desc` 包含 ABI/结构大小、IR 版本、固定整数纳秒步长、节点数组和部件数组。
 
 - 参数使用 `pwr_quantity`。已支持 SI 单位，并在对应量纲上接受 rpm/deg；编译后以及所有宿主输入/输出使用 SI。
 - ID 在节点和部件之间全局唯一且非零；0 专用于机械地、热环境和整个模型的账本。
@@ -119,11 +121,11 @@ context_create
 
 `model_get_channels` 支持先查询所需容量，再把带方向、单位、对象 ID、量名的描述复制到调用方缓冲区；缓冲区不足时不部分覆盖。快照也使用调用方内存。输入通道由定义者指定，高位必须为零；输出通道用 `PWR_MODEL_CHANNEL(object_id, field)` 生成，高位为一，避免混用。对象 0 的四个输出为整图能量账本。
 
-可执行 C/C++ 宿主示例在 [`examples/model_host.c`](../examples/model_host.c)，构建为 `power_model_host`。[`tests/test_model_sdk.c`](../tests/test_model_sdk.c) 另覆盖 descriptor 离开作用域后运行、多实例共享、通道查询、销毁顺序、类型误用、容量失败和旧 ABI 函数表兼容。
+可执行 C/C++ 宿主示例在 [`examples/model_host.c`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/examples/model_host.c)，构建为 `power_model_host`。[`tests/test_model_sdk.c`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/tests/test_model_sdk.c) 另覆盖 descriptor 离开作用域后运行、多实例共享、通道查询、销毁顺序、类型误用、容量失败和旧 ABI 函数表兼容。
 
 ## 6. JSON 实验入口
 
-[`tools/model_lab.py`](../tools/model_lab.py) 是只使用 Python 标准库和公开 C ABI 的离线开发宿主。示例为 [`assets/labs/electrothermal.power.json`](../assets/labs/electrothermal.power.json)。
+[`tools/model_lab.py`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/tools/model_lab.py) 是只使用 Python 标准库和公开 C ABI 的离线开发宿主。示例为 [`assets/labs/electrothermal.power.json`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/assets/labs/electrothermal.power.json)。
 
 ```bash
 cmake -S . -B build -DCMAKE_BUILD_TYPE=Debug
@@ -156,7 +158,7 @@ JSON 顶层字段为 `schema`（`power.model.v1`）、`step_ns`、`nodes`、`com
 - 非法 schema/单位/拓扑/参数/容量、输入事务、数值失败回滚、时间溢出和快照缓冲区保护。
 - 模型/实例生命周期、ABI 旧前缀兼容、单一导出符号以及真实 JSON→C ABI 实验。
 
-这些是数学、实现和场景证据，尚无实测电机或供体标定数据。完整 ICE/BEV/HEV 的支持范围仍以 [开发状态](DEVELOPMENT_STATUS.md) 为准。
+这些是数学、实现和场景证据，尚无实测电机或供体标定数据。完整 ICE/BEV/HEV 的支持范围仍以 [开发状态](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/DEVELOPMENT_STATUS.md) 为准。
 
 ## 8. 下一步扩展顺序
 

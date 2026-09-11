@@ -1,6 +1,0 @@
-POWER_1.0 {
-    global:
-        pwr_get_api;
-    local:
-        *;
-};

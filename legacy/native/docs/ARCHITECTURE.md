@@ -1,11 +1,13 @@
+> Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+
 # Power! 目标架构：C 核心 + Lua 定义层
 
-状态：目标架构；2026-09-07 已落地公开模型 IR、线性电—机械—热图编译/求解和通用 SDK backend。已实现范围与面向未来模型的扩展决策见 [模型运行时](MODEL_RUNTIME.md)，其余现状见 [开发状态](DEVELOPMENT_STATUS.md)。本文中的通用非线性图、Lua、3D/音频仍为目标设计。
+状态：目标架构；2026-09-07 已落地公开模型 IR、线性电—机械—热图编译/求解和通用 SDK backend。已实现范围与面向未来模型的扩展决策见 [模型运行时](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/MODEL_RUNTIME.md)，其余现状见 [开发状态](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/DEVELOPMENT_STATUS.md)。本文中的通用非线性图、Lua、3D/音频仍为目标设计。
 目标：完整重写、ISO C23、Lua 5.5、Linux-first、headless-first、3D reference app、可嵌入游戏
 
 ## 0. 命名边界
 
-产品展示名为 **Power!**；C、Lua、库、文件和 Issue 使用不含感叹号的稳定技术标识。完整映射见 [项目命名约定](NAMING.md)。当前没有已发布兼容面，因此旧工作名及其标识不进入实现。
+产品展示名为 **Power!**；C、Lua、库、文件和 Issue 使用不含感叹号的稳定技术标识。完整映射见 [项目命名约定](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/NAMING.md)。当前没有已发布兼容面，因此旧工作名及其标识不进入实现。
 
 ## 1. 重写边界
 
@@ -28,7 +30,7 @@ Power! 只参考经典 `engine-sim` 的产品思想：参数化发动机、实�
 7. **实时线程有固定上限。** warm-up 后，物理和音频热路径不做无界分配、不拿无界锁、不调用 Lua、不做文件 I/O。
 8. **公开 C 边界长期稳定。** 内部结构可以重写；宿主只看到版本化函数表、普通布局结构和不透明句柄。
 9. **系统支持意味着动态仿真，不是存在一个名字。** 每个宣称支持的系统都要有状态、时序或守恒关系、单位化参数、边界/故障行为和验证 KPI；只有网格、声音、动画或脚本切换的对象必须标为展示占位。
-10. **应用打包与模型沙箱分层。** LuaInstaller 可封装可信 Lua CLI/工具壳和同 ABI 的 `power_native`，但用户 `.power.lua` 仍只在 `libpower` 私有受限 VM 中运行；游戏 SDK 不依赖 LuaInstaller executable。详见 [发行设计](PACKAGING.md)。
+10. **应用打包与模型沙箱分层。** LuaInstaller 可封装可信 Lua CLI/工具壳和同 ABI 的 `power_native`，但用户 `.power.lua` 仍只在 `libpower` 私有受限 VM 中运行；游戏 SDK 不依赖 LuaInstaller executable。详见 [发行设计](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/PACKAGING.md)。
 11. **模型作者与运行时解耦。** 人、GPT-6 或后续模型通过同一带单位 IR、编译诊断和验证场景提交候选。可变的模型服务用于开发与分析；仿真部署的是经过验证、带版本和适用范围的资产/组件。
 
 ## 3. 总体分层

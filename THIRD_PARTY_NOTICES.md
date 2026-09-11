@@ -25,6 +25,24 @@ References: [MCP C# SDK license](https://github.com/modelcontextprotocol/csharp-
 [.NET libraries](https://github.com/dotnet/runtime/blob/main/LICENSE.TXT),
 [.NET Extensions](https://github.com/dotnet/extensions/blob/main/LICENSE).
 
+## Zig native runtime
+
+The native toolchain is Zig 0.15.2. The compiler and standard library are
+downloaded into an ignored cache; their code is not vendored in Power!.
+Zig's standard library also contains mathematical routines ported from Go
+and musl. These retain their original permissive licenses independently of
+Power!'s GPL and Unity Linking Exception.
+
+The native build installs Power!'s license/exception files together with
+the [Zig MIT license](licenses/Zig-MIT.txt),
+[Go BSD-3-Clause license](licenses/Go-BSD-3-Clause.txt) and
+[musl copyright notices](licenses/musl-COPYRIGHT.txt) under
+`share/licenses/power`. Preserve these when distributing the native binaries.
+
+Sources: [Zig 0.15.2 license](https://github.com/ziglang/zig/blob/0.15.2/LICENSE),
+[Go license](https://github.com/golang/go/blob/go1.24.0/LICENSE),
+[musl 1.2.5 notices](https://git.musl-libc.org/cgit/musl/tree/COPYRIGHT?h=v1.2.5).
+
 ## Unity
 
 Unity Editor, Player runtimes, engine assemblies, IL2CPP support code, and

@@ -1,3 +1,5 @@
+> Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+
 # Power! 项目命名约定
 
 状态：已采用产品名；技术命名基线 v0

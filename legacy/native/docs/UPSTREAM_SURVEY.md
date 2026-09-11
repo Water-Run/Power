@@ -1,3 +1,5 @@
+> Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+
 # 经典 engine-sim 源码测绘
 
 状态：完成第一轮静态测绘
@@ -24,7 +26,7 @@
 | 经典开源版 | `v0.1.11a-7-g85f7c3b`，提交于 2023-01-22 | [README](https://github.com/ange-yaghi/engine-sim/blob/master/README.md) 声明只支持 Windows，并明确说明它以声音和响应为目标、不是工程科学工具 | 唯一可进行源码级测绘的主基线；MIT 许可 |
 | Community Edition | `v0.1.14a-3-g4e5c20d`，提交于 2025-09-11 | [README](https://github.com/Engine-Simulator/engine-sim-community-edition/blob/master/README.md) 声明不再活跃维护，仓库只做应用分发且不含源码 | 可对照教程和最终用户行为，不能作为实现基线 |
 
-经典 checkout 含 5 个固定子模块：`csv-io`、`delta-studio`、`direct-to-video`、`piranha`、`simple-2d-constraint-solver`。具体提交见 [reference/README.md](../reference/README.md)。
+经典 checkout 含 5 个固定子模块：`csv-io`、`delta-studio`、`direct-to-video`、`piranha`、`simple-2d-constraint-solver`。具体提交见 [reference/README.md](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/README.md)。
 
 ## 3. 规模清单
 
@@ -63,34 +65,34 @@ flowchart LR
 
 ### 4.1 配置与对象构建
 
-- [`assets/main.mr`](../reference/engine-sim/assets/main.mr) 选择主题和发动机入口。
-- [`scripting/src/compiler.cpp`](../reference/engine-sim/scripting/src/compiler.cpp) 用 Piranha 编译并执行 `.mr`。
+- [`assets/main.mr`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/assets/main.mr) 选择主题和发动机入口。
+- [`scripting/src/compiler.cpp`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/scripting/src/compiler.cpp) 用 Piranha 编译并执行 `.mr`。
 - `scripting/include/*_node.h` 把约 140 个去重后的命名输入映射为 C++ 参数，并最终构造 `Engine`、`Vehicle`、`Transmission`。
 - 脚本非常适合表达发动机部件组合，但它既是配置又是可执行图；对来自游戏 Mod 的不可信内容没有资源上限或沙箱边界。
 
 ### 4.2 机械系统
 
-- [`src/piston_engine_simulator.cpp`](../reference/engine-sim/src/piston_engine_simulator.cpp) 为曲轴、活塞、连杆创建二维刚体和位置/连杆/离合/摩擦约束。
+- [`src/piston_engine_simulator.cpp`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/src/piston_engine_simulator.cpp) 为曲轴、活塞、连杆创建二维刚体和位置/连杆/离合/摩擦约束。
 - `simple-2d-constraint-solver` 以 Gauss-Seidel 或通用线性方程/ODE 路径求解。
 - 变速箱、整车等效质量、空气阻力和滚阻也并入同一个旋转系统。
 - 多曲轴的角度漂移目前由每步直接把其它曲轴角度写成输出曲轴角度来修正；这是注释中明确标出的临时修补，不是扭转动力学模型。
 
 ### 4.3 气体、燃烧与换热
 
-- [`include/gas_system.h`](../reference/engine-sim/include/gas_system.h) 用集中容积状态保存摩尔数、内能、二维动量和 `fuel/inert/O2` 三组分。
+- [`include/gas_system.h`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/include/gas_system.h) 用集中容积状态保存摩尔数、内能、二维动量和 `fuel/inert/O2` 三组分。
 - 流动模型包含可压缩流、临界流、压力平衡和简单动量效应；这部分拥有项目中最完整的守恒单元测试。
-- [`src/combustion_chamber.cpp`](../reference/engine-sim/src/combustion_chamber.cpp) 用经验火焰传播距离和燃烧效率反应燃料，随后把释放热量写入气体状态。
+- [`src/combustion_chamber.cpp`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/src/combustion_chamber.cpp) 用经验火焰传播距离和燃烧效率反应燃料，随后把释放热量写入气体状态。
 - 反应式在代码中固定为简化烃类关系；没有详细物种、蒸发、喷雾、爆震、排放后处理或可替换化学机理。
 - 缸壁换热使用固定目标温度和常数形式；没有冷却回路、零件热容网络或温度相关材料数据。
 
 ### 4.4 步进与耦合
 
-[`src/simulator.cpp`](../reference/engine-sim/src/simulator.cpp) 的典型一帧过程如下：
+[`src/simulator.cpp`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/src/simulator.cpp) 的典型一帧过程如下：
 
 1. `startFrame(dt)` 以全局模拟频率计算本帧步数；默认值为 10 kHz。
 2. 步数会根据合成器输入延迟增减约 10%，因此物理进度受音频缓存状态影响。
 3. 每个物理步先解二维刚体约束，再更新发动机、整车和变速箱。
-4. [`PistonEngineSimulator::simulateStep_`](../reference/engine-sim/src/piston_engine_simulator.cpp) 更新点火和气缸，并默认把每个物理步细分为 8 个流体子步。
+4. [`PistonEngineSimulator::simulateStep_`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/src/piston_engine_simulator.cpp) 更新点火和气缸，并默认把每个物理步细分为 8 个流体子步。
 5. 每步从排气支路压力/动压生成声音输入。
 6. 独立合成线程重采样、加噪、滤波、卷积并输出 44.1 kHz PCM。
 
@@ -98,14 +100,14 @@ flowchart LR
 
 ### 4.5 音频
 
-- [`src/synthesizer.cpp`](../reference/engine-sim/src/synthesizer.cpp) 有独立工作线程、环形缓冲、抗混叠、抖动/噪声、卷积和电平处理。
-- [`PistonEngineSimulator::writeToSynthesizer`](../reference/engine-sim/src/piston_engine_simulator.cpp) 主要从排气压力和传播延迟构造每个排气系统的激励。
+- [`src/synthesizer.cpp`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/src/synthesizer.cpp) 有独立工作线程、环形缓冲、抗混叠、抖动/噪声、卷积和电平处理。
+- [`PistonEngineSimulator::writeToSynthesizer`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/src/piston_engine_simulator.cpp) 主要从排气压力和传播延迟构造每个排气系统的激励。
 - 这是应保留的产品思路，但新实现要让燃烧、进气、排气、机械阶次、电机电磁阶次、齿轮和附件分别生成带时间戳事件，再由无锁音频图合成。
 
 ### 4.6 显示与应用
 
-- `engine-sim-app`、输入、脚本重载、仿真、音频搬运和 UI 主要集中在 [`src/engine_sim_application.cpp`](../reference/engine-sim/src/engine_sim_application.cpp)。
-- [`src/geometry_generator.cpp`](../reference/engine-sim/src/geometry_generator.cpp) 生成线、圆、环、凸轮等二维几何；[`src/simulation_object.cpp`](../reference/engine-sim/src/simulation_object.cpp) 只把二维刚体的 `x/y/theta` 加一个显示层 `z`。
+- `engine-sim-app`、输入、脚本重载、仿真、音频搬运和 UI 主要集中在 [`src/engine_sim_application.cpp`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/src/engine_sim_application.cpp)。
+- [`src/geometry_generator.cpp`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/src/geometry_generator.cpp) 生成线、圆、环、凸轮等二维几何；[`src/simulation_object.cpp`](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/reference/engine-sim/src/simulation_object.cpp) 只把二维刚体的 `x/y/theta` 加一个显示层 `z`。
 - 因而当前表现是分层二维可视化，不是带真实网格、相机、光照、PBR 材质和空间声源的三维场景。
 
 ## 5. 与 Power! 目标的差距
@@ -154,7 +156,7 @@ flowchart LR
 - 不把旧仓库或许可未核实的子模块带入 C 构建。
 - 单独审查声音、纹理、模型和社区发动机数据；代码 MIT 不自动覆盖所有外部资产。
 - `Power!` 已取代旧工作名 `Engine3D`；发布前仍需完成商标、搜索混淆、软件包名和域名可用性检查。
-- 感叹号只用于展示名；C、Lua、文件名和发布产物采用 [稳定技术标识](NAMING.md)，避免 shell、URL 和包管理器转义问题。
+- 感叹号只用于展示名；C、Lua、文件名和发布产物采用 [稳定技术标识](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/NAMING.md)，避免 shell、URL 和包管理器转义问题。
 
 ## 8. 测绘未覆盖项
 

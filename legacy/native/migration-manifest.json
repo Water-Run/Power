@@ -1,0 +1,233 @@
+{
+  "schema": "power.native_migration.v1",
+  "source_revision": "c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3",
+  "source_repository": "https://github.com/Water-Run/Power",
+  "license": "GPL-3.0-or-later WITH Unity-Linking-Exception",
+  "method": "One-time Zig 0.15.2 translation followed by maintained Zig modules, native runtime primitives and test-harness corrections. No translation or C compilation occurs during builds.",
+  "sources": [
+    {
+      "path": "legacy/native/examples/c_host.c",
+      "sha256": "f35c9aa9cbb8d0d72eb5f7005b7d1a2dbbf13d580dfbc1868756efcf7850a3b7",
+      "zig_path": "legacy/native/examples/sdk_host.zig"
+    },
+    {
+      "path": "legacy/native/examples/model_host.c",
+      "sha256": "6e3f467168444221897901e52041168a397d6b862bc95edbda516e4c8d692979",
+      "zig_path": "legacy/native/examples/model_host.zig"
+    },
+    {
+      "path": "legacy/native/include/power/model.h",
+      "sha256": "71fc5b917183457d3e7ab3a883132fe9bd50082225d819d8fa245135d19f4a05",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/include/power/power.h",
+      "sha256": "e4bf4a025ade299df09137bd7e778847d1dbb7bb8cc9c80513f9eb1027ec4433",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/core/pwr_graph.c",
+      "sha256": "7b184542f4ad700305e80139f092b48bb5873f92008b9c6100702ba760bcc178",
+      "zig_path": "legacy/native/src/core/pwr_graph.zig"
+    },
+    {
+      "path": "legacy/native/src/core/pwr_graph.h",
+      "sha256": "a7b19bd335d6615cf8adca868fb47253b8a8f1731969c951943374347ecbfc1c",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/core/pwr_scheduler.c",
+      "sha256": "9db3435b3186f2889bacaa003ba38de2e088d1e9a989404c78769afdc3941f9a",
+      "zig_path": "legacy/native/src/core/pwr_scheduler.zig"
+    },
+    {
+      "path": "legacy/native/src/core/pwr_scheduler.h",
+      "sha256": "11e8f79e2102c9b416da475df12af46bd0dd35bb276ae5746844f1cbafde2c2c",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/models/automatic/pwr_automatic.c",
+      "sha256": "6969f22d847e93b3c9ec79aa2df4d8af90124ae394a9be8eec1988501304e6a7",
+      "zig_path": "legacy/native/src/models/automatic/pwr_automatic.zig"
+    },
+    {
+      "path": "legacy/native/src/models/automatic/pwr_automatic.h",
+      "sha256": "9f94fa5ece39fdc7a5acfdcdc186cdeaba1ffc8878d21b4d87f767834d8c186f",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/models/drivetrain/pwr_dct.c",
+      "sha256": "5e9d78f46f3f9dc2ddb02a1e89c8e201e1fd32af2b44b8cc03e540f3292cddce",
+      "zig_path": "legacy/native/src/models/drivetrain/pwr_dct.zig"
+    },
+    {
+      "path": "legacy/native/src/models/drivetrain/pwr_dct.h",
+      "sha256": "39a8bc9b76507540c4ff28ae7f75be08d963edbcb8e4e44eca3b21f1e133c5cc",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/models/engine/pwr_si_engine.c",
+      "sha256": "6ec32918989a633e029f4095c75156f5a10cf803a6be2aa1ee62b16b567444a7",
+      "zig_path": "legacy/native/src/models/engine/pwr_si_engine.zig"
+    },
+    {
+      "path": "legacy/native/src/models/engine/pwr_si_engine.h",
+      "sha256": "54095c92b65779c831a35242394e5f82ee242c4562505803797fa0d1ebb2357c",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/models/exhaust/pwr_exhaust.c",
+      "sha256": "b4f4bd31e0575ec9fa47dc0659725399ad8e25284b8be0e16fa6b9604d1c5683",
+      "zig_path": "legacy/native/src/models/exhaust/pwr_exhaust.zig"
+    },
+    {
+      "path": "legacy/native/src/models/exhaust/pwr_exhaust.h",
+      "sha256": "9e4a87aee0a21cd4f6551dd378e833e6b169910c2d2d0180baeeac0eda154a82",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/models/powertrain/pwr_automatic_powertrain.c",
+      "sha256": "014ecea1637d98f2015d10de53881df1d7229c796c0dd892711df86fc6c03878",
+      "zig_path": "legacy/native/src/models/powertrain/pwr_automatic_powertrain.zig"
+    },
+    {
+      "path": "legacy/native/src/models/powertrain/pwr_automatic_powertrain.h",
+      "sha256": "643c82eebc258416072989a3d66316c81783e408a537ab05e99f01e1bd1d32e6",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/models/powertrain/pwr_dct_powertrain.c",
+      "sha256": "d366cc9457335d98c4573f9f9f6270d7e68b6f82258c1c50070a5942c15d15db",
+      "zig_path": "legacy/native/src/models/powertrain/pwr_dct_powertrain.zig"
+    },
+    {
+      "path": "legacy/native/src/models/powertrain/pwr_dct_powertrain.h",
+      "sha256": "e049f1ba8cc6762dc70899a80fb75384b7cee52c4c2222fe18a0d09ef0f6fabf",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/models/shaft/pwr_shaft_lab.c",
+      "sha256": "f55dfc2cb95860366349f9af02e8b963fdd6dce9ab1e34d3ab9a1a03544db3f4",
+      "zig_path": "legacy/native/src/models/shaft/pwr_shaft_lab.zig"
+    },
+    {
+      "path": "legacy/native/src/models/shaft/pwr_shaft_lab.h",
+      "sha256": "800ddc38b6dcfabda75f87c49d8b02d8ff7efc76f5a6436c48760812a1b45da2",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/sdk/pwr_api.c",
+      "sha256": "2fbc4f18324b2a20c2db900d79248c0609befbfe63b94baaa8008974e859a54f",
+      "zig_path": "legacy/native/src/sdk/pwr_api.zig"
+    },
+    {
+      "path": "legacy/native/src/sdk/pwr_context.c",
+      "sha256": "5455b7a5de2a27388ee7518be83e9ca8ac3239ab8c6e2666e05b3812be210571",
+      "zig_path": "legacy/native/src/sdk/pwr_context.zig"
+    },
+    {
+      "path": "legacy/native/src/sdk/pwr_instance.c",
+      "sha256": "f8684fb78c46935de2cb50c07e923f4a06f2626d5377d3e6c9ae7938bc416581",
+      "zig_path": "legacy/native/src/sdk/pwr_instance.zig"
+    },
+    {
+      "path": "legacy/native/src/sdk/pwr_internal.h",
+      "sha256": "ac38223c7ac416fe22600a05c08af3eb18e8eaed8e2f5b3c96c7629141e5a4e4",
+      "zig_path": "legacy/native/src/abi.zig"
+    },
+    {
+      "path": "legacy/native/src/sdk/pwr_model.c",
+      "sha256": "2d11bc22addad8efbdffc238ccae53481bd3d7547ee578f14027534347c2b005",
+      "zig_path": "legacy/native/src/sdk/pwr_model.zig"
+    },
+    {
+      "path": "legacy/native/src/sdk/pwr_shaft_backend.c",
+      "sha256": "9c5ca88b15a7608f3b4c6d978482fe84505efc29a30c5d808930adfc934a7077",
+      "zig_path": "legacy/native/src/sdk/pwr_shaft_backend.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_automatic.c",
+      "sha256": "b7d3fc1c0931e224443fbad7a555cac54591863a1b15e6bd45b80cbf7ad1371e",
+      "zig_path": "legacy/native/tests/test_automatic.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_dct.c",
+      "sha256": "69b3404a5a235e3baa0cf67c0c686b5bd1ccfe9ac81f7cbf7a587d97bae9bf43",
+      "zig_path": "legacy/native/tests/test_dct.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_dct_powertrain.c",
+      "sha256": "26a77ba854c028ef02b16f5b0313572cd89ca6200af5eb0fe9befd6afe2db664",
+      "zig_path": "legacy/native/tests/test_dct_powertrain.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_exhaust.c",
+      "sha256": "fc98184aea22141964e6043cf6a0dfa34ae2337198502326a51d87b59fe82b38",
+      "zig_path": "legacy/native/tests/test_exhaust.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_graph.c",
+      "sha256": "1d30ed7fec398e8bf81da08838a40c2d6517d929d86677d9bf16d9376cedc819",
+      "zig_path": "legacy/native/tests/test_graph.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_model_sdk.c",
+      "sha256": "7874cf74eb8a347ea2ee37fb5a107c53d63937767f912dadf77be691e6eda49d",
+      "zig_path": "legacy/native/tests/test_model_sdk.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_scheduler.c",
+      "sha256": "ea232006ecd05fff7447998d40a7dd915841de4087d0ea42e4d3a33dcffadb43",
+      "zig_path": "legacy/native/tests/test_scheduler.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_sdk.c",
+      "sha256": "e15c9275dbbce7b87b10b720ac383e069c89e1dadc0acd410d3006c50888b54a",
+      "zig_path": "legacy/native/tests/test_sdk.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_shaft.c",
+      "sha256": "cb08dec4dde2729fc490bb443f119de40d0d25be4c74321b7f853e5080a3c7f4",
+      "zig_path": "legacy/native/tests/test_shaft.zig"
+    },
+    {
+      "path": "legacy/native/tests/test_si_engine.c",
+      "sha256": "99e6a794f2b3cf941262f03ad8e67a60e6cd35f9d2a2fcb24c4028224d8e0ad9",
+      "zig_path": "legacy/native/tests/test_si_engine.zig"
+    }
+  ],
+  "retired_build_files": [
+    {
+      "path": "legacy/native/CMakeLists.txt",
+      "sha256": "3c39b5268c4fd1dc36fedf8411563860704ccb789e2d99d12e49ca6061815479"
+    },
+    {
+      "path": "legacy/native/cmake/PowerWarnings.cmake",
+      "sha256": "3eb9062dec91f2e86ff72b6afe2102f0b358752cd9d3f0572d8a243b07536d34"
+    },
+    {
+      "path": "legacy/native/cmake/PowerExports.cmake",
+      "sha256": "b4d3954ad8da7287445568120f8416831ee1abe1b60d663c01ca9c168bc575a3"
+    },
+    {
+      "path": "legacy/native/cmake/power.map",
+      "sha256": "be7adf0c4cebf344fe3c4099fc304bf82c8087fd74e098ea1d586b67de681bbc"
+    },
+    {
+      "path": "legacy/native/cmake/power.exports",
+      "sha256": "d4f5abdb75d3ca7935eab44d7d7181739ff76b5aa0e411eca9e7e55f4fb36f53"
+    },
+    {
+      "path": "legacy/native/cmake/power.def",
+      "sha256": "9c529228d286c89ab4501eb88186c4ff7f0b4e5fd7ab735df46f25da021761fa"
+    },
+    {
+      "path": "legacy/native/cmake/CheckPowerExports.cmake",
+      "sha256": "bfa23e67ff9901196daa5c7a7e0cb9495e4603e4f3e138ad6f3d92324591002e"
+    },
+    {
+      "path": "legacy/native/cmake/PowerLuaInstaller.cmake",
+      "sha256": "81eb737859c590f0264dae9c6ba5086b533cccdf3a946f0016652dd8c56469b9"
+    }
+  ]
+}

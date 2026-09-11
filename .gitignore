@@ -36,3 +36,6 @@ Testing/
 
 __pycache__/
 *.pyc
+
+.zig-cache/
+zig-out/

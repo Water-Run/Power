@@ -1,11 +1,13 @@
+> Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+
 # Power! 基础路线图
 
 状态：2026-09-07 可组合模型运行时里程碑已实现；P0/P1 其余门槛继续推进。
 下方人周估算保留为历史规划参考。后续结合 GPT-6 与未来模型的开发能力，按可执行验收门槛推进，不由估算周数或模型名称推断完成度。
 
-当前可执行进度：C23/CMake、固定步调度、公开 ABI、Controlled Shaft、Exhaust Flow、通用 SI 发动机、DCT7 与液力 4AT 组件已有测试；另已完成带单位模型 IR、线性电—机械—热图、共享模型/实例和 JSON 采样回放。Lua、非线性多域图、整机公开实例、供体标定、3D/音频仍未完成。详见 [开发状态](DEVELOPMENT_STATUS.md)。首批 ICE 集成目标固定为 [EA211 DJS + DQ200](../assets/samples/ea211_djs_dq200/README.md) 和 [PSA EC5 + AT8 4AT](../assets/samples/psa_ec5_at8_4at/README.md)，二者均须满足同一完整动力总成边界。
+当前可执行进度：C23/CMake、固定步调度、公开 ABI、Controlled Shaft、Exhaust Flow、通用 SI 发动机、DCT7 与液力 4AT 组件已有测试；另已完成带单位模型 IR、线性电—机械—热图、共享模型/实例和 JSON 采样回放。Lua、非线性多域图、整机公开实例、供体标定、3D/音频仍未完成。详见 [开发状态](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/DEVELOPMENT_STATUS.md)。首批 ICE 集成目标固定为 [EA211 DJS + DQ200](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/assets/samples/ea211_djs_dq200/README.md) 和 [PSA EC5 + AT8 4AT](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/assets/samples/psa_ec5_at8_4at/README.md)，二者均须满足同一完整动力总成边界。
 
-当前开发顺序为：共享 IR 与实验反馈（已实现线性基线）→ Lua/参数证据 → 非线性残差/Jacobian 与强耦合求解 → 电驱/燃烧/液压模型迁入 → 验证后的降阶和 3D/音频产品化。架构决策及每一步的具体范围见 [模型运行时](MODEL_RUNTIME.md#8-下一步扩展顺序)。
+当前开发顺序为：共享 IR 与实验反馈（已实现线性基线）→ Lua/参数证据 → 非线性残差/Jacobian 与强耦合求解 → 电驱/燃烧/液压模型迁入 → 验证后的降阶和 3D/音频产品化。架构决策及每一步的具体范围见 [模型运行时](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/MODEL_RUNTIME.md#8-下一步扩展顺序)。
 
 ## 1. MVP 与 1.0 边界
 
@@ -51,7 +53,7 @@
 | 低压供电/通信 | 12/24/48 V 电源与关键负载、欠压/唤醒；CAN/CAN FD/LIN 消息级仲裁、延迟、超时与 bus-off |
 | 3D/音频/遥测 | 只读表达同一物理状态；关闭、降帧或输出拥塞不得改变仿真时间和结果 |
 
-每一行按 [仿真级别共同门槛](ARCHITECTURE.md#117-达到仿真级别的共同门槛) 验收；未达到者在能力清单中标为 `reduced`、`placeholder` 或 `unsupported`，不得仅凭存在模型名称计入 MVP。
+每一行按 [仿真级别共同门槛](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/ARCHITECTURE.md#117-达到仿真级别的共同门槛) 验收；未达到者在能力清单中标为 `reduced`、`placeholder` 或 `unsupported`，不得仅凭存在模型名称计入 MVP。
 
 ## 2. 阶段依赖
 
@@ -105,7 +107,7 @@ BEV 先行不是产品优先级判断，而是架构验证策略：它用较少�
 - 简单转子/齿轮 3D、功率流叠加、基本电机阶次音频。
 - Lua units/descriptor DSL v0、热重载 shadow graph、C ABI v0、C/C++ 示例宿主、Null 音频和 headless benchmark。
 
-退出门槛：两条切片都从 Lua 定义加载、编译为 C graph，经宿主输入/故障、仿真、账本、快照和回放自动运行；模型 VM 销毁后仍可运行。控制故障会改变轴系响应，尾管堵塞会通过背压改变上游状态；降低 FPS 或关闭音频不改变物理 hash。详见 [首阶段实现方案](IMPLEMENTATION.md)。
+退出门槛：两条切片都从 Lua 定义加载、编译为 C graph，经宿主输入/故障、仿真、账本、快照和回放自动运行；模型 VM 销毁后仍可运行。控制故障会改变轴系响应，尾管堵塞会通过背压改变上游状态；降低 FPS 或关闭音频不改变物理 hash。详见 [首阶段实现方案](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/IMPLEMENTATION.md)。
 
 ### P2 — BEV Alpha（10–14 人周）
 
@@ -118,7 +120,7 @@ BEV 先行不是产品优先级判断，而是架构验证策略：它用较少�
 - `Game` 与 `Interactive` 两档、批量 headless 场景和 Linux 性能报告。
 - 电池脉冲、电机测功、加速/恒速/再生/热降额验证包。
 
-退出门槛：能量账本、SOC、端电压、轴功率和热降额均达到 [验证计划](VALIDATION.md) 冻结的误差；单实例 Interactive 在最低支持机达到实时。
+退出门槛：能量账本、SOC、端电压、轴功率和热降额均达到 [验证计划](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/VALIDATION.md) 冻结的误差；单实例 Interactive 在最低支持机达到实时。
 
 ### P3 — ICE Alpha（16–24 人周）
 
@@ -173,7 +175,7 @@ BEV 先行不是产品优先级判断，而是架构验证策略：它用较少�
 - 安装包、示例资产、SDK 文档、许可/BOM、验证和性能报告。
 - LuaInstaller onedir/onefile 的可信 CLI 发行矩阵；`power_native` 与外层 Lua 5.5 ABI 探针、clean-environment smoke、generated source/relinking 和签名/校验流程。SDK/插件仍由 CMake install/CPack 发行。
 
-退出门槛：满足 [验证计划的 Beta 证据](VALIDATION.md#11-版本发布所需证据)，并完成一次由非核心开发者按文档嵌入的试用。
+退出门槛：满足 [验证计划的 Beta 证据](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/VALIDATION.md#11-版本发布所需证据)，并完成一次由非核心开发者按文档嵌入的试用。
 
 ## 4. 工作量视图
 
@@ -228,7 +230,7 @@ BEV 先行不是产品优先级判断，而是架构验证策略：它用较少�
 
 - 完成命名/许可、单位/时钟、控制执行、气体组分、模型缓存和 C ABI ADR，以及原型性能报告。
 - 把 spike 中保留的代码整理为两条 P1 Lab 的共享骨架，其余明确丢弃。
-- 依据 [首阶段实现方案](IMPLEMENTATION.md) 和退出门槛拆 P1 issues，不按 UI 页面或 3D 部件数量拆任务。
+- 依据 [首阶段实现方案](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/IMPLEMENTATION.md) 和退出门槛拆 P1 issues，不按 UI 页面或 3D 部件数量拆任务。
 
 ## 6. 首批 Epic / Issue 建议
 

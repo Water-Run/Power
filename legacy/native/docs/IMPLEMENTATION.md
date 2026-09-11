@@ -1,7 +1,9 @@
+> Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+
 # Power! 首阶段实现方案
 
-状态：P0/P1 首阶段设计记录；2026-09-07 已加入共享模型 IR、线性图求解与 JSON 实验，当前执行契约见 [模型运行时](MODEL_RUNTIME.md)，全项目现状见 [开发状态](DEVELOPMENT_STATUS.md)。
-依赖：[命名约定](NAMING.md)、[目标架构](ARCHITECTURE.md)、[验证计划](VALIDATION.md)、[路线图](ROADMAP.md)
+状态：P0/P1 首阶段设计记录；2026-09-07 已加入共享模型 IR、线性图求解与 JSON 实验，当前执行契约见 [模型运行时](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/MODEL_RUNTIME.md)，全项目现状见 [开发状态](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/DEVELOPMENT_STATUS.md)。
+依赖：[命名约定](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/NAMING.md)、[目标架构](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/ARCHITECTURE.md)、[验证计划](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/VALIDATION.md)、[路线图](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/ROADMAP.md)
 
 ## 1. 实现结论
 
@@ -139,4 +141,4 @@ pulsating source -> manifold volume -> restriction/turbine -> heated catalyst ->
 - Controlled Shaft Lab 的命令跟踪、故障降级、deadline/超时和电—机械—热账本有可复现报告。
 - Exhaust Flow Lab 的压力/温度/流量、light-off、组分/累计排放和质量—能量账本有收敛测试；堵塞会通过背压改变上游功耗。
 - 相同构建、输入、seed 和调度配置逐步 hash 相同；暂停渲染、禁用音频或改变宿主 FPS 不改变物理结果。
-- 所有已标为 `simulated` 的组件满足 [共同门槛](ARCHITECTURE.md#117-达到仿真级别的共同门槛)；其余组件在能力查询与 UI 中明确显示为 `placeholder` 或 `unsupported`。
+- 所有已标为 `simulated` 的组件满足 [共同门槛](https://github.com/Water-Run/Power/blob/c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3/legacy/native/docs/ARCHITECTURE.md#117-达到仿真级别的共同门槛)；其余组件在能力查询与 UI 中明确显示为 `placeholder` 或 `unsupported`。

@@ -1,7 +1,13 @@
-# 原生原型存档
+# Native prototype provenance
 
-2026-09-07 起，项目主线按用户要求改为 C# 跨平台实现和 Unity 3D。此目录保存此前的 C23 原型、C ABI、构建系统、测试、实验工具与设计资料，用于对照方程和迁移功能。
+The application moved to C# and Unity on 2026-09-07. The owner resumed the
+native language migration on 2026-09-10, and the native prototypes, tests and
+hosts were ported to Zig. There are no C source files or headers in the current
+repository source tree. The original material remains in Git at
+`c342d4c05c9d0b14cae0ce1a85e3f2100dfd7bb3`; the [migration manifest](migration-manifest.json)
+records every removed C/header file and its replacement, plus retired build files.
 
-本目录中的 README 和 docs 描述历史阶段，不能作为当前技术栈或功能完成情况。旧发动机、排气和 DCT/AT 部件的原型尚未全部迁入 C#。
-
-当前入口：[项目 README](../../README.md)、[开发路线](../../docs/ROADMAP.md)。新功能开发在根目录 `src/Power.*` 与 `Unity` 中进行。根目录样例证据资产仍是研究资料的活跃位置；这里的 assets 是存档副本。
+See the [native README](README.md) for Zig commands, the [boundary](../../docs/NATIVE_ZIG.md)
+for interoperability and the [root roadmap](../../docs/ROADMAP.md) for the full
+powertrain objective. Historical design documents and sample evidence retain
+their original language, provenance and calibration limits.
