@@ -21,12 +21,12 @@ ROOT = Path(__file__).resolve().parents[1]
 NATIVE = ROOT / "legacy/native"
 
 
-def run(*arguments):
+def run(*arguments, environment=None):
     display = " ".join(map(str, arguments[:6]))
     if len(arguments) > 6:
         display += f" ... ({len(arguments) - 6} more arguments)"
     print("Running: " + display, flush=True)
-    subprocess.run(list(map(str, arguments)), cwd=ROOT, check=True)
+    subprocess.run(list(map(str, arguments)), cwd=ROOT, check=True, env=environment)
 
 
 def source_audit():
@@ -106,8 +106,16 @@ def main():
     run(zig, "fmt", "--check", *[str(p) for p in NATIVE.rglob("*.zig") if ".zig-cache" not in p.parts and "zig-out" not in p.parts])
     destination = ROOT / "artifacts/native"
     build = [zig, "build", "--build-file", str(NATIVE / "build.zig"), "-j1", "-Doptimize=ReleaseSafe", "--summary", "all"]
-    run(*build, "--prefix", destination)
-    run(*build, "test")
+    build_environment = None
+    if platform.system() == "Darwin":
+        # Zig 0.15.2 cannot read the arm64e-only libSystem stub in newer Apple SDKs.
+        # Disable SDK discovery only in these child processes so Zig uses its
+        # bundled Darwin stubs, as it does when cross-compiling from Linux.
+        build_environment = os.environ.copy()
+        build_environment["DEVELOPER_DIR"] = os.devnull
+        print("Using Zig's bundled Darwin SDK stubs for native verification", flush=True)
+    run(*build, "--prefix", destination, environment=build_environment)
+    run(*build, "test", environment=build_environment)
     executable_suffix = ".exe" if os.name == "nt" else ""
     for name in ("power_host", "power_model_host"):
         run(destination / "bin" / (name + executable_suffix))

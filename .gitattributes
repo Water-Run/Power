@@ -1,5 +1,7 @@
 * text=auto
 *.cs text eol=lf
+*.zig text eol=lf
+*.zig.zon text eol=lf
 *.csproj text eol=lf
 *.props text eol=lf
 *.slnx text eol=lf

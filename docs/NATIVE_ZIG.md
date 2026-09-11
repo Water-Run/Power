@@ -43,6 +43,13 @@ then split into maintained Zig modules with shared binary layouts. Memory,
 mathematical functions and atomic operations use Zig and platform OS APIs.
 Safety checks remain enabled in ReleaseSafe builds.
 
+Zig sources use LF checkouts on every platform. On macOS the verification
+script disables Apple SDK discovery only in its Zig build subprocesses by
+setting `DEVELOPER_DIR=/dev/null`. This selects Zig's bundled Darwin linker
+stubs and avoids Zig 0.15.2's [incompatibility with Xcode 26.4 and newer SDKs](https://github.com/ghostty-org/ghostty/issues/11991),
+whose `libSystem` stub uses arm64e targets. The system Xcode selection is unchanged;
+these native targets do not need Apple frameworks or SDK headers.
+
 `dotnet run --file tools/Build.cs -- verify` runs managed verification, then
 serial native verification. `native-verify` runs just the native portion.
 `tools/VerifyNative.py` rejects C/C++ source and headers, checks the compiler
