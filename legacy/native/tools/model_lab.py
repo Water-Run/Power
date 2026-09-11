@@ -5,7 +5,7 @@
 
 """Offline JSON experiment host for libpower. Uses only the public C ABI.
 
-This tool is a development frontend, not the planned Lua asset sandbox.
+Model documents are declarative JSON and do not execute scripts.
 No model service, API key, native extension loading from assets, or dependencies.
 """
 

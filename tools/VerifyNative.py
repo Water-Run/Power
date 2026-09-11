@@ -39,6 +39,10 @@ def source_audit():
     c_files = [name for name in files if Path(name).suffix.lower() in forbidden]
     if c_files:
         raise ValueError("C/C++ source or headers remain: " + ", ".join(c_files))
+    lua_extensions = {".lua", ".luau", ".luac", ".rockspec", ".rock"}
+    lua_files = [name for name in files if Path(name).suffix.lower() in lua_extensions]
+    if lua_files:
+        raise ValueError("Remove remaining Lua source, bytecode or packages: " + ", ".join(lua_files))
     zig_files = [name for name in files if name.endswith(".zig")]
     for name in zig_files:
         contents = (ROOT / name).read_text()
@@ -53,7 +57,7 @@ def source_audit():
     for name in ("COPYING.NOTICE", "LICENSE", "UNITY-LINKING-EXCEPTION.md"):
         if not (ROOT / name).is_file():
             raise ValueError(f"Required license notice missing: {name}")
-    return {"c_source_files": 0, "zig_source_files": len(zig_files), "migrated_files": len(manifest["sources"])}
+    return {"c_source_files": 0, "lua_files": 0, "zig_source_files": len(zig_files), "migrated_files": len(manifest["sources"])}
 
 
 def baseline_check(library):

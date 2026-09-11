@@ -1,4 +1,5 @@
 > Historical native design record. C-era paths and build instructions refer to commit `c342d4c`; see [the native README](../README.md) for the current Zig implementation.
+> The unused LuaInstaller launcher and its packaging README were retired on 2026-09-11. The proposals below are preserved for provenance; the current project has no Lua runtime or packaging dependency.
 
 # Power! 发行与 LuaInstaller 打包设计
 

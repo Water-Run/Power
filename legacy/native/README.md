@@ -6,6 +6,9 @@ separate research runtime with the [explicit boundary](../../docs/NATIVE_ZIG.md)
 All original C source and headers have been replaced by Zig. Their paths and
 SHA-256 hashes are retained in [migration-manifest.json](migration-manifest.json)
 and the original source is available at commit `c342d4c` in Git history.
+The unused LuaInstaller launcher was retired on 2026-09-11, with its original
+paths and hashes recorded in the same manifest. No Lua source or runtime is
+part of the current project; CLI operations use C# and the native hosts use Zig.
 
 ## Build and verify
 
@@ -46,9 +49,10 @@ consumer through `tools/model_lab.py`.
 The root verifier installs the shared library and hosts under `artifacts/native`,
 runs the physics/SDK regressions and Python tests, compares all electrothermal
 sample values to the original C baseline, and writes machine-readable evidence
-under `artifacts/reports`. It rejects C/C++ files and headers in the repository
-source inventory, including newly added files. Ignored SDK caches and local
-third-party reference checkouts are outside that inventory.
+under `artifacts/reports`. It rejects C/C++ files and headers plus Lua source,
+bytecode and packages in the repository source inventory, including newly added
+files. Ignored SDK caches and local third-party reference checkouts are outside
+that inventory.
 
 ## Physics and evidence
 

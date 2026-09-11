@@ -1,5 +1,26 @@
 # 验证记录
 
+## 2026-09-11: Lua packaging cleanup
+
+Removed the remaining LuaInstaller launcher and its obsolete packaging README.
+The launcher depended on the never-implemented `power_native` bridge and had
+no active build or runtime callers. Original paths and SHA-256 hashes are
+preserved in the [migration manifest](../legacy/native/migration-manifest.json)
+and match the files at its recorded source revision. Historical design
+documents retain their provenance; their Lua proposals are retired.
+
+The source audit now rejects Lua source, bytecode and packages in addition to
+C/C++ source and headers, and reports `lua_files: 0`. Temporary untracked
+`.lua`, `.luau`, `.luac`, `.rockspec`, `.rock` and uppercase `.LUA` probes each
+produced a failing exit status and a structured error identifying the file;
+the clean tree passed afterward.
+
+Full serial `dotnet run --file tools/Build.cs -- verify` passed on Linux x64:
+**38/38 managed, 26/26 .NET Standard assembly, 6/6 MCP, 16/16 Zig and 6/6 Python
+ABI checks**. Both native hosts ran, and all 176 baseline values matched exactly.
+The log is `artifacts/reports/lua-removal-verify.log`. Core behavior, sample
+evidence and license files are unchanged. Unity Editor was not exercised.
+
 ## 2026-09-11: native Zig migration
 
 The owner resumed the native language migration on 2026-09-10. All **26 C

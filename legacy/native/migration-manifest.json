@@ -228,6 +228,16 @@
     {
       "path": "legacy/native/cmake/PowerLuaInstaller.cmake",
       "sha256": "81eb737859c590f0264dae9c6ba5086b533cccdf3a946f0016652dd8c56469b9"
+    },
+    {
+      "path": "legacy/native/packaging/luainstaller/power_cli.lua",
+      "sha256": "7d7b59614917bb5cd242c56821ca5b5643a47bb38f4b5444d16742d5d7e39202",
+      "reason": "Unused LuaInstaller launcher scaffold; its required power_native bridge was never implemented."
+    },
+    {
+      "path": "legacy/native/packaging/luainstaller/README.md",
+      "sha256": "ddd51f0f2c6c7ef018dcea40f0a36b02d3d5aa34d26ab2554fc6e1f142c54b3d",
+      "reason": "Instructions for the removed LuaInstaller launcher and retired CMake integration."
     }
   ]
 }

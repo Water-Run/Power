@@ -32,6 +32,14 @@ the original copyright and GPL-3.0-or-later with Unity Linking Exception
 notices. Historical design and research documents retain their original
 quotations; their C-era descriptions do not describe the new build.
 
+The unused LuaInstaller launcher and its packaging README were retired on
+2026-09-11. Their original paths and hashes are included in the same manifest
+and refer to the same source revision. The launcher depended on an unimplemented
+`power_native` bridge and was never part of a working build. Current CLI and
+model operations use the existing C#/JSON and Zig/Python hosts. Lua proposals
+in historical documents are provenance records, not current dependencies or
+implementation requirements.
+
 
 ## Build and maintenance
 
@@ -53,11 +61,12 @@ these native targets do not need Apple frameworks or SDK headers.
 
 `dotnet run --file tools/Build.cs -- verify` runs managed verification, then
 serial native verification. `native-verify` runs just the native portion.
-`tools/VerifyNative.py` rejects C/C++ source and headers, checks the compiler
-pin and formatting, builds the library and both Zig hosts, runs the Zig and
-Python suites, and compares the electrothermal experiment to its original C
-baseline fixture. On Linux it also checks that only `pwr_get_api` is publicly
-exported and that the library has no unresolved external symbols.
+`tools/VerifyNative.py` rejects C/C++ source and headers plus Lua source, bytecode
+and packages. It checks the compiler pin and formatting, builds the library and
+both Zig hosts, runs the Zig and Python suites, and compares the electrothermal
+experiment to its original C baseline fixture. On Linux it also checks that
+only `pwr_get_api` is publicly exported and that the library has no unresolved
+external symbols.
 
 The baseline comparison preserves model fingerprints, units, channel mappings,
 11 sample times and physical values. Cross-toolchain values use explicit

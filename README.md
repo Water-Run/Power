@@ -30,7 +30,7 @@ python3 tools/InstallZig.py
 dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 ```
 
-This builds the solution serially, exports Unity model assets, runs the core and agent checks, exercises an actual MCP server process, and verifies the Zig runtime, shared-library hosts, Python ABI and original numerical baseline. It writes experiment and migration reports under `artifacts/reports`. The source audit rejects C/C++ implementation files and headers. Build servers and concurrent compilation are disabled inside the build tool to reduce memory pressure. The local `.cache/dotnet/dotnet` executable can also be used when the pinned SDK is installed there; caches are excluded from Git.
+This builds the solution serially, exports Unity model assets, runs the core and agent checks, exercises an actual MCP server process, and verifies the Zig runtime, shared-library hosts, Python ABI and original numerical baseline. It writes experiment and migration reports under `artifacts/reports`. The source audit rejects C/C++ implementation files and headers, plus Lua source, bytecode and packages. Build servers and concurrent compilation are disabled inside the build tool to reduce memory pressure. The local `.cache/dotnet/dotnet` executable can also be used when the pinned SDK is installed there; caches are excluded from Git.
 
 The current increment passed **38/38 managed checks, 26/26 Unity-facing assembly checks, and 6/6 MCP integration groups on Windows, macOS, and Linux**. See the [CI run](https://github.com/Water-Run/Power/actions/runs/34176008291) and [validation record](docs/VALIDATION.md). The assembly checks run under .NET 10; actual Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending.
 
