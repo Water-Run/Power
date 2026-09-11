@@ -13,7 +13,8 @@ Full serial `dotnet run --file tools/Build.cs -- verify` passed on Linux x64
 using the cached pinned .NET SDK 10.0.400 and Zig 0.15.2: **38/38 managed
 checks, 26/26 checks against the Unity-facing .NET Standard 2.1 assemblies,
 6/6 MCP process groups, 16/16 native Zig groups and 6/6 Python foreign-ABI
-tests**. The native suite also passed all 16 groups in Debug with safety checks enabled. Both Zig hosts ran against the actual shared library. The library
+tests**. The native suite also passed all 16 groups in Debug with safety checks
+enabled. Both Zig hosts ran against the actual shared library. The library
 exports only `pwr_get_api` and has no unresolved ELF symbols. All **176 values
 at 11 electrothermal sample times exactly matched** the original C binary on
 this host, with the same model fingerprint and channel contracts. The
@@ -24,9 +25,23 @@ same-binary replay must match exactly. Reports are in
 
 ReleaseSafe library/host cross-compilation also passed for **x86_64 Windows**
 and **aarch64 macOS**. Cross-compilation is not execution evidence for those
-systems; the updated three-platform CI runs the native suite alongside managed
-verification. Local logs are `artifacts/reports/zig-cross-windows.log` and
+systems. Local logs are `artifacts/reports/zig-cross-windows.log` and
 `zig-cross-macos.log`.
+
+GitHub Actions subsequently completed actual verification successfully on
+**Linux x64, Windows x64 and macOS arm64**, each passing all **38/38 managed,
+26/26 .NET Standard assembly, 6/6 MCP, 16/16 Zig and 6/6 Python ABI checks**.
+Both shared-library hosts ran on each platform. All 176 native baseline values
+matched exactly on all three runners, and their source inventories contained
+zero C/C++ sources or headers. Evidence:
+[run 34549950147](https://github.com/Water-Run/Power/actions/runs/34549950147),
+code commit [`dd3de10`](https://github.com/Water-Run/Power/commit/dd3de10294949c8b2ffb49afc02a9c70b5808c00).
+The Windows checkout pins Zig files to LF; macOS verification uses Zig's bundled
+Darwin stubs to avoid the newer Apple SDK incompatibility described in the
+[native build notes](NATIVE_ZIG.md#build-and-maintenance). Complete job logs are
+retained locally under `artifacts/reports/zig-ci-34549950147-{linux,windows,macos}.log`,
+with run metadata in `zig-ci-34549950147.json`. The subsequent documentation and
+comment corrections change no executable code.
 
 The native suite additionally covers the previously unbuilt automatic-powertrain
 module, including replay, energy accounting, brownout and transaction rollback,

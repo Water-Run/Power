@@ -31,8 +31,13 @@ zig build test -j1 -Doptimize=ReleaseSafe
 zig build test -j1
 ```
 
-There is no CMake, C translation, C source compilation or libc linkage. Platform
-OS APIs and Zig's standard library implement the runtime primitives. The shared
+On macOS, prefix direct build commands with `DEVELOPER_DIR=/dev/null` to use
+Zig's bundled SDK stubs; the root verifier does this automatically. See the
+[SDK compatibility notes](../../docs/NATIVE_ZIG.md#build-and-maintenance).
+
+There is no CMake, C translation or C source compilation. Platform OS APIs and
+Zig's standard library implement the runtime primitives. Linux needs no libc;
+macOS uses the OS-provided `libSystem` through Zig's bundled linker stubs. The shared
 library exports `pwr_get_api`; `src/abi.zig` describes its binary layouts along
 with the internal prototype types. The `power_host` and `power_model_host` Zig
 executables call the shared library. Python `ctypes` remains an independent ABI

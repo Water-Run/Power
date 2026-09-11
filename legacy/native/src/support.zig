@@ -2,7 +2,7 @@
 // Licensed under GPL-3.0-or-later with the Unity Linking Exception.
 // See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository root.
 
-// Zig implementations of the primitives used by the port. No libc is linked.
+// Zig implementations of the primitives used by the port, using platform OS APIs.
 const std = @import("std");
 
 pub fn fabs(x: f64) f64 {

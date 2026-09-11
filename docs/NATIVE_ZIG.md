@@ -38,7 +38,8 @@ quotations; their C-era descriptions do not describe the new build.
 The compiler is pinned to Zig 0.15.2 in `.zig-version`. `tools/InstallZig.py`
 uses the official [Zig download metadata](https://ziglang.org/download/index.json)
 with committed per-platform archive hashes. No C translator, headers, CMake or
-libc linkage is needed by the build. The port was initially translated once,
+C source compilation is needed by the build. Linux needs no libc; macOS uses
+the OS-provided `libSystem`. The port was initially translated once,
 then split into maintained Zig modules with shared binary layouts. Memory,
 mathematical functions and atomic operations use Zig and platform OS APIs.
 Safety checks remain enabled in ReleaseSafe builds.
