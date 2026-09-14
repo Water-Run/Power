@@ -1,8 +1,18 @@
 # Engine development resume notes
 
-Development is paused at the owner's request on 2026-09-08. Resume implementation only after an explicit owner instruction. These notes describe proposed work, not current capabilities.
+Development resumed at the owner's request on 2026-09-14. The first slice of the increment proposed
+below has landed as validated physics only; see [gas exchange](GAS_EXCHANGE.md). Everything else in
+these notes still describes proposed work, not current capabilities.
 
 The published executable baseline is code commit `6209df2`: sealed adiabatic cylinders, crank-slider geometry, conservative crank coupling, asset v2, CLI/MCP experiments and a Unity piston view. Windows, macOS and Linux passed managed verification; actual Unity Editor and Player evidence is still pending. See [validation](VALIDATION.md).
+
+**Landed on 2026-09-14 (physics only):** `IdealGas`, `GasVolumeState` and `Orifice` in
+`src/Power.Core/GasExchange.cs`, with six analytic checks in `tests/Power.Tests/GasChecks.cs` covering
+choked and subcritical nozzle flow, adiabatic vessel blowdown, reservoir filling enthalpy, closed
+two-volume conservation, pressure equalisation, reverse flow and closed-valve isolation. No node kind,
+component kind, channel, schema field or asset version changed, so no model document can yet contain a
+finite gas volume. The proposed split method with backward-Euler flow remains unvalidated and unadopted.
+The remaining bullets below are unchanged.
 
 The next engine increment should introduce explicit gas mass and internal-energy states. The present sealed cylinder derives gas state from angle and immutable initial entropy, which cannot represent gas exchange or wall heating. Retain that component as an analytic benchmark while adding finite chambers, fixed pressure/temperature reservoirs, gas cylinders, controlled orifices and gas-to-thermal-node heat links.
 

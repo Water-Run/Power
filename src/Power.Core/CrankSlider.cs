@@ -95,7 +95,7 @@ internal sealed class CylinderPhysics
     internal double Pressure(double crank) => InitialPressure * Math.Pow(ReferenceVolume / GeometryAt(crank).VolumeCubicMeters, Gamma);
     internal double Temperature(double crank) => InitialTemperature * Math.Pow(ReferenceVolume / GeometryAt(crank).VolumeCubicMeters, Gamma - 1);
     internal double Energy(double crank) => ReferenceEnergy * Math.Pow(ReferenceVolume / GeometryAt(crank).VolumeCubicMeters, Gamma - 1);
-    internal double EnergyChange(double crank) => ReferenceEnergy * Expm1((Gamma - 1) * Math.Log(ReferenceVolume / GeometryAt(crank).VolumeCubicMeters));
+    internal double EnergyChange(double crank) => ReferenceEnergy * Numeric.Expm1((Gamma - 1) * Math.Log(ReferenceVolume / GeometryAt(crank).VolumeCubicMeters));
     internal double Torque(double crank) => (Pressure(crank) - BackPressure) * GeometryAt(crank).VolumeDerivativeCubicMetersPerRadian;
     internal bool Finite(double crank) => Numeric.Finite(Pressure(crank)) && Pressure(crank) > 0 &&
         Numeric.Finite(Temperature(crank)) && Temperature(crank) > 0 && Numeric.Finite(Energy(crank)) && Energy(crank) > 0 && Numeric.Finite(Torque(crank));
@@ -105,12 +105,9 @@ internal sealed class CylinderPhysics
         double angle = Angle(crank), volume = Geometry.Evaluate(angle).VolumeCubicMeters;
         double gradient = Geometry.VolumeGradient(angle, delta), z = gradient * delta / volume;
         double pressure = InitialPressure * Math.Pow(ReferenceVolume / volume, Gamma);
-        double meanPressure = z == 0 ? pressure : pressure * -Expm1(-(Gamma - 1) * Log1p(z)) / ((Gamma - 1) * z);
+        double meanPressure = z == 0 ? pressure : pressure * -Numeric.Expm1(-(Gamma - 1) * Numeric.Log1p(z)) / ((Gamma - 1) * z);
         return (meanPressure - BackPressure) * gradient;
     }
 
     internal double BackPressureWork(double crank, double delta) => -BackPressure * Geometry.VolumeGradient(Angle(crank), delta) * delta;
-
-    private static double Log1p(double x) => Math.Abs(x) < 1e-4 ? x * (1 + x * (-0.5 + x * (1.0 / 3 + x * (-0.25 + x / 5)))) : Math.Log(1 + x);
-    private static double Expm1(double x) => Math.Abs(x) < 1e-4 ? x * (1 + x * (0.5 + x * (1.0 / 6 + x * (1.0 / 24 + x / 120)))) : Math.Exp(x) - 1;
 }

@@ -14,6 +14,9 @@ internal static class Numeric
         correction = (next - sum) - adjusted;
         sum = next;
     }
+    // Series near zero avoids cancellation in exp(x)-1 and log(1+x) for small arguments.
+    public static double Expm1(double x) => Math.Abs(x) < 1e-4 ? x * (1 + x * (0.5 + x * (1.0 / 6 + x * (1.0 / 24 + x / 120)))) : Math.Exp(x) - 1;
+    public static double Log1p(double x) => Math.Abs(x) < 1e-4 ? x * (1 + x * (-0.5 + x * (1.0 / 3 + x * (-0.25 + x / 5)))) : Math.Log(1 + x);
     public static ulong Hash(ulong hash, ulong value)
     {
         unchecked

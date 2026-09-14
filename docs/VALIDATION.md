@@ -1,5 +1,42 @@
 # 验证记录
 
+## 2026-09-14: gas-exchange physics (standalone)
+
+Added the first slice of the gas-exchange increment as **physics only**: `IdealGas`,
+`GasVolumeState` and `Orifice` in `src/Power.Core/GasExchange.cs`. Finite volumes now
+carry mass and internal energy as independent states, and the orifice implements the
+standard isentropic nozzle relations in both directions with a discharge coefficient and
+a dimensionless opening fraction. `Numeric.Expm1` and `Numeric.Log1p` moved out of
+`CylinderPhysics` and are shared; the implementations are unchanged, and every existing
+cylinder state hash, model fingerprint and replay boundary still matches.
+
+**No node kind, component kind, channel, schema field or asset version changed.** A model
+document still cannot contain a finite gas volume, and the CLI, MCP and Unity surfaces are
+untouched. The proposed split method with backward-Euler flow remains unvalidated and
+unadopted. See [gas exchange](GAS_EXCHANGE.md) for the equations, the numerical limits and
+the full list of contracts that did not land.
+
+Six new analytic checks in `tests/Power.Tests/GasChecks.cs`, each written against an
+independent closed form rather than a recorded output: choking continuity and flow-function
+monotonicity for gamma in {1.1, 1.3, 1.4, 5/3}; 54 nozzle cases against the NASA compressible
+mass-flow relations; orifice contracts including exact reverse-flow antisymmetry, closed-valve
+isolation and rejected states; adiabatic vessel blowdown against the analytic isentropic
+solution to 1e-9 relative; the reservoir-filling identity dU = cp*T_supply*dm with the
+evacuated-vessel limit T -> gamma*T_supply; and closed two-volume conservation to 1e-14
+relative in mass and 1e-12 in energy with pressure equalisation.
+
+Full serial `dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify`
+passed on Linux x64 with the cached pinned .NET SDK 10.0.400 and Zig 0.15.2: **44/44 managed
+checks** (38 before this change), **26/26 checks against the Unity-facing .NET Standard 2.1
+assemblies**, **6/6 MCP process groups**, three experiment reports with 11, 11 and 21 replay
+boundaries, **16/16 native Zig groups** and the Python foreign-ABI tests. Both Zig hosts ran
+against the actual shared library, the source audit reported `c_source_files: 0` and
+`lua_files: 0`, and all **176 baseline values matched the original C binary exactly**
+(maximum absolute error 0.0). The log is `artifacts/reports/gas-exchange-verify.log`.
+
+Windows and macOS were not exercised for this change, and Unity Editor, Play Mode, rendering
+and IL2CPP validation remain pending as before. Sample parameters remain `unverified`.
+
 ## 2026-09-11: Lua packaging cleanup
 
 Removed the remaining LuaInstaller launcher and its obsolete packaging README.

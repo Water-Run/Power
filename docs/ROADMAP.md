@@ -10,12 +10,18 @@
 | 2. Agent 接口 | Schema、结构化诊断、MCP、状态分支、版本冲突、取消、紧凑证据 | 已实现并完成实际 MCP 进程联调 |
 | 3. Unity 工作室 | 真实导入、Play 生命周期、三维实验、输入/UI、桌面 Player | 工程与测试已写；编辑器与 Player 待验收 |
 | 4. 通用建模工作台 | Unity 加载相同模型资产、图编辑、通道配置、保存与实验回放 | 资产编码、CLI/MCP 导出与回放已通过托管验证；Unity 通用加载代码待实测，图编辑/保存待实现 |
-| 5. 发动机物理 | 曲柄连杆、容积与质量/能量、进排气、燃烧、泵气、壁面传热、气缸循环 | C# sealed adiabatic cylinder and slider-crank implemented; full engine cycle remains open |
+| 5. 发动机物理 | 曲柄连杆、容积与质量/能量、进排气、燃烧、泵气、壁面传热、气缸循环 | C# sealed adiabatic cylinder and slider-crank implemented; gas-exchange flow and finite-volume physics validated standalone (see [gas exchange](GAS_EXCHANGE.md)) but not yet part of the compiled model; full engine cycle remains open |
 | 6. 传动系统 | 离合器、DCT/AT 拓扑、齿轮/行星排、变矩器、液压、热与混合事件 | Native prototypes ported to Zig; managed transmission migration remains open |
 | 7. 控制与整机 | ECU/TCU 周期、传感器/执行器、扭矩协调、电源、附件、故障闭环 | 尚未完成 |
 | 8. 证据与发布 | 两套完整动力总成、实测标定、参数来源、误差预算、长时稳定、桌面包 | 研究资料已保留，发布条件未满足 |
 
 For the next managed engine increment, follow the [next engine-step notes](NEXT_ENGINE_STEP.md). Planned sequence: establish conservative nonlinear engine components while actual Unity verification awaits an Editor environment; then add gas exchange, combustion and wall heat transfer, followed by transmission and control components with appropriate solver contracts. Complete Unity import/Play validation, selectable plots, graph editing and saving as separate deliverables. The current plot still shows the first two rotor speeds; all other channels are available in the output list. CLI, MCP and Unity must continue to consume the same model semantics.
+
+**2026-09-14: gas-exchange physics validated, not yet wired in.** `IdealGas`, `GasVolumeState` and
+`Orifice` provide finite gas volumes tracked by independent mass and internal energy, plus signed
+compressible orifice flow with upstream enthalpy transport. Six analytic checks pass alongside the
+existing suite (44/44 managed checks). No schema, asset version, channel or component kind changed;
+CLI, MCP and Unity semantics are untouched. See [gas exchange](GAS_EXCHANGE.md) for what remains open.
 
 The first engine increment is the [sealed-cylinder foundation](SEALED_CYLINDER.md). It covers geometry, trapped ideal gas, crank pressure work and a bounded nonlinear solve. It does not complete the engine milestone. The archived native engine, exhaust, transmission, control and integration prototypes have now been ported to **Zig** under the defined native boundary. This language migration does not complete the managed engine, vehicle calibration or full powertrain milestones. Original C source is available in Git at `c342d4c`; the current tree contains Zig replacements.
 

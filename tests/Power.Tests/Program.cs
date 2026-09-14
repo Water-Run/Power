@@ -11,7 +11,7 @@ using static Power.Tests.CoreChecks;
 
 string sample = Path.Combine(AppContext.BaseDirectory, "electrothermal.power.json");
 string source = File.ReadAllText(sample);
-var checks = CoreChecks.All.Concat(AssetChecks.All).Concat(EngineChecks.All).Concat(AgentChecks.All).Concat(new (string, Action)[]
+var checks = CoreChecks.All.Concat(AssetChecks.All).Concat(EngineChecks.All).Concat(GasChecks.All).Concat(AgentChecks.All).Concat(new (string, Action)[]
 {
     ("cylinder JSON / all replay boundaries / strict parameters / pressure checks", () =>
     {
