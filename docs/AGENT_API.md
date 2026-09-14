@@ -2,6 +2,8 @@
 
 `Power.Core`、`Power.Agent` 与 MCP 是同一套物理核心的不同入口。API 不绑定特定 GPT 版本或供应商。先用工具获取版本、能力和 Schema，再生成模型；不要根据名称猜组件已经实现。
 
+The [finite gas network](GAS_NETWORK.md) is currently available through the C# Core API only. It is not advertised by MCP or accepted by the JSON/portable-asset interfaces; versioned integration is the next checkpoint. Existing agent examples and model semantics are unchanged.
+
 ## 启动与客户端配置
 
 ```sh

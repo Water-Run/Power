@@ -7,18 +7,23 @@ namespace Power.Core;
 /// <summary>Independent state. Successful stepping and snapshot reads allocate no managed memory.</summary>
 public sealed class Simulation
 {
-    private sealed class State(int dynamics, int thermal, int components)
+    private sealed class State(int dynamics, int thermal, int components, int gases)
     {
         internal readonly double[] X = new double[dynamics], Temperature = new double[thermal], Inputs = new double[components];
+        internal readonly double[] Mass = new double[gases], Energy = new double[gases];
         internal ulong Time;
         internal double InitialEnergy, Work, WorkCorrection, Heat, HeatCorrection;
+        internal double Intake, IntakeCorrection, Enthalpy, EnthalpyCorrection;
         internal void CopyFrom(State other)
         {
             Array.Copy(other.X, X, X.Length); Array.Copy(other.Temperature, Temperature, Temperature.Length);
             Array.Copy(other.Inputs, Inputs, Inputs.Length);
+            Array.Copy(other.Mass, Mass, Mass.Length); Array.Copy(other.Energy, Energy, Energy.Length);
             Time = other.Time; InitialEnergy = other.InitialEnergy;
             Work = other.Work; WorkCorrection = other.WorkCorrection;
             Heat = other.Heat; HeatCorrection = other.HeatCorrection;
+            Intake = other.Intake; IntakeCorrection = other.IntakeCorrection;
+            Enthalpy = other.Enthalpy; EnthalpyCorrection = other.EnthalpyCorrection;
         }
     }
 
@@ -27,6 +32,7 @@ public sealed class Simulation
     private readonly double[] _mid, _temperature, _inputCandidate;
     private readonly bool[] _inputSeen;
     private readonly CylinderSolver? _cylinderSolver;
+    private readonly GasSolver? _gasSolver;
     private int _busy;
     public CompiledModel Model => _model;
 
@@ -34,13 +40,19 @@ public sealed class Simulation
     {
         _model = model;
         if (model.CylinderCoupling is not null) _cylinderSolver = new(model);
-        _state = new(model.DynamicCount, model.ThermalCount, model.ComponentCount);
-        _scratch = new(model.DynamicCount, model.ThermalCount, model.ComponentCount);
+        if (model.Gas is not null) _gasSolver = new(model);
+        _state = new(model.DynamicCount, model.ThermalCount, model.ComponentCount, model.GasCount);
+        _scratch = new(model.DynamicCount, model.ThermalCount, model.ComponentCount, model.GasCount);
         _mid = new double[model.DynamicCount]; _temperature = new double[model.ThermalCount];
         _inputCandidate = new double[model.ComponentCount]; _inputSeen = new bool[model.ComponentCount];
         foreach (var n in model.Nodes)
         {
             if (n.Domain == Domain.Rotational) { _state.X[n.Index] = n.Position; _state.X[n.Index + 1] = n.Initial; }
+            else if (n.Domain == Domain.Gas)
+            {
+                _state.Mass[n.Index] = model.Gas!.InitialMass[n.Index];
+                _state.Energy[n.Index] = model.Gas.InitialEnergy[n.Index];
+            }
             else _state.Temperature[n.Index] = n.Initial;
         }
         for (int i = 0; i < model.ComponentCount; ++i)
@@ -69,9 +81,16 @@ public sealed class Simulation
             {
                 if (!Numeric.Finite(v.Value)) return SimulationStatus.InvalidInput;
                 if (!_model.InputIndices.TryGetValue(v.Channel, out int index)) return SimulationStatus.UnknownChannel;
+                if (v.Value < _model.InputMinimum[index] || v.Value > _model.InputMaximum[index]) return SimulationStatus.InvalidInput;
                 if (_inputSeen[index]) return SimulationStatus.InvalidInput;
                 _inputSeen[index] = true;
                 _inputCandidate[index] = v.Value == 0 ? 0 : v.Value;
+            }
+            if (_gasSolver is not null)
+            {
+                _scratch.CopyFrom(_state);
+                Array.Copy(_inputCandidate, _scratch.Inputs, _inputCandidate.Length);
+                if (!ObservablesFinite(_scratch)) return SimulationStatus.InvalidInput;
             }
             Array.Copy(_inputCandidate, _state.Inputs, _inputCandidate.Length);
             return SimulationStatus.Ok;
@@ -101,6 +120,7 @@ public sealed class Simulation
                     (input.TimeNanoseconds - _state.Time) % step != 0 || !Numeric.Finite(input.Value))
                     return SimulationStatus.InvalidInput;
                 if (!_model.InputIndices.TryGetValue(input.Channel, out int index)) return SimulationStatus.UnknownChannel;
+                if (input.Value < _model.InputMinimum[index] || input.Value > _model.InputMaximum[index]) return SimulationStatus.InvalidInput;
                 if (input.TimeNanoseconds != previous) Array.Clear(_inputSeen, 0, _inputSeen.Length);
                 if (_inputSeen[index]) return SimulationStatus.InvalidInput;
                 _inputSeen[index] = true;
@@ -115,6 +135,7 @@ public sealed class Simulation
                 if (!Tick(_scratch)) return SimulationStatus.NumericalFailure;
                 ApplyScheduledInputs(_scratch, inputs, ref nextInput);
             }
+            if (_gasSolver is not null && !ObservablesFinite(_scratch)) return SimulationStatus.NumericalFailure;
             (_state, _scratch) = (_scratch, _state);
             return SimulationStatus.Ok;
         }
@@ -159,9 +180,12 @@ public sealed class Simulation
         }
         if (!_model.Dynamics.Solve(_mid)) return false;
         if (_cylinderSolver is not null && !_cylinderSolver.Solve(s.X, _mid)) return false;
+        if (_gasSolver is not null && !_gasSolver.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, dt)) return false;
         foreach (var n in _model.Nodes)
             if (n.Domain == Domain.Thermal)
                 _temperature[n.Index] = n.Storage * s.Temperature[n.Index] + _model.AmbientForce[n.Index];
+        if (_gasSolver is not null)
+            for (int w = 0; w < _temperature.Length; ++w) _temperature[w] += _gasSolver.WallHeat[w];
         for (int i = 0; i < _model.ComponentCount; ++i)
         {
             var c = _model.Components[i];
@@ -202,7 +226,14 @@ public sealed class Simulation
         }
         Numeric.Accumulate(work, ref s.Work, ref s.WorkCorrection);
         Numeric.Accumulate(heat, ref s.Heat, ref s.HeatCorrection);
-        if (!Numeric.Finite(s.Work - s.Heat - (Energy(s) - s.InitialEnergy)) ||
+        if (_gasSolver is not null)
+        {
+            Numeric.Accumulate(_gasSolver.ReservoirMass, ref s.Intake, ref s.IntakeCorrection);
+            Numeric.Accumulate(_gasSolver.ReservoirEnthalpy, ref s.Enthalpy, ref s.EnthalpyCorrection);
+            if (!Numeric.Finite(s.Intake) || !Numeric.Finite(s.IntakeCorrection) ||
+                !Numeric.Finite(s.Enthalpy) || !Numeric.Finite(s.EnthalpyCorrection)) return false;
+        }
+        if (!Numeric.Finite(s.Work + s.Enthalpy - s.Heat - (Energy(s) - s.InitialEnergy)) ||
             !Numeric.Finite(s.WorkCorrection) || !Numeric.Finite(s.HeatCorrection) || !ObservablesFinite(s)) return false;
         s.Time += _model.StepNanoseconds;
         return true;
@@ -221,7 +252,7 @@ public sealed class Simulation
                 double speed = s.X[n.Index + 1];
                 energy += 0.5 * n.Storage * speed * speed;
             }
-            else energy += n.Storage * (s.Temperature[n.Index] - n.Initial);
+            else if (n.Domain == Domain.Thermal) energy += n.Storage * (s.Temperature[n.Index] - n.Initial);
         }
         foreach (var c in _model.Components)
         {
@@ -236,8 +267,14 @@ public sealed class Simulation
         for (int i = 0; i < _model.ComponentCount; ++i)
             if (_model.Cylinders[i] is { } cylinder)
                 energy += cylinder.EnergyChange(s.X[_model.Nodes[_model.Components[i].A].Index]);
+        for (int i = 0; i < _model.GasCount; ++i) energy += s.Energy[i] - _model.Gas!.InitialEnergy[i];
         return energy;
     }
+
+    private double GasPressure(State s, int gas) =>
+        (_model.Gas!.Gases[gas].Gamma - 1) * s.Energy[gas] / _model.Gas.Volume[gas];
+    private double GasTemperature(State s, int gas) =>
+        s.Energy[gas] / (s.Mass[gas] * _model.Gas!.Gases[gas].IsochoricHeatCapacityJoulePerKilogramKelvin);
 
     private bool ObservablesFinite(State s)
     {
@@ -249,6 +286,20 @@ public sealed class Simulation
                 if (!Numeric.Finite(twist) || !Numeric.Finite(-c.P0 * twist - c.P1 * Relative(c, s.X, 1))) return false;
             }
             else if (c.Kind == ComponentKind.DcMotor && !Numeric.Finite(c.P2 * s.X[c.Index])) return false;
+        }
+        for (int i = 0; i < _model.GasCount; ++i)
+        {
+            if (!(s.Mass[i] > 0) || !(s.Energy[i] > 0)) return false;
+            double pressure = GasPressure(s, i), temperature = GasTemperature(s, i);
+            if (!Numeric.Finite(pressure) || pressure <= 0 || !Numeric.Finite(temperature) || temperature <= 0) return false;
+        }
+        if (_model.Gas is { } network)
+        {
+            foreach (int component in network.OrificeComponent)
+                if (!TryOrificeMassFlow(s, component, out _)) return false;
+            for (int k = 0; k < network.HeatComponent.Length; ++k)
+                if (!Numeric.Finite(_model.Components[network.HeatComponent[k]].P0 *
+                    (GasTemperature(s, network.HeatGas[k]) - s.Temperature[network.HeatWall[k]]))) return false;
         }
         for (int i = 0; i < _model.ComponentCount; ++i)
             if (_model.Cylinders[i] is { } cylinder && !cylinder.Finite(s.X[_model.Nodes[_model.Components[i].A].Index])) return false;
@@ -263,7 +314,25 @@ public sealed class Simulation
         foreach (double input in s.Inputs) h = Numeric.Hash(h, input);
         h = Numeric.Hash(h, s.InitialEnergy); h = Numeric.Hash(h, s.Work);
         h = Numeric.Hash(h, s.WorkCorrection); h = Numeric.Hash(h, s.Heat);
-        return Numeric.Hash(h, s.HeatCorrection);
+        h = Numeric.Hash(h, s.HeatCorrection);
+        if (_model.GasCount == 0) return h; // Preserve every pre-gas state hash exactly.
+        foreach (double mass in s.Mass) h = Numeric.Hash(h, mass);
+        foreach (double energy in s.Energy) h = Numeric.Hash(h, energy);
+        h = Numeric.Hash(h, s.Intake); h = Numeric.Hash(h, s.IntakeCorrection);
+        h = Numeric.Hash(h, s.Enthalpy);
+        return Numeric.Hash(h, s.EnthalpyCorrection);
+    }
+
+    private bool TryOrificeMassFlow(State state, int component, out double value)
+    {
+        var network = _model.Gas!;
+        int slot = network.Slot[component], a = network.OrificeA[slot], b = network.OrificeB[slot];
+        var c = _model.Components[component];
+        double pressure = b < 0 ? c.P2 : GasPressure(state, b), temperature = b < 0 ? c.P3 : GasTemperature(state, b);
+        bool valid = network.Restriction[slot].TryEvaluate(network.Gases[a], GasPressure(state, a),
+            GasTemperature(state, a), pressure, temperature, state.Inputs[component], out var flow);
+        value = flow.MassFlowKilogramsPerSecond;
+        return valid;
     }
 
     public SnapshotInfo ReadSnapshot(Span<Scalar> destination)
@@ -272,23 +341,39 @@ public sealed class Simulation
         if (!Enter()) throw new InvalidOperationException("Simulation is busy on another thread.");
         try
         {
-            double stored = Energy(_state) - _state.InitialEnergy;
+            double stored = Energy(_state) - _state.InitialEnergy, gasMass = 0;
+            for (int g = 0; g < _model.GasCount; ++g) gasMass += _state.Mass[g] - _model.Gas!.InitialMass[g];
             for (int i = 0; i < _model.OutputCount; ++i)
             {
                 var b = _model.Outputs[i];
                 double value;
                 var cylinder = b.IsComponent ? _model.Cylinders[b.Index] : null;
                 double crank = cylinder is null ? 0 : _state.X[_model.Nodes[_model.Components[b.Index].A].Index];
+                int volume = !b.IsComponent && b.Index >= 0 && _model.Nodes[b.Index].Domain == Domain.Gas
+                    ? _model.Nodes[b.Index].Index : -1;
                 switch (b.Field)
                 {
                     case Field.Angle: value = _state.X[_model.Nodes[b.Index].Index]; break;
                     case Field.Speed: value = _state.X[_model.Nodes[b.Index].Index + 1]; break;
-                    case Field.Temperature: value = cylinder is not null ? cylinder.Temperature(crank) : _state.Temperature[_model.Nodes[b.Index].Index]; break;
-                    case Field.Pressure: value = cylinder!.Pressure(crank); break;
+                    case Field.Temperature:
+                        value = cylinder is not null ? cylinder.Temperature(crank)
+                            : volume >= 0 ? GasTemperature(_state, volume)
+                            : _state.Temperature[_model.Nodes[b.Index].Index];
+                        break;
+                    case Field.Pressure: value = cylinder is not null ? cylinder.Pressure(crank) : GasPressure(_state, volume); break;
                     case Field.Volume: value = cylinder!.GeometryAt(crank).VolumeCubicMeters; break;
-                    case Field.Mass: value = cylinder!.Mass; break;
-                    case Field.InternalEnergy: value = cylinder!.Energy(crank); break;
+                    case Field.Mass: value = cylinder is not null ? cylinder.Mass : _state.Mass[volume]; break;
+                    case Field.InternalEnergy: value = cylinder is not null ? cylinder.Energy(crank) : _state.Energy[volume]; break;
                     case Field.PistonDisplacement: value = cylinder!.GeometryAt(crank).DisplacementMeters; break;
+                    case Field.MassFlow:
+                        if (!TryOrificeMassFlow(_state, b.Index, out value))
+                            throw new InvalidOperationException("Invalid gas flow in a committed state.");
+                        break;
+                    case Field.HeatFlow:
+                        int link = _model.Gas!.Slot[b.Index];
+                        value = _model.Components[b.Index].P0 *
+                            (GasTemperature(_state, _model.Gas.HeatGas[link]) - _state.Temperature[_model.Gas.HeatWall[link]]);
+                        break;
                     case Field.Current: value = _state.X[_model.Components[b.Index].Index]; break;
                     case Field.Twist: value = Relative(_model.Components[b.Index], _state.X, 0); break;
                     case Field.Torque:
@@ -299,7 +384,9 @@ public sealed class Simulation
                     case Field.SourceWork: value = _state.Work; break;
                     case Field.HeatRejected: value = _state.Heat; break;
                     case Field.StoredEnergyChange: value = stored; break;
-                    case Field.EnergyResidual: value = _state.Work - _state.Heat - stored; break;
+                    case Field.EnergyResidual: value = _state.Work + _state.Enthalpy - _state.Heat - stored; break;
+                    case Field.ReservoirEnthalpy: value = _state.Enthalpy; break;
+                    case Field.MassResidual: value = gasMass - _state.Intake; break;
                     default: throw new InvalidOperationException("Unknown compiled output.");
                 }
                 destination[i] = new(Channels.Output(b.ObjectId, b.Field), value);

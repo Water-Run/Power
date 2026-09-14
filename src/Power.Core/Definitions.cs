@@ -9,16 +9,19 @@ public enum Unit
     None, KilogramMeterSquared, Radian, RadianPerSecond, NewtonMeter,
     NewtonMeterPerRadian, NewtonMeterSecondPerRadian, Kelvin, JoulePerKelvin,
     WattPerKelvin, Ohm, Henry, NewtonMeterPerAmpere, Ampere, Volt, Joule, Rpm, Degree,
-    Meter, Millimeter, CubicMeter, Pascal, Bar, Kilogram, JoulePerKilogramKelvin
+    Meter, Millimeter, CubicMeter, Pascal, Bar, Kilogram, JoulePerKilogramKelvin,
+    Liter, SquareMeter, SquareMillimeter, KilogramPerSecond, Watt, Fraction
 }
 
-public enum Domain { Rotational = 1, Thermal = 2 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder }
+public enum Domain { Rotational = 1, Thermal = 2, Gas = 3 }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
     Pressure, Volume, Mass, InternalEnergy, PistonDisplacement,
-    SourceWork = 16, HeatRejected, StoredEnergyChange, EnergyResidual
+    MassFlow = 12, HeatFlow = 13,
+    SourceWork = 16, HeatRejected, StoredEnergyChange, EnergyResidual,
+    ReservoirEnthalpy = 20, MassResidual = 21
 }
 public enum SimulationStatus { Ok, InvalidTimeStep, InvalidInput, UnknownChannel, NumericalFailure, Busy, Cancelled }
 public enum DiagnosticCode { Schema, Capacity, Id, Unit, Range, Connection, Channel, Solver }
@@ -30,13 +33,30 @@ public readonly record struct ChannelInfo(ulong Id, uint ObjectId, bool IsInput,
 public readonly record struct SnapshotInfo(ulong TimeNanoseconds, ulong StateHash, int ValueCount);
 public sealed record ModelDiagnostic(DiagnosticCode Code, uint ObjectId, string Field, string Message);
 
+/// <summary>Composition of one gas volume. Connected volumes must agree until species mixing exists.</summary>
+public sealed record GasDefinition
+{
+    public Quantity GasConstant { get; init; }
+    public double Gamma { get; init; }
+}
+
 public sealed record NodeDefinition(uint Id, Domain Domain, Quantity Storage, Quantity Initial, Quantity Position)
 {
+    /// <summary>Required for, and only for, <see cref="Domain.Gas"/> nodes.</summary>
+    public GasDefinition? Gas { get; init; }
+
     public static NodeDefinition Rotor(uint id, double inertia, double speed = 0, double angle = 0) =>
         new(id, Domain.Rotational, new(inertia, Unit.KilogramMeterSquared),
             new(speed, Unit.RadianPerSecond), new(angle, Unit.Radian));
     public static NodeDefinition Thermal(uint id, double capacity, double temperature) =>
         new(id, Domain.Thermal, new(capacity, Unit.JoulePerKelvin), new(temperature, Unit.Kelvin), default);
+    /// <summary>A finite gas volume: storage is the volume, initial is temperature, position is pressure.</summary>
+    public static NodeDefinition GasVolume(uint id, double volume, double pressure, double temperature,
+        double gasConstant = 287, double gamma = 1.4) =>
+        new(id, Domain.Gas, new(volume, Unit.CubicMeter), new(temperature, Unit.Kelvin), new(pressure, Unit.Pascal))
+        {
+            Gas = new() { GasConstant = new(gasConstant, Unit.JoulePerKilogramKelvin), Gamma = gamma }
+        };
 }
 
 public sealed record SealedCylinderDefinition
@@ -72,6 +92,9 @@ public sealed record ComponentDefinition
     public Quantity InitialCurrent { get; init; }
     public Quantity Conductance { get; init; }
     public Quantity AmbientTemperature { get; init; }
+    public Quantity Area { get; init; }
+    public double DischargeCoefficient { get; init; } = 1;
+    public Quantity ReservoirPressure { get; init; }
     public SealedCylinderDefinition? Cylinder { get; init; }
 
     public static ComponentDefinition SealedCylinder(uint id, uint crank, SealedCylinderDefinition cylinder) => new()
@@ -106,6 +129,29 @@ public sealed record ComponentDefinition
         Id = id, Kind = ComponentKind.ThermalLink, NodeA = a, NodeB = b,
         Conductance = new(conductance, Unit.WattPerKelvin),
         AmbientTemperature = b == 0 ? new(ambient, Unit.Kelvin) : default
+    };
+    /// <summary>A restriction between two finite gas volumes. Opening is a fraction in [0, 1].</summary>
+    public static ComponentDefinition GasOrifice(uint id, uint a, uint b, double area,
+        double dischargeCoefficient = 1, ulong channel = 0, double opening = 1) => new()
+    {
+        Id = id, Kind = ComponentKind.GasOrifice, NodeA = a, NodeB = b, InputChannel = channel,
+        Area = new(area, Unit.SquareMeter), DischargeCoefficient = dischargeCoefficient,
+        InitialInput = new(opening, Unit.Fraction)
+    };
+    /// <summary>A restriction between one finite gas volume and a fixed pressure/temperature reservoir.</summary>
+    public static ComponentDefinition GasReservoir(uint id, uint a, double area, double pressure,
+        double temperature, double dischargeCoefficient = 1, ulong channel = 0, double opening = 1) => new()
+    {
+        Id = id, Kind = ComponentKind.GasOrifice, NodeA = a, InputChannel = channel,
+        Area = new(area, Unit.SquareMeter), DischargeCoefficient = dischargeCoefficient,
+        ReservoirPressure = new(pressure, Unit.Pascal), AmbientTemperature = new(temperature, Unit.Kelvin),
+        InitialInput = new(opening, Unit.Fraction)
+    };
+    /// <summary>Conductive heat exchange between a finite gas volume and a thermal node.</summary>
+    public static ComponentDefinition GasHeatLink(uint id, uint gas, uint wall, double conductance) => new()
+    {
+        Id = id, Kind = ComponentKind.GasHeatLink, NodeA = gas, NodeB = wall,
+        Conductance = new(conductance, Unit.WattPerKelvin)
     };
 }
 

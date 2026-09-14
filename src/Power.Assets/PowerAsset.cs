@@ -39,6 +39,8 @@ public sealed class PowerAsset
         var nodes = (NodeDefinition[])definition.Nodes.Clone();
         var components = (ComponentDefinition[])definition.Components.Clone();
         Model = CompiledModel.Compile(definition with { Nodes = nodes, Components = components });
+        if (nodes.Any(n => n.Domain == Domain.Gas))
+            throw new AssetFormatException("Finite gas networks are currently a Core-only checkpoint; asset v1/v2 cannot represent gas composition or restrictions.");
         Array.Sort(nodes, (a, b) => a.Id.CompareTo(b.Id));
         Array.Sort(components, (a, b) => a.Id.CompareTo(b.Id));
         Nodes = Array.AsReadOnly(nodes); Components = Array.AsReadOnly(components);

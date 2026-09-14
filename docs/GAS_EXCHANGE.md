@@ -4,11 +4,12 @@ This document records the first slice of the gas-exchange increment described in
 [the engine resume notes](NEXT_ENGINE_STEP.md): the flow and control-volume physics, validated on
 their own, before any of it is wired into the compiled model graph.
 
-Everything here lives in `src/Power.Core/GasExchange.cs` and is covered by
-`tests/Power.Tests/GasChecks.cs`. **No new node kind, component kind, channel, schema field or asset
-version exists yet.** A model document cannot yet contain a finite gas volume, and the CLI, MCP and
-Unity surfaces are unchanged. The sealed adiabatic cylinder remains the only gas component in the
-compiled model, and it remains the analytic benchmark the notes ask to retain.
+The primitives live in `src/Power.Core/GasExchange.cs` and are covered by
+`tests/Power.Tests/GasChecks.cs`. A subsequent [Core gas-network checkpoint](GAS_NETWORK.md)
+now connects finite gas nodes, restrictions, heat links and conservation ledgers to the
+compiled model. JSON, CLI/MCP and Unity asset integration remain pending; asset v1/v2
+reject these new models explicitly. The sealed adiabatic cylinder remains an unchanged
+analytic benchmark, with no mass exchange through its crank-coupled chamber yet.
 
 ## What is implemented
 
@@ -89,12 +90,10 @@ rather than a recorded output of this code:
 
 ## What is still open
 
-The contracts in [the resume notes](NEXT_ENGINE_STEP.md) that this slice does **not** deliver:
-gas endpoints referencing component IDs, gas-to-thermal heat links, a `Domain.Gas` node with mass and
-internal-energy states in the compiled model, external mass and energy ledgers, mass-residual and
-mass-flow channels, the bounded pairwise implicit transfer solve, coupling gas pressure work through
-the existing crank solve, schema and asset extensions, capability discovery, and the Unity views.
-The proposed split method with backward-Euler flow is still unvalidated and has not been adopted.
-
-Restricting a connected set of volumes to one gas constant and one gamma is still the intended rule;
-`IdealGas` carries a single composition and no mixing is implemented.
+The [Core gas-network checkpoint](GAS_NETWORK.md) now covers fixed-volume nodes,
+reservoirs, restrictions, thermal links, mass and energy ledgers, output channels and
+bounded transactional stepping. The remaining engine increment requires gas-cylinder
+crank work, schema and asset extensions, capability discovery, replay examples and
+Unity views. The proposed implicit pairwise method has not been adopted: the current
+explicit method, its equilibrium limiter and its accuracy limits are documented there.
+Connected volumes require identical gas constants and gamma; species mixing remains open.

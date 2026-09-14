@@ -1,24 +1,23 @@
 # Engine development resume notes
 
-Development resumed at the owner's request on 2026-09-14. The first slice of the increment proposed
-below has landed as validated physics only; see [gas exchange](GAS_EXCHANGE.md). Everything else in
-these notes still describes proposed work, not current capabilities.
+Development resumed at the owner's request on 2026-09-14. Standalone gas primitives and
+the compiled Core network are now implemented; the remaining integration scope is below.
+The preceding sealed-cylinder baseline passed managed verification on Windows, macOS and
+Linux. Actual Unity Editor and Player evidence is still pending; see [validation](VALIDATION.md).
 
-The published executable baseline is code commit `6209df2`: sealed adiabatic cylinders, crank-slider geometry, conservative crank coupling, asset v2, CLI/MCP experiments and a Unity piston view. Windows, macOS and Linux passed managed verification; actual Unity Editor and Player evidence is still pending. See [validation](VALIDATION.md).
+**Subsequent checkpoint on 2026-09-14:** the [Core gas network](GAS_NETWORK.md) now
+implements fixed-volume gas nodes, reservoir restrictions, controlled openings, thermal
+links, channels, ledgers, forks and rollback. The bounded Heun method has analytic and
+refinement evidence for smooth flow, with explicit wall coupling and a conservative
+near-equilibrium limiter. It is not the proposed implicit method. The next checkpoint is
+versioned JSON/asset/CLI/MCP integration and portable replay, followed separately by
+gas-cylinder crank work. Finite gas assets are rejected until that format exists.
 
-**Landed on 2026-09-14 (physics only):** `IdealGas`, `GasVolumeState` and `Orifice` in
-`src/Power.Core/GasExchange.cs`, with six analytic checks in `tests/Power.Tests/GasChecks.cs` covering
-choked and subcritical nozzle flow, adiabatic vessel blowdown, reservoir filling enthalpy, closed
-two-volume conservation, pressure equalisation, reverse flow and closed-valve isolation. No node kind,
-component kind, channel, schema field or asset version changed, so no model document can yet contain a
-finite gas volume. The proposed split method with backward-Euler flow remains unvalidated and unadopted.
-The remaining bullets below are unchanged.
+The Core network now provides explicit gas mass and internal-energy states. The next engine solver increment must couple them to moving chambers. The present sealed cylinder derives gas state from angle and immutable initial entropy, which cannot represent gas exchange or wall heating. Retain that component as an analytic benchmark while adding finite chambers, fixed pressure/temperature reservoirs, gas cylinders, controlled orifices and gas-to-thermal-node heat links.
 
-The next engine increment should introduce explicit gas mass and internal-energy states. The present sealed cylinder derives gas state from angle and immutable initial entropy, which cannot represent gas exchange or wall heating. Retain that component as an analytic benchmark while adding finite chambers, fixed pressure/temperature reservoirs, gas cylinders, controlled orifices and gas-to-thermal-node heat links.
+Original increment contracts (use the checkpoint above to distinguish completed Core work from remaining integration):
 
-Proposed contracts:
-
-- Gas endpoints reference stable component IDs. A gas cylinder also connects to a rotational node; a heat link connects a finite gas volume to a thermal node. Support gas-only networks without requiring a dummy mechanical node.
+- Gas restrictions reference stable gas node IDs; a future gas cylinder must define its moving-volume endpoint explicitly. A gas cylinder also connects to a rotational node; a heat link connects a finite gas volume to a thermal node. Support gas-only networks without requiring a dummy mechanical node.
 - Track mass and internal energy independently, with positive finite state validation. Transfer mass and upstream enthalpy together. Track reservoir exchange in external mass and energy ledgers; internal transfers must cancel. Restrict connected gases to identical gas constant and gamma until composition/species mixing is implemented.
 - Expose signed mass flow, gas state, heat flow, and mass residual channels. Orifice opening uses an explicit dimensionless fraction within `[0,1]`, with the same validation for direct and scheduled inputs.
 - Investigate a bounded pairwise implicit transfer solve, bracketed by the connected pair's equal-pressure state. Couple gas-cylinder pressure work through the existing crank solve. A split method with backward-Euler flow would be first order for gas exchange; conservation alone does not prove accuracy. Validate this proposed method before adopting it.

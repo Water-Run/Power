@@ -150,7 +150,32 @@ public sealed class Orifice
         if (!Numeric.Finite(pressureAPascals) || pressureAPascals <= 0 || !Numeric.Finite(temperatureAKelvin) || temperatureAKelvin <= 0 ||
             !Numeric.Finite(pressureBPascals) || pressureBPascals <= 0 || !Numeric.Finite(temperatureBKelvin) || temperatureBKelvin <= 0)
             throw new ArgumentException("Require positive absolute pressures and temperatures at both endpoints.");
-        if (area == 0 || pressureAPascals == pressureBPascals) return new(0, 0, false);
+        if (!Flow(gas, area, pressureAPascals, temperatureAKelvin, pressureBPascals, temperatureBKelvin, out var flow))
+            throw new ArgumentException("Orifice flow exceeds the supported binary64 range.");
+        return flow;
+    }
+
+    /// <summary>
+    /// Allocation-free and exception-free evaluation for the stepping loop. Returns false instead of
+    /// throwing when an endpoint state or the resulting flow leaves the supported range.
+    /// </summary>
+    internal bool TryEvaluate(IdealGas gas, double pressureAPascals, double temperatureAKelvin,
+        double pressureBPascals, double temperatureBKelvin, double opening, out OrificeFlow flow)
+    {
+        flow = default;
+        if (!Numeric.Finite(opening) || opening < 0 || opening > 1) return false;
+        if (!Numeric.Finite(pressureAPascals) || pressureAPascals <= 0 || !Numeric.Finite(temperatureAKelvin) || temperatureAKelvin <= 0 ||
+            !Numeric.Finite(pressureBPascals) || pressureBPascals <= 0 || !Numeric.Finite(temperatureBKelvin) || temperatureBKelvin <= 0)
+            return false;
+        return Flow(gas, AreaSquareMeters * DischargeCoefficient * opening,
+            pressureAPascals, temperatureAKelvin, pressureBPascals, temperatureBKelvin, out flow);
+    }
+
+    private static bool Flow(IdealGas gas, double area, double pressureAPascals, double temperatureAKelvin,
+        double pressureBPascals, double temperatureBKelvin, out OrificeFlow flow)
+    {
+        flow = new(0, 0, false);
+        if (area == 0 || pressureAPascals == pressureBPascals) return true;
         bool forward = pressureAPascals > pressureBPascals;
         double upstream = forward ? pressureAPascals : pressureBPascals;
         double downstream = forward ? pressureBPascals : pressureAPascals;
@@ -161,10 +186,10 @@ public sealed class Orifice
             ? gas.ChokedMassFluxCoefficient
             : gas.SubcriticalMassFluxCoefficient * Math.Sqrt(SubcriticalFlowFunction(ratio, gas.Gamma));
         double massFlow = area * flux * upstream / Math.Sqrt(temperature);
-        if (!Numeric.Finite(massFlow) || massFlow < 0)
-            throw new ArgumentException("Orifice flow exceeds the supported binary64 range.");
         double enthalpyFlow = massFlow * gas.SpecificEnthalpy(temperature);
-        return forward ? new(massFlow, enthalpyFlow, choked) : new(-massFlow, -enthalpyFlow, choked);
+        if (!Numeric.Finite(massFlow) || massFlow < 0 || !Numeric.Finite(enthalpyFlow)) return false;
+        flow = forward ? new(massFlow, enthalpyFlow, choked) : new(-massFlow, -enthalpyFlow, choked);
+        return true;
     }
 
     /// <summary>The dimensionless subcritical flow function pr^(2/gamma) - pr^((gamma+1)/gamma).</summary>

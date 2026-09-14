@@ -32,7 +32,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 
 This builds the solution serially, exports Unity model assets, runs the core and agent checks, exercises an actual MCP server process, and verifies the Zig runtime, shared-library hosts, Python ABI and original numerical baseline. It writes experiment and migration reports under `artifacts/reports`. The source audit rejects C/C++ implementation files and headers, plus Lua source, bytecode and packages. Build servers and concurrent compilation are disabled inside the build tool to reduce memory pressure. The local `.cache/dotnet/dotnet` executable can also be used when the pinned SDK is installed there; caches are excluded from Git.
 
-The published three-platform baseline passed **38/38 managed checks, 26/26 Unity-facing assembly checks, and 6/6 MCP integration groups on Windows, macOS, and Linux**; see the [CI run](https://github.com/Water-Run/Power/actions/runs/34176008291). The gas-exchange physics added on 2026-09-14 raised the managed suite to **44/44** and has so far been verified on Linux only. See the [validation record](docs/VALIDATION.md). The assembly checks run under .NET 10; actual Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending.
+The published three-platform baseline passed **38/38 managed checks, 26/26 Unity-facing assembly checks, and 6/6 MCP integration groups on Windows, macOS, and Linux**; see the [CI run](https://github.com/Water-Run/Power/actions/runs/34176008291). The 2026-09-14 Core gas-network checkpoint passes **53/53 managed checks** and **41/41 Unity-facing assembly checks** on Linux. See the [validation record](docs/VALIDATION.md). The assembly checks run under .NET 10; actual Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending.
 
 Run an experiment directly:
 
@@ -85,7 +85,7 @@ The [agent API](docs/AGENT_API.md) documents client configuration and operation 
 
 The current executable C# models include rotational inertia, elastic shafts with positive or negative ratios, RL DC motors, torque sources, thermal capacities, heat-conduction networks, and sealed adiabatic cylinders with slider-crank geometry. They share coupled integration and an energy ledger. All sample parameters are marked `unverified`.
 
-`Power.Core` also provides validated [gas-exchange physics](docs/GAS_EXCHANGE.md) — an ideal gas, a finite volume tracked by independent mass and internal energy, and a compressible orifice with choked and subcritical flow. These are library types only: no node kind, component kind, channel, schema field or asset version exposes them yet, so a model document cannot contain a finite gas volume.
+`Power.Core` also provides validated [gas-exchange physics](docs/GAS_EXCHANGE.md) — an ideal gas, a finite volume tracked by independent mass and internal energy, and a compressible orifice with choked and subcritical flow. They now participate in compiled Core gas networks with channels, heat links and transactional ledgers. JSON model documents and portable assets still cannot represent them; see the checkpoint below.
 
 The complete engine, intake, combustion, exhaust, DCT/AT, hydraulic, ECU/TCU, and calibrated powertrain objectives remain open. Earlier native prototypes and tests have been ported to Zig in [legacy/native](legacy/native/README.md); their functionality has not all been migrated to C#. All 38 C source/header files were replaced, with original hashes and Git provenance in the [migration manifest](legacy/native/migration-manifest.json). Research for EA211 DJS + DQ200 and PSA EC5 + AT8 remains in [assets/samples](assets/samples), with its evidence and calibration boundaries intact.
 
@@ -98,3 +98,15 @@ See the [architecture](docs/ARCHITECTURE.md), [roadmap](docs/ROADMAP.md), and [v
 Original Power! material is licensed under **GPL-3.0-or-later with the Unity Linking Exception**. Read [COPYING.NOTICE](COPYING.NOTICE), the unmodified [GPLv3 text](LICENSE), and the [exception](UNITY-LINKING-EXCEPTION.md) together.
 
 The exception permits the specified Unity combination while keeping Power! and its modifications under GPL requirements. Unity and other third-party software retain their own licenses; the exception grants no rights held by their authors. See [third-party notices](THIRD_PARTY_NOTICES.md). Preserve the applicable license, copyright, and notice files when distributing source or binaries.
+
+## Finite gas network checkpoint
+
+The C# Core API now compiles fixed-volume gas chambers, reservoir orifices, controlled
+restrictions and gas-to-wall heat links. Mass, internal energy and reservoir ledgers
+participate in stepping, snapshots, forks and whole-batch rollback. See the
+[gas network contract and example](docs/GAS_NETWORK.md).
+
+This is a Core-only checkpoint: JSON models, CLI/MCP capability discovery and Unity
+assets still expose the existing component set. Asset v1/v2 explicitly reject finite
+gas networks until a versioned format can retain their composition and restrictions.
+Gas-cylinder crank coupling, combustion and the full engine cycle remain open.

@@ -1,5 +1,35 @@
 # 验证记录
 
+## 2026-09-14: compiled gas-network Core checkpoint
+
+Recovered the WSL work through `4a81716` and its unfinished Core integration. The
+checkpoint now compiles gas-only and mixed gas/thermal networks, validates composition
+and opening ranges, and includes mass/internal-energy state and reservoir ledgers in
+snapshots, hashes, forks and whole-batch rollback. A conservative stage limiter prevents
+an isolated equalising pair from oscillating through equilibrium. The unchanged sealed
+cylinder and linear models retain their prior fingerprints and replay behavior.
+
+Serial verification using the pinned cached .NET SDK 10.0.400 on Linux x64:
+
+- **53/53** .NET 10 Core/application checks.
+- **41/41** checks against the .NET Standard 2.1 Core/Assets assemblies on .NET 10.
+- **6/6** MCP integration groups against an actual child server.
+- Existing electrothermal, thermal and cylinder experiment replay reports pass.
+- Native Zig groups and six Python ABI tests pass; all **176** original baseline values
+  match exactly. Source audit: zero C/C++ files and zero Lua files.
+
+Gas-specific evidence includes choked/subcritical nozzle physics, analytic vessel
+blowdown and refinement, reservoir filling enthalpy, reverse flow, closed-network mass
+and energy conservation, finite-time analytic wall exchange, closed-valve isolation,
+input/schedule range rejection, observable overflow, mid-batch failure/recovery, branch
+and batching equivalence, immutable compilation and zero stepping/snapshot allocations.
+Asset v1/v2 rejection is tested to prevent dropping unsupported gas fields.
+
+See [GAS_NETWORK.md](GAS_NETWORK.md) for the numerical method and remaining scope.
+This checkpoint has local Linux evidence; current Windows/macOS CI status must be read
+from its commit's workflow. Unity Editor/Play/IL2CPP and calibrated vehicle behavior
+remain unverified. The earlier standalone record below describes the preceding commit.
+
 ## 2026-09-14: gas-exchange physics (standalone)
 
 Added the first slice of the gas-exchange increment as **physics only**: `IdealGas`,
