@@ -39,8 +39,6 @@ public sealed class PowerAsset
         var nodes = (NodeDefinition[])definition.Nodes.Clone();
         var components = (ComponentDefinition[])definition.Components.Clone();
         Model = CompiledModel.Compile(definition with { Nodes = nodes, Components = components });
-        if (nodes.Any(n => n.Domain == Domain.Gas))
-            throw new AssetFormatException("Finite gas networks are currently a Core-only checkpoint; asset v1/v2 cannot represent gas composition or restrictions.");
         Array.Sort(nodes, (a, b) => a.Id.CompareTo(b.Id));
         Array.Sort(components, (a, b) => a.Id.CompareTo(b.Id));
         Nodes = Array.AsReadOnly(nodes); Components = Array.AsReadOnly(components);
@@ -53,7 +51,6 @@ public sealed class PowerAsset
         DurationNanoseconds = durationNanoseconds; SampleEveryNanoseconds = sampleEveryNanoseconds;
         InputArray = (inputs ?? throw new ArgumentNullException(nameof(inputs))).Take(MaxScheduledInputs + 1).ToArray();
         if (InputArray.Length > MaxScheduledInputs) throw new ArgumentException("Too many scheduled inputs.");
-        var knownInputs = new HashSet<ulong>(Model.Channels.Where(c => c.IsInput).Select(c => c.Id));
         var knownOutputs = new HashSet<ulong>(Model.Channels.Where(c => !c.IsInput).Select(c => c.Id));
         var seen = new HashSet<ulong>();
         ulong previous = 0; int frames = 0;
@@ -61,8 +58,10 @@ public sealed class PowerAsset
         {
             var input = InputArray[i];
             if (input.TimeNanoseconds < previous || input.TimeNanoseconds >= durationNanoseconds ||
-                input.TimeNanoseconds % step != 0 || !knownInputs.Contains(input.Channel) || !Finite(input.Value))
-                throw new ArgumentException("Invalid time, order, channel or value in the input schedule.");
+                input.TimeNanoseconds % step != 0)
+                throw new ArgumentException("Invalid time or order in the input schedule.");
+            if (Model.ValidateInput(new(input.Channel, input.Value)) != SimulationStatus.Ok)
+                throw new ArgumentException($"Invalid scheduled input on channel {input.Channel} at {input.TimeNanoseconds} ns; use a known input with a finite value, and gas openings, burn multipliers and clutch engagement in [0, 1].");
             if (i == 0 || input.TimeNanoseconds != previous) { ++frames; seen.Clear(); }
             if (!seen.Add(input.Channel)) throw new ArgumentException("Repeated input channel at the same time.");
             previous = input.TimeNanoseconds;

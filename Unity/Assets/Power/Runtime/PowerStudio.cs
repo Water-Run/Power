@@ -30,6 +30,20 @@ namespace Power.Studio
             internal double StrokeMeters;
         }
         private readonly Dictionary<uint, PistonVisual> _pistons = new Dictionary<uint, PistonVisual>();
+        private sealed class ValveVisual
+        {
+            internal Transform Stem;
+            internal Vector3 Closed;
+        }
+        private readonly Dictionary<uint, ValveVisual> _valves = new Dictionary<uint, ValveVisual>();
+        private sealed class CombustionVisual
+        {
+            internal Material Surface;
+            internal double PreviousHeat;
+            internal ulong PreviousTime;
+        }
+        private readonly Dictionary<uint, CombustionVisual> _combustors = new Dictionary<uint, CombustionVisual>();
+        private readonly Dictionary<uint, Material> _clutchMaterials = new Dictionary<uint, Material>();
         private readonly Dictionary<uint, Material> _thermalMaterials = new Dictionary<uint, Material>();
         private readonly Dictionary<ulong, TextField> _inputFields = new Dictionary<ulong, TextField>();
         private readonly Dictionary<ulong, double> _inputValues = new Dictionary<ulong, double>();
@@ -121,7 +135,7 @@ namespace Power.Studio
             if (_panel != null) Destroy(_panel);
             foreach (var material in _materials) if (material != null) Destroy(material);
             _materials.Clear();
-            _rotors.Clear(); _pistons.Clear(); _thermalMaterials.Clear(); _inputFields.Clear(); _inputValues.Clear();
+            _rotors.Clear(); _pistons.Clear(); _valves.Clear(); _combustors.Clear(); _clutchMaterials.Clear(); _thermalMaterials.Clear(); _inputFields.Clear(); _inputValues.Clear();
             _valueIndices.Clear(); _outputLabels.Clear();
             _plot = null;
         }
@@ -271,6 +285,9 @@ namespace Power.Studio
                 field.Value.SetValueWithoutNotify(_inputValues[field.Key].ToString("G17", CultureInfo.InvariantCulture));
             }
             foreach (var label in _outputLabels) label.Value.text = Output(label.Key).ToString("G6", CultureInfo.InvariantCulture);
+            foreach (uint clutch in _clutchMaterials.Keys)
+                if (_outputLabels.TryGetValue(Channels.Output(clutch, Field.ClutchMode), out var label))
+                    label.text = ((ClutchMode)(int)Value(clutch, Field.ClutchMode)).ToString();
             _pauseButton.text = _running ? "Pause" : "Resume";
             _stateLabel.text = _outcome.Length > 0 ? _outcome : (_playback != null ? "SAVED EXPERIMENT" : "INTERACTIVE LAB") + "  /  " + (_running ? "RUNNING" : "PAUSED");
         }
@@ -283,6 +300,27 @@ namespace Power.Studio
             foreach (var piston in _pistons)
                 piston.Value.Piston.localPosition = piston.Value.Top - Vector3.up *
                     (float)(Value(piston.Key, Field.PistonDisplacement) / piston.Value.StrokeMeters);
+            foreach (var valve in _valves)
+                valve.Value.Stem.localPosition = valve.Value.Closed + Vector3.up * (float)(0.4 * Value(valve.Key, Field.Opening));
+            foreach (var clutch in _clutchMaterials)
+            {
+                var mode = (ClutchMode)(int)Value(clutch.Key, Field.ClutchMode);
+                Color color = mode == ClutchMode.Disengaged ? new Color(0.25f, 0.3f, 0.35f)
+                    : mode == ClutchMode.Locked ? new Color(0.15f, 0.75f, 0.35f) : new Color(1, 0.55f, 0.1f);
+                clutch.Value.SetColor("_BaseColor", color);
+            }
+            foreach (var combustor in _combustors)
+            {
+                var visual = combustor.Value;
+                double heat = Value(combustor.Key, Field.HeatReleased);
+                if (_snapshot.TimeNanoseconds != visual.PreviousTime || _snapshot.TimeNanoseconds == 0)
+                {
+                    double watts = _snapshot.TimeNanoseconds > visual.PreviousTime
+                        ? (heat - visual.PreviousHeat) / ((_snapshot.TimeNanoseconds - visual.PreviousTime) * 1e-9) : 0;
+                    visual.Surface.SetColor("_BaseColor", Color.Lerp(new Color(0.2f, 0.25f, 0.3f), new Color(1, 0.4f, 0.05f), Mathf.Clamp01((float)(watts / 20000))));
+                    visual.PreviousHeat = heat; visual.PreviousTime = _snapshot.TimeNanoseconds;
+                }
+            }
             foreach (var heat in _thermalMaterials)
                 heat.Value.SetColor("_BaseColor", Color.Lerp(new Color(0.12f, 0.40f, 0.46f), new Color(1, 0.35f, 0.12f),
                     Mathf.Clamp01((float)(Value(heat.Key, Field.Temperature) - 290) / 80)));
@@ -361,6 +399,20 @@ namespace Power.Studio
                     Shape("Mount " + node.Id, PrimitiveType.Cube, new Vector3(position.x, 0.3f, position.z), new Vector3(1.6f, 0.6f, 1.5f), surface);
                     Shape("Bearing " + node.Id, PrimitiveType.Cube, new Vector3(position.x - 0.35f, 1, position.z), new Vector3(0.2f, 1.1f, 0.3f), steel);
                 }
+                else if (node.Domain == Domain.Hydraulic)
+                {
+                    position.y = 1.0f;
+                    Shape("Hydraulic chamber " + node.Id, PrimitiveType.Cylinder, position, new Vector3(1.0f, 0.65f, 1.0f), blue);
+                    Shape("Hydraulic compliance marker " + node.Id, PrimitiveType.Cube, position + Vector3.up * 0.7f, new Vector3(0.7f, 0.08f, 0.7f), steel);
+                }
+                else if (node.Domain == Domain.Gas)
+                {
+                    position.y = 1.0f;
+                    var surface = Surface(new Color(0.12f, 0.40f, 0.46f));
+                    _thermalMaterials.Add(node.Id, surface);
+                    Shape("Gas volume " + node.Id, PrimitiveType.Cylinder, position, new Vector3(1.4f, 0.8f, 1.4f), surface);
+                    Shape("Gas lid " + node.Id, PrimitiveType.Cylinder, position + Vector3.up * 0.85f, new Vector3(1.5f, 0.05f, 1.5f), steel);
+                }
                 else
                 {
                     position.y = 0.7f;
@@ -376,7 +428,7 @@ namespace Power.Studio
             foreach (var component in _asset.Components)
             {
                 Vector3 a = positions[component.NodeA];
-                if (component.Kind == ComponentKind.SealedCylinder)
+                if (component.Kind == ComponentKind.SealedCylinder || component.Kind == ComponentKind.GasCylinder)
                 {
                     cylinderCounts.TryGetValue(component.NodeA, out int ordinal);
                     cylinderCounts[component.NodeA] = ordinal + 1;
@@ -386,14 +438,99 @@ namespace Power.Studio
                     for (int side = -1; side <= 1; side += 2)
                         Shape("Cylinder wall " + component.Id, PrimitiveType.Cube, top + new Vector3(side * 0.42f, -0.5f, 0), new Vector3(0.06f, 1.3f, 0.7f), steel);
                     var piston = Shape("Piston " + component.Id, PrimitiveType.Cube, top, new Vector3(0.7f, 0.15f, 0.6f), copper);
-                    Quantity stroke = component.Cylinder.Stroke;
+                    Quantity stroke = component.Kind == ComponentKind.GasCylinder ? component.MovingCylinder.Stroke : component.Cylinder.Stroke;
                     _pistons.Add(component.Id, new PistonVisual { Piston = piston.transform, Top = top,
                         StrokeMeters = stroke.Unit == Unit.Millimeter ? stroke.Value / 1000 : stroke.Value });
                     Connection("Crank connection " + component.Id, a, top - Vector3.up * 1.2f, steel, 0.08f);
+                    if (component.Kind == ComponentKind.GasCylinder)
+                        Connection("Cylinder chamber " + component.Id, top, positions[component.NodeB], blue, 0.1f);
                 }
                 if (component.Kind == ComponentKind.Shaft || component.Kind == ComponentKind.ThermalLink)
                     Connection("Component " + component.Id, a, component.NodeB == 0 ? new Vector3(a.x, 0.05f, a.z + 1) : positions[component.NodeB],
                         component.Kind == ComponentKind.Shaft ? steel : copper, component.Kind == ComponentKind.Shaft ? 0.15f : 0.07f);
+                if (component.Kind == ComponentKind.GasOrifice)
+                {
+                    Vector3 b = component.NodeB == 0 ? a + new Vector3(0, 0, 1.5f) : positions[component.NodeB];
+                    if (component.NodeB == 0)
+                        Shape("Reservoir " + component.Id, PrimitiveType.Sphere, b, Vector3.one * 0.55f, blue);
+                    Connection("Gas restriction " + component.Id, a, b, blue, 0.1f);
+                    if (component.ValveTiming != null)
+                    {
+                        Vector3 closed = (a + b) * 0.5f + Vector3.up * 0.12f;
+                        var stem = Shape("Timed valve " + component.Id, PrimitiveType.Cube, closed, new Vector3(0.3f, 0.25f, 0.12f), steel);
+                        _valves.Add(component.Id, new ValveVisual { Stem = stem.transform, Closed = closed });
+                    }
+                }
+                if (component.Kind == ComponentKind.HydraulicResistance || component.Kind == ComponentKind.HydraulicOrifice || component.Kind == ComponentKind.HydraulicRelief)
+                {
+                    Vector3 b = component.NodeB == 0 ? a + new Vector3(0.8f, 0, 1.3f) : positions[component.NodeB];
+                    if (component.NodeB == 0) Shape("Hydraulic reservoir " + component.Id, PrimitiveType.Cube, b, Vector3.one * 0.45f, blue);
+                    Connection("Hydraulic valve " + component.Id, a, b, blue, 0.08f);
+                }
+                if (component.Kind == ComponentKind.HydraulicPump)
+                {
+                    Vector3 outlet = positions[component.NodeB], center = (a + outlet) * 0.5f + Vector3.up * 0.5f;
+                    uint inletId = component.HydraulicPump.InletNode;
+                    Vector3 inlet = inletId == 0 ? center + new Vector3(0.8f, 0, 1.3f) : positions[inletId];
+                    Shape("Hydraulic pump " + component.Id, PrimitiveType.Cylinder, center, new Vector3(0.65f, 0.25f, 0.65f), copper);
+                    if (inletId == 0) Shape("Pump reservoir " + component.Id, PrimitiveType.Cube, inlet, Vector3.one * 0.45f, blue);
+                    Connection("Pump shaft " + component.Id, a, center, steel, 0.12f);
+                    Connection("Pump outlet " + component.Id, center, outlet, blue, 0.08f);
+                    Connection("Pump inlet " + component.Id, inlet, center, blue, 0.08f);
+                }
+                if (component.Kind == ComponentKind.GasHeatLink)
+                    Connection("Gas wall link " + component.Id, a, positions[component.NodeB], copper, 0.07f);
+                if (component.Kind == ComponentKind.TorqueConverter)
+                {
+                    Vector3 b = positions[component.NodeB];
+                    Vector3 center = (a + b) * 0.5f + Vector3.up * 0.8f;
+                    Shape("Converter pump " + component.Id, PrimitiveType.Sphere, center - Vector3.right * 0.2f, new Vector3(0.3f, 0.8f, 0.8f), copper);
+                    Shape("Converter turbine " + component.Id, PrimitiveType.Sphere, center + Vector3.right * 0.2f, new Vector3(0.3f, 0.8f, 0.8f), blue);
+                    Connection("Converter pump port " + component.Id, a, center - Vector3.right * 0.2f, copper, 0.08f);
+                    Connection("Converter turbine port " + component.Id, center + Vector3.right * 0.2f, b, blue, 0.08f);
+                    Connection("Converter stationary stator " + component.Id, center, new Vector3(center.x, 0.05f, center.z), steel, 0.06f);
+                }
+                if (component.Kind == ComponentKind.IdealGear)
+                {
+                    Vector3 b = positions[component.NodeB];
+                    Vector3 center = (a + b) * 0.5f + Vector3.up * 0.4f;
+                    Shape("Ideal gear " + component.Id, PrimitiveType.Cylinder, center, new Vector3(0.8f, 0.1f, 0.8f), steel);
+                    Connection("Gear port A " + component.Id, a, center, copper, 0.08f);
+                    Connection("Gear port B " + component.Id, center, b, steel, 0.08f);
+                }
+                if (component.Kind == ComponentKind.PlanetaryGear)
+                {
+                    Vector3 ring = positions[component.NodeB], carrier = positions[component.NodeC];
+                    Vector3 center = (a + ring + carrier) / 3 + Vector3.up * 0.65f;
+                    // Schematic members identify the three ports; these are not tooth geometry.
+                    Shape("Planetary gear " + component.Id, PrimitiveType.Cylinder, center, new Vector3(1.1f, 0.08f, 1.1f), steel);
+                    Shape("Planetary carrier marker " + component.Id, PrimitiveType.Cylinder, center + Vector3.up * 0.15f, new Vector3(0.8f, 0.05f, 0.8f), blue);
+                    Shape("Planetary sun marker " + component.Id, PrimitiveType.Cylinder, center + Vector3.up * 0.27f, new Vector3(0.35f, 0.08f, 0.35f), copper);
+                    Connection("Planetary sun " + component.Id, a, center, copper, 0.08f);
+                    Connection("Planetary ring " + component.Id, ring, center, steel, 0.08f);
+                    Connection("Planetary carrier " + component.Id, carrier, center, blue, 0.08f);
+                }
+                if (component.Kind == ComponentKind.Clutch || component.Kind == ComponentKind.HydraulicClutch)
+                {
+                    Vector3 b = component.NodeB == 0 ? a + new Vector3(0, 0, 1.5f) : positions[component.NodeB];
+                    Vector3 center = (a + b) * 0.5f + Vector3.up * 0.45f;
+                    var surface = Surface(new Color(0.25f, 0.3f, 0.35f));
+                    var plateA = Shape("Clutch plate A " + component.Id, PrimitiveType.Cylinder, center - Vector3.right * 0.12f, new Vector3(0.7f, 0.04f, 0.7f), surface);
+                    var plateB = Shape("Clutch plate B " + component.Id, PrimitiveType.Cylinder, center + Vector3.right * 0.12f, new Vector3(0.7f, 0.04f, 0.7f), surface);
+                    plateA.transform.localRotation = Quaternion.Euler(0, 0, 90);
+                    plateB.transform.localRotation = Quaternion.Euler(0, 0, 90);
+                    Connection("Clutch input " + component.Id, a, center, steel, 0.08f);
+                    Connection("Clutch output " + component.Id, center, b, steel, 0.08f);
+                    _clutchMaterials.Add(component.Id, surface);
+                    if (component.Kind == ComponentKind.HydraulicClutch)
+                        Connection("Pressure actuator " + component.Id, positions[component.HydraulicClutch.PressureNode], center, blue, 0.07f);
+                }
+                if (component.Kind == ComponentKind.PremixedCombustion)
+                {
+                    var surface = Surface(new Color(0.2f, 0.25f, 0.3f));
+                    Shape("Combustion " + component.Id, PrimitiveType.Sphere, positions[component.NodeB] + new Vector3(0.6f, 1.1f, 0), Vector3.one * 0.35f, surface);
+                    _combustors.Add(component.Id, new CombustionVisual { Surface = surface });
+                }
                 if (component.HeatNode != 0) Connection("Loss path " + component.Id, a, positions[component.HeatNode], copper, 0.05f);
             }
             _distance = Math.Max(12, Math.Max(columns * 3.2f, rows * 2.8f) * 1.6f);

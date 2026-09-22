@@ -163,7 +163,7 @@ internal static class EngineChecks
         Require(decoded.Components[0].Cylinder == Gas && decoded.Model.Fingerprint == compiled.Fingerprint);
         Require(AssetCodec.Encode(decoded).SequenceEqual(encoded));
         var forged = (byte[])encoded.Clone();
-        int extensionOffset = 98 + Encoding.UTF8.GetByteCount(asset.Name) + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
+        int extensionOffset = 158 + Encoding.UTF8.GetByteCount(asset.Name) + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
         // Redirect gas parameters to the torque source, retaining a valid digest.
         forged[extensionOffset] = 1;
         SHA256.HashData(forged.AsSpan(0, forged.Length - 32)).CopyTo(forged, forged.Length - 32);

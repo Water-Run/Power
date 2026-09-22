@@ -10,6 +10,15 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
   <ItemGroup>
     <EmbeddedResource Include="../../assets/labs/electrothermal.power.json" LogicalName="power.template.json" />
     <EmbeddedResource Include="../../assets/labs/sealed-cylinder.power.json" LogicalName="power.cylinder.template.json" />
+    <EmbeddedResource Include="../../assets/labs/gas-network.power.json" LogicalName="power.gas.template.json" />
+    <EmbeddedResource Include="../../assets/labs/moving-cylinder.power.json" LogicalName="power.moving-cylinder.template.json" />
+    <EmbeddedResource Include="../../assets/labs/crank-timed-cylinder.power.json" LogicalName="power.crank-timed-cylinder.template.json" />
+    <EmbeddedResource Include="../../assets/labs/fired-cylinder.power.json" LogicalName="power.fired-cylinder.template.json" />
+    <EmbeddedResource Include="../../assets/labs/fired-clutch.power.json" LogicalName="power.fired-clutch.template.json" />
+    <EmbeddedResource Include="../../assets/labs/fired-pump.power.json" LogicalName="power.fired-pump.template.json" />
+    <EmbeddedResource Include="../../assets/labs/fired-hydraulic.power.json" LogicalName="power.fired-hydraulic.template.json" />
+    <EmbeddedResource Include="../../assets/labs/fired-converter.power.json" LogicalName="power.fired-converter.template.json" />
+    <EmbeddedResource Include="../../assets/labs/fired-planetary.power.json" LogicalName="power.fired-planetary.template.json" />
     <EmbeddedResource Include="../../schemas/power.model.v1.schema.json" LogicalName="power.model.schema.json" />
   </ItemGroup>
 </Project>

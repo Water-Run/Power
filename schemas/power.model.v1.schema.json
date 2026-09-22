@@ -32,6 +32,12 @@
           },
           {
             "$ref": "#/$defs/thermal"
+          },
+          {
+            "$ref": "#/$defs/gas"
+          },
+          {
+            "$ref": "#/$defs/hydraulic"
           }
         ]
       },
@@ -56,6 +62,45 @@
           },
           {
             "$ref": "#/$defs/sealed_cylinder"
+          },
+          {
+            "$ref": "#/$defs/gas_orifice"
+          },
+          {
+            "$ref": "#/$defs/gas_heat_link"
+          },
+          {
+            "$ref": "#/$defs/gas_cylinder"
+          },
+          {
+            "$ref": "#/$defs/premixed_combustion"
+          },
+          {
+            "$ref": "#/$defs/clutch"
+          },
+          {
+            "$ref": "#/$defs/ideal_gear"
+          },
+          {
+            "$ref": "#/$defs/planetary_gear"
+          },
+          {
+            "$ref": "#/$defs/torque_converter"
+          },
+          {
+            "$ref": "#/$defs/hydraulic_resistance"
+          },
+          {
+            "$ref": "#/$defs/hydraulic_orifice"
+          },
+          {
+            "$ref": "#/$defs/hydraulic_clutch"
+          },
+          {
+            "$ref": "#/$defs/hydraulic_pump"
+          },
+          {
+            "$ref": "#/$defs/hydraulic_relief"
           }
         ]
       },
@@ -725,7 +770,39 @@
             "volume",
             "mass",
             "internal_energy",
-            "piston_displacement"
+            "piston_displacement",
+            "mass_flow",
+            "heat_flow",
+            "reservoir_enthalpy",
+            "mass_residual",
+            "opening",
+            "fuel_mass",
+            "fresh_air_mass",
+            "product_mass",
+            "chemical_energy",
+            "fuel_burned",
+            "heat_released",
+            "fuel_energy_in",
+            "fuel_residual",
+            "fresh_air_residual",
+            "burn_frontier",
+            "slip_speed",
+            "clutch_mode",
+            "friction_heat",
+            "torque_at_b",
+            "torque_at_c",
+            "constraint_error",
+            "fluid_heat",
+            "speed_ratio",
+            "converter_drive",
+            "volume_flow",
+            "hydraulic_volume_in",
+            "hydraulic_volume_residual",
+            "hydraulic_work",
+            "clamp_force",
+            "static_capacity",
+            "sliding_capacity",
+            "hydraulic_power"
           ]
         },
         "min": {
@@ -955,6 +1032,1841 @@
               "exclusiveMinimum": 1
             }
           }
+        }
+      }
+    },
+    "gas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "domain",
+        "initial",
+        "position",
+        "gas"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "domain": {
+          "const": "gas"
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "m3",
+                "l"
+              ]
+            }
+          }
+        },
+        "initial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "k"
+              ]
+            }
+          }
+        },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "pa",
+                "bar"
+              ]
+            }
+          }
+        },
+        "gas": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "gas_constant",
+            "gamma"
+          ],
+          "properties": {
+            "gas_constant": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "gamma": {
+              "type": "number",
+              "exclusiveMinimum": 1
+            },
+            "premixed": {
+              "$ref": "#/$defs/premixed_gas"
+            }
+          }
+        }
+      },
+      "description": "Fixed-volume gas nodes require storage. A moving gas chamber omits storage and must be owned by exactly one gas_cylinder component; the compiler validates this topology."
+    },
+    "gas_orifice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "initial_input",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "gas_orifice"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "area",
+            "discharge_coefficient"
+          ],
+          "properties": {
+            "area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "discharge_coefficient": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "reservoir_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "reservoir_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "valve_timing": {
+          "$ref": "#/$defs/valve_timing"
+        },
+        "reservoir_fractions": {
+          "$ref": "#/$defs/mass_fractions"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "anyOf": [
+              {
+                "not": {
+                  "required": [
+                    "node_b"
+                  ]
+                }
+              },
+              {
+                "properties": {
+                  "node_b": {
+                    "const": 0
+                  }
+                },
+                "required": [
+                  "node_b"
+                ]
+              }
+            ]
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "required": [
+                  "reservoir_pressure",
+                  "reservoir_temperature"
+                ]
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "parameters": {
+                "not": {
+                  "anyOf": [
+                    {
+                      "required": [
+                        "reservoir_pressure"
+                      ]
+                    },
+                    {
+                      "required": [
+                        "reservoir_temperature"
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "gas_heat_link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "gas_heat_link"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "conductance"
+          ],
+          "properties": {
+            "conductance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "w_k"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "gas_cylinder": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters",
+        "node_b"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "gas_cylinder"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "bore",
+            "stroke",
+            "rod_length",
+            "phase",
+            "compression_ratio",
+            "back_pressure"
+          ],
+          "properties": {
+            "bore": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "stroke": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "rod_length": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "phase": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "rad",
+                    "deg"
+                  ]
+                }
+              }
+            },
+            "back_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "compression_ratio": {
+              "type": "number",
+              "exclusiveMinimum": 1
+            }
+          }
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "valve_timing": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "crank_node",
+        "cycle_angle",
+        "open_angle",
+        "duration_angle"
+      ],
+      "properties": {
+        "crank_node": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "cycle_angle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "rad",
+                "deg"
+              ]
+            }
+          }
+        },
+        "open_angle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "rad",
+                "deg"
+              ]
+            }
+          }
+        },
+        "duration_angle": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "rad",
+                "deg"
+              ]
+            }
+          }
+        }
+      },
+      "description": "Sin-squared opening versus crank angle. Cycle must be 360 or 720 degrees; duration must be at least 1e-6 radians and no greater than the cycle. Initial input and input channel set the peak opening in [0,1]. The compiler validates normalized bounds."
+    },
+    "mass_fractions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "fuel",
+        "fresh_air"
+      ],
+      "properties": {
+        "fuel": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "fresh_air": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        }
+      },
+      "description": "Fuel and fresh-air mass fractions must sum to at most one. The remainder is inert products; compilation checks the sum."
+    },
+    "premixed_gas": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "lower_heating_value",
+        "stoichiometric_air_fuel_ratio",
+        "initial_fractions"
+      ],
+      "properties": {
+        "lower_heating_value": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "j_kg"
+              ]
+            }
+          }
+        },
+        "stoichiometric_air_fuel_ratio": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "initial_fractions": {
+          "$ref": "#/$defs/mass_fractions"
+        }
+      }
+    },
+    "premixed_combustion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "initial_input",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "premixed_combustion"
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cycle_angle",
+            "start_angle",
+            "duration_angle",
+            "shape_exponent",
+            "burn_coefficient"
+          ],
+          "properties": {
+            "cycle_angle": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "deg",
+                    "rad"
+                  ]
+                }
+              }
+            },
+            "start_angle": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "deg",
+                    "rad"
+                  ]
+                }
+              }
+            },
+            "duration_angle": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "deg",
+                    "rad"
+                  ]
+                }
+              }
+            },
+            "shape_exponent": {
+              "type": "number",
+              "minimum": 1,
+              "maximum": 16
+            },
+            "burn_coefficient": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 50
+            }
+          }
+        }
+      }
+    },
+    "clutch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters",
+        "initial_input"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "clutch"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "static_capacity",
+            "sliding_capacity",
+            "ratio"
+          ],
+          "properties": {
+            "static_capacity": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "const": "nm"
+                }
+              }
+            },
+            "sliding_capacity": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "const": "nm"
+                }
+              }
+            },
+            "ratio": {
+              "type": "number",
+              "not": {
+                "const": 0
+              }
+            }
+          }
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "ideal_gear": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "ideal_gear"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ratio"
+          ],
+          "properties": {
+            "ratio": {
+              "type": "number",
+              "not": {
+                "const": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "planetary_gear": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters",
+        "node_c"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "planetary_gear"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "ratio"
+          ],
+          "properties": {
+            "ratio": {
+              "type": "number",
+              "exclusiveMinimum": 1
+            }
+          }
+        },
+        "node_c": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "converter_map": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 32,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "speed_ratio",
+          "torque_ratio",
+          "capacity_coefficient"
+        ],
+        "properties": {
+          "speed_ratio": {
+            "type": "number",
+            "minimum": -1,
+            "maximum": 1
+          },
+          "torque_ratio": {
+            "type": "number",
+            "minimum": 0
+          },
+          "capacity_coefficient": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "value",
+              "unit"
+            ],
+            "properties": {
+              "value": {
+                "type": "number",
+                "minimum": 0
+              },
+              "unit": {
+                "const": "nm_s2_rad2"
+              }
+            }
+          }
+        }
+      },
+      "description": "Explicit signed map spanning [-1,1]. Compiler checks ordering, continuous reactions and passivity throughout interpolation. End at ratio 1 with torque ratio 1 and coefficient 0."
+    },
+    "torque_converter": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "torque_converter"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "pump_positive",
+            "pump_negative",
+            "turbine_positive",
+            "turbine_negative"
+          ],
+          "properties": {
+            "pump_positive": {
+              "$ref": "#/$defs/converter_map"
+            },
+            "pump_negative": {
+              "$ref": "#/$defs/converter_map"
+            },
+            "turbine_positive": {
+              "$ref": "#/$defs/converter_map"
+            },
+            "turbine_negative": {
+              "$ref": "#/$defs/converter_map"
+            }
+          }
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        }
+      }
+    },
+    "hydraulic": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "domain",
+        "storage",
+        "initial"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "domain": {
+          "const": "hydraulic"
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "m3_pa"
+              ]
+            }
+          }
+        },
+        "initial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "unit": {
+              "enum": [
+                "pa",
+                "bar"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "hydraulic_resistance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters",
+        "initial_input"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "hydraulic_resistance"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "coefficient"
+          ],
+          "properties": {
+            "coefficient": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3_s_pa"
+                  ]
+                }
+              }
+            },
+            "reservoir_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "node_b"
+            ],
+            "properties": {
+              "node_b": {
+                "minimum": 1
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "not": {
+                  "required": [
+                    "reservoir_pressure"
+                  ]
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "parameters": {
+                "required": [
+                  "reservoir_pressure"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "hydraulic_orifice": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters",
+        "initial_input"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "hydraulic_orifice"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "coefficient",
+            "transition_pressure"
+          ],
+          "properties": {
+            "coefficient": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3_s_sqrt_pa"
+                  ]
+                }
+              }
+            },
+            "transition_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "reservoir_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "node_b"
+            ],
+            "properties": {
+              "node_b": {
+                "minimum": 1
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "not": {
+                  "required": [
+                    "reservoir_pressure"
+                  ]
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "parameters": {
+                "required": [
+                  "reservoir_pressure"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "hydraulic_clutch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "hydraulic_clutch"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "pressure_node",
+            "piston_area",
+            "preload_force",
+            "effective_radius",
+            "static_friction",
+            "sliding_friction",
+            "friction_surfaces",
+            "ratio"
+          ],
+          "properties": {
+            "pressure_node": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "piston_area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "preload_force": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "n"
+                  ]
+                }
+              }
+            },
+            "effective_radius": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "static_friction": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sliding_friction": {
+              "type": "number",
+              "minimum": 0
+            },
+            "friction_surfaces": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 128
+            },
+            "ratio": {
+              "type": "number",
+              "not": {
+                "const": 0
+              }
+            }
+          }
+        }
+      }
+    },
+    "hydraulic_relief": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "hydraulic_relief"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "coefficient",
+            "cracking_pressure"
+          ],
+          "properties": {
+            "coefficient": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3_s_pa"
+                  ]
+                }
+              }
+            },
+            "reservoir_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "cracking_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "node_b"
+            ],
+            "properties": {
+              "node_b": {
+                "minimum": 1
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "not": {
+                  "required": [
+                    "reservoir_pressure"
+                  ]
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "parameters": {
+                "required": [
+                  "reservoir_pressure"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    "hydraulic_pump": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters",
+        "node_b"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "hydraulic_pump"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "inlet_node",
+            "displacement"
+          ],
+          "properties": {
+            "inlet_node": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            },
+            "displacement": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "const": "m3_rad"
+                }
+              }
+            },
+            "reservoir_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "inlet_node": {
+                    "const": 0
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "reservoir_pressure"
+                ]
+              },
+              "else": {
+                "not": {
+                  "required": [
+                    "reservoir_pressure"
+                  ]
+                }
+              }
+            }
+          ]
         }
       }
     }

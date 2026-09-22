@@ -13,7 +13,24 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Compile Include="../Power.Tests/AssetChecks.cs" Link="AssetChecks.cs" />
     <Compile Include="../Power.Tests/EngineChecks.cs" Link="EngineChecks.cs" />
     <Compile Include="../Power.Tests/GasChecks.cs" Link="GasChecks.cs" />
+    <Compile Include="../Power.Tests/ClutchChecks.cs" Link="ClutchChecks.cs" />
+    <Compile Include="../Power.Tests/IdealGearChecks.cs" Link="IdealGearChecks.cs" />
+    <Compile Include="../Power.Tests/ConverterAssetChecks.cs" Link="ConverterAssetChecks.cs" />
+    <Compile Include="../Power.Tests/HydraulicAssetChecks.cs" Link="HydraulicAssetChecks.cs" />
+    <Compile Include="../Power.Tests/PumpAssetChecks.cs" Link="PumpAssetChecks.cs" />
+    <Compile Include="../Power.Tests/PumpChecks.cs" Link="PumpChecks.cs" />
+    <Compile Include="../Power.Tests/HydraulicChecks.cs" Link="HydraulicChecks.cs" />
+    <Compile Include="../Power.Tests/ConverterChecks.cs" Link="ConverterChecks.cs" />
+    <Compile Include="../Power.Tests/GearModelChecks.cs" Link="GearModelChecks.cs" />
+    <Compile Include="../Power.Tests/GearAssetChecks.cs" Link="GearAssetChecks.cs" />
+    <Compile Include="../Power.Tests/ClutchModelChecks.cs" Link="ClutchModelChecks.cs" />
+    <Compile Include="../Power.Tests/ClutchAssetChecks.cs" Link="ClutchAssetChecks.cs" />
     <Compile Include="../Power.Tests/GasModelChecks.cs" Link="GasModelChecks.cs" />
+    <Compile Include="../Power.Tests/GasAssetChecks.cs" Link="GasAssetChecks.cs" />
+    <Compile Include="../Power.Tests/MovingCylinderChecks.cs" Link="MovingCylinderChecks.cs" />
+    <Compile Include="../Power.Tests/ValveTimingChecks.cs" Link="ValveTimingChecks.cs" />
+    <Compile Include="../Power.Tests/CombustionChecks.cs" Link="CombustionChecks.cs" />
+    <Compile Include="../Power.Tests/CombustionAssetChecks.cs" Link="CombustionAssetChecks.cs" />
     <None Include="../Power.Tests/Fixtures/*.powerasset" Link="Fixtures/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <Target Name="BuildUnityCore" BeforeTargets="ResolveAssemblyReferences">

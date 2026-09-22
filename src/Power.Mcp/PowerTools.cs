@@ -25,7 +25,7 @@ public sealed class PowerTools(AgentWorkspace workspace)
     [McpServerTool(Name = "get_model_schema", ReadOnly = true, OpenWorld = false, UseStructuredContent = true, OutputSchemaType = typeof(AgentReply)), Description("Get JSON Schema 2020-12 for power.model.v1. The compiler additionally checks dimensions, topology and numerical feasibility.")]
     public CallToolResult ModelSchema() => Reply(AgentWorkspace.ModelSchema());
 
-    [McpServerTool(Name = "get_example_model", ReadOnly = true, OpenWorld = false, UseStructuredContent = true, OutputSchemaType = typeof(AgentReply)), Description("Get an editable synthetic model and experiment. Names: electrothermal, sealed-cylinder. Parameters are uncalibrated.")]
+    [McpServerTool(Name = "get_example_model", ReadOnly = true, OpenWorld = false, UseStructuredContent = true, OutputSchemaType = typeof(AgentReply)), Description("Get an editable synthetic model and experiment. Names: electrothermal, sealed-cylinder, gas-network, moving-cylinder, crank-timed-cylinder, fired-cylinder, fired-clutch, fired-planetary, fired-converter, fired-hydraulic, fired-pump. Parameters are uncalibrated.")]
     public CallToolResult ExampleModel(string name = "electrothermal") => Reply(AgentWorkspace.ExampleModel(name));
 
     [McpServerTool(Name = "validate_model", ReadOnly = true, OpenWorld = false, UseStructuredContent = true, OutputSchemaType = typeof(AgentReply)), Description("Validate a model document and experiment without running it. Returns fingerprint, channel IDs/units and structured repair diagnostics.")]

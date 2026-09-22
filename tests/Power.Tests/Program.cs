@@ -11,7 +11,7 @@ using static Power.Tests.CoreChecks;
 
 string sample = Path.Combine(AppContext.BaseDirectory, "electrothermal.power.json");
 string source = File.ReadAllText(sample);
-var checks = CoreChecks.All.Concat(AssetChecks.All).Concat(EngineChecks.All).Concat(GasChecks.All).Concat(GasModelChecks.All).Concat(AgentChecks.All).Concat(new (string, Action)[]
+var checks = CoreChecks.All.Concat(AssetChecks.All).Concat(EngineChecks.All).Concat(GasChecks.All).Concat(ClutchChecks.All).Concat(IdealGearChecks.All).Concat(PumpChecks.All).Concat(PumpAssetChecks.All).Concat(HydraulicChecks.All).Concat(HydraulicAssetChecks.All).Concat(ConverterChecks.All).Concat(ConverterAssetChecks.All).Concat(GearModelChecks.All).Concat(GearAssetChecks.All).Concat(ClutchModelChecks.All).Concat(ClutchAssetChecks.All).Concat(GasModelChecks.All).Concat(GasAssetChecks.All).Concat(MovingCylinderChecks.All).Concat(ValveTimingChecks.All).Concat(CombustionChecks.All).Concat(CombustionAssetChecks.All).Concat(GasIntegrationChecks.All).Concat(MovingCylinderIntegrationChecks.All).Concat(ValveTimingIntegrationChecks.All).Concat(CombustionIntegrationChecks.All).Concat(ClutchIntegrationChecks.All).Concat(GearIntegrationChecks.All).Concat(ConverterIntegrationChecks.All).Concat(HydraulicIntegrationChecks.All).Concat(PumpIntegrationChecks.All).Concat(AgentChecks.All).Concat(new (string, Action)[]
 {
     ("cylinder JSON / all replay boundaries / strict parameters / pressure checks", () =>
     {

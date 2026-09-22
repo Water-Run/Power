@@ -12,7 +12,7 @@ string? framework = typeof(Simulation).Assembly.GetCustomAttribute<TargetFramewo
 CoreChecks.Require(framework == ".NETStandard,Version=v2.1", $"Wrong assembly under test: {framework}");
 CoreChecks.Require(typeof(AssetCodec).Assembly.GetCustomAttribute<TargetFrameworkAttribute>()?.FrameworkName == ".NETStandard,Version=v2.1");
 int failed = 0, total = 0;
-foreach (var (name, run) in CoreChecks.All.Concat(AssetChecks.All).Concat(EngineChecks.All).Concat(GasChecks.All).Concat(GasModelChecks.All))
+foreach (var (name, run) in CoreChecks.All.Concat(AssetChecks.All).Concat(EngineChecks.All).Concat(GasChecks.All).Concat(ClutchChecks.All).Concat(IdealGearChecks.All).Concat(PumpChecks.All).Concat(PumpAssetChecks.All).Concat(HydraulicChecks.All).Concat(HydraulicAssetChecks.All).Concat(ConverterChecks.All).Concat(ConverterAssetChecks.All).Concat(GearModelChecks.All).Concat(GearAssetChecks.All).Concat(ClutchModelChecks.All).Concat(ClutchAssetChecks.All).Concat(GasModelChecks.All).Concat(GasAssetChecks.All).Concat(MovingCylinderChecks.All).Concat(ValveTimingChecks.All).Concat(CombustionChecks.All).Concat(CombustionAssetChecks.All))
 {
     ++total;
     try { run(); Console.WriteLine($"PASS {name}"); }

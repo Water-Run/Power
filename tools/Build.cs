@@ -46,14 +46,23 @@ try
     string cli = Path.Combine(root, "src", "Power.Cli", "bin", "Release", "net10.0", "Power.Cli.dll");
     foreach (var lab in new[] { (File: "electrothermal", Asset: "Electrothermal", Name: "Electrothermal laboratory"),
         (File: "thermal-network", Asset: "ThermalNetwork", Name: "Thermal exchange laboratory"),
-        (File: "sealed-cylinder", Asset: "SealedCylinder", Name: "Sealed cylinder laboratory") })
+        (File: "sealed-cylinder", Asset: "SealedCylinder", Name: "Sealed cylinder laboratory"),
+        (File: "gas-network", Asset: "GasNetwork", Name: "Gas exchange laboratory"),
+        (File: "moving-cylinder", Asset: "MovingCylinder", Name: "Moving cylinder laboratory"),
+        (File: "crank-timed-cylinder", Asset: "CrankTimedCylinder", Name: "Crank-timed cylinder laboratory"),
+        (File: "fired-cylinder", Asset: "FiredCylinder", Name: "Premixed fired cylinder laboratory"),
+        (File: "fired-clutch", Asset: "FiredClutch", Name: "Fired clutch laboratory"),
+        (File: "fired-pump", Asset: "FiredPump", Name: "Fired pump transmission laboratory"),
+        (File: "fired-hydraulic", Asset: "FiredHydraulic", Name: "Fired hydraulic transmission laboratory"),
+        (File: "fired-converter", Asset: "FiredConverter", Name: "Fired torque converter laboratory"),
+        (File: "fired-planetary", Asset: "FiredPlanetary", Name: "Fired planetary transmission laboratory") })
         await Run(dotnet, cli, "export", $"assets/labs/{lab.File}.power.json", "--name", lab.Name,
             "--output", $"Unity/Assets/Generated/Resources/{lab.Asset}.powerasset");
     if (mode == "verify")
     {
         foreach (string project in new[] { "Power.Tests", "Power.UnityCompatibility", "Power.Mcp.Tests" })
             await Run(dotnet, Path.Combine(root, "tests", project, "bin", "Release", "net10.0", project + ".dll"));
-        foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder" })
+        foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic" })
             await Run(dotnet, cli, $"assets/labs/{lab}.power.json", "--output", $"artifacts/reports/{lab}.json");
         Console.WriteLine("Managed verification passed. Unity Editor/Play/IL2CPP require separate Unity validation.");
         await Run(python, "tools/VerifyNative.py");

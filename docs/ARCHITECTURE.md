@@ -43,9 +43,65 @@ Unity 直接引用 Core、Assets 的标准库程序集。场景代码按节点�
 
 `CompiledModel` 保存不变的拓扑、通道表、模型指纹与 LU 分解。多个 `Simulation` 共享模型，各自拥有完整状态及工作区。调用者在编译之后修改原始描述数组不会改变已编译模型。
 
+## Ideal transmission reference boundary
+
+`IdealGearPair` and `SimplePlanetaryGear` are immutable constant-load reference primitives
+with explicit SI properties and pure result records. They provide independent evidence
+for the separate coupled gear constraints, while retaining pure local reference state. The planetary uses a reduced kinetic-energy mass
+matrix and is checked against a separate acceleration-constraint solution. See
+[the reference contract](IDEAL_GEARS.md).
+
+## Permanent gear constraints
+
+The [coupled gear solver](GEAR_NETWORK.md) projects the electromechanical midpoint and
+all cylinder/converter/clutch force responses onto permanent ideal gear and planetary constraints.
+Normalized rows and full-tick factors are immutable compiled data; variable-interval
+factors and multiplier buffers belong to each simulation. Initial speeds must be
+compatible, initial relative phase is preserved, and dependent constraints are rejected.
+Per-port mean reactions are accumulated across accepted internal intervals and copied,
+hashed and rolled back with the full state. Asset v8 introduced bounded topology records while
+prior gear-free fingerprints and replay hashes remain unchanged.
+
+## Joint converter and cylinder solve
+
+The [converter law](CONVERTER_NETWORK.md) owns four immutable signed maps and rejects
+energy-creating interpolation. A joint nonlinear system solves cylinder crank increments
+and converter midpoint port speeds through the same projected electromechanical response.
+Clutch iterations and internal event intervals reuse that system, including variable-step
+responses. Converter-free models retain their previous solver path and fingerprints.
+
+Mean pump/turbine torques, mean heat power and compensated cumulative fluid heat belong
+to transactional simulation state. Stator reaction is their opposite torque sum, at
+stationary ground. Thermal routing uses actual removed mechanical work. Map definitions
+cross JSON and bounded asset v9 records; factors and runtime histories are reconstructed
+by replay. Lockup is a separate parallel clutch. The quasi-steady component adds no Core
+transport, Unity, JSON or third-party dependency.
+
+## Hydraulic network and pressure actuation
+
+The [hydraulic network](HYDRAULIC_NETWORK.md) advances gauge pressure through constant
+compliance and explicit linear/regularized-turbulent restrictions. Conserved reference
+volume, quadratic elastic energy, reservoir work and pressure-loss heat use the same
+accepted transfers. The per-simulation Newton workspace is bounded and allocation-free.
+
+Pressure-operated clutches derive capacity from the hydraulic interval midpoint, piston
+area, preload, friction and effective radius. Every speculative clutch event trial owns
+a full hydraulic state copy; rollback includes pressure, mean flows, cumulative loss and
+boundary ledgers. Mean outputs are normalized over the complete tick. Asset v10 preserves
+the explicit pressure boundaries and actuator ports; hydraulic-free paths retain their
+previous fingerprints. Pumps and moving pistons require further conserving components.
+
 ## 当前求解器
 
-Models containing sealed cylinders add a bounded nonlinear discrete-gradient solve around the existing electromechanical midpoint system. Gas pressure work is coupled to crank motion and included in the energy ledger. The original linear path retains solver version 2 and its model fingerprints; cylinder models use solver version 3. See [the equations, limits and evidence](SEALED_CYLINDER.md). This first cylinder component derives constant-mass gas state from crank angle. Separate fixed-volume gas nodes now carry independent mass and internal energy through the [Core gas-network solver](GAS_NETWORK.md); connecting those states to moving cylinders and combustion remains open.
+The [coupled clutch solver](CLUTCH_NETWORK.md) adds bounded static reactions and kinetic
+friction to the electromechanical/cylinder midpoint system. Internal slip-zero events
+are bracketed against complete speculative state copies; interval factors belong to
+each simulation. Friction heat enters thermal nodes or the external ledger. Phase,
+mean torque/power and compensated cumulative heat participate in hashes, forks and
+whole-batch rollback. The [standalone law and exact pair](CLUTCH_PHYSICS.md) remain
+independent constant-load references. External time stays in bounded integer ticks.
+
+Models containing sealed cylinders add a bounded nonlinear discrete-gradient solve around the existing electromechanical midpoint system. Gas pressure work is coupled to crank motion and included in the energy ledger. The original linear path retains solver version 2 and its model fingerprints; cylinder models use solver version 3. See [the equations, limits and evidence](SEALED_CYLINDER.md). This first cylinder component derives constant-mass gas state from crank angle. Separate fixed-volume gas nodes now carry independent mass and internal energy through the [Core gas-network solver](GAS_NETWORK.md); the [moving-cylinder coupling](MOVING_CYLINDER.md) now connects those states to crank pressure work. Optional [crank-angle timing](VALVE_TIMING.md) now controls restrictions from actual crank position; [premixed combustion](PREMIXED_COMBUSTION.md) now adds constituent and chemical-energy accounting. Detailed chemistry and complete engine behavior remain open.
 
 机械与电机使用一个耦合线性系统，避免把反电动势、轴扭矩和转速当作互不相关的单向信号：
 
@@ -97,3 +153,90 @@ MCP 会话存在于本地服务进程，数量限制为 16；服务退出即释�
 下一阶段把压缩性气体、燃烧、排气与变速器变成带端口、状态和守恒约束的组件，再增加非线性/混合事件求解。现有线性求解器继续作为可验证子集。新增方程能力需要明确的模型版本、量纲与数值验证，不通过默默改变已有组件语义扩展。
 
 未来更强的 Agent 可以生成拓扑和初值、提出参数假设、编写组件候选、构造实验并读回证据。执行核心仍负责数值约束和验证，不能把语言模型判断当成物理事实。Unity 图编辑、仿真工作线程和可替换高性能求解后端在边界稳定后推进；目前没有假称实现通用非线性求解、Burst 或 GPU 求解。
+
+## 2026-09-22 gas integration
+
+`ModelDocument` and `power.model.v1` now map finite gas composition and restriction
+parameters into the existing Core definitions. `CompiledModel.ValidateInput` exposes
+static channel/finiteness/range validation, used by experiment and asset schedule checks;
+state-dependent observable checks remain in `Simulation`. The solver equations and
+fingerprint construction are unchanged.
+
+Asset format v3 extends the bounded binary tables with gas-node composition and orifice
+records. It retains v1/v2 readers and checks extension coverage, type, uniqueness and
+length before compiling and comparing fingerprints. Gas wall conductance and reservoir
+temperature use the existing base component fields. This keeps Core and Assets free of
+JSON, transport and Unity dependencies.
+
+CLI and MCP share the gas document, asset and experiment semantics. Studio reads the
+same asset and adds schematic vessels/paths; its new Editor/Play tests still require an
+actual Editor run. See [development status](DEVELOPMENT_STATUS.md) for remaining work.
+
+## Moving-cylinder coupling
+
+A `gas_cylinder` owns the volume of one gas node and references one rotational crank.
+The gas node omits independent storage, so compilation derives initial volume from the
+geometry at the crank's initial angle. Pressure, temperature, mass and energy remain on
+the gas node; the geometry component exposes volume, displacement and crank torque.
+
+Models with moving chambers add fingerprint tag 5 and use symmetric half-flow/full-crank/
+half-flow integration. Adiabatic chamber energy change and crank torque use the same
+discrete gradient, including external back-pressure work. Wall coupling remains first
+order. The previous fixed-volume-only solver path and prior fingerprints remain intact.
+All candidate gas, crank and ledger state still belongs to the whole-call transaction.
+
+Asset v4 adds indexed moving-geometry records and retains the earlier readers. The
+JSON/MCP example and Unity moving-piston view use the same definitions; actual Editor
+verification remains pending. See [MOVING_CYLINDER.md](MOVING_CYLINDER.md).
+
+## Crank-angle restriction profiles
+
+An optional immutable `ValveTimingDefinition` on a gas orifice references a rotational
+node and explicit cycle, opening and duration angles. `CrankValveProfile` normalizes
+phase and evaluates a continuous sin-squared envelope. The orifice input becomes peak
+opening; the gas solver and observable mass flow share the same effective fraction.
+There is no separate mutable cam state. Timed models add fingerprint tag 6 and use the
+symmetric gas/crank split even when their gas volumes are fixed. Models without timing
+retain their prior path and fingerprints.
+
+Per-lobe angle/speed and precision guards reject under-resolved ticks within the existing
+candidate-state transaction. JSON, asset v10 and MCP expose the same contract, while
+Studio reads the effective-opening channel for its schematic marker. Actual Unity
+execution remains separately pending. See [VALVE_TIMING.md](VALVE_TIMING.md).
+
+## Premixed reaction and constituent transport
+
+Optional `GasDefinition.Premixed` supplies explicit heating value, stoichiometric ratio
+and initial fuel/fresh-air fractions. `GasNetwork` compiles compatible connected mixtures
+and explicit reservoir fractions. The gas solver transports three nonnegative constituent
+masses with upstream flow, reconstructs total mass, and accounts for chemical enthalpy
+at the model boundary. Premixed transport includes an outgoing-flow bound in addition
+to the existing net mass/energy bounds.
+
+`PremixedCombustion` references the gas node and its crank. `CombustionSolver` previews
+heat from forward Wiebe exposure and limiting reactants during the crank iteration.
+The pressure torque uses half the preview heat before adiabatic work; the remaining
+half follows the work step. Accepted fuel/air consumption, product formation, chemical
+ledgers and the irreversible angle frontier live in `MixtureState` inside the normal
+candidate transaction. It is copied on forks and included in hashes; workspace previews
+never survive a failed call as committed state.
+
+Premixed models add fingerprint tag 7. Asset v10 retains mixture, reservoir and burn
+extensions; earlier nonreacting semantics remain unchanged. JSON/CLI/MCP expose fuel
+and heat evidence, while Studio uses the same heat-release channel for its schematic
+marker. Actual Editor execution remains pending. The full numerical and physical scope
+is documented in [PREMIXED_COMBUSTION.md](PREMIXED_COMBUSTION.md).
+
+## Shaft-driven hydraulic coupling
+
+Models with pumps extend the joint nonlinear system with pump shaft speeds and all
+hydraulic midpoint pressures. Pressure reaction enters the same gear-projected force
+responses as cylinder and converter torque. Pump flow enters paired compliance-node
+balances; pressure-dependent clutch capacities refresh within constraint iteration.
+Accepted transfers commit volume, boundary work, shaft-to-fluid work and relief heat.
+All workspace is simulation-owned and stepping allocates no managed memory.
+
+Pump-free models retain the preceding hydraulic solver path and replay hashes. The
+ideal displacement and finite-conductance relief limits, typed ports, observables and
+independent evidence are specified in [HYDRAULIC_PUMP.md](HYDRAULIC_PUMP.md). Core and
+Assets remain dependency-free dual-target assemblies; actual Unity evidence is separate.

@@ -2,7 +2,18 @@
 
 `Power.Core`、`Power.Agent` 与 MCP 是同一套物理核心的不同入口。API 不绑定特定 GPT 版本或供应商。先用工具获取版本、能力和 Schema，再生成模型；不要根据名称猜组件已经实现。
 
-The [finite gas network](GAS_NETWORK.md) is currently available through the C# Core API only. It is not advertised by MCP or accepted by the JSON/portable-asset interfaces; versioned integration is the next checkpoint. Existing agent examples and model semantics are unchanged.
+The [finite gas network](GAS_NETWORK.md) is available through JSON, CLI and MCP, with gas composition, controlled restrictions, fixed reservoirs, wall heat links and conservation channels retained in portable assets. Existing linear and sealed-cylinder model semantics remain unchanged.
+
+The [coupled clutch component](CLUTCH_NETWORK.md) is available through the shared
+JSON, experiment and session contracts. It includes bounded engagement inputs, static
+and sliding capacities, signed ratios, phase/heat outputs and transactional internal
+events. The standalone [exact pair](CLUTCH_PHYSICS.md) remains a verification reference.
+
+The [ideal gear/planetary components](GEAR_NETWORK.md) participate in the shared solver
+and document contracts. `ideal_gear` has A/B ports and a signed nonzero ratio;
+`planetary_gear` has sun/ring/carrier ports A/B/C and a ring/sun tooth ratio greater than
+one. Compatible initial speeds and independent permanent constraints are required.
+Capabilities describe rank policy, solver tolerances and mean reaction outputs.
 
 ## 启动与客户端配置
 
@@ -28,7 +39,7 @@ Windows 同样使用 `dotnet` 和 DLL 的绝对路径。生产连接应直接运
 
 ## 工具与结果
 
-As of version 0.4.0, `get_example_model` accepts an optional `name`: `electrothermal` (default) or `sealed-cylinder`. `get_capabilities` advertises supported fidelity levels, readable asset versions and cylinder solver limits. Exports use `power.asset.v2`; v1 assets remain readable. Cylinder output channels and their SI units are returned by model validation and session creation. The [sealed-cylinder contract](SEALED_CYLINDER.md) defines its physical limits and numerical recovery procedure; passing its KPIs does not establish a complete or calibrated engine.
+As of version 0.13.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter` `fired-hydraulic` or `fired-pump`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v11`; v1–v10 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
 
 | 工具 | 用途 |
 |---|---|
@@ -96,3 +107,194 @@ As of version 0.4.0, `get_example_model` accepts an optional `name`: `electrothe
 ## 作为开发 Agent
 
 组件新增流程是：写清方程与适用范围 → 定义带单位端口/参数 → 在核心中实现 → 用解析解、守恒、步长收敛与故障测试取得证据 → 增加 Schema 和能力发现 → 提供可回放实验 → 接入 Unity 显示。实测来源及不确定度独立登记，不能由测试通过推导“已校准”。
+
+## Gas-network workflow
+
+Request `gas-network`, validate it, then run the experiment and export its asset using
+the existing tools. `power.model.v1` gains additive gas node/component definitions;
+clients should discover them from the schema and capabilities. No tool names change.
+Gas volumes consume two scalar states each, and connected volumes must share R and gamma.
+
+`gas_orifice` inputs use `fraction` values in [0, 1]. A missing or zero input channel
+keeps the explicit `initial_input` fixed. Validation and export reject out-of-range
+scheduled values before any experiment executes. Interactive rejection preserves both
+state and revision. Compilation, successful execution, KPI success and calibration
+remain distinct: the example is synthetic and `unverified`.
+
+Gas-only session operations use the same nanosecond times, revision checks, cancellation,
+filtered snapshots and independent forks. Sessions start from component initial inputs;
+`create_session` does not execute the experiment's event schedule. Use `run_experiment`
+or portable playback for that schedule. Static validation cannot guarantee a future
+state remains numerically solvable: on `numerical_failure`, reduce `step_ns` and inspect
+flow area, volume, conductance and initial conditions before recreating the session.
+
+## Moving-cylinder workflow
+
+`get_example_model({"name":"moving-cylinder"})` returns an uncalibrated motoring
+experiment with two time-controlled restrictions, crank pressure work and wall transfer.
+Gas nodes without `storage` must connect to exactly one `gas_cylinder`, whose parameters
+supply the geometry. The compiler validates ownership and derives initial mass/energy
+from the gas node's pressure/temperature and the crank's initial geometry.
+
+Capabilities advertise `moving_cylinder_gas_exchange`, the 0.25-rad crank bound and the
+split integration scope. Gas states remain channels on the gas node; volume, displacement
+and torque are channels on the gas-cylinder component. The experiment, export, session,
+revision and failure contracts are unchanged. See [moving cylinders](MOVING_CYLINDER.md).
+Time-scheduled restrictions do not establish crank-angle valve timing or combustion.
+
+## Crank-timed valve workflow
+
+`get_example_model({"name":"crank-timed-cylinder"})` returns a 720-degree motoring
+experiment with variable speed, intake/exhaust profiles and wall heat. `valve_timing`
+on a `gas_orifice` requires a rotational `crank_node` and unit-bearing `cycle_angle`,
+`open_angle` and `duration_angle`. The capability object advertises cycles, profile,
+limits and recovery. See [the timing contract](VALVE_TIMING.md).
+
+Timed input channels represent `peak_opening` in [0, 1]; the observable
+`effective_opening` is derived from actual crank angle. Use KPI field `opening` to check
+it. A stopped crank can remain open; reverse motion retraces the same profile. Phase
+is explicit, independent of cylinder geometry phase. A scheduled peak change scales
+the lobe; it does not replace crank timing.
+
+Validation checks topology and parameters but does not guarantee runtime resolution.
+On `numerical_failure`, reduce `step_ns` so angle travel and endpoint-speed travel stay
+within `min(0.25 rad, duration_angle/8)`, then recreate the session. The entire failed
+batch preserves inputs, state and revision. Asset v11 retains the profile and v1–v10
+compatibility. The new fidelity is `crank_timed_gas_exchange`; successful execution,
+passing KPIs and calibration remain distinct.
+
+## Premixed-combustion workflow
+
+`get_example_model({"name":"fired-cylinder"})` returns a premixed fired cylinder driving
+an external load. The `combustion` capability declares the Wiebe prescription, fuel/air/
+product classes, input range, forward-history behavior and numerical limits. Gas nodes
+specify `gas.premixed`, and their reservoir restrictions specify explicit
+`reservoir_fractions`. The compiler rejects missing fractions, incompatible connected
+mixtures and multiple burn components on one chamber.
+
+`premixed_combustion` connects a rotational `node_a` to a premixed-gas `node_b`, with
+explicit cycle/start/duration angles, shape exponent and burn coefficient. Its optional
+input channel scales the burn hazard through `burn_multiplier` in [0,1]. Zero disables
+burning but does not stop fuel arriving at an open inlet. Forward angles beyond the
+recorded frontier consume fuel; stopping/reversal/retracing cannot repeat heat release.
+
+Discover constituent masses, chemical energy, cumulative fuel burned, heat released
+and `burn_frontier_angle` from the channel table. Global fuel/fresh-air residuals supplement total mass and energy.
+`reservoir_enthalpy` includes transported chemical energy for premixed gases, and
+`net_fuel_energy_in` exposes that part separately. Gas internal energy remains thermal.
+The report fidelities are `premixed_gas_transport` or `premixed_wiebe_combustion`; both
+remain `unverified`.
+
+On a burn-resolution failure, reduce `step_ns` and recreate the session. Enabled burning
+requires crank travel and endpoint-speed travel no greater than
+`min(0.25 rad, burn duration/32)`; heat per tick is limited to 25% of pre-burn thermal
+energy. Whole-call rollback and revision contracts remain unchanged. A valid model can
+still fail a runtime bound; successful execution can still fail KPIs. See
+[PREMIXED_COMBUSTION.md](PREMIXED_COMBUSTION.md) for equations and limitations.
+
+## Clutch workflow
+
+`get_example_model({"name":"fired-clutch"})` returns a fired engine, separate load,
+clutch and heat sink, with exact-tick engagement/release events. `clutch` capabilities
+declare input bounds, solver budgets, mode codes and output-history semantics. Define
+`parameters.static_capacity` and `sliding_capacity` in Nm, plus a signed nonzero `ratio`.
+The compiler enforces `static >= sliding >= 0`, rotational endpoints and a thermal loss
+sink. Ground brakes use omitted/zero `node_b` and ratio one.
+
+The `engagement` input lies in `[0,1]`; zero disengages. Discover current relative slip,
+last accepted phase, last-tick mean torque/heat power and cumulative friction heat from
+the channel table. Phases are 0 disengaged, 1 locked, 2 positive slip and 3 negative slip.
+Updating engagement does not rewrite the preceding tick's mean outputs or phase.
+The fidelity `hybrid_clutch_powertrain` identifies models containing this component;
+it does not imply a complete transmission or calibrated vehicle.
+
+Use `run_experiment` to evaluate KPI and replay evidence, or session tools to vary
+engagement while preserving revision checks and independent branches. On numerical
+failure, reduce `step_ns` and inspect inertia/ratio scaling, redundant constraints and
+capacity schedules. The failed/cancelled call commits no inputs, phases, heat or physical
+state. Breakaway under changing loads uses interval-average demand; timestep refinement
+is required near transitions. See [CLUTCH_NETWORK.md](CLUTCH_NETWORK.md).
+
+## Ideal transmission workflow
+
+Request `fired-planetary` to obtain a synthetic engine, ring brake, sun/ring clutch,
+planetary set and final drive. The scheduled upshift/downshift uses the same exact-tick
+semantics as other experiments, with 84 matching replay boundaries. `node_c` is the
+planetary carrier; gears accept only their rotational ports and `parameters.ratio`.
+
+`slip_speed` and `constraint_error` expose current speed and phase residuals. `torque`,
+`torque_at_b` and planetary-only `torque_at_c` are mean reactions on the corresponding
+rotors over the last complete tick. They start at zero and are not rewritten by boundary
+input changes. Initial-speed failures return `model_connection` with field `initial_speed`;
+dependent constraint rows return `model_solver` with field `gear.constraints`.
+Correct topology or initial conditions rather than retrying unchanged data.
+
+Asset v11 retains all prior readers, including an authentic v7 fired-clutch fixture.
+This model establishes a synthetic transmission path, not complete DCT/AT, hydraulic
+actuation, TCU behavior or measured calibration. Actual Unity evidence remains separate.
+
+## Converter workflow
+
+Request `fired-converter` for a synthetic engine, mapped fluid path, separate lockup,
+planetary shift and thermal sink. Capabilities advertise all four required signed maps,
+point/component limits, reference-member convention, nonlinear iteration budgets,
+observable semantics and runtime recovery. The fidelity is
+`quasisteady_converter_powertrain`; passing the 87 replay boundaries establishes
+numerical consistency, not measured transmission performance.
+
+`torque_converter` requires pump/turbine `node_a`/`node_b`, optionally `heat_node`, and
+four explicit map arrays under `parameters`. Each point has dimensionless speed and
+torque ratios and a coefficient in `nm_s2_rad2`. No map, reverse quadrant, input channel
+or stator-rotor port is inferred. Compilation checks interpolation passivity and map
+continuity, reporting `converter.<map>` or `converter.counter_rotation` with the object ID.
+
+Discover mean pump/turbine/stator torques, fluid heat power, cumulative fluid heat,
+current signed speed ratio and driver code from channels. A parallel `clutch` supplies
+lockup engagement. The session revision, cancellation, branch independence and complete
+rollback contracts also cover converter histories. On `numerical_failure`, reduce
+`step_ns` and inspect map slopes, inertia/speed scales and clutch constraints. See
+[the equations, bounds and evidence](CONVERTER_NETWORK.md). Exports use asset v11;
+authentic prior fixtures preserve v1–v10 compatibility. Automatic hydraulic control and actual
+Unity Editor/Player validation remain separate unfinished work.
+
+## Hydraulic workflow
+
+Request `fired-hydraulic` for valve-controlled pressure chambers operating shift and
+lockup clutches. The `hydraulics` capability exposes gauge-pressure convention, storage
+and flow models, units, iteration limits, pressure tolerance, actuator scope and recovery.
+The fidelity is `compliant_hydraulic_powertrain`; calibration remains `unverified`.
+
+A hydraulic node requires positive compliance `storage` in `m3_pa` and nonnegative
+initial gauge pressure. `hydraulic_resistance` and `hydraulic_orifice` require explicit
+flow coefficients and valve opening; an orifice additionally needs a positive transition
+pressure. Reservoir endpoints require an explicit `reservoir_pressure`. A missing or
+zero input channel fixes the supplied opening. The compiler never infers fluid properties,
+leakage, reservoir pressure or an OEM map.
+
+`hydraulic_clutch` has rotational ports and geometry under `parameters`, including its
+hydraulic `pressure_node`. It has no engagement input. Discover pressure, stored reference
+volume, hydraulic boundary work, inventory residual, restriction heat, clamp force and
+current friction capacities alongside the existing clutch history channels. Valve input
+changes preserve stored pressure and last-tick means until accepted stepping advances them.
+
+The complete state, revision, cancellation and branch contracts cover hydraulic pressure
+and ledgers. On numerical failure, reduce `step_ns` and inspect compliance, coefficients,
+gauge pressures and actuator geometry. Negative final pressure rejects the entire batch;
+it is not silently clamped. See [HYDRAULIC_NETWORK.md](HYDRAULIC_NETWORK.md). Asset v11
+retains pressure boundaries, flow laws and actuator geometry; all v1–v10 readers remain.
+Pump losses/control, piston dynamics, full ECU/TCU control and actual Unity acceptance are separate work.
+
+## Pump supply workflow
+
+Request `fired-pump` for a crank-driven pump, compliant line, relief and pressure-operated
+transmission. Capabilities expose `hydraulic_pump`, displacement units, inlet convention,
+joint-solver limits and signed work semantics. Pump `hydraulic_work` is internal
+shaft-to-fluid transfer; global `hydraulic_work` remains external reservoir work.
+This example has zero external hydraulic work and explicit initial stored pressure.
+
+`hydraulic_pump` requires shaft/outlet ports, explicit `parameters.inlet_node`, positive
+`displacement` in `m3_rad`, and a reservoir pressure only for inlet zero. The relief
+requires conductance and cracking pressure, with no input channel. Missing or wrong-domain
+ports, dimensions and irrelevant parameters produce actionable validation errors.
+Asset v11 retains both definitions. Revisions, cancellation, forks, complete rollback and
+KPI/calibration distinctions remain unchanged. See [HYDRAULIC_PUMP.md](HYDRAULIC_PUMP.md).

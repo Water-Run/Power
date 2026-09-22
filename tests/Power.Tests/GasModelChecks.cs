@@ -103,9 +103,6 @@ internal static class GasModelChecks
         }).Code == DiagnosticCode.Connection);
         // A gas volume alone is a legal model: gas networks do not need a mechanical node.
         Require(CompiledModel.TryCompile(new() { Nodes = [gasNode] }, out _, out _));
-        // The existing asset format must reject new fields instead of silently dropping them.
-        Throws<AssetFormatException>(() => PowerAsset.Create(Vessel(), "Gas boundary", new string('0', 64),
-            100_000_000, 10_000_000, [], []));
         var mutable = Vessel();
         var frozen = CompiledModel.Compile(mutable);
         var original = Snapshot(frozen.CreateSimulation());

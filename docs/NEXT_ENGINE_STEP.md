@@ -1,7 +1,7 @@
 # Engine development resume notes
 
 Development resumed at the owner's request on 2026-09-14. Standalone gas primitives and
-the compiled Core network are now implemented; the remaining integration scope is below.
+the compiled Core network are now implemented. The 2026-09-22 integration checkpoint below updates the remaining scope.
 The preceding sealed-cylinder baseline passed managed verification on Windows, macOS and
 Linux. Actual Unity Editor and Player evidence is still pending; see [validation](VALIDATION.md).
 
@@ -9,11 +9,18 @@ Linux. Actual Unity Editor and Player evidence is still pending; see [validation
 implements fixed-volume gas nodes, reservoir restrictions, controlled openings, thermal
 links, channels, ledgers, forks and rollback. The bounded Heun method has analytic and
 refinement evidence for smooth flow, with explicit wall coupling and a conservative
-near-equilibrium limiter. It is not the proposed implicit method. The next checkpoint is
-versioned JSON/asset/CLI/MCP integration and portable replay, followed separately by
-gas-cylinder crank work. Finite gas assets are rejected until that format exists.
+near-equilibrium limiter. It is not the proposed implicit method.
 
-The Core network now provides explicit gas mass and internal-energy states. The next engine solver increment must couple them to moving chambers. The present sealed cylinder derives gas state from angle and immutable initial entropy, which cannot represent gas exchange or wall heating. Retain that component as an analytic benchmark while adding finite chambers, fixed pressure/temperature reservoirs, gas cylinders, controlled orifices and gas-to-thermal-node heat links.
+**2026-09-22 integration:** JSON/schema, asset v3, CLI/MCP discovery and examples,
+portable replay and Unity schematic views are implemented. Pre-change v1/v2 readers
+and fixtures are retained. Unity Editor/Play verification remains pending. The subsequent [moving-cylinder increment](MOVING_CYLINDER.md) adds gas exchange and
+crank work through JSON, assets and agents. The subsequent [crank-angle timing increment](VALVE_TIMING.md) adds explicit 360/720-degree
+profiles, reversal and bounded lobe resolution through the same interfaces. The latest
+engine checkpoint includes [premixed combustion](PREMIXED_COMBUSTION.md), with
+transported fuel/air/products, limiting reactants and chemical-energy accounting. Detailed
+thermochemistry, fuel metering and ignition control remain engine work.
+
+The Core network now provides explicit gas mass and internal-energy states. The moving-cylinder component now couples them to crank-dependent chambers with conservative pressure work. The present sealed cylinder derives gas state from angle and immutable initial entropy, which cannot represent gas exchange or wall heating. That component remains an analytic benchmark; finite chambers, reservoirs, gas cylinders, controlled orifices and gas-to-thermal links now coexist in the compiled graph.
 
 Original increment contracts (use the checkpoint above to distinguish completed Core work from remaining integration):
 
@@ -28,6 +35,6 @@ Required evidence includes choked and subcritical nozzle flow, analytic adiabati
 
 Research starting points: [NASA mass-flow choking](https://www.grc.nasa.gov/www/k-12/BGP/mflchk.html) for ideal compressible nozzle flow, and [Cantera reactor interactions](https://www.cantera.org/stable/reference/reactors/interactions.html) for control-volume boundary and wall concepts. These references are not runtime dependencies or validation of Power!'s proposed solver.
 
-A pre-change cylinder v2 asset was saved locally under `artifacts/drafts/gas-exchange/sealed-cylinder-v2.powerasset` for a future compatibility test. It is outside the active test suite and is not published as new functionality. It can be reproduced from the verified baseline before changing the encoder.
+An authentic pre-change cylinder v2 asset is now retained in the [compatibility fixtures](../tests/Power.Tests/Fixtures/README.md), with its source commit and SHA-256. The active tests verify its fingerprint and replay after upgrading to v3; do not regenerate it with the new encoder.
 
-The full engine cycle, combustion, valve timing, transmissions, controls and calibrated vehicle samples remain open. Preserve all sample evidence boundaries. The archived native prototypes have been ported to **Zig** under [the native boundary](NATIVE_ZIG.md); the active C#/Unity implementation remains in place.
+Complete engine behavior, predictive combustion/thermochemistry, mechanical valve-train dynamics, transmissions, controls and calibrated vehicle samples remain open. Preserve all sample evidence boundaries. The archived native prototypes have been ported to **Zig** under [the native boundary](NATIVE_ZIG.md); the active C#/Unity implementation remains in place.

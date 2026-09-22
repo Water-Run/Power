@@ -43,8 +43,11 @@ public static class ExperimentRunner
             if (e.TimeNanoseconds >= duration || e.TimeNanoseconds % step != 0 ||
                 (events.Count > 0 && e.TimeNanoseconds <= previous) || e.Values.Length == 0 || e.Values.Length > inputs.Count ||
                 e.Values.Select(v => v.Channel).Distinct().Count() != e.Values.Length ||
-                e.Values.Any(v => !inputs.Contains(v.Channel) || !double.IsFinite(v.Value)))
+                e.Values.Any(v => !inputs.Contains(v.Channel)))
                 throw new ArgumentException("Invalid, duplicated, unknown, or unordered input event.");
+            foreach (var input in e.Values)
+                if (model.ValidateInput(input) != SimulationStatus.Ok)
+                    throw new ArgumentException($"Invalid scheduled input on channel {input.Channel} at {e.TimeNanoseconds} ns; use a finite value, and gas openings, burn multipliers and clutch engagement in [0, 1].");
             events.Add(e.TimeNanoseconds, e.Values); boundaries.Add(e.TimeNanoseconds); previous = e.TimeNanoseconds;
         }
         foreach (var c in document.Checks)

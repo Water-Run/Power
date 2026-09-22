@@ -7,8 +7,9 @@ their own, before any of it is wired into the compiled model graph.
 The primitives live in `src/Power.Core/GasExchange.cs` and are covered by
 `tests/Power.Tests/GasChecks.cs`. A subsequent [Core gas-network checkpoint](GAS_NETWORK.md)
 now connects finite gas nodes, restrictions, heat links and conservation ledgers to the
-compiled model. JSON, CLI/MCP and Unity asset integration remain pending; asset v1/v2
-reject these new models explicitly. The sealed adiabatic cylinder remains an unchanged
+compiled model. The 2026-09-22 integration adds JSON, CLI/MCP and portable asset v3,
+while retaining v1/v2 readers for their original model sets. Unity schematic views and
+tests are prepared; actual Editor verification remains pending. The sealed adiabatic cylinder remains an unchanged
 analytic benchmark, with no mass exchange through its crank-coupled chamber yet.
 
 ## What is implemented
@@ -92,8 +93,11 @@ rather than a recorded output of this code:
 
 The [Core gas-network checkpoint](GAS_NETWORK.md) now covers fixed-volume nodes,
 reservoirs, restrictions, thermal links, mass and energy ledgers, output channels and
-bounded transactional stepping. The remaining engine increment requires gas-cylinder
-crank work, schema and asset extensions, capability discovery, replay examples and
-Unity views. The proposed implicit pairwise method has not been adopted: the current
+bounded transactional stepping. JSON, portable assets, capability discovery and replay
+examples are integrated. The [moving-cylinder extension](MOVING_CYLINDER.md) now couples gas exchange and crank
+work. Optional [crank-angle timing](VALVE_TIMING.md) controls restrictions, and
+[premixed combustion](PREMIXED_COMBUSTION.md) adds fuel/air/product and chemical-energy
+accounting. Unity Editor evidence is a
+separate deliverable. The proposed implicit pairwise method has not been adopted: the current
 explicit method, its equilibrium limiter and its accuracy limits are documented there.
-Connected volumes require identical gas constants and gamma; species mixing remains open.
+Connected volumes require identical gas constants and gamma; detailed species thermochemistry remains open.

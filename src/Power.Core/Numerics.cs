@@ -33,6 +33,7 @@ internal sealed class Factorization
 {
     private readonly double[,] _lu;
     private readonly int[] _pivots;
+    private readonly double[] _scales;
     public int Size => _pivots.Length;
 
     public Factorization(double[,] matrix)
@@ -40,23 +41,42 @@ internal sealed class Factorization
         _lu = matrix;
         int n = matrix.GetLength(0);
         _pivots = new int[n];
-        double[] scales = new double[n];
+        _scales = new double[n];
+        if (!Factor()) Fail();
+    }
+
+    // Mutable factors are owned exclusively by a Simulation, never the shared compiled model.
+    internal Factorization(int size)
+    {
+        _lu = new double[size, size]; _pivots = new int[size]; _scales = new double[size];
+    }
+
+    internal bool Refactor(double[,] matrix)
+    {
+        Array.Copy(matrix, _lu, matrix.Length);
+        return Factor();
+    }
+
+    private bool Factor()
+    {
+        int n = Size; var matrix = _lu; var scales = _scales;
+        Array.Clear(scales, 0, n);
         for (int row = 0; row < n; ++row)
         {
             for (int col = 0; col < n; ++col)
             {
                 double value = Math.Abs(matrix[row, col]);
-                if (!Numeric.Finite(value)) Fail();
+                if (!Numeric.Finite(value)) return false;
                 scales[row] = Math.Max(scales[row], value);
             }
-            if (scales[row] == 0) Fail();
+            if (scales[row] == 0) return false;
         }
         for (int k = 0; k < n; ++k)
         {
             int pivot = k;
             for (int row = k + 1; row < n; ++row)
                 if (Math.Abs(matrix[row, k]) / scales[row] > Math.Abs(matrix[pivot, k]) / scales[pivot]) pivot = row;
-            if (Math.Abs(matrix[pivot, k]) / scales[pivot] < 64 * 2.2204460492503131e-16) Fail();
+            if (Math.Abs(matrix[pivot, k]) / scales[pivot] < 64 * 2.2204460492503131e-16) return false;
             _pivots[k] = pivot;
             if (pivot != k)
             {
@@ -67,14 +87,15 @@ internal sealed class Factorization
             for (int row = k + 1; row < n; ++row)
             {
                 matrix[row, k] /= matrix[k, k];
-                if (!Numeric.Finite(matrix[row, k])) Fail();
+                if (!Numeric.Finite(matrix[row, k])) return false;
                 for (int col = k + 1; col < n; ++col)
                 {
                     matrix[row, col] -= matrix[row, k] * matrix[k, col];
-                    if (!Numeric.Finite(matrix[row, col])) Fail();
+                    if (!Numeric.Finite(matrix[row, col])) return false;
                 }
             }
         }
+        return true;
     }
 
     private static void Fail() => throw new ModelCompileException(DiagnosticCode.Solver, 0,

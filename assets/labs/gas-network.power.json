@@ -1,0 +1,232 @@
+{
+  "schema": "power.model.v1",
+  "description": "Synthetic fixed-volume gas exchange with two chambers, a reservoir restriction and a finite thermal wall. Scheduled openings exercise exact tick replay. No moving-cylinder coupling, combustion, species mixing or OEM calibration.",
+  "step_ns": 100000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "gas",
+      "storage": {
+        "value": 2,
+        "unit": "l"
+      },
+      "initial": {
+        "value": 600,
+        "unit": "k"
+      },
+      "position": {
+        "value": 8,
+        "unit": "bar"
+      },
+      "gas": {
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "gamma": 1.4
+      }
+    },
+    {
+      "id": 2,
+      "domain": "gas",
+      "storage": {
+        "value": 1,
+        "unit": "l"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      },
+      "position": {
+        "value": 1,
+        "unit": "bar"
+      },
+      "gas": {
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "gamma": 1.4
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 500,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "gas_orifice",
+      "node_a": 1,
+      "node_b": 2,
+      "input_channel": 100,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "area": {
+          "value": 20,
+          "unit": "mm2"
+        },
+        "discharge_coefficient": 0.8
+      }
+    },
+    {
+      "id": 11,
+      "kind": "gas_orifice",
+      "node_a": 2,
+      "node_b": 0,
+      "input_channel": 101,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "area": {
+          "value": 5,
+          "unit": "mm2"
+        },
+        "discharge_coefficient": 0.9,
+        "reservoir_pressure": {
+          "value": 1,
+          "unit": "bar"
+        },
+        "reservoir_temperature": {
+          "value": 300,
+          "unit": "k"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "kind": "gas_heat_link",
+      "node_a": 1,
+      "node_b": 3,
+      "parameters": {
+        "conductance": {
+          "value": 2,
+          "unit": "w_k"
+        }
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 200000000,
+    "sample_every_ns": 20000000,
+    "events": [
+      {
+        "time_ns": 0,
+        "values": [
+          {
+            "channel": 100,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 50100000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 100300000,
+        "values": [
+          {
+            "channel": 101,
+            "value": 0.4
+          }
+        ]
+      },
+      {
+        "time_ns": 150700000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 180000000,
+        "values": [
+          {
+            "channel": 101,
+            "value": 0
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 1,
+        "field": "pressure",
+        "min": 100000,
+        "max": 800000
+      },
+      {
+        "object_id": 1,
+        "field": "temperature",
+        "min": 200,
+        "max": 600
+      },
+      {
+        "object_id": 2,
+        "field": "pressure",
+        "min": 100000,
+        "max": 800000
+      },
+      {
+        "object_id": 3,
+        "field": "temperature",
+        "min": 300,
+        "max": 310
+      },
+      {
+        "object_id": 10,
+        "field": "mass_flow",
+        "abs_max": 0
+      },
+      {
+        "object_id": 11,
+        "field": "mass_flow",
+        "abs_max": 0
+      },
+      {
+        "object_id": 12,
+        "field": "heat_flow",
+        "min": 0,
+        "max": 600
+      },
+      {
+        "object_id": 0,
+        "field": "reservoir_enthalpy",
+        "min": -10000,
+        "max": 0
+      },
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 1e-06
+      },
+      {
+        "object_id": 0,
+        "field": "mass_residual",
+        "abs_max": 1e-14
+      }
+    ]
+  }
+}

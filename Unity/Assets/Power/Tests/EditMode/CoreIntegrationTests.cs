@@ -39,6 +39,15 @@ namespace Power.Studio.Tests
         [TestCase("Electrothermal")]
         [TestCase("ThermalNetwork")]
         [TestCase("SealedCylinder")]
+        [TestCase("GasNetwork")]
+        [TestCase("MovingCylinder")]
+        [TestCase("CrankTimedCylinder")]
+        [TestCase("FiredCylinder")]
+        [TestCase("FiredClutch")]
+        [TestCase("FiredPlanetary")]
+        [TestCase("FiredConverter")]
+        [TestCase("FiredHydraulic")]
+        [TestCase("FiredPump")]
         public void ScriptedImportPreservesPortablePayloadAndReplay(string resource)
         {
             var imported = Resources.Load<PowerModelAsset>(resource);
