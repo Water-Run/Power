@@ -5,7 +5,7 @@
 const std = @import("std");
 comptime {
     if (!std.mem.eql(u8, @import("builtin").zig_version_string, "0.15.2"))
-        @compileError("Power! native builds require Zig 0.15.2; see tools/InstallZig.py.");
+        @compileError("Power! native builds require Zig 0.15.2; run: dotnet run --file tools/Build.cs -- install-zig");
 }
 pub fn build(b: *std.Build) void {
     const target = b.standardTargetOptions(.{});

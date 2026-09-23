@@ -641,6 +641,22 @@ Mono/IL2CPP, Player packaging and this increment's Windows/macOS execution remai
 unverified. Full engine-cycle physics, transmissions, controls and vehicle calibration
 remain open; sample parameters stay `unverified`.
 
+## 2026-09-19: Python 工具链退役，原生验证移植为 C#
+
+仓库不再包含 Python。`tools/InstallZig.py`、`tools/VerifyNative.py`、
+`legacy/native/tools/model_lab.py` 与其测试已移植为 C#，全部并入
+`tools/Build.cs` 单文件构建工具（.NET 10 file-based app 限单源文件）。
+ctypes 宿主改为 P/Invoke，外部 ABI 消费者属性不变；Zig 安装器在 Windows 用
+内置 ZIP 解压，`tar.xz` 平台委托系统 `tar`。CI 与文档同步更新。
+
+Windows x64 本机串行验证（`install-zig` + `native-verify`）：
+
+- 源审计：0 个 C/C++ 文件、0 个 Lua 文件、35 个 Zig 源文件、38 项迁移清单条目。
+- 完整 `verify`（Windows x64 本机串行）：53/53 托管检查、41/41 .NET Standard 程序集检查、
+  6/6 MCP 集成组、16/16 原生 Zig 测试；`power_host` 与 `power_model_host` 运行正常。
+- 6/6 移植后 C# ABI 测试通过（含 70 次编译失败槽位清理、15 个文档突变拒绝、
+  失败 KPI 退出码 2）。
+- 基线比对：**176/176** 个原始 C 基线值完全一致（最大绝对误差 0.0）。
 
 ## 2026-09-14: compiled gas-network Core checkpoint
 
@@ -835,7 +851,7 @@ The owner requested wrap-up and a development pause after the cylinder increment
 dotnet run --file tools/Build.cs -- verify
 ```
 
-这里的检查是会在 Release 执行断言的控制台验收程序，并非依赖 `Debug.Assert` 的空测试。它们不需要 Unity、Python 或原 C 库。MCP 项目使用官方 NuGet 包，`packages.lock.json` 固定解析结果。
+这里的检查是会在 Release 执行断言的控制台验收程序，并非依赖 `Debug.Assert` 的空测试。它们不需要 Unity、Python 或原 C 库；原生验证宿主与 Zig 安装器已于 2026-09-19 移植进同一 .NET 构建工具（C# P/Invoke）。MCP 项目使用官方 NuGet 包，`packages.lock.json` 固定解析结果。
 
 GitHub Actions 已在 Windows、macOS、Linux 上完成同一组托管验收：各平台均为 30/30、19/19、5/5。证据对应代码提交 [`aea6136`](https://github.com/Water-Run/Power/commit/aea6136bbdcbeaea91d63836d947637e7eac730e) 和 [运行 34087686661](https://github.com/Water-Run/Power/actions/runs/34087686661)。本地保存了 `artifacts/reports/github-actions-34087686661.log` 与 `.json`，包含实际作业输出和终态；另外从不含缓存及生成程序集的干净源码副本完成了一轮本地验收，日志为 `github-clean-checkout.log`。
 

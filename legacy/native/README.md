@@ -16,12 +16,11 @@ The pinned compiler is [Zig 0.15.2](https://ziglang.org/documentation/0.15.2/).
 From the repository root:
 
 ```sh
-python3 tools/InstallZig.py
+dotnet run --file tools/Build.cs -- install-zig
 dotnet run --file tools/Build.cs -- native-verify
 ```
 
-Use `python` on Windows. `POWER_ZIG` may select an existing pinned compiler,
-and `POWER_PYTHON` may select Python for the .NET build tool. The installer uses
+`POWER_ZIG` may select an existing pinned compiler. The installer uses
 committed official download URLs and SHA-256 checks. Full project verification
 with `tools/Build.cs verify` includes these native checks after managed checks;
 it keeps all builds and tests serial.
@@ -43,11 +42,12 @@ Zig's standard library implement the runtime primitives. Linux needs no libc;
 macOS uses the OS-provided `libSystem` through Zig's bundled linker stubs. The shared
 library exports `pwr_get_api`; `src/abi.zig` describes its binary layouts along
 with the internal prototype types. The `power_host` and `power_model_host` Zig
-executables call the shared library. Python `ctypes` remains an independent ABI
-consumer through `tools/model_lab.py`.
+executables call the shared library. The C# build tool's P/Invoke model lab
+(`dotnet run --file tools/Build.cs -- model-lab <model.power.json> --library <path>`)
+remains an independent ABI consumer.
 
 The root verifier installs the shared library and hosts under `artifacts/native`,
-runs the physics/SDK regressions and Python tests, compares all electrothermal
+runs the physics/SDK regressions and the C# ABI test suite, compares all electrothermal
 sample values to the original C baseline, and writes machine-readable evidence
 under `artifacts/reports`. It rejects C/C++ files and headers plus Lua source,
 bytecode and packages in the repository source inventory, including newly added

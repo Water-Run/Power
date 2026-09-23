@@ -21,14 +21,14 @@ Unity's own compiler supports C# 9 with .NET Standard 2.1 as its API profile. Th
 
 ## Build and verify
 
-Install the pinned .NET SDK and Python 3.12 or newer, then install Zig and run from the repository root (`python` on Windows):
+Install the pinned .NET SDK, then install Zig and run from the repository root on Windows, macOS, or Linux:
 
 ```sh
-python3 tools/InstallZig.py
+dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- install-zig
 dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 ```
 
-`verify` builds the solution serially, exports Unity model assets, runs the core and agent checks, exercises an actual MCP server process, and verifies the Zig runtime, shared-library hosts, the Python ABI, and the original numerical baseline. Reports land under `artifacts/reports`. A pinned SDK installed at `.cache/dotnet/dotnet` works too; caches aren't tracked by Git.
+`verify` builds the solution serially, exports Unity model assets, runs the core and agent checks, exercises an actual MCP server process, and verifies the Zig runtime, shared-library hosts, the C# P/Invoke ABI, and the original numerical baseline. Reports land under `artifacts/reports`. A pinned SDK installed at `.cache/dotnet/dotnet` works too; caches aren't tracked by Git.
 
 > The source audit rejects C/C++ implementation files and headers, plus Lua source, bytecode, and packages. Keep the repository free of them.
 

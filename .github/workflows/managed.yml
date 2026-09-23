@@ -28,5 +28,5 @@ jobs:
         with:
           global-json-file: global.json
       - run: dotnet restore Power.slnx --locked-mode --disable-parallel --disable-build-servers -p:UseSharedCompilation=false
-      - run: python tools/InstallZig.py
+      - run: dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- install-zig
       - run: dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
