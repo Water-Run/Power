@@ -12,3 +12,27 @@
 - Unity verification is separate: set POWER_UNITY_EDITOR and run `unity-test`. Never replace actual Editor/Play/IL2CPP evidence with a .NET-only test claim.
 - Use the user's existing authorization to progress. Routine reversible code, tests and documentation changes do not need another permission question. Preserve user work and source provenance.
 - Do not mark research parameters as calibrated or silently fill missing OEM measurements. Retain the complete boundaries and evidence manifests in assets/samples.
+
+# Documentation style
+
+User-facing docs (`README.md`, `THIRD_PARTY_NOTICES.md`) are written for people,
+not for agents. Keep them that way when editing. Write them in English; this
+repository has no Chinese README.
+
+- Write for the current version only. No changelogs, release attestations, or
+  "since vX.Y" history. Git history is the log. Checkpoint counts and per-lab
+  evidence stay in `docs/VALIDATION.md`.
+- Say what a user needs and stop. Cut edge-case enumeration, exhaustive
+  parameter semantics, and implementation internals. If a detail only matters
+  when something breaks, it doesn't belong in the README.
+- Plain sentences a person would say. No spec-legalese walls, no nested
+  qualifiers, no "every X is Y; Z may differ when..." hedging chains.
+- Calm, factual tone. Prefer "doesn't" / "不会" over "never" / "绝不". Soften a
+  behavioral absolute with "by design" / "设计上". Describe what the project
+  does; don't preach absolutes.
+- Use GitHub Markdown deliberately: tables for reference data, `<details>`
+  for long lists, blockquote notes for caveats. The area under the title
+  carries no badge or nav-link row.
+- In `THIRD_PARTY_NOTICES.md`, keep every license, source, and provenance fact.
+  Change wording and layout only.
+- Machine-only instructions live here, not in the user docs.
