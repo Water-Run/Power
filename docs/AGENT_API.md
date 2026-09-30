@@ -15,6 +15,23 @@ and document contracts. `ideal_gear` has A/B ports and a signed nonzero ratio;
 one. Compatible initial speeds and independent permanent constraints are required.
 Capabilities describe rank policy, solver tolerances and mean reaction outputs.
 
+The [hydraulic piston contract](HYDRAULIC_PISTON.md) adds `translational` nodes,
+`linear_spring`, `hydraulic_piston`, `piston_clutch` and `force_source`. Agents can
+observe displacement, velocity, pressure force, pad energy/force, clutch capacities
+and cumulative damping heat. A piston clutch has no engagement input: command its
+fill/drain valves and inspect pad contact. `get_capabilities.hydraulic_piston`
+describes SI units, the volume/work convention, solver scope and negative-pressure
+recovery. Model validation returns actionable unit, range and connection errors;
+session revision, cancellation and independent-fork contracts apply unchanged.
+
+`hydraulic_spool_valve` references a piston component and explicit closed/full-open
+positions. Its opening follows actual motion; it accepts no opening command or
+initial-input override. Flow, loss and opening are observable through the shared
+model/session contract. `get_capabilities.hydraulic_spool_valve` declares the
+position/flow units, simultaneous solve and omitted jet-force physics. Request
+`spool-regulated-pump` to inspect mechanical pressure regulation; see
+[the metering contract](HYDRAULIC_SPOOL.md).
+
 ## 启动与客户端配置
 
 ```sh
@@ -39,7 +56,7 @@ Windows 同样使用 `dotnet` 和 DLL 的绝对路径。生产连接应直接运
 
 ## 工具与结果
 
-As of version 0.13.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter` `fired-hydraulic` or `fired-pump`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v11`; v1–v10 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
+In agent API version 0.18.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch` or `spool-regulated-pump`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v15`; v1–v14 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
 
 | 工具 | 用途 |
 |---|---|
@@ -282,7 +299,7 @@ and ledgers. On numerical failure, reduce `step_ns` and inspect compliance, coef
 gauge pressures and actuator geometry. Negative final pressure rejects the entire batch;
 it is not silently clamped. See [HYDRAULIC_NETWORK.md](HYDRAULIC_NETWORK.md). Asset v11
 retains pressure boundaries, flow laws and actuator geometry; all v1–v10 readers remain.
-Pump losses/control, piston dynamics, full ECU/TCU control and actual Unity acceptance are separate work.
+Measured loss/control maps, measured valve/accumulator dynamics, full ECU/TCU control and actual Unity acceptance remain open.
 
 ## Pump supply workflow
 
@@ -298,3 +315,75 @@ requires conductance and cracking pressure, with no input channel. Missing or wr
 ports, dimensions and irrelevant parameters produce actionable validation errors.
 Asset v11 retains both definitions. Revisions, cancellation, forks, complete rollback and
 KPI/calibration distinctions remain unchanged. See [HYDRAULIC_PUMP.md](HYDRAULIC_PUMP.md).
+
+## Pump assembly workflow
+
+Request `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump` or `battery-regulated-pump`. The `pump_assembly` capability gives
+the net-flow/reaction equations, loss units, component composition and electrical
+supply boundary. Models contain ordinary pump, resistance and shaft records; the
+electric example adds the existing RL motor. No new component kind, schema or asset
+version is required. Core clients can use `HydraulicPumpAssembly.CreateComponents`
+with their own stable IDs to produce the same graph definitions.
+
+Leakage is an explicit outlet-to-inlet resistance with coefficient in `m3_s_pa`;
+shaft friction is a grounded, zero-stiffness shaft with damping in `nm_s_rad`.
+Both require supplied values and explicit heat routing. An electric pump accepts
+motor voltage through a `v` input, with back EMF, current and copper heat in the
+shared solve. It does not infer a battery, efficiency, viscosity, controller or
+calibration. Discover channels rather than interpreting ideal pump branch flow as
+net assembly delivery. Existing revisions, cancellation, forks and complete batch
+rollback apply to the entire composition.
+
+## Pressure feedback workflow
+
+Request `pressure-regulated-pump`. Capabilities advertise the `pressure_controller`
+component, dimensional gains, sensor/target requirements, integer sampling, clamping
+and transaction semantics. Validate, run and export with the existing tools. Asset v12
+retains the full controller definition and all previous readers remain supported.
+
+The example's `105` input changes pressure setpoint in SI Pa. The motor's voltage
+channel `100` is owned by the controller and absent from writable channels. Direct
+writes return `controlled_input` with guidance to write `pressure_setpoint`; rejection
+changes neither state nor revision. Negative pressure targets are rejected. Static
+validation detects conflicting owners, wrong domains/units and misaligned sample periods.
+
+Read `sampled_pressure`, `pressure_error`, `integral_voltage` and `command_voltage`
+through the discoverable output IDs. These are last-sample state and held command.
+Snapshot timestamps identify the clock phase. Input changes do not advance control
+history; the next due sample updates it at a physical tick. Forks include integral
+memory and clock phase. Cancellation or later arithmetic/solver failure commits no
+part of the batch. Overflow recovery requires inspecting gains, targets and integral
+scales, rather than retrying identical inputs blindly.
+
+Successful execution and exact replay can accompany failed tracking KPIs when the
+actuator saturates. Check `passed` and the error bounds separately from `ok`.
+The example's ideal sensor and voltage source are research components; they do not
+establish a battery, complete ECU/TCU, calibrated controls or Unity acceptance.
+
+## Battery supply workflow
+
+Request `battery-regulated-pump`. Capabilities expose finite charge, OCV/RC equations,
+load and duty rules, control ownership and recovery. Battery node `storage` uses `c`
+or `ah`, `initial` is SOC in `fraction`, and `position` is polarization voltage in `v`.
+The battery record requires all five electrical parameters. Units, capacity/state
+bounds, source ports, heat sinks, increasing OCV and controller periods are validated.
+
+`battery_motor` requires a rotational A port, battery B port and duty input in [-1,1].
+`resistive_load` has a battery A port, resistance and opening in [0,1]. The example's
+`106` channel changes accessory load; `105` changes pressure setpoint in SI Pa.
+Duty `100` is owned by `pressure_duty_controller` and cannot be written directly.
+Its gains use `fraction_pa` and `fraction_pa_s`; output bounds are dimensionless.
+
+Read `state_of_charge`, `charge`, `battery_current`, `terminal_voltage`,
+`polarization_voltage`, battery stored energy and heat alongside `integral_duty`
+and `command_duty`. Voltage/current/load-power channels are instantaneous algebraic
+observables, so valid duty/load changes can alter them without changing stored states.
+Battery work is internal; global `source_work` includes only explicit external power
+boundaries. SOC/voltage violations reject the whole batch. Inspect initial charge,
+capacity, duty, loads and batch length before retrying. There is no silent SOC clamp.
+
+Asset v15 retains all supply/control parameters with authentic prior readers/fixtures.
+Cancellation and later failure preserve charge, RC/control memory, inputs and revision.
+Independent forks compare accessory/duty strategies from the same physical history.
+All parameters remain unverified; an ideal averaged duty converter is not a battery
+BMS, PWM/current loop, complete vehicle electrical system or calibration.

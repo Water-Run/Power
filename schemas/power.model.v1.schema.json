@@ -38,6 +38,12 @@
           },
           {
             "$ref": "#/$defs/hydraulic"
+          },
+          {
+            "$ref": "#/$defs/battery"
+          },
+          {
+            "$ref": "#/$defs/translational"
           }
         ]
       },
@@ -101,6 +107,33 @@
           },
           {
             "$ref": "#/$defs/hydraulic_relief"
+          },
+          {
+            "$ref": "#/$defs/pressure_controller"
+          },
+          {
+            "$ref": "#/$defs/battery_motor"
+          },
+          {
+            "$ref": "#/$defs/resistive_load"
+          },
+          {
+            "$ref": "#/$defs/pressure_duty_controller"
+          },
+          {
+            "$ref": "#/$defs/linear_spring"
+          },
+          {
+            "$ref": "#/$defs/hydraulic_piston"
+          },
+          {
+            "$ref": "#/$defs/piston_clutch"
+          },
+          {
+            "$ref": "#/$defs/force_source"
+          },
+          {
+            "$ref": "#/$defs/hydraulic_spool_valve"
           }
         ]
       },
@@ -802,7 +835,21 @@
             "clamp_force",
             "static_capacity",
             "sliding_capacity",
-            "hydraulic_power"
+            "hydraulic_power",
+            "sampled_pressure",
+            "pressure_error",
+            "integral_voltage",
+            "command_voltage",
+            "state_of_charge",
+            "charge",
+            "terminal_voltage",
+            "polarization_voltage",
+            "battery_current",
+            "integral_duty",
+            "command_duty",
+            "displacement",
+            "linear_speed",
+            "force"
           ]
         },
         "min": {
@@ -2869,6 +2916,1493 @@
           ]
         }
       }
+    },
+    "pressure_controller": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "input_channel",
+        "initial_input",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "pressure_controller"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "unit": {
+              "enum": [
+                "pa",
+                "bar"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "target_channel",
+            "sample_period_ns",
+            "proportional_gain",
+            "integral_gain",
+            "minimum_voltage",
+            "maximum_voltage",
+            "initial_integral_voltage"
+          ],
+          "properties": {
+            "target_channel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            },
+            "sample_period_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000000
+            },
+            "proportional_gain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "v_pa"
+                  ]
+                }
+              }
+            },
+            "integral_gain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "v_pa_s"
+                  ]
+                }
+              }
+            },
+            "minimum_voltage": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "v"
+                  ]
+                }
+              }
+            },
+            "maximum_voltage": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "v"
+                  ]
+                }
+              }
+            },
+            "initial_integral_voltage": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "v"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "id": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4294967295
+    },
+    "battery": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "domain",
+        "storage",
+        "initial",
+        "position",
+        "battery"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "domain": {
+          "const": "battery"
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "unit": {
+              "enum": [
+                "c",
+                "ah"
+              ]
+            }
+          }
+        },
+        "initial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "v"
+              ]
+            }
+          }
+        },
+        "battery": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "empty_voltage",
+            "full_voltage",
+            "series_resistance",
+            "polarization_resistance",
+            "polarization_capacitance"
+          ],
+          "properties": {
+            "empty_voltage": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "v"
+                  ]
+                }
+              }
+            },
+            "full_voltage": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "v"
+                  ]
+                }
+              }
+            },
+            "series_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "ohm"
+                  ]
+                }
+              }
+            },
+            "polarization_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "ohm"
+                  ]
+                }
+              }
+            },
+            "polarization_capacitance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "f"
+                  ]
+                }
+              }
+            },
+            "heat_node": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            }
+          }
+        }
+      }
+    },
+    "battery_motor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "input_channel",
+        "initial_input",
+        "parameters",
+        "node_b"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "battery_motor"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": -1,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "resistance",
+            "inductance",
+            "coupling",
+            "initial_current"
+          ],
+          "properties": {
+            "resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "ohm"
+                  ]
+                }
+              }
+            },
+            "inductance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "h"
+                  ]
+                }
+              }
+            },
+            "coupling": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "nm_a"
+                  ]
+                }
+              }
+            },
+            "initial_current": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "a"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        }
+      }
+    },
+    "resistive_load": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "initial_input",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "resistive_load"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "resistance"
+          ],
+          "properties": {
+            "resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "ohm"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "pressure_duty_controller": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "input_channel",
+        "initial_input",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "pressure_duty_controller"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "unit": {
+              "enum": [
+                "pa",
+                "bar"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "target_channel",
+            "sample_period_ns",
+            "proportional_gain",
+            "integral_gain",
+            "minimum_duty",
+            "maximum_duty",
+            "initial_integral_duty"
+          ],
+          "properties": {
+            "target_channel": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9223372036854775807
+            },
+            "sample_period_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000000
+            },
+            "proportional_gain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "fraction_pa"
+                  ]
+                }
+              }
+            },
+            "integral_gain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "fraction_pa_s"
+                  ]
+                }
+              }
+            },
+            "minimum_duty": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": -1,
+                  "maximum": 1
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
+                  ]
+                }
+              }
+            },
+            "maximum_duty": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": -1,
+                  "maximum": 1
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
+                  ]
+                }
+              }
+            },
+            "initial_integral_duty": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "translational": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "domain",
+        "storage",
+        "initial",
+        "position"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "domain": {
+          "const": "translational"
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0
+            },
+            "unit": {
+              "enum": [
+                "kg"
+              ]
+            }
+          }
+        },
+        "initial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "m_s"
+              ]
+            }
+          }
+        },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "m",
+                "mm"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "linear_spring": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "linear_spring"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "stiffness",
+            "damping",
+            "ratio",
+            "rest_angle"
+          ],
+          "properties": {
+            "stiffness": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "n_m"
+                  ]
+                }
+              }
+            },
+            "damping": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "n_s_m"
+                  ]
+                }
+              }
+            },
+            "ratio": {
+              "type": "number",
+              "not": {
+                "const": 0
+              }
+            },
+            "rest_angle": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "force_source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "input_channel",
+        "initial_input"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "force_source"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "n"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [],
+          "properties": {}
+        }
+      }
+    },
+    "hydraulic_piston": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "hydraulic_piston"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "front_area",
+            "back_area",
+            "back_node",
+            "minimum_position",
+            "maximum_position",
+            "stop_stiffness",
+            "contact_position",
+            "contact_stiffness"
+          ],
+          "properties": {
+            "front_area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "back_area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "back_node": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 4294967295
+            },
+            "back_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "minimum_position": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "maximum_position": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "stop_stiffness": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "n_m"
+                  ]
+                }
+              }
+            },
+            "contact_position": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "contact_stiffness": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "n_m"
+                  ]
+                }
+              }
+            }
+          },
+          "allOf": [
+            {
+              "if": {
+                "properties": {
+                  "back_node": {
+                    "const": 0
+                  }
+                }
+              },
+              "then": {
+                "required": [
+                  "back_pressure"
+                ]
+              },
+              "else": {
+                "not": {
+                  "required": [
+                    "back_pressure"
+                  ]
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    "piston_clutch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "piston_clutch"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "piston_component",
+            "effective_radius",
+            "static_friction",
+            "sliding_friction",
+            "friction_surfaces",
+            "ratio"
+          ],
+          "properties": {
+            "piston_component": {
+              "$ref": "#/$defs/id"
+            },
+            "effective_radius": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "static_friction": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sliding_friction": {
+              "type": "number",
+              "minimum": 0
+            },
+            "friction_surfaces": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 128
+            },
+            "ratio": {
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "hydraulic_spool_valve": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "hydraulic_spool_valve"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "heat_node": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "coefficient",
+            "transition_pressure",
+            "piston_component",
+            "closed_position",
+            "full_open_position"
+          ],
+          "properties": {
+            "coefficient": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3_s_sqrt_pa"
+                  ]
+                }
+              }
+            },
+            "transition_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "reservoir_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "piston_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "closed_position": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "full_open_position": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "node_b"
+            ],
+            "properties": {
+              "node_b": {
+                "minimum": 1
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "parameters": {
+                "not": {
+                  "required": [
+                    "reservoir_pressure"
+                  ]
+                }
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "parameters": {
+                "required": [
+                  "reservoir_pressure"
+                ]
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }

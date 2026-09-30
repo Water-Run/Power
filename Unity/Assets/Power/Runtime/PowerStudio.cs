@@ -28,8 +28,10 @@ namespace Power.Studio
             internal Transform Piston;
             internal Vector3 Top;
             internal double StrokeMeters;
+            internal double MinimumMeters;
         }
         private readonly Dictionary<uint, PistonVisual> _pistons = new Dictionary<uint, PistonVisual>();
+        private readonly Dictionary<uint, PistonVisual> _sliders = new Dictionary<uint, PistonVisual>();
         private sealed class ValveVisual
         {
             internal Transform Stem;
@@ -135,7 +137,7 @@ namespace Power.Studio
             if (_panel != null) Destroy(_panel);
             foreach (var material in _materials) if (material != null) Destroy(material);
             _materials.Clear();
-            _rotors.Clear(); _pistons.Clear(); _valves.Clear(); _combustors.Clear(); _clutchMaterials.Clear(); _thermalMaterials.Clear(); _inputFields.Clear(); _inputValues.Clear();
+            _rotors.Clear(); _pistons.Clear(); _sliders.Clear(); _valves.Clear(); _combustors.Clear(); _clutchMaterials.Clear(); _thermalMaterials.Clear(); _inputFields.Clear(); _inputValues.Clear();
             _valueIndices.Clear(); _outputLabels.Clear();
             _plot = null;
         }
@@ -146,6 +148,8 @@ namespace Power.Studio
                 if (!channel.IsInput && channel.Quantity == quantity) return channel.Id;
             return 0;
         }
+
+        private static double Meters(Quantity quantity) => quantity.Unit == Unit.Millimeter ? quantity.Value / 1000 : quantity.Value;
 
         public void ResetSimulation()
         {
@@ -300,6 +304,9 @@ namespace Power.Studio
             foreach (var piston in _pistons)
                 piston.Value.Piston.localPosition = piston.Value.Top - Vector3.up *
                     (float)(Value(piston.Key, Field.PistonDisplacement) / piston.Value.StrokeMeters);
+            foreach (var slider in _sliders)
+                slider.Value.Piston.localPosition = slider.Value.Top + Vector3.up *
+                    (float)((Value(slider.Key, Field.Displacement) - slider.Value.MinimumMeters) / slider.Value.StrokeMeters);
             foreach (var valve in _valves)
                 valve.Value.Stem.localPosition = valve.Value.Closed + Vector3.up * (float)(0.4 * Value(valve.Key, Field.Opening));
             foreach (var clutch in _clutchMaterials)
@@ -399,6 +406,22 @@ namespace Power.Studio
                     Shape("Mount " + node.Id, PrimitiveType.Cube, new Vector3(position.x, 0.3f, position.z), new Vector3(1.6f, 0.6f, 1.5f), surface);
                     Shape("Bearing " + node.Id, PrimitiveType.Cube, new Vector3(position.x - 0.35f, 1, position.z), new Vector3(0.2f, 1.1f, 0.3f), steel);
                 }
+                else if (node.Domain == Domain.Translational)
+                {
+                    var owner = _asset.Components.FirstOrDefault(c => c.Kind == ComponentKind.HydraulicPiston && c.NodeA == node.Id);
+                    double minimum = owner == null ? 0 : Meters(owner.HydraulicPiston.MinimumPosition);
+                    double stroke = owner == null ? .1 : Meters(owner.HydraulicPiston.MaximumPosition) - minimum;
+                    var slider = Shape("Slider " + node.Id, PrimitiveType.Cube, position, new Vector3(0.7f, 0.2f, 0.7f), copper);
+                    _sliders.Add(node.Id, new PistonVisual { Piston = slider.transform, Top = position, MinimumMeters = minimum, StrokeMeters = stroke });
+                    Shape("Slider guide " + node.Id, PrimitiveType.Cube, position + new Vector3(-0.5f, 0.5f, 0), new Vector3(0.08f, 1.5f, 0.7f), steel);
+                }
+                else if (node.Domain == Domain.Battery)
+                {
+                    position.y = 0.9f;
+                    Shape("Battery " + node.Id, PrimitiveType.Cube, position, new Vector3(1.3f, 0.9f, 0.9f), steel);
+                    Shape("Battery positive terminal " + node.Id, PrimitiveType.Cylinder, position + new Vector3(-0.4f, 0.6f, 0), new Vector3(0.15f, 0.12f, 0.15f), copper);
+                    Shape("Battery negative terminal " + node.Id, PrimitiveType.Cylinder, position + new Vector3(0.4f, 0.6f, 0), new Vector3(0.15f, 0.12f, 0.15f), blue);
+                }
                 else if (node.Domain == Domain.Hydraulic)
                 {
                     position.y = 1.0f;
@@ -461,11 +484,19 @@ namespace Power.Studio
                         _valves.Add(component.Id, new ValveVisual { Stem = stem.transform, Closed = closed });
                     }
                 }
-                if (component.Kind == ComponentKind.HydraulicResistance || component.Kind == ComponentKind.HydraulicOrifice || component.Kind == ComponentKind.HydraulicRelief)
+                if (component.Kind == ComponentKind.HydraulicResistance || component.Kind == ComponentKind.HydraulicOrifice || component.Kind == ComponentKind.HydraulicRelief || component.Kind == ComponentKind.HydraulicSpoolValve)
                 {
                     Vector3 b = component.NodeB == 0 ? a + new Vector3(0.8f, 0, 1.3f) : positions[component.NodeB];
                     if (component.NodeB == 0) Shape("Hydraulic reservoir " + component.Id, PrimitiveType.Cube, b, Vector3.one * 0.45f, blue);
                     Connection("Hydraulic valve " + component.Id, a, b, blue, 0.08f);
+                    if (component.Kind == ComponentKind.HydraulicSpoolValve)
+                    {
+                        var owner = _asset.Components.First(c => c.Id == component.SpoolValve.PistonComponent);
+                        Vector3 closed = (a + b) * 0.5f + Vector3.up * 0.3f;
+                        var stem = Shape("Spool valve " + component.Id, PrimitiveType.Cube, closed, new Vector3(0.3f, 0.25f, 0.2f), steel);
+                        _valves.Add(component.Id, new ValveVisual { Stem = stem.transform, Closed = closed });
+                        Connection("Spool actuator " + component.Id, positions[owner.NodeA], closed, copper, 0.05f);
+                    }
                 }
                 if (component.Kind == ComponentKind.HydraulicPump)
                 {
@@ -477,6 +508,22 @@ namespace Power.Studio
                     Connection("Pump shaft " + component.Id, a, center, steel, 0.12f);
                     Connection("Pump outlet " + component.Id, center, outlet, blue, 0.08f);
                     Connection("Pump inlet " + component.Id, inlet, center, blue, 0.08f);
+                }
+                if (component.Kind is ComponentKind.BatteryMotor or ComponentKind.ResistiveLoad)
+                {
+                    Vector3 battery = positions[component.Kind == ComponentKind.BatteryMotor ? component.NodeB : component.NodeA];
+                    Vector3 consumer = component.Kind == ComponentKind.BatteryMotor ? a : a + Vector3.right * 0.8f;
+                    Connection("Electrical supply " + component.Id, battery + Vector3.up * 0.6f, consumer, copper, 0.05f);
+                    if (component.Kind == ComponentKind.ResistiveLoad) Shape("Electrical load " + component.Id, PrimitiveType.Cube, consumer, Vector3.one * 0.4f, copper);
+                }
+                if (component.Kind is ComponentKind.PressureController or ComponentKind.PressureDutyController)
+                {
+                    ulong target = component.Kind == ComponentKind.PressureController ? component.PressureController.TargetChannel : component.PressureDutyController.TargetChannel;
+                    var motor = _asset.Components.Single(c => (c.Kind is ComponentKind.DcMotor or ComponentKind.BatteryMotor) && c.InputChannel == target);
+                    Vector3 center = a + new Vector3(0, 1.8f, 1.3f);
+                    Shape("Pressure regulator " + component.Id, PrimitiveType.Cube, center, new Vector3(0.7f, 0.4f, 0.6f), copper);
+                    Connection("Pressure sensor " + component.Id, a, center, blue, 0.05f);
+                    Connection((component.Kind == ComponentKind.PressureController ? "Voltage command " : "Duty command ") + component.Id, center, positions[motor.NodeA], copper, 0.05f);
                 }
                 if (component.Kind == ComponentKind.GasHeatLink)
                     Connection("Gas wall link " + component.Id, a, positions[component.NodeB], copper, 0.07f);
@@ -510,7 +557,17 @@ namespace Power.Studio
                     Connection("Planetary ring " + component.Id, ring, center, steel, 0.08f);
                     Connection("Planetary carrier " + component.Id, carrier, center, blue, 0.08f);
                 }
-                if (component.Kind == ComponentKind.Clutch || component.Kind == ComponentKind.HydraulicClutch)
+                if (component.Kind == ComponentKind.HydraulicPiston)
+                {
+                    Connection("Piston front chamber " + component.Id, a, positions[component.NodeB], blue, 0.08f);
+                    if (component.HydraulicPiston.BackNode != 0)
+                        Connection("Piston back chamber " + component.Id, a, positions[component.HydraulicPiston.BackNode], blue, 0.08f);
+                    var visual = _sliders[component.NodeA];
+                    double clearance = (Meters(component.HydraulicPiston.ContactPosition) - visual.MinimumMeters) / visual.StrokeMeters;
+                    Shape("Piston contact pad " + component.Id, PrimitiveType.Cube, a + Vector3.up * (float)clearance,
+                        new Vector3(0.9f, 0.08f, 0.9f), mint);
+                }
+                if (component.Kind == ComponentKind.Clutch || component.Kind == ComponentKind.HydraulicClutch || component.Kind == ComponentKind.PistonClutch)
                 {
                     Vector3 b = component.NodeB == 0 ? a + new Vector3(0, 0, 1.5f) : positions[component.NodeB];
                     Vector3 center = (a + b) * 0.5f + Vector3.up * 0.45f;
@@ -524,6 +581,11 @@ namespace Power.Studio
                     _clutchMaterials.Add(component.Id, surface);
                     if (component.Kind == ComponentKind.HydraulicClutch)
                         Connection("Pressure actuator " + component.Id, positions[component.HydraulicClutch.PressureNode], center, blue, 0.07f);
+                    if (component.Kind == ComponentKind.PistonClutch)
+                    {
+                        var piston = _asset.Components.First(c => c.Id == component.PistonClutch.PistonComponent);
+                        Connection("Piston actuator " + component.Id, positions[piston.NodeA], center, copper, 0.07f);
+                    }
                 }
                 if (component.Kind == ComponentKind.PremixedCombustion)
                 {

@@ -76,6 +76,12 @@ try
         (File: "fired-cylinder", Asset: "FiredCylinder", Name: "Premixed fired cylinder laboratory"),
         (File: "fired-clutch", Asset: "FiredClutch", Name: "Fired clutch laboratory"),
         (File: "fired-pump", Asset: "FiredPump", Name: "Fired pump transmission laboratory"),
+        (File: "fired-pump-losses", Asset: "FiredPumpLosses", Name: "Fired transmission with pump losses"),
+        (File: "electric-pump", Asset: "ElectricPump", Name: "Electric pump and pressure clutch laboratory"),
+        (File: "pressure-regulated-pump", Asset: "PressureRegulatedPump", Name: "Pressure-regulated electric pump laboratory"),
+        (File: "battery-regulated-pump", Asset: "BatteryRegulatedPump", Name: "Battery-fed regulated pump laboratory"),
+        (File: "piston-actuated-clutch", Asset: "PistonActuatedClutch", Name: "Dynamic piston clutch laboratory"),
+        (File: "spool-regulated-pump", Asset: "SpoolRegulatedPump", Name: "Mechanical spool regulator laboratory"),
         (File: "fired-hydraulic", Asset: "FiredHydraulic", Name: "Fired hydraulic transmission laboratory"),
         (File: "fired-converter", Asset: "FiredConverter", Name: "Fired torque converter laboratory"),
         (File: "fired-planetary", Asset: "FiredPlanetary", Name: "Fired planetary transmission laboratory") })
@@ -85,7 +91,7 @@ try
     {
         foreach (string project in new[] { "Power.Tests", "Power.UnityCompatibility", "Power.Mcp.Tests" })
             await Run(dotnet, Path.Combine(root, "tests", project, "bin", "Release", "net10.0", project + ".dll"));
-        foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic" })
+        foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump" })
             await Run(dotnet, cli, $"assets/labs/{lab}.power.json", "--output", $"artifacts/reports/{lab}.json");
         Console.WriteLine("Managed verification passed. Unity Editor/Play/IL2CPP require separate Unity validation.");
         return NativeVerify.Run(root);

@@ -1,5 +1,368 @@
 # 验证记录
 
+## 2026-09-30: mechanical spool regulator checkpoint
+
+The required serial command passes on Windows x64, SDK 10.0.401/runtime 10.0.12:
+`dotnet run --file tools/Build.cs -- verify`. The result is **221/221** managed
+checks, **173/173** Standard-assembly checks hosted on .NET 10, **21/21** actual
+MCP child-server groups, **16/16** Zig and **6/6** C# ABI checks. All **176**
+historical numerical values match exactly. Release compilation has zero warnings/
+errors; the source audit finds zero C/C++/Lua files. Log:
+`artifacts/reports/spool-final-2026-09-30.log`.
+
+The [spool contract](HYDRAULIC_SPOOL.md) adds a pressure-balanced metering land,
+explicitly neglecting axial jet force. Actual piston position and both fluid-port
+pressures participate in the shared Newton solve with analytic derivatives. Seven
+physical groups verify signed travel, passive bidirectional flow and derivatives,
+independent steady pressure, a separate three-state RK4 transient with smooth
+second-order refinement, decreasing error through opening, finite-port equalization,
+transactions and immutable geometry. Warm Step/ReadSnapshot allocation remains zero
+against both Core targets. Late failure, cancellation and independent forks retain
+all pressure/motion/heat state. No uniform nonsmooth order is claimed.
+
+Two portable groups cover complete v15 geometry and forged malformed counts/types/
+units, missing/duplicate records and downgrade rejection. Authentic v14 piston
+fixture SHA-256 is
+`72e0605d00972a58e2f5358aa8cbd44417e81cf1c452a20ab9661eac0919bae0`; its fingerprint,
+physical references and exact same-runtime upgraded replay retain every event
+boundary. Prior fixtures are intact. Three integration groups verify strict
+documents, session revisions/cancellation/forks and a separate fluid/motion ledger.
+Wrong metering-position units retain the unit diagnostic rather than being caught
+as constructor range errors.
+
+All **18** laboratory documents pass structural schema validation. **12** malformed
+spool cases are independently rejected by jsonschema 4.25.1. Report:
+`artifacts/reports/spool-schema-audit.json`. Nonzero signed travel, land positions
+within piston stroke and typed ownership remain additional compiler checks.
+
+The `spool-regulated-pump` experiment runs **3 s** with **20,000 ns** ticks and
+**156** matching JSON/portable/MCP boundaries. Its moving pressure actuator, return
+spring/damping and bypass regulate the line without a sampled valve controller.
+The 2 N*m drive/brake are explicit research loads. The inherited two-second
+high-pressure capture criterion failed at the lower regulated pressure; the
+experiment now runs long enough to observe actual capture while retaining zero-slip
+and locked-mode assertions. No pressure, energy or slip state is corrected to pass.
+
+| Final quantity | Value |
+|---|---:|
+| Line pressure | 233956.17402528782 Pa |
+| Spool displacement | 0.00016975695474013045 m |
+| Metering opening | 0.08487847737006522 |
+| Spool restriction heat | 2.917614235503143 J |
+| Return damping heat | 0.0006249365922203377 J |
+| Pump hydraulic work | 3.3299555096992406 J |
+| Clutch heat | 260.2402810714738 J |
+| Final clutch mode/slip | Locked / 0 rad/s |
+
+Across all boundaries, the separate hydraulic/motion/spring/pad/heat balance has
+maximum error **9.77e-15 J** (asserted bound 1e-8 J), global energy **1.99e-8 J**
+(bound 1e-6 J), and reference-volume inventory **1.35e-20 m3** (bound 1e-16 m3).
+Fingerprint `28aa0965d248e280`, final Windows/runtime hash `180744d025212ef7`.
+Reports: `artifacts/reports/spool-regulated-pump.json` and
+`artifacts/reports/spool-evidence-summary.json`.
+
+Three serial CLI runs, each including two complete trajectories (300,000 accepted
+ticks), all replay checks and 156 output boundaries, took **1.183 / 1.230 / 1.153 s**;
+median **1.183 s** at ordinary desktop load. This is an observed checkpoint cost,
+not a cross-platform throughput guarantee or evidence of speedup. Matrix, land-slope
+and rollback buffers are bounded and simulation-owned; steady stepping/readback
+remain allocation-free.
+
+Agent 0.18.0 advertises mechanically regulated hydraulics, geometry units and its
+jet-force omission. Actual MCP checks cover complete export/replay and rejection of
+an attempted opening-output write. Unity valve/actuator views and Edit/Play tests
+are prepared in C# 9 source. `POWER_UNITY_EDITOR` is unset; actual Editor/Play/
+Mono/IL2CPP/Player and fresh Linux/macOS verification remain pending. The owner ends
+today's development at this numerical checkpoint; complete Power! and calibration
+are not claimed. Source/package delivery preserves licenses and sample boundaries.
+
+## 2026-09-30: dynamic piston and contact-actuated clutch
+
+The required serial command passed on Windows x64, SDK 10.0.401/runtime 10.0.12:
+
+```sh
+dotnet run --file tools/Build.cs -- verify
+```
+
+- **209/209** managed checks, **164/164** Standard-assembly checks hosted on .NET 10,
+  and **20/20** actual-child-server MCP groups.
+- **16/16** Zig and **6/6** C# ABI checks; all **176** historical values match exactly.
+  Source audit finds zero C/C++/Lua files. Release build: zero warnings/errors.
+- Log: `artifacts/reports/piston-final-2026-09-30.log`.
+- All **17** laboratories pass JSON Schema validation. Separate audits each reject
+  **12** malformed piston, battery/duty and voltage-control cases with jsonschema
+  4.25.1. The reports are `piston-schema-audit.json`, `battery-schema-audit.json` and
+  `pressure-schema-audit.json` under `artifacts/reports`.
+
+[Hydraulic pistons](HYDRAULIC_PISTON.md) add explicit mass, displacement, chamber
+swept volume, spring/damping, pad clearance and compliant stroke ends. Contact
+clutches derive capacity from pad force. Eight physical check groups cover hinge
+work and analytic derivatives, separate compact damping histories/analytic decay,
+coupled spring/fluid oscillation with smooth second-order refinement, finite/back
+reservoir work and volume, piecewise RK4 contact refinement, free fill/capture/release,
+typed contracts and full transactions. No uniform order is claimed across contact
+events. Late numerical failure, cancellation, forks and exact batching preserve the
+whole state. Warm core stepping and snapshot reads allocate **zero managed bytes**.
+
+The synthetic `piston-actuated-clutch` laboratory advances **15 s** at **20,000 ns**
+ticks with **5 ms** sampled duty control. All **761** report/portable/MCP boundaries
+have identical hashes and observable values in this runtime. Pressure during free
+fill produces no pad force. The scheduled drain releases the clutch; later fill
+captures it. At the final boundary:
+
+| Quantity | Value |
+|---|---:|
+| Piston displacement | 0.0021772797986273195 m |
+| Pad force | 177.27979862731945 N |
+| Static/sliding capacities | 22.69181422429689 / 11.345907112148446 N*m |
+| Front chamber pressure | 199053.02928772685 Pa |
+| Pad/stop stored energy | 0.01571406350067147 J |
+| Cumulative return damping heat | 0.0025718766359138913 J |
+
+Fingerprint `46f746398142c258`; final Windows/runtime hash `3a7b8eee248785d3`.
+Report: `artifacts/reports/piston-actuated-clutch.json`. The source explicitly uses
+300 N*s/m synthetic damping to keep supply sufficient during the contact transient;
+the solver retains negative-pressure rejection rather than clamping that state.
+
+### Independent energy accounts and tolerance evidence
+
+Every boundary independently compares pump work with compliant fluid, slider kinetic,
+return-spring and pad energy plus restriction/damping heat; battery chemical/RC loss
+with motor kinetic/inductive energy, pump work and electrical heat; and external
+rotational work with rotor energy and clutch heat.
+
+| Account | Maximum absolute error over the experiment | Asserted bound |
+|---|---:|---:|
+| Hydraulic, motion and contact | 1.56e-13 J | 1e-9 J |
+| Electrical supply and motor | 2.48e-8 J | 1e-7 J |
+| Shared thermal node vs direct heat histories | 2.87e-7 J | 5e-7 J |
+| Driven rotors and clutch | 1.16e-6 J | 2e-6 J |
+| Whole model | 1.42e-6 J | 5e-6 J |
+
+The initial 1e-7-J hydraulic assertion inferred tiny spring heat by subtracting
+large clutch heat from rounded shared-node temperature. It failed, and that inferred
+heat even decreased near steady motion. A direct compensated damping channel now
+retains the physical dissipation independently; the tighter hydraulic balance above
+passes. Thermal and rotational accumulation explain the remaining global residual.
+The inherited 1e-6-J global threshold was insufficient for this 750,000-tick run;
+5e-6 J is an explicit long-run numerical bound, supplemented by the tighter analytic,
+fluid-volume and separate energy checks. No energy state is corrected to force a pass.
+Supplemental audit: `artifacts/reports/piston-evidence-summary.json`.
+
+### Performance scope
+
+Three serial CLI runs at ordinary desktop load each include **two** complete
+trajectories (1.5 million accepted ticks), replay checks and 761 output boundaries.
+Elapsed medians were **4.007 s** before the analytic derivative/damping histories,
+**4.100 s** with the analytic derivative and full component-indexed histories, and
+**4.234 s** with compact histories. The last three runs were 4.234, 4.088 and 4.928 s.
+These measurements do not establish a speedup or a portable throughput guarantee.
+The analytic Jacobian removes the physical-length perturbation and repeated contact
+evaluations; compact histories allocate and copy only actual spring slots. Dense
+workspace and LU factors stay bounded, cached and simulation-owned. Successful
+steady stepping and snapshot reads retain the zero-allocation assertion.
+
+Asset v14 stores piston/back boundary, stroke/pad parameters and referenced friction
+geometry. Counts, coverage, malformed units/types, duplicate/missing records and
+forged downgrades are rejected. The authentic v13 battery fixture retains SHA-256
+`67e7bde4dfcc2b8b41f49cadae8f89ff5fc5a1668059e084b7b5d9da02c7c44a`, physical
+references and exact same-runtime upgraded replay. Older fixtures remain intact.
+Agent 0.17.0/MCP exercise discovery, validation, every exported boundary, contact
+force, revision conflicts and independent forks.
+
+Unity slider/contact views and Edit/Play tests are prepared in C# 9 source. The
+Standard check host is .NET 10; it does not exercise Unity Editor. `POWER_UNITY_EDITOR`
+is unset. Editor/Play/Mono/IL2CPP/Player and fresh Linux/macOS evidence remain pending.
+Parameters are unverified research inputs; the complete engine, transmission,
+ECU/TCU and calibrated vehicle samples remain unfinished.
+
+## 2026-09-30: finite battery supply and duty regulation
+
+The required serial command passed on Windows x64, SDK 10.0.401/runtime 10.0.12:
+
+```sh
+dotnet run --file tools/Build.cs -- verify
+```
+
+- **196/196** managed checks, **154/154** Standard-assembly checks hosted on .NET 10,
+  and **19/19** actual-child-server MCP groups.
+- **16/16** Zig and **6/6** C# ABI checks; all **176** historical values match exactly.
+  Source audit finds zero C/C++/Lua files. Release build: zero warnings/errors.
+- Log: `artifacts/reports/battery-final-2026-09-30.log`.
+- All **16** laboratories pass JSON Schema; **12** malformed battery/duty cases are
+  rejected by jsonschema 4.25.1 in an isolated ignored cache. Supplemental report:
+  `artifacts/reports/battery-schema-audit.json`.
+
+Finite-capacity battery nodes add affine OCV/SOC and one polarization RC branch.
+Battery motors use a bidirectional averaged duty transformer; switched resistive
+accessory loads share bus resistance. Chemical/RC and motor inductive energy, battery/
+copper/load heat and mechanical/hydraulic transfers share the conservation ledger.
+Battery motor work is internal, not duplicated external source work. Initial numerical
+checks exposed missing battery-motor inductive energy; the ledger now includes it.
+
+Evidence covers analytic no-load polarization decay and resistive-load RC response,
+charge inventory, independent four-state RK4 motor/battery integration and smooth
+second-order refinement. Signed duty, regenerative charging, parallel winding
+equivalence, duty-dependent geared responses, joint clutch/pump coupling, full late
+depletion rollback, cancellation, input rejection, independent forks, batch replay and
+zero allocations pass against both assemblies. Runtime factors and mechanical
+responses remain simulation-owned and update for changed duties/load openings.
+
+The battery-regulated pump uses 100 µs physical ticks and a 5 ms duty regulator.
+Accessory pulses cause measured-in-simulation bus sag. All **761** report/portable/MCP
+boundaries agree. At 15 s SOC is **0.6269678451**, remaining charge **31.3483922575 C**,
+terminal voltage **12.6056975839 V**, polarization **0.0207555849 V**, and discharge
+current **0.2052072574 A**. Pressure ends at **200828.2935823 Pa** for a 200000 Pa
+target. Last sampled error is **-825.4441034 Pa**; integral/held duty are
+**0.0642978516 / 0.0629221114**. Final energy residual is about `2.13e-7 J`.
+Fingerprint `40d4fcbab9cad8f8`, final Windows/runtime hash `803d9adef384cd35`.
+Report: `artifacts/reports/battery-regulated-pump.json`. The 50 C charge capacity is
+explicitly a small synthetic verification inventory, not an OEM battery measurement.
+Every boundary checks isolated electrical energy and absence of duplicated source work.
+
+Asset v13 retains battery OCV/resistance/capacitance/heat parameters and duty control
+period/gains/bounds/initial integral. Re-signed malformed types, counts, units, missing/
+duplicate extensions and forged downgrades are rejected. The authentic v12 regulated
+pump fixture retains its digest, fingerprint, physical references and same-runtime
+upgraded replay. Prior fixtures and uncontrolled model fingerprints remain unchanged.
+Agent 0.16.0/MCP verify battery discovery, complete experiment/export replay, duty
+ownership, invalid accessory writes, revisions and independent battery/control forks.
+
+Unity battery/electrical/duty views and import/Play lifecycle tests are prepared.
+Actual Editor/Play/Mono/IL2CPP/Player evidence and new Linux/macOS checks remain pending.
+Constant affine battery parameters, ideal converter and prescribed accessory/valve
+schedules do not establish BMS/chemistry/ageing, PWM/current control, contactors/faults,
+actuator mechanics, full ECU/TCU, complete DCT/AT, remaining engine behavior or vehicle
+calibration. All parameters remain `unverified`; the full Power! objective remains open.
+
+## 2026-09-30: sampled pressure-control checkpoint
+
+The required serial command passed on Windows x64 with SDK 10.0.401/runtime 10.0.12:
+
+```sh
+dotnet run --file tools/Build.cs -- verify
+```
+
+- **185/185** managed checks, **146/146** Standard-assembly checks hosted on .NET 10,
+  and **18/18** actual-child-server MCP integration groups.
+- **16/16** Zig and **6/6** C# ABI checks; all **176** historical values match exactly.
+  Source audit finds zero C/C++/Lua files. Release build: zero warnings/errors.
+- Log: `artifacts/reports/pressure-control-final-2026-09-30.log`.
+- All **15** laboratories pass the model JSON Schema; **12** malformed controller
+  cases are structurally rejected. The supplemental audit uses jsonschema 4.25.1 in
+  an isolated ignored cache. Report: `artifacts/reports/pressure-controller-schema-audit.json`.
+
+`pressure_controller` reads a hydraulic node and owns a DC motor voltage input.
+Samples occur at time zero and integer multiples of a tick-aligned period; voltage
+is held between samples. The first sample retains the supplied initial integral.
+Conditional integration prevents increments farther into voltage saturation. Four
+controller states and the held input participate in complete rollback, cancellation,
+forks, hashes and zero-allocation stepping. External voltage overrides are rejected
+with actionable `controlled_input` errors. See [the contract](HYDRAULIC_PUMP.md#sampled-pressure-regulation).
+
+Independent numerical evidence includes a separately programmed sampled PI/RK4
+motor/shaft/pressure plant. Halving physical ticks at a fixed 10 ms control period
+shows smooth second-order convergence to that sampled reference; this is not a
+claim of second-order convergence toward a continuous-time controller. Exact constant
+pressure tests verify sample/hold, event endpoint ordering and fork clock phase.
+Saturation and unwinding, malformed units/periods/ownership, state capacity, late
+arithmetic failure rollback, cancellation, independent memory and allocation checks
+run against both Core target assemblies. An unreachable target executes and replays
+successfully but fails tracking KPIs while command stays saturated and integral is held.
+
+Asset v12 carries the complete 80-byte control record with target, integer period,
+gains, voltage limits and initial integral. Typed coverage, bounded counts, malformed
+units/records, duplicate/missing extensions and forged downgrades are rejected. The
+authentic v11 fired-pump fixture was captured before the writer changed; its original
+SHA-256 and fingerprint remain fixed. Same-runtime upgraded replay and physical
+references pass, alongside all previous fixtures and unchanged uncontrolled models.
+
+The `pressure-regulated-pump` experiment uses 100 µs physical ticks, 5 ms control
+samples and 300/350/200 kPa setpoints with scheduled clutch fill/drain disturbances.
+All **757** report, portable and MCP boundaries agree. At 15 s, line pressure is
+**200550.7972096 Pa** for the 200000 Pa target. Last sampled pressure is
+**200544.9882311 Pa**, error **-544.9882311 Pa**, integral **0.8124749429 V**, and held
+voltage **0.8015751783 V**. Motor current is **0.5964870315 A** and pump shaft speed
+**2.0526093297 rad/s**. Model fingerprint `67e8edb13dc42f42`; final Windows/runtime
+state hash `44342c02cd41f3c6`. Report: `artifacts/reports/pressure-regulated-pump.json`.
+Tests also isolate electrical work from the driven/load mechanical boundaries at
+every report sample and check volume/energy residuals.
+
+Agent 0.15.0 exposes the control contract, dimensional gains, owned-input errors and
+example. Real MCP tests exercise complete experiment/export replay, blocked voltage
+writes, setpoint updates, revisions, controller forks and parent independence.
+Unity now prepares regulator/sensor/command views and import/Play reset/replay tests.
+No actual Editor/Play/Mono/IL2CPP or Player evidence was obtained; new Linux/macOS
+verification also remains pending. Prescribed valve schedules and the ideal sensor/
+voltage source do not implement complete ECU/TCU, battery/PWM, sensor dynamics,
+actuator mechanics, full DCT/AT, remaining engine behavior or measured calibration.
+All research and sample parameters remain `unverified`. The full Power! goal remains open.
+
+## 2026-09-30: resumed pump-loss and electrical-supply checkpoint
+
+The owner resumed development. Source changes were verified locally on Windows x64
+with .NET SDK 10.0.401 and runtime 10.0.12 (the configured `latestPatch` roll-forward).
+Base commit is `d266095`; these changes were uncommitted at verification time.
+
+```sh
+dotnet run --file tools/Build.cs -- verify
+```
+
+- **174/174** managed checks, **138/138** Standard-assembly checks hosted on .NET 10,
+  and **17/17** MCP groups against an actual child server.
+- **16/16** Zig checks and **6/6** C# ABI checks; all **176** historical values match
+  exactly. Source audit retains zero C/C++/Lua files. Release build: zero warnings/errors.
+- Log: `artifacts/reports/pump-assembly-final-2026-09-30.log`. The earlier baseline
+  repair alone passed 165/165, 132/132 and 15/15 in `resume-baseline-2026-09-30.log`.
+
+The preceding [CI run 35809732259](https://github.com/Water-Run/Power/actions/runs/35809732259)
+passed on Linux and failed four asset checks on Windows/macOS. Each failed only at
+a hard-coded final state hash from the original Linux fixture run, after original and
+upgraded playback agreed. Fixture file digests and model fingerprints remain exact.
+Tests now preserve same-runtime hash equality and use physical references from the
+documented checkpoints with explicit tolerances reflecting their published precision.
+Historical hashes remain recorded in fixture provenance. This Windows run repairs the
+observed failure locally; it does not establish a new Linux/macOS CI result.
+
+`HydraulicPumpAssembly` composes the ideal pump, outlet-to-inlet pressure leakage and
+grounded viscous shaft friction. Independent evidence covers all signed regimes and
+passive power identities, analytic damped shaft/pressure motion, smooth second-order
+refinement, finite-inlet inventory, reservoir work, an independent RK4 integration of
+the RL-motor/shaft/pressure ODE, analytic electric equilibrium, full late-failure rollback,
+cancellation, forks, immutability and zero-allocation stepping. Both target assemblies
+run the same checks. The zero-loss fired experiment reproduces the original laboratory's
+shared physical observables within declared tolerances.
+
+The `fired-pump-losses` laboratory has **89** matching report/portable/MCP boundaries.
+Its model has 60 counted states. At 0.8 s, pump work is **52.6573534421 J**, leakage
+heat **8.6081420133 J**, combined pump loss heat **41.0517855370 J**, and the pump
+thermal node reaches **300.4105178554 K**. Final crank speed is **68.6812975063 rad/s**
+and line pressure **1.0581382360 MPa**. Energy residual is about `-6.13e-10 J`.
+Fingerprint `524661ea3d721bbc`. Report: `artifacts/reports/fired-pump-losses.json`.
+
+The `electric-pump` laboratory has **106** matching boundaries over 2 s. Its RL motor,
+separate pump shaft, leakage, drag, relief and compliant line drive scheduled pressure
+clutch fill/drain/recapture. External hydraulic work is **zero**. Final pump-shaft speed
+is **67.0570291504 rad/s**, current **5.3148298325 A**, line pressure **0.5606191525 MPa**,
+and clutch slip below `1e-8 rad/s`. Pump work is **3.6117807126 J**; leakage heat is
+**0.3597803209 J**. Energy residual is about `5.85e-10 J`. Fingerprint `d8f8fedfdce59003`.
+Report: `artifacts/reports/electric-pump.json`. Checks isolate electrical work from the
+separate driven/load shaft boundaries and verify that sealed valves prevent pressure
+actuation even while the electric pump operates.
+
+Agent 0.14.0 advertises the composition, units, power semantics and both examples.
+The unchanged JSON schema and asset v11 carry ordinary components; no new format or
+component kind was introduced. Fourteen laboratories export and execute in the serial
+build tool, including the previously export-only fired-pump CLI report.
+
+Unity import/Play replay, reset and cleanup tests are prepared for both new assets.
+`POWER_UNITY_EDITOR` is unset and the pinned Editor was not found in the standard
+installation directory. No actual Editor/Play/Mono/IL2CPP or desktop Player evidence
+was obtained. New Linux/macOS verification also remains pending. Constant loss values,
+prescribed commands and all sample parameters remain `unverified`; measured maps,
+battery/control/regulator/piston dynamics, complete DCT/AT and ECU/TCU, remaining engine
+behavior, calibrated vehicle samples and release acceptance remain unfinished.
+
 ## 2026-09-22 closing checkpoint: shaft-driven pump and pressure relief
 
 Added ideal reversible displacement pumps, explicit finite/reservoir inlets and

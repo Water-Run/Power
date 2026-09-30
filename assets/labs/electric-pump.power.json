@@ -1,0 +1,431 @@
+{
+  "schema": "power.model.v1",
+  "description": "Synthetic 12 V RL motor driving a reversible hydraulic pump with explicit leakage and viscous drag. A compliant supply line, relief and scheduled fill/drain valves actuate a clutch between a driven shaft and an inertial load. Electrical work, motor copper heat, pump losses, hydraulic storage and clutch heat share the energy ledger. The pump has no crank connection and no external hydraulic supply work. Commands are prescribed; no battery, voltage controller, piston travel, cavitation or OEM calibration is claimed.",
+  "step_ns": 100000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 2,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-12,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 100,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 4,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.2,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 40,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 5,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.5,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 6,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-12,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 7,
+      "domain": "thermal",
+      "storage": {
+        "value": 100,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "dc_motor",
+      "node_a": 1,
+      "heat_node": 3,
+      "input_channel": 100,
+      "initial_input": {
+        "value": 12,
+        "unit": "v"
+      },
+      "parameters": {
+        "resistance": {
+          "value": 1,
+          "unit": "ohm"
+        },
+        "inductance": {
+          "value": 0.01,
+          "unit": "h"
+        },
+        "coupling": {
+          "value": 0.1,
+          "unit": "nm_a"
+        },
+        "initial_current": {
+          "value": 0,
+          "unit": "a"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "kind": "hydraulic_pump",
+      "node_a": 1,
+      "node_b": 2,
+      "parameters": {
+        "inlet_node": 0,
+        "displacement": {
+          "value": 1e-07,
+          "unit": "m3_rad"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "kind": "hydraulic_resistance",
+      "node_a": 2,
+      "node_b": 0,
+      "heat_node": 3,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 1e-12,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "kind": "shaft",
+      "node_a": 1,
+      "node_b": 0,
+      "heat_node": 3,
+      "parameters": {
+        "stiffness": {
+          "value": 0,
+          "unit": "nm_rad"
+        },
+        "damping": {
+          "value": 0.001,
+          "unit": "nm_s_rad"
+        },
+        "rest_angle": {
+          "value": 0,
+          "unit": "rad"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 14,
+      "kind": "hydraulic_relief",
+      "node_a": 2,
+      "node_b": 0,
+      "heat_node": 3,
+      "parameters": {
+        "coefficient": {
+          "value": 1e-10,
+          "unit": "m3_s_pa"
+        },
+        "cracking_pressure": {
+          "value": 500000.0,
+          "unit": "pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "kind": "hydraulic_resistance",
+      "node_a": 2,
+      "node_b": 6,
+      "heat_node": 7,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 1e-10,
+          "unit": "m3_s_pa"
+        }
+      },
+      "input_channel": 101
+    },
+    {
+      "id": 16,
+      "kind": "hydraulic_resistance",
+      "node_a": 6,
+      "node_b": 0,
+      "heat_node": 7,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 1e-10,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      },
+      "input_channel": 102
+    },
+    {
+      "id": 17,
+      "kind": "hydraulic_clutch",
+      "node_a": 4,
+      "node_b": 5,
+      "heat_node": 7,
+      "parameters": {
+        "pressure_node": 6,
+        "piston_area": {
+          "value": 0.001,
+          "unit": "m2"
+        },
+        "preload_force": {
+          "value": 100,
+          "unit": "n"
+        },
+        "effective_radius": {
+          "value": 0.08,
+          "unit": "m"
+        },
+        "static_friction": 0.4,
+        "sliding_friction": 0.2,
+        "friction_surfaces": 4,
+        "ratio": 1
+      }
+    },
+    {
+      "id": 18,
+      "kind": "torque_source",
+      "node_a": 4,
+      "input_channel": 103,
+      "initial_input": {
+        "value": 10,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 19,
+      "kind": "torque_source",
+      "node_a": 5,
+      "input_channel": 104,
+      "initial_input": {
+        "value": 0,
+        "unit": "nm"
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 2000000000,
+    "sample_every_ns": 20000000,
+    "events": [
+      {
+        "time_ns": 200100000,
+        "values": [
+          {
+            "channel": 101,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 350100000,
+        "values": [
+          {
+            "channel": 104,
+            "value": -2
+          }
+        ]
+      },
+      {
+        "time_ns": 600100000,
+        "values": [
+          {
+            "channel": 101,
+            "value": 0
+          },
+          {
+            "channel": 102,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 700100000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 6
+          }
+        ]
+      },
+      {
+        "time_ns": 900100000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 12
+          },
+          {
+            "channel": 101,
+            "value": 1
+          },
+          {
+            "channel": 102,
+            "value": 0
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 1e-06
+      },
+      {
+        "object_id": 0,
+        "field": "hydraulic_volume_residual",
+        "abs_max": 1e-16
+      },
+      {
+        "object_id": 0,
+        "field": "hydraulic_work",
+        "abs_max": 0
+      },
+      {
+        "object_id": 1,
+        "field": "speed",
+        "min": 1,
+        "max": 120
+      },
+      {
+        "object_id": 2,
+        "field": "pressure",
+        "min": 500000,
+        "max": 1000000
+      },
+      {
+        "object_id": 10,
+        "field": "current",
+        "min": 0.1,
+        "max": 12
+      },
+      {
+        "object_id": 11,
+        "field": "hydraulic_work",
+        "min": 0.1
+      },
+      {
+        "object_id": 12,
+        "field": "fluid_heat",
+        "min": 0.01
+      },
+      {
+        "object_id": 3,
+        "field": "temperature",
+        "min": 300.01,
+        "max": 310
+      },
+      {
+        "object_id": 17,
+        "field": "friction_heat",
+        "min": 1
+      },
+      {
+        "object_id": 17,
+        "field": "clutch_mode",
+        "min": 1,
+        "max": 1
+      },
+      {
+        "object_id": 17,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      }
+    ]
+  }
+}

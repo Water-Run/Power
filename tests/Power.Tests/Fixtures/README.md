@@ -1,5 +1,12 @@
 # Portable asset compatibility fixture
 
+Recorded final state hashes below retain the original Linux checkpoint provenance.
+They are not cross-runtime assertions. Tests retain each file digest and model
+fingerprint, compare original and upgraded replay bit-for-bit within the executing
+runtime, and check final physical values against the documented checkpoint with
+explicit tolerances. These tolerances account for the displayed reference precision;
+they do not establish OEM calibration.
+
 `electrothermal-v1.powerasset` was exported by the unmodified solver and asset codec at commit `9176758dcca6623248082d14cc14c4c4e34bbc98`, before introducing asset format v2. Its source is `assets/labs/electrothermal.power.json`; its display name is `Electrothermal laboratory`.
 
 The complete file SHA-256 is `9a2cfea833f0ff95ee8e1c7630025729137170bc670eae604be72c437646f751`.
@@ -101,3 +108,54 @@ introducing v11. Source: `assets/labs/fired-hydraulic.power.json`; asset name:
 - Final 0.8-s replay hash: `46a01d103e6159d3`.
 
 The v11 upgrade must preserve definitions, fingerprint and every replay boundary.
+
+## Fired pump version 11
+
+`fired-pump-v11.powerasset` was copied from the verified v11 encoder output on
+2026-09-30 before adding the controller table and changing the writer to v12.
+Its source is `assets/labs/fired-pump.power.json`; name: `Fired pump transmission
+laboratory`. This was an uncommitted pump-assembly checkpoint based on `d266095`;
+no published source commit is asserted. SHA-256:
+`6c5616c7da077377d02cc76a36475fa3aec9163cf7b39c90b4dbeca54a05f0d3`.
+Model fingerprint: `d0bd8f29a706fd89`. Tests retain the digest, fingerprint, physical
+reference values and bit-for-bit original/upgraded replay in the executing runtime.
+Do not regenerate this artifact with the current encoder. The same Power! GPL license
+and Unity Linking Exception apply.
+
+## Regulated pump version 12
+
+`pressure-regulated-pump-v12.powerasset` was copied from verified v12 output on
+2026-09-30 before adding battery/duty tables and changing the writer to v13. Source:
+`assets/labs/pressure-regulated-pump.power.json`; name: `Pressure-regulated electric
+pump laboratory`. The source checkpoint was uncommitted on base `d266095`; no
+published source commit is asserted. SHA-256:
+`8e094df27f5e419480232969356731a72dc13c5724b869f0ccb1b2ace98e58e9`.
+Fingerprint: `67e8edb13dc42f42`. Tests retain digest, physical references and exact
+same-runtime old/upgraded replay. Do not regenerate with the current writer. The
+same Power! GPL license and Unity Linking Exception apply.
+
+## Battery-regulated pump version 13
+
+`battery-regulated-pump-v13.powerasset` was copied from verified v13 output on
+2026-09-30 before the piston/contact tables changed the writer to v14. Source:
+`assets/labs/battery-regulated-pump.power.json`; name: `Battery-regulated electric
+pump laboratory`. The source checkpoint was uncommitted on base `d266095`; no
+published source commit is asserted. SHA-256:
+`67e7bde4dfcc2b8b41f49cadae8f89ff5fc5a1668059e084b7b5d9da02c7c44a`.
+Fingerprint: `40d4fcbab9cad8f8`. Tests retain its digest, independent physical
+references and exact same-runtime old/upgraded replay. Do not regenerate this fixture
+with the current encoder. The Power! GPL license and Unity Linking Exception apply.
+
+## Piston-actuated clutch version 14
+
+`piston-actuated-clutch-v14.powerasset` was copied from verified v14 output on
+2026-09-30 before adding spool metering and changing the writer to v15. Source:
+`assets/labs/piston-actuated-clutch.power.json`; name: `Dynamic piston clutch
+laboratory`. The source checkpoint was uncommitted on base `d266095`; no published
+source commit is asserted. SHA-256:
+`72e0605d00972a58e2f5358aa8cbd44417e81cf1c452a20ab9661eac0919bae0`.
+Fingerprint: `46f746398142c258`. Tests retain digest, physical references and exact
+same-runtime original/upgraded replay including every event boundary. The existing
+5e-6-J long-run energy bound is explicit, with tighter separate ledgers in
+`PistonIntegrationChecks`. Do not regenerate this fixture with the current writer.
+The Power! GPL license and Unity Linking Exception apply.

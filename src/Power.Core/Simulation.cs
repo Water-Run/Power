@@ -7,7 +7,7 @@ namespace Power.Core;
 /// <summary>Independent state. Successful stepping and snapshot reads allocate no managed memory.</summary>
 public sealed class Simulation
 {
-    private sealed class State(int dynamics, int thermal, int components, int gases, MixtureState? mixture, int clutches, int gears, int converters, int hydraulicNodes, int hydraulicComponents, int pumps)
+    private sealed class State(int dynamics, int thermal, int components, int gases, MixtureState? mixture, int clutches, int gears, int converters, int hydraulicNodes, int hydraulicComponents, int pumps, int controllers, int linearSprings)
     {
         internal readonly double[] X = new double[dynamics], Temperature = new double[thermal], Inputs = new double[components];
         internal readonly double[] Mass = new double[gases], Energy = new double[gases];
@@ -16,6 +16,8 @@ public sealed class Simulation
         internal readonly HydraulicState? Hydraulic = hydraulicNodes == 0 ? null : new(hydraulicNodes, hydraulicComponents, pumps);
         internal readonly ConverterState? Converters = converters == 0 ? null : new(converters);
         internal readonly double[] GearTorque = new double[gears];
+        internal readonly double[] DampingHeat = new double[linearSprings], DampingCorrection = new double[linearSprings];
+        internal readonly PressureControllerState? Controllers = controllers == 0 ? null : new(controllers);
         internal ulong Time;
         internal double InitialEnergy, Work, WorkCorrection, Heat, HeatCorrection;
         internal double Intake, IntakeCorrection, Enthalpy, EnthalpyCorrection;
@@ -27,7 +29,10 @@ public sealed class Simulation
             Mixture?.CopyFrom(other.Mixture!);
             Clutches?.CopyFrom(other.Clutches!);
             Converters?.CopyFrom(other.Converters!); Hydraulic?.CopyFrom(other.Hydraulic!);
+            Controllers?.CopyFrom(other.Controllers!);
             Array.Copy(other.GearTorque, GearTorque, GearTorque.Length);
+            Array.Copy(other.DampingHeat, DampingHeat, DampingHeat.Length);
+            Array.Copy(other.DampingCorrection, DampingCorrection, DampingCorrection.Length);
             Time = other.Time; InitialEnergy = other.InitialEnergy;
             Work = other.Work; WorkCorrection = other.WorkCorrection;
             Heat = other.Heat; HeatCorrection = other.HeatCorrection;
@@ -44,6 +49,7 @@ public sealed class Simulation
     private readonly ConverterSolver? _converters;
     private readonly GasSolver? _gasSolver;
     private readonly HydraulicSolver? _hydraulics;
+    private readonly ElectricalDynamics? _electrical;
     private readonly CombustionSolver? _combustion;
     private readonly ClutchSolver? _clutches;
     private readonly GearSolver? _gears;
@@ -54,14 +60,15 @@ public sealed class Simulation
     internal Simulation(CompiledModel model)
     {
         _model = model;
+        if (model.HasBatteries) _electrical = new(model);
         if (model.Gears is not null) _gears = new(model.Gears);
         if (model.HasHydraulics) _hydraulics = new(model);
-        if (model.HasConverters || model.HasPumps) { _converters = new(model, _hydraulics); _mechanicalSolver = _converters; }
+        if (model.HasConverters || model.HasCoupledHydraulics) { _converters = new(model, _hydraulics); _mechanicalSolver = _converters; }
         else if (model.CylinderCoupling is not null) _mechanicalSolver = new CylinderSolver(model);
         if (model.Gas is not null) _gasSolver = new(model);
         if (model.Burners.Any(b => b is not null)) _combustion = new(model);
         State CreateState() => new(model.DynamicCount, model.ThermalCount, model.ComponentCount, model.GasCount,
-            model.HasPremixedGas ? new(model) : null, model.ClutchComponents.Length, model.GearComponents.Length, model.ConverterComponents.Length, model.HydraulicCount, model.HydraulicComponents.Length, model.PumpComponents.Length);
+            model.HasPremixedGas ? new(model) : null, model.ClutchComponents.Length, model.GearComponents.Length, model.ConverterComponents.Length, model.HydraulicCount, model.HydraulicComponents.Length, model.PumpComponents.Length, model.PressureControllers.Length, model.LinearSpringCount);
         _state = CreateState(); _scratch = CreateState();
         if (model.HasClutches)
         {
@@ -71,7 +78,8 @@ public sealed class Simulation
         _inputCandidate = new double[model.ComponentCount]; _inputSeen = new bool[model.ComponentCount];
         foreach (var n in model.Nodes)
         {
-            if (n.Domain == Domain.Rotational) { _state.X[n.Index] = n.Position; _state.X[n.Index + 1] = n.Initial; }
+            if (n.Domain is Domain.Rotational or Domain.Translational) { _state.X[n.Index] = n.Position; _state.X[n.Index + 1] = n.Initial; }
+            else if (n.Domain == Domain.Battery) { _state.X[n.Index] = n.Initial; _state.X[n.Index + 1] = n.Position; }
             else if (n.Domain == Domain.Gas)
             {
                 _state.Mass[n.Index] = model.Gas!.InitialMass[n.Index];
@@ -84,9 +92,15 @@ public sealed class Simulation
         {
             var c = model.Components[i];
             _state.Inputs[i] = c.InitialInput;
-            if (c.Kind == ComponentKind.DcMotor) _state.X[c.Index] = c.P3;
+            if (c.Kind is ComponentKind.DcMotor or ComponentKind.BatteryMotor) _state.X[c.Index] = c.P3;
         }
         _state.InitialEnergy = Energy(_state);
+        for (int k = 0; k < model.PressureControllers.Length; ++k)
+        {
+            var controller = model.PressureControllers[k];
+            _state.Controllers!.Integral[k] = controller.InitialIntegral;
+            _state.Controllers.Command[k] = _state.Inputs[controller.Motor];
+        }
         _clutches?.BeginTick(_state.Clutches!, _state.X, _state.Inputs, _state.Hydraulic?.Pressure);
         if (!Numeric.Finite(_state.InitialEnergy) || !ObservablesFinite(_state))
             throw new ModelCompileException(DiagnosticCode.Solver, 0, "initial", "Initial energy or output overflows binary64.");
@@ -106,13 +120,14 @@ public sealed class Simulation
             foreach (var v in values)
             {
                 if (!Numeric.Finite(v.Value)) return SimulationStatus.InvalidInput;
-                if (!_model.InputIndices.TryGetValue(v.Channel, out int index)) return SimulationStatus.UnknownChannel;
+                if (!_model.InputIndices.TryGetValue(v.Channel, out int index))
+                    return _model.ControlledInputs.Contains(v.Channel) ? SimulationStatus.ControlledInput : SimulationStatus.UnknownChannel;
                 if (v.Value < _model.InputMinimum[index] || v.Value > _model.InputMaximum[index]) return SimulationStatus.InvalidInput;
                 if (_inputSeen[index]) return SimulationStatus.InvalidInput;
                 _inputSeen[index] = true;
                 _inputCandidate[index] = v.Value == 0 ? 0 : v.Value;
             }
-            if (_gasSolver is not null)
+            if (_gasSolver is not null || _electrical is not null)
             {
                 _scratch.CopyFrom(_state);
                 Array.Copy(_inputCandidate, _scratch.Inputs, _inputCandidate.Length);
@@ -145,7 +160,8 @@ public sealed class Simulation
                 if (input.TimeNanoseconds < previous || input.TimeNanoseconds > end ||
                     (input.TimeNanoseconds - _state.Time) % step != 0 || !Numeric.Finite(input.Value))
                     return SimulationStatus.InvalidInput;
-                if (!_model.InputIndices.TryGetValue(input.Channel, out int index)) return SimulationStatus.UnknownChannel;
+                if (!_model.InputIndices.TryGetValue(input.Channel, out int index))
+                    return _model.ControlledInputs.Contains(input.Channel) ? SimulationStatus.ControlledInput : SimulationStatus.UnknownChannel;
                 if (input.Value < _model.InputMinimum[index] || input.Value > _model.InputMaximum[index]) return SimulationStatus.InvalidInput;
                 if (input.TimeNanoseconds != previous) Array.Clear(_inputSeen, 0, _inputSeen.Length);
                 if (_inputSeen[index]) return SimulationStatus.InvalidInput;
@@ -161,7 +177,7 @@ public sealed class Simulation
                 if (!Tick(_scratch, cancellationToken)) return cancellationToken.IsCancellationRequested ? SimulationStatus.Cancelled : SimulationStatus.NumericalFailure;
                 ApplyScheduledInputs(_scratch, inputs, ref nextInput);
             }
-            if (_gasSolver is not null && !ObservablesFinite(_scratch)) return SimulationStatus.NumericalFailure;
+            if ((_gasSolver is not null || _electrical is not null) && !ObservablesFinite(_scratch)) return SimulationStatus.NumericalFailure;
             (_state, _scratch) = (_scratch, _state);
             return SimulationStatus.Ok;
         }
@@ -192,6 +208,17 @@ public sealed class Simulation
 
     private bool Tick(State s, CancellationToken cancellation)
     {
+        for (int k = 0; k < _model.PressureControllers.Length; ++k)
+        {
+            var controller = _model.PressureControllers[k];
+            if (s.Time % controller.Period != 0) continue;
+            double measured = s.Hydraulic!.Pressure[controller.Pressure];
+            if (!controller.Law.TrySample(s.Inputs[controller.Component], measured, s.Controllers!.Integral[k],
+                s.Time == 0 ? 0 : controller.Period * 1e-9, out var result)) return false;
+            s.Controllers.Pressure[k] = measured; s.Controllers.Error[k] = result.ErrorPascals;
+            s.Controllers.Integral[k] = result.IntegralVoltage; s.Controllers.Command[k] = result.CommandVoltage;
+            s.Inputs[controller.Motor] = result.CommandVoltage;
+        }
         Array.Clear(s.GearTorque, 0, s.GearTorque.Length);
         s.Converters?.BeginTick(); s.Hydraulic?.BeginTick();
         if (_clutches is null)
@@ -245,26 +272,34 @@ public sealed class Simulation
     {
         crossing = false;
         double work = 0, heat = 0;
-        if (_clutches is not null && !_clutches.Prepare(dt)) return false;
-        if (_model.HasPumps) _converters!.PrepareHydraulics(s.Hydraulic!, s.Inputs, dt);
-        if (!_model.HasPumps && _hydraulics is not null && !_hydraulics.Advance(s.Hydraulic!, s.Inputs, dt, cancellation)) return false;
+        if (_electrical is not null && !_electrical.Prepare(dt, s.Inputs)) return false;
+        var dynamics = _electrical?.Dynamics ?? _model.Dynamics;
+        if (_clutches is not null && !_clutches.Prepare(dt, _electrical?.Dynamics, _electrical?.Generation ?? 0)) return false;
+        if (_clutches is null && _electrical is not null)
+        {
+            if (_gears is not null && !_gears.Prepare(dt, dynamics, true)) return false;
+            if (_mechanicalSolver is not null && !_mechanicalSolver.SetInterval(dt, dynamics, _gears)) return false;
+        }
+        if (_model.HasCoupledHydraulics) _converters!.PrepareHydraulics(s.Hydraulic!, s.Inputs, dt);
+        if (!_model.HasCoupledHydraulics && _hydraulics is not null && !_hydraulics.Advance(s.Hydraulic!, s.Inputs, dt, cancellation)) return false;
         bool splitGas = _model.HasMovingGas || _model.HasValveTiming || _combustion is not null;
         double intake = 0, enthalpy = 0;
         // Symmetric flow / adiabatic crank-work / flow split. Wall temperatures remain
         // explicit over the outer tick, so wall-coupled models retain first-order accuracy.
         if (splitGas && !_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture)) return false;
-        for (int i = 0; i < _mid.Length; ++i) _mid[i] = s.X[i] + 0.5 * dt * _model.ConstantForce[i];
+        var force = _electrical?.Force ?? _model.ConstantForce;
+        for (int i = 0; i < _mid.Length; ++i) _mid[i] = s.X[i] + 0.5 * dt * force[i];
         for (int i = 0; i < _model.ComponentCount; ++i)
         {
             var c = _model.Components[i];
-            if (c.Kind == ComponentKind.TorqueSource)
+            if (c.Kind is ComponentKind.TorqueSource or ComponentKind.ForceSource)
             {
                 var n = _model.Nodes[c.A];
                 _mid[n.Index + 1] += 0.5 * dt * s.Inputs[i] / n.Storage;
             }
             else if (c.Kind == ComponentKind.DcMotor) _mid[c.Index] += 0.5 * dt * s.Inputs[i] / c.P1;
         }
-        if (!(_clutches?.Dynamics ?? _model.Dynamics).Solve(_mid)) return false;
+        if (!(_clutches?.Dynamics ?? dynamics).Solve(_mid)) return false;
         if (_gears is not null && !_gears.ProjectFree(_mid)) return false;
         _combustion?.Prepare(s.Mixture!, s.Inputs);
         if (_clutches is not null)
@@ -274,7 +309,7 @@ public sealed class Simulation
             if (crossing) return true; // Caller discards the speculative interval and brackets the first event.
         }
         else if (_mechanicalSolver is not null && !_mechanicalSolver.Solve(s.X, _mid, s.Energy, _combustion, cancellation)) return false;
-        if (_model.HasPumps && !_hydraulics!.Commit(s.Hydraulic!, dt, _mid)) return false;
+        if (_model.HasCoupledHydraulics && !_hydraulics!.Commit(s.Hydraulic!, dt, _mid)) return false;
         if (_gears is not null)
         {
             _mechanicalSolver?.AddGearReactions(_gears.Torque);
@@ -306,26 +341,32 @@ public sealed class Simulation
         {
             var c = _model.Components[i];
             double loss = 0;
-            if (c.Kind == ComponentKind.Shaft)
+            if (c.Kind is ComponentKind.Shaft or ComponentKind.LinearSpring)
             {
                 double slip = Relative(c, _mid, 1);
                 loss = dt * c.P1 * slip * slip;
+                if (c.Kind == ComponentKind.LinearSpring) Numeric.Accumulate(loss, ref s.DampingHeat[c.Index], ref s.DampingCorrection[c.Index]);
             }
             else if (c.Kind == ComponentKind.TorqueConverter)
             {
                 if (!_converters!.Accumulate(c.Index, s.Converters!, dt, _mid, out loss)) return false;
             }
-            else if (c.Kind is ComponentKind.Clutch or ComponentKind.HydraulicClutch)
+            else if (c.Kind is ComponentKind.Clutch or ComponentKind.HydraulicClutch or ComponentKind.PistonClutch)
             {
                 if (!_clutches!.Accumulate(c.Index, s.Clutches!, dt, _mid, out loss)) return false;
             }
-            else if (c.Kind == ComponentKind.DcMotor)
+            else if (c.Kind is ComponentKind.DcMotor or ComponentKind.BatteryMotor)
             {
                 double current = _mid[c.Index];
                 loss = dt * c.P0 * current * current;
-                work += dt * s.Inputs[i] * current;
+                if (c.Kind == ComponentKind.DcMotor) work += dt * s.Inputs[i] * current;
             }
-            else if (c.Kind == ComponentKind.TorqueSource) work += dt * s.Inputs[i] * _mid[_model.Nodes[c.A].Index + 1];
+            else if (c.Kind == ComponentKind.ResistiveLoad)
+            {
+                if (!BatteryCircuit.Evaluate(_model, _model.BatteryByNode[c.A]!, _mid, s.Inputs, out _, out var battery)) return false;
+                loss = dt * s.Inputs[i] / c.P0 * battery.TerminalVoltage * battery.TerminalVoltage;
+            }
+            else if (c.Kind is ComponentKind.TorqueSource or ComponentKind.ForceSource) work += dt * s.Inputs[i] * _mid[_model.Nodes[c.A].Index + 1];
             else if (c.Kind == ComponentKind.SealedCylinder)
             {
                 int angle = _model.Nodes[c.A].Index;
@@ -342,6 +383,12 @@ public sealed class Simulation
             }
             if (c.Heat < 0) heat += loss;
             else _temperature[_model.Nodes[c.Heat].Index] += loss;
+        }
+        foreach (var battery in _model.Batteries)
+        {
+            if (!BatteryCircuit.Evaluate(_model, battery, _mid, s.Inputs, out _, out var reaction)) return false;
+            double loss = dt * reaction.HeatFlowWatts;
+            if (battery.Heat < 0) heat += loss; else _temperature[_model.Nodes[battery.Heat].Index] += loss;
         }
         for (int i = 0; i < _mid.Length; ++i)
         {
@@ -390,22 +437,31 @@ public sealed class Simulation
         double energy = 0;
         foreach (var n in _model.Nodes)
         {
-            if (n.Domain == Domain.Rotational)
+            if (n.Domain is Domain.Rotational or Domain.Translational)
             {
                 double speed = s.X[n.Index + 1];
                 energy += 0.5 * n.Storage * speed * speed;
             }
+            else if (n.Domain == Domain.Battery)
+                continue;
             else if (n.Domain == Domain.Hydraulic) energy += .5 * n.Storage * s.Hydraulic!.Pressure[n.Index] * s.Hydraulic.Pressure[n.Index];
             else if (n.Domain == Domain.Thermal) energy += n.Storage * (s.Temperature[n.Index] - n.Initial);
         }
+        foreach (var battery in _model.Batteries)
+        {
+            int index = battery.State; var law = battery.Law;
+            energy += law.ChemicalEnergy(s.X[index]) + .5 * law.PolarizationCapacitanceFarads * s.X[index + 1] * s.X[index + 1];
+        }
+        foreach (int index in _model.PistonComponents)
+            energy += _model.Pistons[index]!.StoredContactEnergy(s.X[_model.Nodes[_model.Components[index].A].Index]);
         foreach (var c in _model.Components)
         {
-            if (c.Kind == ComponentKind.Shaft)
+            if (c.Kind is ComponentKind.Shaft or ComponentKind.LinearSpring)
             {
                 double twist = Relative(c, s.X, 0);
                 energy += 0.5 * c.P0 * twist * twist;
             }
-            else if (c.Kind == ComponentKind.DcMotor)
+            else if (c.Kind is ComponentKind.DcMotor or ComponentKind.BatteryMotor)
                 energy += 0.5 * c.P1 * s.X[c.Index] * s.X[c.Index];
         }
         for (int i = 0; i < _model.ComponentCount; ++i)
@@ -427,11 +483,27 @@ public sealed class Simulation
     {
         double volume = 0;
         foreach (var n in _model.Nodes) if (n.Domain == Domain.Hydraulic) volume += n.Storage * (s.Hydraulic!.Pressure[n.Index] - n.Initial);
+        foreach (int index in _model.PistonComponents)
+        {
+            var c = _model.Components[index]; var slider = _model.Nodes[c.A];
+            volume += (c.P0 - c.P1) * (s.X[slider.Index] - slider.Position);
+        }
         return volume;
     }
 
     private bool ObservablesFinite(State s)
     {
+        foreach (int index in _model.PistonComponents)
+        {
+            var c = _model.Components[index]; var law = _model.Pistons[index]!; double x = s.X[_model.Nodes[c.A].Index];
+            if (!Numeric.Finite(law.StoredContactEnergy(x)) || !Numeric.Finite(law.ContactForce(x)) ||
+                !Numeric.Finite(law.PressureForce(s.Hydraulic!.Pressure[_model.Nodes[c.B].Index], c.C < 0 ? c.P2 : s.Hydraulic.Pressure[_model.Nodes[c.C].Index]))) return false;
+        }
+        foreach (var battery in _model.Batteries)
+            if (!BatteryCircuit.Evaluate(_model, battery, s.X, s.Inputs, out _, out _)) return false;
+        if (s.Controllers is not null && !s.Controllers.Finite()) return false;
+        for (int i = 0; i < s.DampingHeat.Length; ++i)
+            if (!Numeric.Finite(s.DampingHeat[i]) || !Numeric.Finite(s.DampingCorrection[i])) return false;
         if (s.Hydraulic is not null)
         {
             if (!s.Hydraulic.Finite() || !Numeric.Finite(HydraulicVolumeChange(s) - s.Hydraulic.VolumeIn)) return false;
@@ -483,12 +555,12 @@ public sealed class Simulation
         }
         foreach (var c in _model.Components)
         {
-            if (c.Kind == ComponentKind.Shaft)
+            if (c.Kind is ComponentKind.Shaft or ComponentKind.LinearSpring)
             {
                 double twist = Relative(c, s.X, 0);
                 if (!Numeric.Finite(twist) || !Numeric.Finite(-c.P0 * twist - c.P1 * Relative(c, s.X, 1))) return false;
             }
-            else if (c.Kind == ComponentKind.DcMotor && !Numeric.Finite(c.P2 * s.X[c.Index])) return false;
+            else if (c.Kind is ComponentKind.DcMotor or ComponentKind.BatteryMotor && !Numeric.Finite(c.P2 * s.X[c.Index])) return false;
         }
         for (int i = 0; i < _model.GasCount; ++i)
         {
@@ -529,6 +601,9 @@ public sealed class Simulation
         foreach (double torque in s.GearTorque) h = Numeric.Hash(h, torque);
         if (s.Converters is not null) h = s.Converters.Hash(h);
         if (s.Hydraulic is not null) h = s.Hydraulic.Hash(h);
+        if (s.Controllers is not null) h = s.Controllers.Hash(h);
+        foreach (double loss in s.DampingHeat) h = Numeric.Hash(h, loss);
+        foreach (double correction in s.DampingCorrection) h = Numeric.Hash(h, correction);
         if (_model.GasCount == 0) return h; // Preserve every pre-gas state hash exactly.
         foreach (double mass in s.Mass) h = Numeric.Hash(h, mass);
         foreach (double energy in s.Energy) h = Numeric.Hash(h, energy);
@@ -570,6 +645,13 @@ public sealed class Simulation
             }
     }
 
+    private BatteryReaction ReadBattery(int node, out double current)
+    {
+        if (!BatteryCircuit.Evaluate(_model, _model.BatteryByNode[node]!, _state.X, _state.Inputs, out current, out var reaction))
+            throw new InvalidOperationException("Invalid battery circuit in a committed state.");
+        return reaction;
+    }
+
     public SnapshotInfo ReadSnapshot(Span<Scalar> destination)
     {
         if (destination.Length < _model.OutputCount) throw new ArgumentException("Snapshot buffer is too small.", nameof(destination));
@@ -590,6 +672,7 @@ public sealed class Simulation
                 int volume = !b.IsComponent && b.Index >= 0 && _model.Nodes[b.Index].Domain == Domain.Gas
                     ? _model.Nodes[b.Index].Index : -1;
                 bool hydraulicNode = !b.IsComponent && b.Index >= 0 && _model.Nodes[b.Index].Domain == Domain.Hydraulic;
+                bool batteryNode = !b.IsComponent && b.Index >= 0 && _model.Nodes[b.Index].Domain == Domain.Battery;
                 double pressure = hydraulicNode ? _state.Hydraulic!.Pressure[_model.Nodes[b.Index].Index] : 0;
                 switch (b.Field)
                 {
@@ -603,12 +686,30 @@ public sealed class Simulation
                     case Field.Pressure: value = hydraulicNode ? pressure : cylinder is not null ? cylinder.Pressure(crank) : GasPressure(_state, volume); break;
                     case Field.Volume: value = hydraulicNode ? _model.Nodes[b.Index].Storage * pressure : cylinder is not null ? cylinder.GeometryAt(crank).VolumeCubicMeters : movingCylinder!.GeometryAt(crank).VolumeCubicMeters; break;
                     case Field.Mass: value = cylinder is not null ? cylinder.Mass : _state.Mass[volume]; break;
-                    case Field.InternalEnergy: value = hydraulicNode ? .5 * _model.Nodes[b.Index].Storage * pressure * pressure : cylinder is not null ? cylinder.Energy(crank) : _state.Energy[volume]; break;
+                    case Field.InternalEnergy:
+                        if (b.IsComponent && _model.Components[b.Index].Kind == ComponentKind.HydraulicPiston)
+                            value = _model.Pistons[b.Index]!.StoredContactEnergy(_state.X[_model.Nodes[_model.Components[b.Index].A].Index]);
+                        else if (batteryNode) { var energy = ReadBattery(b.Index, out _); value = energy.ChemicalEnergyJoules + energy.PolarizationEnergyJoules; }
+                        else value = hydraulicNode ? .5 * _model.Nodes[b.Index].Storage * pressure * pressure : cylinder is not null ? cylinder.Energy(crank) : _state.Energy[volume];
+                        break;
                     case Field.PistonDisplacement: value = cylinder is not null ? cylinder.GeometryAt(crank).DisplacementMeters : movingCylinder!.GeometryAt(crank).DisplacementMeters; break;
                     case Field.FuelMass: value = mixture!.Fuel[volume]; break;
                     case Field.FreshAirMass: value = mixture!.Air[volume]; break;
                     case Field.ProductMass: value = mixture!.Products[volume]; break;
-                    case Field.ChemicalEnergy: value = volume < 0 ? chemical : mixture!.Fuel[volume] * _model.Gas!.Mixtures[volume]!.Lhv; break;
+                    case Field.ChemicalEnergy: value = batteryNode ? ReadBattery(b.Index, out _).ChemicalEnergyJoules : volume < 0 ? chemical : mixture!.Fuel[volume] * _model.Gas!.Mixtures[volume]!.Lhv; break;
+                    case Field.StateOfCharge: value = _state.X[_model.Nodes[b.Index].Index]; break;
+                    case Field.Charge: value = _model.Nodes[b.Index].Storage * _state.X[_model.Nodes[b.Index].Index]; break;
+                    case Field.PolarizationVoltage: value = _state.X[_model.Nodes[b.Index].Index + 1]; break;
+                    case Field.BatteryCurrent: ReadBattery(b.Index, out value); break;
+                    case Field.TerminalVoltage:
+                        if (batteryNode) value = ReadBattery(b.Index, out _).TerminalVoltage;
+                        else
+                        {
+                            var source = _model.Components[b.Index];
+                            value = ReadBattery(source.Kind == ComponentKind.BatteryMotor ? source.B : source.A, out _).TerminalVoltage;
+                            if (source.Kind == ComponentKind.BatteryMotor) value *= _state.Inputs[b.Index];
+                        }
+                        break;
                     case Field.FuelBurned: value = mixture!.Burned[b.Index]; break;
                     case Field.BurnFrontier: value = mixture!.Frontier[b.Index]; break;
                     case Field.HeatReleased: value = mixture!.Burned[b.Index] * _model.Gas!.Mixtures[_model.Burners[b.Index]!.Gas]!.Lhv; break;
@@ -619,10 +720,23 @@ public sealed class Simulation
                         if (!TryOrificeMassFlow(_state, b.Index, out value))
                             throw new InvalidOperationException("Invalid gas flow in a committed state.");
                         break;
-                    case Field.Opening: value = _model.Gas!.Opening(b.Index, _state.X, _state.Inputs); break;
+                    case Field.Opening: value = _model.SpoolValves[b.Index] is { } metering ? metering.Law.Opening(_state.X[metering.Position]) : _model.Gas!.Opening(b.Index, _state.X, _state.Inputs); break;
+                    case Field.SampledPressure: value = _state.Controllers!.Pressure[_model.Components[b.Index].Index]; break;
+                    case Field.PressureError: value = _state.Controllers!.Error[_model.Components[b.Index].Index]; break;
+                    case Field.IntegralVoltage: value = _state.Controllers!.Integral[_model.Components[b.Index].Index]; break;
+                    case Field.CommandVoltage: value = _state.Controllers!.Command[_model.Components[b.Index].Index]; break;
+                    case Field.IntegralDuty: value = _state.Controllers!.Integral[_model.Components[b.Index].Index]; break;
+                    case Field.CommandDuty: value = _state.Controllers!.Command[_model.Components[b.Index].Index]; break;
+                    case Field.Displacement: value = b.IsComponent ? Relative(_model.Components[b.Index], _state.X, 0) : _state.X[_model.Nodes[b.Index].Index]; break;
+                    case Field.LinearSpeed: value = _state.X[_model.Nodes[b.Index].Index + 1]; break;
+                    case Field.Force:
+                        var forceComponent = _model.Components[b.Index];
+                        value = forceComponent.Kind == ComponentKind.LinearSpring ? -forceComponent.P0 * Relative(forceComponent, _state.X, 0) - forceComponent.P1 * Relative(forceComponent, _state.X, 1)
+                            : _model.Pistons[b.Index]!.PressureForce(_state.Hydraulic!.Pressure[_model.Nodes[forceComponent.B].Index], forceComponent.C < 0 ? forceComponent.P2 : _state.Hydraulic.Pressure[_model.Nodes[forceComponent.C].Index]);
+                        break;
                     case Field.SlipSpeed:
                         var slipComponent = _model.Components[b.Index];
-                        value = slipComponent.Kind is ComponentKind.Clutch or ComponentKind.HydraulicClutch ? _clutches!.Slip(slipComponent.Index, _state.X)
+                        value = slipComponent.Kind is ComponentKind.Clutch or ComponentKind.HydraulicClutch or ComponentKind.PistonClutch ? _clutches!.Slip(slipComponent.Index, _state.X)
                             : _model.Gears!.Dot(slipComponent.Index, _state.X) * _model.Gears.Scale[slipComponent.Index];
                         break;
                     case Field.ConstraintError:
@@ -637,6 +751,12 @@ public sealed class Simulation
                     case Field.ClampForce:
                     case Field.StaticCapacity:
                     case Field.SlidingCapacity:
+                        if (_model.Components[b.Index].Kind is ComponentKind.PistonClutch or ComponentKind.HydraulicPiston)
+                        {
+                            var friction = _model.PistonFriction[b.Index]; int index = friction?.Piston ?? b.Index;
+                            double normal = _model.Pistons[index]!.ContactForce(_state.X[_model.Nodes[_model.Components[index].A].Index]);
+                            value = b.Field == Field.ClampForce ? normal : friction!.Capacity(normal, b.Field == Field.SlidingCapacity); break;
+                        }
                         var actuator = _model.HydraulicActuators[b.Index]!;
                         double controlPressure = _state.Hydraulic!.Pressure[actuator.Pressure];
                         value = b.Field == Field.ClampForce ? actuator.ClampForce(controlPressure) : actuator.Capacity(controlPressure, b.Field == Field.SlidingCapacity);
@@ -664,28 +784,37 @@ public sealed class Simulation
                         value = _state.GearTorque[gearComponent.Index] * _model.Gears!.Rows[gearComponent.Index][_model.Nodes[port].Index + 1];
                         break;
                     case Field.ClutchMode: value = (double)_state.Clutches!.Mode[_model.Components[b.Index].Index]; break;
-                    case Field.FrictionHeat: value = _state.Clutches!.Heat[_model.Components[b.Index].Index]; break;
+                    case Field.FrictionHeat: value = _model.Components[b.Index].Kind == ComponentKind.LinearSpring ? _state.DampingHeat[_model.Components[b.Index].Index] : _state.Clutches!.Heat[_model.Components[b.Index].Index]; break;
                     case Field.HeatFlow:
-                        if (_model.Components[b.Index].Kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief)
+                        if (batteryNode) { value = ReadBattery(b.Index, out _).HeatFlowWatts; break; }
+                        if (_model.Components[b.Index].Kind == ComponentKind.ResistiveLoad)
+                        {
+                            var resistor = _model.Components[b.Index]; double voltage = ReadBattery(resistor.A, out _).TerminalVoltage;
+                            value = _state.Inputs[b.Index] / resistor.P0 * voltage * voltage; break;
+                        }
+                        if (_model.Components[b.Index].Kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve)
                         { value = _state.Hydraulic!.Power[_model.Components[b.Index].Index]; break; }
                         if (_model.Components[b.Index].Kind == ComponentKind.TorqueConverter)
                         { value = _state.Converters!.Power[_model.Components[b.Index].Index]; break; }
-                        if (_model.Components[b.Index].Kind is ComponentKind.Clutch or ComponentKind.HydraulicClutch)
+                        if (_model.Components[b.Index].Kind is ComponentKind.Clutch or ComponentKind.HydraulicClutch or ComponentKind.PistonClutch)
                         { value = _state.Clutches!.Power[_model.Components[b.Index].Index]; break; }
                         int link = _model.Gas!.Slot[b.Index];
                         value = _model.Components[b.Index].P0 *
                             (GasTemperature(_state, _model.Gas.HeatGas[link]) - _state.Temperature[_model.Gas.HeatWall[link]]);
                         break;
-                    case Field.Current: value = _state.X[_model.Components[b.Index].Index]; break;
+                    case Field.Current:
+                        var electrical = _model.Components[b.Index];
+                        value = electrical.Kind == ComponentKind.ResistiveLoad ? _state.Inputs[b.Index] / electrical.P0 * ReadBattery(electrical.A, out _).TerminalVoltage : _state.X[electrical.Index];
+                        break;
                     case Field.Twist: value = Relative(_model.Components[b.Index], _state.X, 0); break;
                     case Field.Torque:
                         var c = _model.Components[b.Index];
                         int movingGas = movingCylinder is null ? -1 : _model.Nodes[c.B].Index;
                         value = movingCylinder is not null ? movingCylinder.Torque(crank, _state.Energy[movingGas], _model.Gas!.Gases[movingGas].Gamma)
-                            : cylinder is not null ? cylinder.Torque(crank) : c.Kind == ComponentKind.DcMotor ? c.P2 * _state.X[c.Index]
+                            : cylinder is not null ? cylinder.Torque(crank) : c.Kind is ComponentKind.DcMotor or ComponentKind.BatteryMotor ? c.P2 * _state.X[c.Index]
                             : c.Kind == ComponentKind.HydraulicPump ? _state.Hydraulic!.PumpTorque[c.Index]
                             : c.Kind == ComponentKind.TorqueConverter ? _state.Converters!.PumpTorque[c.Index]
-                            : c.Kind is ComponentKind.Clutch or ComponentKind.HydraulicClutch ? _state.Clutches!.Torque[c.Index]
+                            : c.Kind is ComponentKind.Clutch or ComponentKind.HydraulicClutch or ComponentKind.PistonClutch ? _state.Clutches!.Torque[c.Index]
                             : c.Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear ? _state.GearTorque[c.Index] / _model.Gears!.Scale[c.Index] :
                             -c.P0 * Relative(c, _state.X, 0) - c.P1 * Relative(c, _state.X, 1);
                         break;

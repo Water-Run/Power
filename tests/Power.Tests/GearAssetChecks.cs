@@ -16,7 +16,7 @@ internal static class GearAssetChecks
     internal static IEnumerable<(string Name, Action Run)> All =>
     [
         ("gear asset / three-port topology / every replay boundary / authentic v7 fixture", Replay),
-        ("gear asset / v11 counts / wrong ports / missing and duplicate topology / downgrade", Corruption)
+        ("gear asset / v15 counts / wrong ports / missing and duplicate topology / downgrade", Corruption)
     ];
     private static PowerAsset Asset()
     {
@@ -28,7 +28,7 @@ internal static class GearAssetChecks
     private static void Replay()
     {
         var original = Asset(); var bytes = AssetCodec.Encode(original); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 11);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 15);
         Require(decoded.Components.SequenceEqual(original.Components) && decoded.Model.Fingerprint == original.Model.Fingerprint);
         Require(AssetCodec.Encode(decoded).SequenceEqual(bytes));
         var a = original.CreatePlayback(); var b = decoded.CreatePlayback(); var values = new Scalar[a.Model.OutputCount];
@@ -42,15 +42,22 @@ internal static class GearAssetChecks
         Require(Convert.ToHexStringLower(SHA256.HashData(fixture)) == "9a670efbbc4046f87be8ee7b20f6fee6823ce5cff982002f619ced5722fc324d");
         var old = AssetCodec.Decode(fixture); Require(old.Model.Fingerprint.ToString("x16") == "197be44884deee90");
         var upgraded = AssetCodec.Decode(AssetCodec.Encode(old)); var first = old.CreatePlayback(); var second = upgraded.CreatePlayback();
-        Require(first.Advance(old.DurationNanoseconds) == SimulationStatus.Ok && second.Advance(old.DurationNanoseconds) == SimulationStatus.Ok);
-        Require(first.ReadSnapshot(new Scalar[old.Model.OutputCount]) == second.ReadSnapshot(new Scalar[old.Model.OutputCount]));
-        Require(first.ReadSnapshot(new Scalar[old.Model.OutputCount]).StateHash.ToString("x16") == "28bf5335d8e35cde");
+        while (!first.Completed)
+        {
+            ulong duration = Math.Min(old.SampleEveryNanoseconds, old.DurationNanoseconds - first.TimeNanoseconds);
+            Require(first.Advance(duration) == SimulationStatus.Ok && second.Advance(duration) == SimulationStatus.Ok);
+            var left = new Scalar[old.Model.OutputCount]; var right = new Scalar[old.Model.OutputCount];
+            Require(first.ReadSnapshot(left) == second.ReadSnapshot(right) && left.SequenceEqual(right));
+        }
+        AssetChecks.Reference(first, (1, Field.Speed, 68.58488546, 1e-6), (4, Field.Speed, 68.58488546, 1e-6),
+            (16, Field.FrictionHeat, 191.55570747, 1e-5), (5, Field.Temperature, 300.95777854, 1e-6),
+            (0, Field.SourceWork, -96.74607609, 1e-5), (16, Field.ClutchMode, 1, 0));
     }
     private static void Corruption()
     {
         var asset = Asset(); var bytes = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int extension = counts + 80 + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
+        int extension = counts + 104 + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
         void Reject(byte[] bad)
         {
             SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32);
@@ -66,7 +73,7 @@ internal static class GearAssetChecks
         BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 52), 1); Reject(missing);
         var duplicate = bytes.Take(extension + 8).Concat(bytes.Skip(extension).Take(8)).Concat(bytes.Skip(extension + 8)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 52), 3); Reject(duplicate);
-        var downgraded = bytes.Take(counts + 52).Concat(bytes.Skip(counts + 80).Take(extension - counts - 80)).Concat(bytes.Skip(extension + 16)).ToArray();
+        var downgraded = bytes.Take(counts + 52).Concat(bytes.Skip(counts + 104).Take(extension - counts - 104)).Concat(bytes.Skip(extension + 16)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgraded.AsSpan(8), 7); Reject(downgraded);
     }
 }

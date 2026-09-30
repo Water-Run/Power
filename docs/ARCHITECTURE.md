@@ -240,3 +240,73 @@ Pump-free models retain the preceding hydraulic solver path and replay hashes. T
 ideal displacement and finite-conductance relief limits, typed ports, observables and
 independent evidence are specified in [HYDRAULIC_PUMP.md](HYDRAULIC_PUMP.md). Core and
 Assets remain dependency-free dual-target assemblies; actual Unity evidence is separate.
+
+## Sampled control in the model transaction
+
+`PressureControllerDefinition` declares the hydraulic sensor, owned DC motor voltage
+channel, explicit gains/bounds, initial integral and a tick-aligned integer sampling
+period. Compilation binds one controller owner per motor input and removes that input
+from the external write table. A controller's pressure setpoint remains discoverable
+with units and stable IDs. Models without controllers retain their previous fingerprints.
+
+At the start of each complete tick, after scheduled inputs at that time, the candidate
+state samples due controllers from current hydraulic pressure. It updates integral,
+sampled pressure/error and held voltage, then performs the physical solve. Internal
+clutch trial intervals copy this state and do not resample it. The physical motor still
+accounts for all electrical work and heat. The controller has no invented energy store.
+
+Controller memory and owned motor inputs are copied by forks, hashed, and committed
+only with the whole batch. Cancellation or later numerical failure rolls back control
+history alongside physical state and inputs. Sampling allocates no managed memory.
+JSON, asset v12, CLI and MCP share this model semantics, with actual Editor execution
+remaining separately pending. See [the complete contract](HYDRAULIC_PUMP.md#sampled-pressure-regulation).
+
+## Coupled electrical supply
+
+Battery nodes add SOC and polarization voltage to the same dynamic state vector as
+rotational coordinates and RL motor currents. Chemical energy is the integral of the
+explicit affine OCV curve over charge; the RC branch stores quadratic energy. No model
+provider, transport, Unity or third-party dependency enters these equations.
+
+Held duty and resistive load openings change the electrical matrix and affine forcing.
+`ElectricalDynamics` owns its rates, LU factors and input cache per simulation. Gear,
+cylinder, converter and clutch responses use the prepared factors, including internal
+variable-duration capture trials. Failed preparation invalidates caches; candidate
+physical/control state still commits only with the whole batch. Caches are workspace,
+not shared model state or persistent simulation history.
+
+Battery motor work transfers internally. Battery, inductive, mechanical and hydraulic
+energy changes balance explicit heat and external ideal-source/load work. Charge and
+polarization live in the normal state vector, so forks, hashes and rollback include
+them automatically. Duty control uses dimensionless outputs and the same sampling/
+anti-windup contract as voltage control. Asset v14 and JSON/MCP retain complete supply
+definitions. [The supply contract](HYDRAULIC_PUMP.md#finite-battery-supply-and-duty-regulation)
+records scope, limits and independent evidence.
+
+## Translational hydraulic actuation
+
+`translational` nodes add displacement and velocity states with positive lumped
+mass. Hydraulic pistons add coordinate unknowns to the existing joint mechanical/
+pressure solver. Swept front/back volumes couple to compliance; reservoir pressure
+work remains an explicit external boundary. Linear springs use the same midpoint
+matrix with translational units. Pad and stroke-stop forces use discrete potential
+gradients and analytic Jacobians, preserving pressure/contact work across hinge
+activation and release.
+
+Contact clutches derive capacities from the pad's discrete force during the solve,
+then expose instantaneous force/capacity in snapshots. Each simulation owns compact
+compensated spring-damping histories, copied and hashed with every candidate state.
+No workspace allocations occur during successful steady stepping or snapshot reads.
+Asset v14 and JSON/MCP retain the motion and contact topology. See
+[HYDRAULIC_PISTON.md](HYDRAULIC_PISTON.md) for equations, limits and evidence.
+
+## Mechanically metered flow
+
+Spool-valve lands bind to existing piston coordinates. The hydraulic residual reads
+their midpoint position and includes analytic flow derivatives with respect to
+pressure and piston travel. Pressure feedback, motion and metering therefore share
+the Newton matrix and speculative clutch intervals. Passive port heat and swept
+volume commit through the existing hydraulic histories. Position slopes use bounded
+simulation-owned buffers; successful stepping adds no managed allocations. Asset v15,
+JSON and actual MCP replay retain the geometry. The declared pressure-balanced land
+neglects axial jet force; see [HYDRAULIC_SPOOL.md](HYDRAULIC_SPOOL.md).

@@ -40,6 +40,9 @@ public static class ExperimentRunner
         ulong previous = 0;
         foreach (var e in document.Events)
         {
+            foreach (var value in e.Values)
+                if (model.ValidateInput(value) == SimulationStatus.ControlledInput)
+                    throw new ArgumentException("A scheduled motor voltage channel is owned by a pressure controller; schedule its pressure_setpoint input instead.");
             if (e.TimeNanoseconds >= duration || e.TimeNanoseconds % step != 0 ||
                 (events.Count > 0 && e.TimeNanoseconds <= previous) || e.Values.Length == 0 || e.Values.Length > inputs.Count ||
                 e.Values.Select(v => v.Channel).Distinct().Count() != e.Values.Length ||

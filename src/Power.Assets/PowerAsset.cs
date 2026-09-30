@@ -60,6 +60,8 @@ public sealed class PowerAsset
             if (input.TimeNanoseconds < previous || input.TimeNanoseconds >= durationNanoseconds ||
                 input.TimeNanoseconds % step != 0)
                 throw new ArgumentException("Invalid time or order in the input schedule.");
+            if (Model.ValidateInput(new(input.Channel, input.Value)) == SimulationStatus.ControlledInput)
+                throw new ArgumentException($"Channel {input.Channel} is owned by a pressure controller; schedule its pressure_setpoint input instead.");
             if (Model.ValidateInput(new(input.Channel, input.Value)) != SimulationStatus.Ok)
                 throw new ArgumentException($"Invalid scheduled input on channel {input.Channel} at {input.TimeNanoseconds} ns; use a known input with a finite value, and gas openings, burn multipliers and clutch engagement in [0, 1].");
             if (i == 0 || input.TimeNanoseconds != previous) { ++frames; seen.Clear(); }

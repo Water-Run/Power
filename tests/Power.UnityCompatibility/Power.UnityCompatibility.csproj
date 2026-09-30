@@ -19,6 +19,15 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Compile Include="../Power.Tests/HydraulicAssetChecks.cs" Link="HydraulicAssetChecks.cs" />
     <Compile Include="../Power.Tests/PumpAssetChecks.cs" Link="PumpAssetChecks.cs" />
     <Compile Include="../Power.Tests/PumpChecks.cs" Link="PumpChecks.cs" />
+    <Compile Include="../Power.Tests/PumpAssemblyChecks.cs" Link="PumpAssemblyChecks.cs" />
+    <Compile Include="../Power.Tests/PressureControllerChecks.cs" Link="PressureControllerChecks.cs" />
+    <Compile Include="../Power.Tests/BatteryChecks.cs" Link="BatteryChecks.cs" />
+    <Compile Include="../Power.Tests/PistonChecks.cs" Link="PistonChecks.cs" />
+    <Compile Include="../Power.Tests/SpoolChecks.cs" Link="SpoolChecks.cs" />
+    <Compile Include="../Power.Tests/SpoolAssetChecks.cs" Link="SpoolAssetChecks.cs" />
+    <Compile Include="../Power.Tests/PistonAssetChecks.cs" Link="PistonAssetChecks.cs" />
+    <Compile Include="../Power.Tests/BatteryAssetChecks.cs" Link="BatteryAssetChecks.cs" />
+    <Compile Include="../Power.Tests/PressureControllerAssetChecks.cs" Link="PressureControllerAssetChecks.cs" />
     <Compile Include="../Power.Tests/HydraulicChecks.cs" Link="HydraulicChecks.cs" />
     <Compile Include="../Power.Tests/ConverterChecks.cs" Link="ConverterChecks.cs" />
     <Compile Include="../Power.Tests/GearModelChecks.cs" Link="GearModelChecks.cs" />

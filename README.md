@@ -32,7 +32,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 
 > The source audit rejects C/C++ implementation files and headers, plus Lua source, bytecode, and packages. Keep the repository free of them.
 
-Managed checks pass on Windows, macOS, and Linux; the record is [docs/VALIDATION.md](docs/VALIDATION.md). Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending — see [Unity verification](#unity-studio) below. Development is paused at this verified checkpoint at the owner's request.
+Serial verification passes on Windows; earlier runs also have Linux and macOS evidence. See [docs/VALIDATION.md](docs/VALIDATION.md) for the scope of each run. Unity Editor, Play Mode, rendering, and IL2CPP validation remain pending — see [Unity verification](#unity-studio) below.
 
 Run an experiment directly:
 
@@ -46,7 +46,7 @@ Model documents specify units, fixed nanosecond ticks, input events, and KPI bou
 
 ## Unity studio
 
-1. Run `dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- build`. This creates the Core and Assets assemblies in `Unity/Assets/Plugins` and twelve sample `.powerasset` files in `Unity/Assets/Generated/Resources`.
+1. Run `dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- build`. This creates the Core and Assets assemblies in `Unity/Assets/Plugins` and eighteen sample `.powerasset` files in `Unity/Assets/Generated/Resources`.
 2. Add the repository's `Unity` directory to Unity Hub and select **6000.6.0f1**.
 3. Let package resolution and script import finish — first-time preparation generates URP and material assets.
 4. Open `Assets/Scenes/PowerLab.unity`, or choose **Power > Open laboratory**, then enter Play Mode.
@@ -71,7 +71,7 @@ Unity Editor and Play Mode checks are a separate entry point. Set `POWER_UNITY_E
 dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- unity-test
 ```
 
-This is the only path that counts as actual Editor/Play Mode evidence. Unity hasn't been installed or exercised in the current development environment, and no validated Player build is available yet.
+This is the only path that counts as actual Editor/Play Mode evidence. Unity hasn't been exercised in the current development environment, and no validated Player build is available yet.
 
 ## Agent interface
 
@@ -87,9 +87,9 @@ The [agent API](docs/AGENT_API.md) documents client configuration and operation 
 
 ## Models and laboratories
 
-The executable C# models today cover rotational inertia, elastic shafts with positive or negative ratios, RL DC motors, torque sources, thermal capacities, heat-conduction networks, sealed adiabatic cylinders, and open gas chambers with slider-crank pressure-work coupling, crank-timed 360/720-degree valve profiles, and prescribed premixed combustion with fuel/air/product transport. Validated [gas-exchange physics](docs/GAS_EXCHANGE.md) — ideal gas, finite volume tracked by independent mass and internal energy, and a compressible orifice with choked and subcritical flow — feeds fixed and moving-volume gas networks. Clutches with static/sliding capacities, ideal gear and planetary constraints, mapped torque converters, and a hydraulic network with explicit valves, compliance, and a crank-driven pump supply join the same coupled solve. These models share coupled integration and an energy ledger. All sample parameters are `unverified` — research values, not calibrated measurements.
+The executable C# models today cover rotational inertia, elastic shafts with positive or negative ratios, RL DC motors, torque sources, thermal capacities, heat-conduction networks, sealed adiabatic cylinders, and open gas chambers with slider-crank pressure-work coupling, crank-timed 360/720-degree valve profiles, and prescribed premixed combustion with fuel/air/product transport. Validated [gas-exchange physics](docs/GAS_EXCHANGE.md) — ideal gas, finite volume tracked by independent mass and internal energy, and a compressible orifice with choked and subcritical flow — feeds fixed and moving-volume gas networks. Clutches with static/sliding capacities, ideal gear and planetary constraints, mapped torque converters, and a hydraulic network with explicit valves, compliance, and a crank-driven pump supply join the same coupled solve. Explicit pressure leakage and viscous drag model pump losses; a DC motor can supply the pump through the same electrical and thermal system. A sampled pressure regulator adjusts motor voltage or battery-fed motor duty from measured hydraulic pressure. Finite charge, battery resistance and polarization, and switched accessory loads feed the same energy ledger. These models share coupled integration and an energy ledger. All sample parameters are `unverified` — research values, not calibrated measurements.
 
-Every laboratory below runs from the same definitions through JSON, CLI, MCP, and the Unity studio (asset `power.asset.v11`; readers for asset v1–v10 remain supported):
+The laboratories below share definitions across JSON, CLI, MCP and Studio imports (asset `power.asset.v15`; readers for asset v1–v14 remain supported):
 
 | Example name (`get_example_model`) | Laboratory | What it exercises |
 |---|---|---|
@@ -103,6 +103,12 @@ Every laboratory below runs from the same definitions through JSON, CLI, MCP, an
 | `fired-converter` | `assets/labs/fired-converter.power.json` | converter maps and scheduled lockup |
 | `fired-hydraulic` | `assets/labs/fired-hydraulic.power.json` | valve-fed pressure for shift/lockup clutches |
 | `fired-pump` | `assets/labs/fired-pump.power.json` | crank-driven pump, compliant line, relief |
+| `fired-pump-losses` | `assets/labs/fired-pump-losses.power.json` | pump leakage, shaft drag and heat |
+| `electric-pump` | `assets/labs/electric-pump.power.json` | DC motor supply and valve-operated pressure clutch |
+| `pressure-regulated-pump` | `assets/labs/pressure-regulated-pump.power.json` | sampled pressure feedback, bounded motor voltage and disturbance recovery |
+| `battery-regulated-pump` | `assets/labs/battery-regulated-pump.power.json` | battery voltage sag, accessory loads and duty-regulated pressure |
+| `piston-actuated-clutch` | `assets/labs/piston-actuated-clutch.power.json` | piston free travel, pad contact, clutch capture/release and conserving fluid work |
+| `spool-regulated-pump` | `assets/labs/spool-regulated-pump.power.json` | mechanical pressure feedback, metered bypass and pressure-clutch capture |
 
 Request `get_example_model` with a `name`, or run one directly:
 
@@ -110,9 +116,9 @@ Request `get_example_model` with a `name`, or run one directly:
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.json --output artifacts/reports/<name>.json
 ```
 
-The build exports a matching `.powerasset` for each laboratory. Replay evidence — matched report boundaries, work and heat totals, energy residuals — is recorded in [docs/VALIDATION.md](docs/VALIDATION.md) and the contract documents: [gas network](docs/GAS_NETWORK.md), [moving cylinder](docs/MOVING_CYLINDER.md), [valve timing](docs/VALVE_TIMING.md), [premixed combustion](docs/PREMIXED_COMBUSTION.md), [clutches](docs/CLUTCH_NETWORK.md) with an [independent constant-load reference](docs/CLUTCH_PHYSICS.md), [gears](docs/GEAR_NETWORK.md) with [constant-load references](docs/IDEAL_GEARS.md), [converter](docs/CONVERTER_NETWORK.md), [hydraulics](docs/HYDRAULIC_NETWORK.md), and [pump](docs/HYDRAULIC_PUMP.md).
+The build exports a matching `.powerasset` for each laboratory. Replay evidence — matched report boundaries, work and heat totals, energy residuals — is recorded in [docs/VALIDATION.md](docs/VALIDATION.md) and the contract documents: [gas network](docs/GAS_NETWORK.md), [moving cylinder](docs/MOVING_CYLINDER.md), [valve timing](docs/VALVE_TIMING.md), [premixed combustion](docs/PREMIXED_COMBUSTION.md), [clutches](docs/CLUTCH_NETWORK.md) with an [independent constant-load reference](docs/CLUTCH_PHYSICS.md), [gears](docs/GEAR_NETWORK.md) with [constant-load references](docs/IDEAL_GEARS.md), [converter](docs/CONVERTER_NETWORK.md), [hydraulics](docs/HYDRAULIC_NETWORK.md), [pump](docs/HYDRAULIC_PUMP.md), [piston actuation](docs/HYDRAULIC_PISTON.md), and [spool regulation](docs/HYDRAULIC_SPOOL.md).
 
-Still open: complete engine behavior (intake/exhaust modeling, fuel metering, richer thermochemistry, ignition control), complete DCT/AT topology and transmission controls (ECU/TCU), pump and regulator dynamics, hydraulic piston travel, and calibrated powertrains. Earlier native prototypes and tests are ported to Zig in [legacy/native](legacy/native/README.md) as a separate research library; their functionality hasn't all been migrated to C#. The original C sources were replaced by Zig ports, with original hashes and Git provenance in [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). The [native Zig boundary](docs/NATIVE_ZIG.md) keeps the versioned binary ABI without adding a native dependency to the C#/Unity application. OEM research for EA211 DJS + DQ200 and PSA EC5 + AT8 stays in [assets/samples](assets/samples), with its evidence and calibration boundaries intact.
+Still open: complete engine behavior (intake/exhaust modeling, fuel metering, richer thermochemistry, ignition control), complete DCT/AT topology and transmission controls (ECU/TCU), measured pump loss/control maps, measured battery chemistry and BMS, measured valve/accumulator dynamics, and calibrated powertrains. Earlier native prototypes and tests are ported to Zig in [legacy/native](legacy/native/README.md) as a separate research library; their functionality hasn't all been migrated to C#. The original C sources were replaced by Zig ports, with original hashes and Git provenance in [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). The [native Zig boundary](docs/NATIVE_ZIG.md) keeps the versioned binary ABI without adding a native dependency to the C#/Unity application. OEM research for EA211 DJS + DQ200 and PSA EC5 + AT8 stays in [assets/samples](assets/samples), with its evidence and calibration boundaries intact.
 
 ## Documentation
 

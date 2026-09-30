@@ -41,6 +41,8 @@ internal sealed class ClutchSolver
     private readonly double[] _free, _diagonal, _staticCapacity, _slidingCapacity;
     internal readonly double[] Torque;
     private double _duration;
+    private bool _externalDynamics;
+    private int _externalGeneration;
     internal Factorization Dynamics { get; private set; }
     internal Factorization Thermal { get; private set; }
 
@@ -57,12 +59,12 @@ internal sealed class ClutchSolver
         if (!Prepare(model.Dt)) throw new ModelCompileException(DiagnosticCode.Solver, 0, "clutch.coupling", "Clutch response is nonfinite, ill-conditioned or fully constrained by permanent gears; inspect the power path, inertia and ratio scales.");
     }
 
-    internal bool Prepare(double duration)
+    internal bool Prepare(double duration, Factorization? external = null, int generation = 0)
     {
-        if (duration == _duration) return true;
+        if (duration == _duration && _externalDynamics == (external is not null) && (external is null || generation == _externalGeneration)) return true;
         if (!(duration > 0) || !Numeric.Finite(duration)) return false;
         _duration = 0; // A failed preparation must never make a later retry reuse partial factors.
-        if (duration == _model.Dt) { Dynamics = _model.Dynamics; Thermal = _model.Thermal; }
+        if (duration == _model.Dt) { Dynamics = external ?? _model.Dynamics; Thermal = _model.Thermal; }
         else
         {
             for (int row = 0; row < _free.Length; ++row)
@@ -73,10 +75,10 @@ internal sealed class ClutchSolver
                     _heatMatrix[row, col] = duration * _model.HeatConductance![row, col];
             foreach (var node in _model.Nodes)
                 if (node.Domain == Domain.Thermal) _heatMatrix[node.Index, node.Index] += node.Storage;
-            if (!_variableDynamics.Refactor(_matrix) || !_variableThermal.Refactor(_heatMatrix)) return false;
-            Dynamics = _variableDynamics; Thermal = _variableThermal;
+            if ((external is null && !_variableDynamics.Refactor(_matrix)) || !_variableThermal.Refactor(_heatMatrix)) return false;
+            Dynamics = external ?? _variableDynamics; Thermal = _variableThermal;
         }
-        if (_gears is not null && !_gears.Prepare(duration, Dynamics)) return false;
+        if (_gears is not null && !_gears.Prepare(duration, Dynamics, external is not null)) return false;
         if (_mechanical is not null && !_mechanical.SetInterval(duration, Dynamics, _gears)) return false;
         for (int k = 0; k < _response.Length; ++k)
         {
@@ -91,7 +93,7 @@ internal sealed class ClutchSolver
             if (_gears is not null && _diagonal[k] <= 64 * GearReference.Epsilon * freeMobility) return false;
             if (!Numeric.Finite(_diagonal[k]) || _diagonal[k] <= 0) return false;
         }
-        _duration = duration;
+        _duration = duration; _externalDynamics = external is not null; _externalGeneration = generation;
         return true;
     }
 
@@ -120,14 +122,24 @@ internal sealed class ClutchSolver
         UpdateCapacities(state, x, inputs, pressure);
     }
 
-    private void UpdateCapacities(ClutchState state, double[] x, double[] inputs, double[]? pressure)
+    private void UpdateCapacities(ClutchState state, double[] x, double[] inputs, double[]? pressure, double[]? midpoint = null)
     {
         for (int k = 0; k < Torque.Length; ++k)
         {
             int index = _model.ClutchComponents[k]; var c = Component(k);
             var actuator = _model.HydraulicActuators[index];
-            _staticCapacity[k] = actuator is null ? inputs[index] * c.P0 : actuator.Capacity(pressure![actuator.Pressure], false);
-            _slidingCapacity[k] = actuator is null ? inputs[index] * c.P1 : actuator.Capacity(pressure![actuator.Pressure], true);
+            var contact = _model.PistonFriction[index];
+            if (contact is not null)
+            {
+                int slider = _model.Nodes[_model.Components[contact.Piston].A].Index; var piston = _model.Pistons[contact.Piston]!;
+                double normal = midpoint is null ? piston.ContactForce(x[slider]) : piston.DiscreteContactForce(x[slider], 2 * midpoint[slider] - x[slider]);
+                _staticCapacity[k] = contact.Capacity(normal, false); _slidingCapacity[k] = contact.Capacity(normal, true);
+            }
+            else
+            {
+                _staticCapacity[k] = actuator is null ? inputs[index] * c.P0 : actuator.Capacity(pressure![actuator.Pressure], false);
+                _slidingCapacity[k] = actuator is null ? inputs[index] * c.P1 : actuator.Capacity(pressure![actuator.Pressure], true);
+            }
             if (_staticCapacity[k] == 0) state.Mode[k] = ClutchMode.Disengaged;
             else if (state.Mode[k] == ClutchMode.Disengaged)
             {
@@ -168,9 +180,9 @@ internal sealed class ClutchSolver
                 if ((iteration & 15) == 0 && cancellation.IsCancellationRequested) return false;
                 if (!Midpoint(old, mid, energy, combustion, cancellation)) return false;
                 bool satisfied = true;
-                if (_model.HasPumps)
+                if (_model.HasCoupledHydraulics)
                 {
-                    UpdateCapacities(state, old, inputs, pressure);
+                    UpdateCapacities(state, old, inputs, pressure, mid);
                     if (!ProjectHydraulicTorques(state, mid, true, ref satisfied)) return false;
                 }
                 for (int k = 0; k < Torque.Length; ++k)
@@ -187,9 +199,9 @@ internal sealed class ClutchSolver
                 if (!satisfied) continue;
                 // Recompute cylinder torque for the final force, then check the projected residual.
                 if (!Midpoint(old, mid, energy, combustion, cancellation)) return false;
-                if (_model.HasPumps)
+                if (_model.HasCoupledHydraulics)
                 {
-                    UpdateCapacities(state, old, inputs, pressure);
+                    UpdateCapacities(state, old, inputs, pressure, mid);
                     if (!ProjectHydraulicTorques(state, mid, false, ref satisfied)) return false;
                 }
                 for (int k = 0; k < Torque.Length; ++k)

@@ -26,15 +26,44 @@ public sealed class AgentWorkspace
 
     public static AgentReply Capabilities() => AgentReply.Success(new
     {
-        version = "0.13.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
-        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", AssetCodec.FormatName },
-        domains = new[] { "rotational", "thermal", "gas", "hydraulic" },
-        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief" },
-        examples = new[] { "electrothermal", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump" },
+        version = "0.18.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
+        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", "power.asset.v11", "power.asset.v12", "power.asset.v13", "power.asset.v14", AssetCodec.FormatName },
+        domains = new[] { "rotational", "thermal", "gas", "hydraulic", "battery", "translational" },
+        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief", "pressure_controller", "battery_motor", "resistive_load", "pressure_duty_controller", "linear_spring", "hydraulic_piston", "piston_clutch", "force_source", "hydraulic_spool_valve" },
+        examples = new[] { "electrothermal", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump" },
         limits = new { nodes = CompiledModel.MaxNodes, components = CompiledModel.MaxComponents, states = CompiledModel.MaxStates,
             sessions = MaxSessions, ticks_per_step = 1_000_000, experiment_ticks = 10_000_000, document_bytes = 1_048_576, asset_bytes = AssetCodec.MaxBytes },
         determinism = "Exact replay within the same binary/runtime/architecture. Compare tolerances across platforms.",
-        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics" }, calibration = "unverified",
+        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics", "sampled_pressure_control", "battery_electromechanical", "battery_pressure_control", "dynamic_piston_powertrain", "mechanically_regulated_hydraulics" }, calibration = "unverified",
+        hydraulic_spool_valve = new { component = "hydraulic_spool_valve", owner = "piston_component", position_unit = "m", coefficient_unit = "m3_s_sqrt_pa",
+            metering = "opening=clamp((x-closed_position)/(full_open_position-closed_position),0,1); signed travel permits reversed lands.",
+            integration = "Position and pressure evaluated at the same joint midpoint, with analytic pressure and land-position derivatives; no engagement or opening command channel.",
+            physics = "Pressure-balanced metering land; passive bidirectional turbulent restriction heat, explicit pressure-actuator piston, mass, spring/damping and stroke ends.",
+            scope = "No axial jet force, seal friction, cavitation, viscosity/temperature maps or calibrated valve geometry." },
+        hydraulic_piston = new { component = "hydraulic_piston", slider_domain = "translational", mass_unit = "kg", velocity_unit = "m_s", stiffness_unit = "n_m", damping_unit = "n_s_m",
+            pressure_force = "A_front*p_front-A_back*p_back", volume = "Front expansion draws A_front*dx; back contraction delivers A_back*dx; swept and compliant reference volumes share the ledger.",
+            contact = "Unilateral elastic pad at contact_position, plus compliant nominal stroke ends; discrete potential gradients conserve pressure/contact work.",
+            clutch = "piston_clutch capacity=friction*surfaces*radius*pad force. Pressure alone cannot engage a clutch before pad clearance closes.",
+            integration = "Joint midpoint/discrete-gradient piston, fluid pressure, motor/converter/cylinder and clutch constraints; contact capacity refreshed within constraint iterations.",
+            recovery = "Negative accepted gauge pressure rejects the whole batch. Inspect valve supply, slider mass/damping, areas/compliance and tick resolution; no cavitation clamp.",
+            scope = "Constant effective fluid compliance, explicit slider mass, linear return spring/damping, elastic pad and compliant ends. No cavitation, dry seal friction, plate flexural modes, wear or OEM calibration." },
+        battery = new { domain = "battery", capacity_units = new[] { "c", "ah" }, capacitance_unit = "f", state_of_charge_min = 0, state_of_charge_max = 1,
+            model = "Affine OCV/SOC, explicit series resistance and one polarization RC branch; positive current discharges charge inventory.",
+            energy = "Chemical energy Q*(V_empty*z+0.5*(V_full-V_empty)*z^2), polarization C*v_p^2/2; series/polarization and accessory heat share the ledger. Battery motor power is internal, not external source_work.",
+            motor = "battery_motor: node_a=shaft, node_b=battery; duty in [-1,1], motor voltage=duty*bus voltage, battery current=duty*motor current",
+            accessory = "resistive_load: explicit positive resistance and opening in [0,1] on a battery bus",
+            integration = "Held duty/load inputs update simulation-owned coupled midpoint factors, including gear, cylinder, converter and clutch responses.",
+            recovery = "SOC outside [0,1], negative bus voltage or nonfinite state rejects the whole batch. Shorten the step or change duty/load/initial charge; no silent capacity clamp.",
+            scope = "Research equivalent circuit and ideal averaged bidirectional duty conversion. No PWM switching, contactors, charging/BMS strategy, ageing, temperature-dependent OCV or calibrated chemistry." },
+        pressure_duty_controller = new { target = "battery_motor duty input", gain_units = new[] { "fraction_pa", "fraction_pa_s" }, output_range = "Explicit bounds within [-1,1]",
+            ownership = "Owned duty cannot be written directly; use pressure_setpoint. Integral duty and held command share sample clock, rollback and fork semantics." },
+        pressure_controller = new { component = "pressure_controller", sensor = "node_a=hydraulic gauge pressure", input = "pressure_setpoint in pa or bar",
+            target = "parameters.target_channel owns a dc_motor voltage input; that channel cannot be written externally",
+            sampling = "Samples at time zero and integer multiples of sample_period_ns; period 1 ns..1 s and tick-aligned. Holds output between samples.",
+            integration = "I_candidate=I+Ki*sample_period_s*error; first sample preserves initial I. Conditional integration rejects increments further into voltage saturation.",
+            units = new { proportional_gain = "v_pa", integral_gain = "v_pa_s", voltage_limits = "v", integral_state = "v" },
+            state = "Last sampled pressure/error, integral voltage and held command share hashes, forks, cancellation and whole-batch rollback.",
+            scope = "Ideal sampled pressure measurement and explicit voltage limits. No battery, sensor filtering/delay, PWM/current-loop dynamics or complete ECU/TCU." },
         hydraulic_pump = new { component = "hydraulic_pump", displacement_unit = "m3_rad", ports = "node_a=shaft; node_b=outlet; parameters.inlet_node=inlet or zero reservoir",
             equation = "Q=D*omega; shaft reaction=-D*(p_out-p_in); fluid power=-shaft reaction*omega",
             relief = "hydraulic_relief: Q=G*max(p_a-p_b-cracking_pressure,0); heat=Q*(p_a-p_b)",
@@ -42,6 +71,12 @@ public sealed class AgentWorkspace
             newton_iterations = 24, line_search_iterations = 12,
             outputs = "Last-tick mean inlet-to-outlet volume flow, shaft reaction and shaft-to-fluid power; cumulative signed hydraulic_work. Global hydraulic_work counts only reservoir work.",
             scope = "Ideal reversible displacement with explicit attached shaft inertia. No inferred leakage, drag, check valve, cavitation, spool dynamics or calibration." },
+        pump_assembly = new { components = new[] { "hydraulic_pump", "hydraulic_resistance", "shaft" },
+            net_flow = "D*omega-G*(p_out-p_in)", shaft_reaction = "-D*(p_out-p_in)-B*omega",
+            losses = "G*(p_out-p_in)^2+B*omega^2; explicit thermal sinks or heat rejection",
+            leakage_unit = "m3_s_pa", friction_unit = "nm_s_rad",
+            electric_supply = "dc_motor on the pump shaft: RL current, back EMF, torque and copper heat; voltage is an explicit input",
+            scope = "Constant supplied loss coefficients and explicit component IDs. No inferred efficiencies, battery, voltage controller, temperature-dependent viscosity or OEM calibration." },
         hydraulics = new { pressure_reference = "nonnegative_gauge_common_tank", storage = "linear_reference_volume_compliance_m3_per_pa",
             restrictions = new[] { "linear_conductance", "regularized_turbulent_coefficient", "one_way_linear_relief" }, opening_min = 0, opening_max = 1, friction_surfaces_max = 128,
             energy = "Stored energy C*p^2/2; reservoir work p_res*volume_in; restriction loss Q*delta_p. Routed thermal heat and global energy ledger share the accepted transfers.",
@@ -121,10 +156,16 @@ public sealed class AgentWorkspace
         "fired-cylinder" => AgentReply.Success(Resource("power.fired-cylinder.template.json")),
         "fired-clutch" => AgentReply.Success(Resource("power.fired-clutch.template.json")),
         "fired-pump" => AgentReply.Success(Resource("power.fired-pump.template.json")),
+        "fired-pump-losses" => AgentReply.Success(Resource("power.fired-pump-losses.template.json")),
+        "electric-pump" => AgentReply.Success(Resource("power.electric-pump.template.json")),
+        "pressure-regulated-pump" => AgentReply.Success(Resource("power.pressure-regulated-pump.template.json")),
+        "battery-regulated-pump" => AgentReply.Success(Resource("power.battery-regulated-pump.template.json")),
+        "piston-actuated-clutch" => AgentReply.Success(Resource("power.piston-actuated-clutch.template.json")),
+        "spool-regulated-pump" => AgentReply.Success(Resource("power.spool-regulated-pump.template.json")),
         "fired-hydraulic" => AgentReply.Success(Resource("power.fired-hydraulic.template.json")),
         "fired-converter" => AgentReply.Success(Resource("power.fired-converter.template.json")),
         "fired-planetary" => AgentReply.Success(Resource("power.fired-planetary.template.json")),
-        _ => AgentReply.Failure("unknown_example", "Available examples: electrothermal, sealed-cylinder, gas-network, moving-cylinder, crank-timed-cylinder, fired-cylinder, fired-clutch, fired-planetary, fired-converter, fired-hydraulic, fired-pump.", field: "name")
+        _ => AgentReply.Failure("unknown_example", "Available examples: electrothermal, sealed-cylinder, gas-network, moving-cylinder, crank-timed-cylinder, fired-cylinder, fired-clutch, fired-planetary, fired-converter, fired-hydraulic, fired-pump, fired-pump-losses, electric-pump, pressure-regulated-pump, battery-regulated-pump, piston-actuated-clutch, spool-regulated-pump.", field: "name")
     };
 
     private static AgentReply Guard(Func<AgentReply> work)
@@ -258,7 +299,8 @@ public sealed class AgentWorkspace
         JsonNamingPolicy.SnakeCaseLower.ConvertName(status.ToString()),
         status == SimulationStatus.NumericalFailure
             ? "Numerical solve failed; state and revision are unchanged. Reduce step_ns and recreate the model/session. For cylinders keep crank travel below 0.25 rad per interval; for gas networks inspect flow area, volume, conductance and initial conditions. Timed valves require crank travel per interval <= min(0.25 rad, duration_angle/8). Premixed combustion also requires travel <= min(0.25 rad, burn duration/32) and heat release <= 25% of pre-burn thermal energy. For hydraulics inspect compliance, valve coefficients, gauge pressures and actuator geometry; reduce step_ns if pressures become negative. For converters inspect map slopes and speed/inertia scales. For ideal gears inspect constraint rank and inertia/ratio scales. For clutches inspect inertia/ratio scales, redundant constraints, capacity schedules and the bounded interval/constraint limits in capabilities."
-            : "Operation rejected; session state and revision are unchanged. Inspect capabilities, channels and fixed step before retrying. Gas openings, burn multipliers and clutch engagement must be finite fractions in [0, 1].",
+            : status == SimulationStatus.ControlledInput ? "This actuator input is owned by a pressure controller. Write its pressure_setpoint input instead; state and revision are unchanged."
+            : "Operation rejected; session state and revision are unchanged. Inspect capabilities, channels and fixed step before retrying. Gas openings, burn multipliers and clutch engagement must be finite fractions in [0, 1]; pressure setpoints must be nonnegative.",
         status is SimulationStatus.Cancelled or SimulationStatus.Busy, revision: s.Revision.ToString(CultureInfo.InvariantCulture));
 
     public AgentReply ForkSession(string id, string expectedRevision) => Use(id, expectedRevision, s =>

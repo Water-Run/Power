@@ -25,6 +25,10 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
 
     private static readonly Dictionary<string, Unit> Units = new(StringComparer.Ordinal)
     {
+        ["v_pa"] = Unit.VoltPerPascal, ["v_pa_s"] = Unit.VoltPerPascalSecond,
+        ["c"] = Unit.Coulomb, ["ah"] = Unit.AmpereHour, ["f"] = Unit.Farad,
+        ["fraction_pa"] = Unit.FractionPerPascal, ["fraction_pa_s"] = Unit.FractionPerPascalSecond,
+        ["m_s"] = Unit.MeterPerSecond, ["n_m"] = Unit.NewtonPerMeter, ["n_s_m"] = Unit.NewtonSecondPerMeter,
         ["m3_rad"] = Unit.CubicMeterPerRadian, ["m3_pa"] = Unit.CubicMeterPerPascal, ["m3_s_pa"] = Unit.CubicMeterPerSecondPascal,
         ["m3_s_sqrt_pa"] = Unit.CubicMeterPerSecondSqrtPascal, ["m3_s"] = Unit.CubicMeterPerSecond, ["n"] = Unit.Newton,
         ["nm_s2_rad2"] = Unit.NewtonMeterSecondSquaredPerRadianSquared, ["none"] = Unit.None, ["kg_m2"] = Unit.KilogramMeterSquared, ["rad"] = Unit.Radian,
@@ -39,6 +43,12 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     };
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
+        ["sampled_pressure"] = Field.SampledPressure, ["pressure_error"] = Field.PressureError,
+        ["integral_voltage"] = Field.IntegralVoltage, ["command_voltage"] = Field.CommandVoltage,
+        ["state_of_charge"] = Field.StateOfCharge, ["charge"] = Field.Charge, ["terminal_voltage"] = Field.TerminalVoltage,
+        ["polarization_voltage"] = Field.PolarizationVoltage, ["battery_current"] = Field.BatteryCurrent,
+        ["integral_duty"] = Field.IntegralDuty, ["command_duty"] = Field.CommandDuty,
+        ["displacement"] = Field.Displacement, ["linear_speed"] = Field.LinearSpeed, ["force"] = Field.Force,
         ["hydraulic_power"] = Field.HydraulicPower, ["volume_flow"] = Field.VolumeFlow, ["hydraulic_volume_in"] = Field.HydraulicVolumeIn,
         ["hydraulic_volume_residual"] = Field.HydraulicVolumeResidual, ["hydraulic_work"] = Field.HydraulicWork,
         ["clamp_force"] = Field.ClampForce, ["static_capacity"] = Field.StaticCapacity, ["sliding_capacity"] = Field.SlidingCapacity,
@@ -112,17 +122,28 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
         if (Text(root.GetProperty("schema")) != "power.model.v1") throw new ArgumentException("Unsupported schema.");
         var nodes = Array(root.GetProperty("nodes"), CompiledModel.MaxNodes, 1).Select(n =>
         {
-            Object(n, ["id", "domain", "initial"], "storage", "position", "gas");
+            Object(n, ["id", "domain", "initial"], "storage", "position", "gas", "battery");
             var domain = Text(n.GetProperty("domain")) switch
             {
-                "rotational" => Domain.Rotational, "thermal" => Domain.Thermal, "gas" => Domain.Gas, "hydraulic" => Domain.Hydraulic,
+                "rotational" => Domain.Rotational, "thermal" => Domain.Thermal, "gas" => Domain.Gas, "hydraulic" => Domain.Hydraulic, "battery" => Domain.Battery, "translational" => Domain.Translational,
                 _ => throw new ArgumentException("Unknown node domain.")
             };
-            if (domain is Domain.Rotational or Domain.Gas && !n.TryGetProperty("position", out _))
+            if (domain is Domain.Rotational or Domain.Gas or Domain.Battery or Domain.Translational && !n.TryGetProperty("position", out _))
                 throw new ArgumentException("Rotational position and gas pressure must be explicit.");
             if (domain != Domain.Gas && !n.TryGetProperty("storage", out _))
                 throw new ArgumentException("Rotational inertia and thermal capacity must be explicit.");
             GasDefinition? gas = null;
+            BatteryDefinition? battery = null;
+            if (n.TryGetProperty("battery", out var sourceBattery))
+            {
+                Object(sourceBattery, ["empty_voltage", "full_voltage", "series_resistance", "polarization_resistance", "polarization_capacitance"], "heat_node");
+                battery = new()
+                {
+                    EmptyOpenCircuitVoltage = Quantity(sourceBattery.GetProperty("empty_voltage")), FullOpenCircuitVoltage = Quantity(sourceBattery.GetProperty("full_voltage")),
+                    SeriesResistance = Quantity(sourceBattery.GetProperty("series_resistance")), PolarizationResistance = Quantity(sourceBattery.GetProperty("polarization_resistance")),
+                    PolarizationCapacitance = Quantity(sourceBattery.GetProperty("polarization_capacitance")), HeatNode = Id(sourceBattery, "heat_node", true)
+                };
+            }
             if (n.TryGetProperty("gas", out var composition))
             {
                 Object(composition, ["gas_constant", "gamma"], "premixed");
@@ -137,7 +158,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 gas = new() { GasConstant = Quantity(composition.GetProperty("gas_constant")), Gamma = Number(composition.GetProperty("gamma")), Premixed = premixed };
             }
             return new NodeDefinition(Id(n, "id"), domain, n.TryGetProperty("storage", out var storage) ? Quantity(storage) : default, Quantity(n.GetProperty("initial")),
-                n.TryGetProperty("position", out var p) ? Quantity(p) : default) { Gas = gas };
+                n.TryGetProperty("position", out var p) ? Quantity(p) : default) { Gas = gas, Battery = battery };
         }).ToArray();
         var components = Array(root.GetProperty("components"), CompiledModel.MaxComponents).Select(c =>
         {
@@ -147,6 +168,9 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 "hydraulic_resistance" => ComponentKind.HydraulicResistance, "hydraulic_orifice" => ComponentKind.HydraulicOrifice,
                 "hydraulic_clutch" => ComponentKind.HydraulicClutch,
                 "hydraulic_pump" => ComponentKind.HydraulicPump, "hydraulic_relief" => ComponentKind.HydraulicRelief,
+                "pressure_controller" => ComponentKind.PressureController,
+                "battery_motor" => ComponentKind.BatteryMotor, "resistive_load" => ComponentKind.ResistiveLoad, "pressure_duty_controller" => ComponentKind.PressureDutyController,
+                "hydraulic_piston" => ComponentKind.HydraulicPiston, "linear_spring" => ComponentKind.LinearSpring, "piston_clutch" => ComponentKind.PistonClutch, "force_source" => ComponentKind.ForceSource, "hydraulic_spool_valve" => ComponentKind.HydraulicSpoolValve,
                 "torque_converter" => ComponentKind.TorqueConverter, "shaft" => ComponentKind.Shaft, "dc_motor" => ComponentKind.DcMotor,
                 "torque_source" => ComponentKind.TorqueSource, "thermal_link" => ComponentKind.ThermalLink,
                 "sealed_cylinder" => ComponentKind.SealedCylinder,
@@ -159,8 +183,13 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             if (kind == ComponentKind.IdealGear) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind == ComponentKind.PlanetaryGear) Object(c, ["id", "kind", "node_a", "node_b", "node_c", "parameters"]);
             else if (kind == ComponentKind.TorqueConverter) Object(c, ["id", "kind", "node_a", "node_b", "parameters"], "heat_node");
+            else if (kind is ComponentKind.PressureController or ComponentKind.PressureDutyController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
+            else if (kind == ComponentKind.BatteryMotor) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"], "heat_node");
+            else if (kind == ComponentKind.ResistiveLoad) Object(c, ["id", "kind", "node_a", "initial_input", "parameters"], "input_channel", "heat_node");
+            else if (kind == ComponentKind.HydraulicPiston) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
+            else if (kind == ComponentKind.PistonClutch) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
             else if (kind == ComponentKind.HydraulicPump) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
-            else if (kind == ComponentKind.HydraulicRelief) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
+            else if (kind is ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
             else if (kind == ComponentKind.HydraulicClutch) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
             else if (kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice) Object(c, ["id", "kind", "node_a", "parameters", "initial_input"], "node_b", "heat_node", "input_channel");
             else if (c.TryGetProperty("node_c", out _)) throw new ArgumentException("node_c applies only to planetary gears.");
@@ -179,12 +208,58 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 InputChannel = c.TryGetProperty("input_channel", out var channel) ? Integer(channel, long.MaxValue) : 0,
                 InitialInput = c.TryGetProperty("initial_input", out var initial) ? Quantity(initial) : default
             };
-            if (kind == ComponentKind.TorqueSource)
+            if (kind is ComponentKind.TorqueSource or ComponentKind.ForceSource)
             {
                 if (c.TryGetProperty("parameters", out var empty)) Object(empty, []);
                 return result;
             }
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
+            if (kind == ComponentKind.HydraulicPiston)
+            {
+                uint back = Id(parameters, "back_node", true); string[] required = ["front_area", "back_area", "back_node", "minimum_position", "maximum_position", "stop_stiffness", "contact_position", "contact_stiffness"];
+                if (back == 0) required = [..required, "back_pressure"];
+                Object(parameters, required);
+                return result with { HydraulicPiston = new()
+                {
+                    BackNode = back, FrontArea = Quantity(parameters.GetProperty("front_area")), BackArea = Quantity(parameters.GetProperty("back_area")),
+                    BackPressure = back == 0 ? Quantity(parameters.GetProperty("back_pressure")) : default,
+                    MinimumPosition = Quantity(parameters.GetProperty("minimum_position")), MaximumPosition = Quantity(parameters.GetProperty("maximum_position")),
+                    StopStiffness = Quantity(parameters.GetProperty("stop_stiffness")), ContactPosition = Quantity(parameters.GetProperty("contact_position")), ContactStiffness = Quantity(parameters.GetProperty("contact_stiffness"))
+                } };
+            }
+            if (kind == ComponentKind.PistonClutch)
+            {
+                Object(parameters, ["piston_component", "effective_radius", "static_friction", "sliding_friction", "friction_surfaces", "ratio"]);
+                return result with { Ratio = Number(parameters.GetProperty("ratio")), PistonClutch = new()
+                {
+                    PistonComponent = Id(parameters, "piston_component"), EffectiveRadius = Quantity(parameters.GetProperty("effective_radius")),
+                    StaticFriction = Number(parameters.GetProperty("static_friction")), SlidingFriction = Number(parameters.GetProperty("sliding_friction")), FrictionSurfaces = (uint)Integer(parameters.GetProperty("friction_surfaces"), 128, 1)
+                } };
+            }
+            if (kind == ComponentKind.ResistiveLoad)
+            { Object(parameters, ["resistance"]); return result with { Resistance = Quantity(parameters.GetProperty("resistance")) }; }
+            if (kind == ComponentKind.PressureDutyController)
+            {
+                Object(parameters, ["target_channel", "sample_period_ns", "proportional_gain", "integral_gain", "minimum_duty", "maximum_duty", "initial_integral_duty"]);
+                return result with { PressureDutyController = new()
+                {
+                    TargetChannel = Integer(parameters.GetProperty("target_channel"), long.MaxValue, 1), SamplePeriodNanoseconds = Integer(parameters.GetProperty("sample_period_ns"), 1_000_000_000, 1),
+                    ProportionalGain = Quantity(parameters.GetProperty("proportional_gain")), IntegralGain = Quantity(parameters.GetProperty("integral_gain")),
+                    MinimumDuty = Quantity(parameters.GetProperty("minimum_duty")), MaximumDuty = Quantity(parameters.GetProperty("maximum_duty")), InitialIntegralDuty = Quantity(parameters.GetProperty("initial_integral_duty"))
+                } };
+            }
+            if (kind == ComponentKind.PressureController)
+            {
+                Object(parameters, ["target_channel", "sample_period_ns", "proportional_gain", "integral_gain", "minimum_voltage", "maximum_voltage", "initial_integral_voltage"]);
+                return result with { PressureController = new()
+                {
+                    TargetChannel = Integer(parameters.GetProperty("target_channel"), long.MaxValue, 1),
+                    SamplePeriodNanoseconds = Integer(parameters.GetProperty("sample_period_ns"), 1_000_000_000, 1),
+                    ProportionalGain = Quantity(parameters.GetProperty("proportional_gain")), IntegralGain = Quantity(parameters.GetProperty("integral_gain")),
+                    MinimumVoltage = Quantity(parameters.GetProperty("minimum_voltage")), MaximumVoltage = Quantity(parameters.GetProperty("maximum_voltage")),
+                    InitialIntegralVoltage = Quantity(parameters.GetProperty("initial_integral_voltage"))
+                } };
+            }
             if (kind == ComponentKind.HydraulicPump)
             {
                 uint inlet = Id(parameters, "inlet_node", true);
@@ -194,14 +269,16 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 return result with { HydraulicPump = new() { InletNode = inlet, Displacement = Quantity(parameters.GetProperty("displacement")) },
                     ReservoirPressure = inlet == 0 ? Quantity(parameters.GetProperty("reservoir_pressure")) : default };
             }
-            if (kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief)
+            if (kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve)
             {
                 string[] required = kind == ComponentKind.HydraulicRelief ? ["coefficient", "cracking_pressure"] : kind == ComponentKind.HydraulicResistance ? ["coefficient"] : ["coefficient", "transition_pressure"];
+                if (kind == ComponentKind.HydraulicSpoolValve) required = [..required, "piston_component", "closed_position", "full_open_position"];
                 if (result.NodeB == 0) required = [..required, "reservoir_pressure"];
                 Object(parameters, required);
                 return result with { ReservoirPressure = result.NodeB == 0 ? Quantity(parameters.GetProperty("reservoir_pressure")) : default,
+                    SpoolValve = kind == ComponentKind.HydraulicSpoolValve ? new() { PistonComponent = Id(parameters, "piston_component"), ClosedPosition = Quantity(parameters.GetProperty("closed_position")), FullOpenPosition = Quantity(parameters.GetProperty("full_open_position")) } : null,
                     HydraulicRestriction = new() { Coefficient = Quantity(parameters.GetProperty("coefficient")),
-                        TransitionPressure = kind == ComponentKind.HydraulicOrifice ? Quantity(parameters.GetProperty("transition_pressure")) : default,
+                        TransitionPressure = kind is ComponentKind.HydraulicOrifice or ComponentKind.HydraulicSpoolValve ? Quantity(parameters.GetProperty("transition_pressure")) : default,
                         CrackingPressure = kind == ComponentKind.HydraulicRelief ? Quantity(parameters.GetProperty("cracking_pressure")) : default } };
             }
             if (kind == ComponentKind.HydraulicClutch)
@@ -290,13 +367,13 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                     Gamma = Number(parameters.GetProperty("gamma")), BackPressure = Quantity(parameters.GetProperty("back_pressure"))
                 } };
             }
-            if (kind == ComponentKind.Shaft)
+            if (kind is ComponentKind.Shaft or ComponentKind.LinearSpring)
             {
                 Object(parameters, ["stiffness", "damping", "rest_angle", "ratio"]);
                 return result with { Stiffness = Quantity(parameters.GetProperty("stiffness")), Damping = Quantity(parameters.GetProperty("damping")),
                     RestAngle = Quantity(parameters.GetProperty("rest_angle")), Ratio = Number(parameters.GetProperty("ratio")) };
             }
-            if (kind == ComponentKind.DcMotor)
+            if (kind is ComponentKind.DcMotor or ComponentKind.BatteryMotor)
             {
                 Object(parameters, ["resistance", "inductance", "coupling", "initial_current"]);
                 return result with { Resistance = Quantity(parameters.GetProperty("resistance")), Inductance = Quantity(parameters.GetProperty("inductance")),

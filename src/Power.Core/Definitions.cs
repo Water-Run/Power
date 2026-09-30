@@ -10,11 +10,11 @@ public enum Unit
     NewtonMeterPerRadian, NewtonMeterSecondPerRadian, Kelvin, JoulePerKelvin,
     WattPerKelvin, Ohm, Henry, NewtonMeterPerAmpere, Ampere, Volt, Joule, Rpm, Degree,
     Meter, Millimeter, CubicMeter, Pascal, Bar, Kilogram, JoulePerKilogramKelvin,
-    Liter, SquareMeter, SquareMillimeter, KilogramPerSecond, Watt, Fraction, JoulePerKilogram, StateCode, NewtonMeterSecondSquaredPerRadianSquared, CubicMeterPerPascal, CubicMeterPerSecondPascal, CubicMeterPerSecondSqrtPascal, CubicMeterPerSecond, Newton, CubicMeterPerRadian
+    Liter, SquareMeter, SquareMillimeter, KilogramPerSecond, Watt, Fraction, JoulePerKilogram, StateCode, NewtonMeterSecondSquaredPerRadianSquared, CubicMeterPerPascal, CubicMeterPerSecondPascal, CubicMeterPerSecondSqrtPascal, CubicMeterPerSecond, Newton, CubicMeterPerRadian, VoltPerPascal, VoltPerPascalSecond, Coulomb, Farad, AmpereHour, FractionPerPascal, FractionPerPascalSecond, MeterPerSecond, NewtonPerMeter, NewtonSecondPerMeter
 }
 
-public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief }
+public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6 }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
@@ -23,9 +23,9 @@ public enum Field
     SourceWork = 16, HeatRejected, StoredEnergyChange, EnergyResidual,
     ReservoirEnthalpy = 20, MassResidual = 21,
     FuelMass = 22, FreshAirMass, ProductMass, ChemicalEnergy, FuelBurned, HeatReleased,
-    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower
+    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower, SampledPressure, PressureError, IntegralVoltage, CommandVoltage, StateOfCharge, Charge, TerminalVoltage, PolarizationVoltage, BatteryCurrent, IntegralDuty, CommandDuty, Displacement, LinearSpeed, Force
 }
-public enum SimulationStatus { Ok, InvalidTimeStep, InvalidInput, UnknownChannel, NumericalFailure, Busy, Cancelled }
+public enum SimulationStatus { Ok, InvalidTimeStep, InvalidInput, UnknownChannel, NumericalFailure, Busy, Cancelled, ControlledInput }
 public enum DiagnosticCode { Schema, Capacity, Id, Unit, Range, Connection, Channel, Solver }
 
 public readonly record struct Quantity(double Value, Unit Unit);
@@ -73,12 +73,19 @@ public sealed record NodeDefinition(uint Id, Domain Domain, Quantity Storage, Qu
 {
     /// <summary>Required for, and only for, <see cref="Domain.Gas"/> nodes.</summary>
     public GasDefinition? Gas { get; init; }
+    public BatteryDefinition? Battery { get; init; }
 
     public static NodeDefinition Rotor(uint id, double inertia, double speed = 0, double angle = 0) =>
         new(id, Domain.Rotational, new(inertia, Unit.KilogramMeterSquared),
             new(speed, Unit.RadianPerSecond), new(angle, Unit.Radian));
     public static NodeDefinition Hydraulic(uint id, double compliance, double gaugePressure = 0) =>
         new(id, Domain.Hydraulic, new(compliance, Unit.CubicMeterPerPascal), new(gaugePressure, Unit.Pascal), default);
+    public static NodeDefinition BatteryNode(uint id, double capacityCoulombs, double stateOfCharge,
+        BatteryDefinition battery, double polarizationVoltage = 0) =>
+        new(id, Domain.Battery, new(capacityCoulombs, Unit.Coulomb), new(stateOfCharge, Unit.Fraction), new(polarizationVoltage, Unit.Volt))
+        { Battery = battery };
+    public static NodeDefinition Translational(uint id, double massKilograms, double speedMetersPerSecond = 0, double displacementMeters = 0) =>
+        new(id, Domain.Translational, new(massKilograms, Unit.Kilogram), new(speedMetersPerSecond, Unit.MeterPerSecond), new(displacementMeters, Unit.Meter));
     public static NodeDefinition Thermal(uint id, double capacity, double temperature) =>
         new(id, Domain.Thermal, new(capacity, Unit.JoulePerKelvin), new(temperature, Unit.Kelvin), default);
     /// <summary>A finite gas volume: storage is the volume, initial is temperature, position is pressure.</summary>
@@ -163,12 +170,56 @@ public sealed record ComponentDefinition
     public HydraulicRestrictionDefinition? HydraulicRestriction { get; init; }
     public HydraulicClutchDefinition? HydraulicClutch { get; init; }
     public HydraulicPumpDefinition? HydraulicPump { get; init; }
+    public PressureControllerDefinition? PressureController { get; init; }
+    public PressureDutyControllerDefinition? PressureDutyController { get; init; }
+    public HydraulicPistonDefinition? HydraulicPiston { get; init; }
+    public PistonClutchDefinition? PistonClutch { get; init; }
+    public HydraulicSpoolValveDefinition? SpoolValve { get; init; }
     /// <summary>Required only at a reservoir boundary of a premixed gas network.</summary>
     public MassFractions? ReservoirFractions { get; init; }
 
     /// <summary>Quasi-steady fluid coupling; a lockup clutch is a separate component.</summary>
     public static ComponentDefinition TorqueConverter(uint id, uint pump, uint turbine, TorqueConverterDefinition maps, uint heat = 0) => new()
     { Id = id, Kind = ComponentKind.TorqueConverter, NodeA = pump, NodeB = turbine, Converter = maps, HeatNode = heat };
+
+    /// <summary>Sample hydraulic pressure on the integer clock and own one DC motor voltage channel.</summary>
+    public static ComponentDefinition PressureLoop(uint id, uint pressureNode, ulong setpointChannel,
+        double setpointPascals, PressureControllerDefinition controller) => new()
+    {
+        Id = id, Kind = ComponentKind.PressureController, NodeA = pressureNode, InputChannel = setpointChannel,
+        InitialInput = new(setpointPascals, Unit.Pascal), PressureController = controller
+    };
+    public static ComponentDefinition PressureDutyLoop(uint id, uint pressureNode, ulong setpointChannel,
+        double setpointPascals, PressureDutyControllerDefinition controller) => new()
+    {
+        Id = id, Kind = ComponentKind.PressureDutyController, NodeA = pressureNode, InputChannel = setpointChannel,
+        InitialInput = new(setpointPascals, Unit.Pascal), PressureDutyController = controller
+    };
+    /// <summary>Ideal averaged bidirectional duty transformer feeding an RL motor from one battery bus.</summary>
+    public static ComponentDefinition BatteryMotor(uint id, uint shaft, uint battery, uint heat, ulong channel,
+        double resistance, double inductance, double coupling, double duty, double current = 0) => new()
+    {
+        Id = id, Kind = ComponentKind.BatteryMotor, NodeA = shaft, NodeB = battery, HeatNode = heat, InputChannel = channel,
+        Resistance = new(resistance, Unit.Ohm), Inductance = new(inductance, Unit.Henry), Coupling = new(coupling, Unit.NewtonMeterPerAmpere),
+        InitialCurrent = new(current, Unit.Ampere), InitialInput = new(duty, Unit.Fraction)
+    };
+    public static ComponentDefinition ResistiveLoad(uint id, uint battery, double resistance,
+        uint heat = 0, ulong channel = 0, double opening = 1) => new()
+    {
+        Id = id, Kind = ComponentKind.ResistiveLoad, NodeA = battery, HeatNode = heat, InputChannel = channel,
+        Resistance = new(resistance, Unit.Ohm), InitialInput = new(opening, Unit.Fraction)
+    };
+    public static ComponentDefinition Piston(uint id, uint slider, uint chamber, HydraulicPistonDefinition piston) => new()
+    { Id = id, Kind = ComponentKind.HydraulicPiston, NodeA = slider, NodeB = chamber, HydraulicPiston = piston };
+    public static ComponentDefinition ContactClutch(uint id, uint a, uint b, PistonClutchDefinition clutch, uint heat = 0, double ratio = 1) => new()
+    { Id = id, Kind = ComponentKind.PistonClutch, NodeA = a, NodeB = b, PistonClutch = clutch, HeatNode = heat, Ratio = ratio };
+    public static ComponentDefinition Force(uint id, uint slider, ulong channel, double forceNewtons) => new()
+    { Id = id, Kind = ComponentKind.ForceSource, NodeA = slider, InputChannel = channel, InitialInput = new(forceNewtons, Unit.Newton) };
+    public static ComponentDefinition LinearSpring(uint id, uint a, uint b, double stiffness, double damping, double rest = 0, uint heat = 0, double ratio = 1) => new()
+    {
+        Id = id, Kind = ComponentKind.LinearSpring, NodeA = a, NodeB = b, HeatNode = heat,
+        Stiffness = new(stiffness, Unit.NewtonPerMeter), Damping = new(damping, Unit.NewtonSecondPerMeter), RestAngle = new(rest, Unit.Meter), Ratio = ratio
+    };
 
     /// <summary>Permanent lossless speed constraint omega_A = ratio * omega_B.</summary>
     public static ComponentDefinition IdealGear(uint id, uint a, uint b, double ratio) => new()
@@ -185,6 +236,13 @@ public sealed record ComponentDefinition
         Id = id, Kind = ComponentKind.HydraulicResistance, NodeA = a, NodeB = b, HeatNode = heat,
         InputChannel = channel, InitialInput = new(opening, Unit.Fraction), ReservoirPressure = b == 0 ? new(reservoirPressure, Unit.Pascal) : default,
         HydraulicRestriction = new() { Coefficient = new(conductance, Unit.CubicMeterPerSecondPascal) }
+    };
+    public static ComponentDefinition Spool(uint id, uint a, uint b, double coefficient, double transitionPressure,
+        HydraulicSpoolValveDefinition land, double reservoirPressure = 0, uint heat = 0) => new()
+    {
+        Id = id, Kind = ComponentKind.HydraulicSpoolValve, NodeA = a, NodeB = b, HeatNode = heat, SpoolValve = land,
+        HydraulicRestriction = new() { Coefficient = new(coefficient, Unit.CubicMeterPerSecondSqrtPascal), TransitionPressure = new(transitionPressure, Unit.Pascal) },
+        ReservoirPressure = b == 0 ? new(reservoirPressure, Unit.Pascal) : default
     };
     public static ComponentDefinition HydraulicOrifice(uint id, uint a, uint b, double coefficient, double transitionPressure,
         double reservoirPressure = 0, ulong channel = 0, double opening = 1, uint heat = 0) => new()

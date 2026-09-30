@@ -128,11 +128,11 @@ internal sealed class GearSolver
         _duration = coupling.Model.Dt; Torque = new double[coupling.Rows.Length];
     }
 
-    internal bool Prepare(double duration, Factorization dynamics)
+    internal bool Prepare(double duration, Factorization dynamics, bool force = false)
     {
-        if (duration == _duration) return true;
+        if (!force && duration == _duration) return true;
         _duration = 0;
-        if (duration == _coupling.Model.Dt) _projection = _coupling.FullInterval;
+        if (!force && duration == _coupling.Model.Dt) _projection = _coupling.FullInterval;
         else
         {
             if (!_variable.Prepare(duration, dynamics)) return false;

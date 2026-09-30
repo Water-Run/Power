@@ -52,7 +52,7 @@ internal sealed class CylinderSolver : MechanicalSolver
         _residual = new double[n]; _trial = new double[n]; _trialResidual = new double[n]; _correction = new double[n];
         _jacobian = new double[n, n];
         _response = _coupling.Response; _gearReaction = _coupling.GearReaction;
-        if (model.HasClutches)
+        if (model.HasClutches || model.HasBatteries)
         {
             _variableResponse = Enumerable.Range(0, n).Select(_ => new double[model.DynamicCount]).ToArray();
             _variableGearReaction = Enumerable.Range(0, n).Select(_ => new double[model.GearComponents.Length]).ToArray();
@@ -61,7 +61,7 @@ internal sealed class CylinderSolver : MechanicalSolver
 
     internal override bool SetInterval(double duration, Factorization dynamics, GearSolver? gears)
     {
-        if (duration == _model.Dt) { _response = _coupling.Response; _gearReaction = _coupling.GearReaction; return true; }
+        if (duration == _model.Dt && !_model.HasBatteries) { _response = _coupling.Response; _gearReaction = _coupling.GearReaction; return true; }
         _response = _variableResponse!; _gearReaction = _variableGearReaction!;
         for (int k = 0; k < _response.Length; ++k)
         {

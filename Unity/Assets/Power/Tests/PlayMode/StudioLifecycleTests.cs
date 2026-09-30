@@ -169,6 +169,58 @@ namespace Power.Studio.Tests
         }
 
         [UnityTest]
+        public IEnumerator LossyPumpImportsAndReplays() => PumpAssemblyReplay("FiredPumpLosses", "Hydraulic pump 46");
+
+        [UnityTest]
+        public IEnumerator ElectricPumpImportsAndReplays() => PumpAssemblyReplay("ElectricPump", "Hydraulic pump 11");
+
+        [UnityTest]
+        public IEnumerator RegulatedPumpImportsAndReplays() => PumpAssemblyReplay("PressureRegulatedPump", "Pressure regulator 20");
+
+        [UnityTest]
+        public IEnumerator BatteryPumpImportsAndReplays() => PumpAssemblyReplay("BatteryRegulatedPump", "Battery 30");
+
+        [UnityTest]
+        public IEnumerator PistonClutchImportsAndReplays() => PumpAssemblyReplay("PistonActuatedClutch", "Slider 40");
+
+        [UnityTest]
+        public IEnumerator SpoolRegulatorImportsAndReplays() => PumpAssemblyReplay("SpoolRegulatedPump", "Spool valve 14");
+
+        private IEnumerator PumpAssemblyReplay(string resource, string pumpName)
+        {
+            _host = new GameObject(resource + " test");
+            var studio = _host.AddComponent<PowerStudio>();
+            var source = Resources.Load<PowerModelAsset>(resource);
+            Assert.That(source, Is.Not.Null);
+            studio.SetModelAsset(source); studio.SetRunning(false);
+            yield return null;
+            ulong initial = studio.StateHash;
+            Assert.That(_host.transform.Find("Power generated lab/" + pumpName), Is.Not.Null);
+            Vector3 sliderStart = Vector3.zero;
+            if (resource == "PistonActuatedClutch")
+            {
+                sliderStart = _host.transform.Find("Power generated lab/Slider 40").localPosition;
+                Assert.That(_host.transform.Find("Power generated lab/Thermal node 40"), Is.Null);
+                Assert.That(_host.transform.Find("Power generated lab/Piston contact pad 22"), Is.Not.Null);
+                Assert.That(_host.transform.Find("Power generated lab/Piston actuator 17"), Is.Not.Null);
+                Assert.That(_host.transform.Find("Power generated lab/Clutch plate A 17"), Is.Not.Null);
+            }
+            studio.RunReferenceExperiment(); studio.SetRunning(false);
+            var asset = source.Load(); var playback = asset.CreatePlayback();
+            for (ulong i = 0; i < asset.DurationNanoseconds / PowerStudio.PresentationStepNanoseconds + 1; ++i) studio.AdvanceOnePresentationStep();
+            Assert.That(playback.Advance(asset.DurationNanoseconds), Is.EqualTo(SimulationStatus.Ok));
+            Assert.That(studio.SimulationTimeNanoseconds, Is.EqualTo(asset.DurationNanoseconds));
+            Assert.That(studio.StateHash, Is.EqualTo(playback.ReadSnapshot(new Scalar[asset.Model.OutputCount]).StateHash));
+            if (resource == "PistonActuatedClutch")
+                Assert.That(_host.transform.Find("Power generated lab/Slider 40").localPosition.y, Is.GreaterThan(sliderStart.y));
+            studio.ResetSimulation(); studio.SetRunning(false);
+            Assert.That(studio.StateHash, Is.EqualTo(initial));
+            studio.enabled = false;
+            yield return null;
+            Assert.That(_host.transform.childCount, Is.EqualTo(0));
+        }
+
+        [UnityTest]
         public IEnumerator FiredHydraulicShowsPressurePortsAndReplaysLockup()
         {
             _host = new GameObject("Fired hydraulic test");

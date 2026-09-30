@@ -27,7 +27,7 @@ internal static class ConverterAssetChecks
     private static void Replay()
     {
         var original = Asset(); var bytes = AssetCodec.Encode(original); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 11);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 15);
         Require(decoded.Components.SequenceEqual(original.Components) && decoded.Model.Fingerprint == original.Model.Fingerprint);
         Require(AssetCodec.Encode(decoded).SequenceEqual(bytes));
         var a = original.CreatePlayback(); var b = decoded.CreatePlayback(); var values = new Scalar[a.Model.OutputCount];
@@ -46,12 +46,14 @@ internal static class ConverterAssetChecks
             Require(first.Advance(old.SampleEveryNanoseconds) == SimulationStatus.Ok && second.Advance(old.SampleEveryNanoseconds) == SimulationStatus.Ok);
             Require(first.ReadSnapshot(new Scalar[old.Model.OutputCount]) == second.ReadSnapshot(new Scalar[old.Model.OutputCount]));
         }
-        Require(first.ReadSnapshot(new Scalar[old.Model.OutputCount]).StateHash.ToString("x16") == "b328de221532fbae");
+        AssetChecks.Reference(first, (1, Field.Speed, 76.81548837, 1e-6), (7, Field.Speed, 7.31576080, 1e-6),
+            (16, Field.FrictionHeat, 254.52399968, 1e-5), (17, Field.FrictionHeat, 156.31560557, 1e-5),
+            (5, Field.Temperature, 302.05419803, 1e-6), (0, Field.SourceWork, -56.83157714, 1e-5));
     }
     private static void Corruption()
     {
         var asset=Asset(); var bytes=AssetCodec.Encode(asset);
-        int counts=78+Encoding.UTF8.GetByteCount(asset.Name), extension=counts+80+44*asset.Nodes.Count+156*asset.Components.Count;
+        int counts=78+Encoding.UTF8.GetByteCount(asset.Name), extension=counts+104+44*asset.Nodes.Count+156*asset.Components.Count;
         void Reject(byte[] bad)
         {
             SHA256.HashData(bad.AsSpan(0,bad.Length-32)).CopyTo(bad,bad.Length-32);
@@ -68,7 +70,7 @@ internal static class ConverterAssetChecks
         Change(second,0); // Re-signed duplicate extension must not replace the first converter.
         Change(extension+20+24,(int)Unit.NewtonMeter); // Wrong dimension in a map point.
         var altered=(byte[])bytes.Clone(); BinaryPrimitives.WriteDoubleLittleEndian(altered.AsSpan(extension+20),-.9); Reject(altered);
-        var down=bytes.Take(counts+56).Concat(bytes.Skip(counts+80).Take(extension-counts-80)).Concat(bytes.Skip(second+20+28*8)).ToArray();
+        var down=bytes.Take(counts+56).Concat(bytes.Skip(counts+104).Take(extension-counts-104)).Concat(bytes.Skip(second+20+28*8)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(down.AsSpan(8),8); Reject(down);
     }
 }

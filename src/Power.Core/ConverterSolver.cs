@@ -49,26 +49,28 @@ internal sealed class ConverterState(int count)
 /// <summary>Compiled unit-torque responses for joint cylinder, converter and hydraulic pump coupling.</summary>
 internal sealed class ConverterCoupling
 {
-    internal readonly int Cranks, PumpOffset;
+    internal readonly int Cranks, Coordinates, PumpOffset;
     internal readonly int[] Nodes, Variables;
     internal readonly double[][] Response, GearReaction;
     internal ConverterCoupling(CompiledModel model)
     {
         Cranks = model.CylinderCoupling?.Angles.Length ?? 0;
-        PumpOffset = Cranks + 2 * model.ConverterComponents.Length;
+        Coordinates = Cranks + model.PistonComponents.Length;
+        PumpOffset = Coordinates + 2 * model.ConverterComponents.Length;
         int count = PumpOffset + model.PumpComponents.Length;
         Nodes = new int[count]; Variables = new int[count]; Response = new double[count][]; GearReaction = new double[count][];
         for (int k = 0; k < Cranks; ++k) Nodes[k] = model.Components[model.CylinderCoupling!.Components[k][0]].A;
+        for (int k = 0; k < model.PistonComponents.Length; ++k) Nodes[Cranks + k] = model.Components[model.PistonComponents[k]].A;
         for (int k = 0; k < model.ConverterComponents.Length; ++k)
         {
             var c = model.Components[model.ConverterComponents[k]];
-            Nodes[Cranks + 2 * k] = c.A; Nodes[Cranks + 2 * k + 1] = c.B;
+            Nodes[Coordinates + 2 * k] = c.A; Nodes[Coordinates + 2 * k + 1] = c.B;
         }
         for (int k = 0; k < model.PumpComponents.Length; ++k) Nodes[PumpOffset + k] = model.Components[model.PumpComponents[k]].A;
         for (int k = 0; k < count; ++k)
         {
             var node = model.Nodes[Nodes[k]];
-            Variables[k] = node.Index + (k < Cranks ? 0 : 1);
+            Variables[k] = node.Index + (k < Coordinates ? 0 : 1);
             var response = Response[k] = new double[model.DynamicCount];
             var reactions = GearReaction[k] = new double[model.GearComponents.Length];
             response[node.Index + 1] = .5 * model.Dt / node.Storage;
@@ -100,8 +102,8 @@ internal sealed class ConverterSolver : MechanicalSolver
 
     internal ConverterSolver(CompiledModel model, HydraulicSolver? hydraulics = null)
     {
-        _model = model; _coupling = model.ConverterCoupling!; _hydraulics = model.HasPumps ? hydraulics : null;
-        int count = _coupling.Nodes.Length + (model.HasPumps ? model.HydraulicCount : 0);
+        _model = model; _coupling = model.ConverterCoupling!; _hydraulics = model.HasCoupledHydraulics ? hydraulics : null;
+        int count = _coupling.Nodes.Length + (model.HasCoupledHydraulics ? model.HydraulicCount : 0);
         _value = new double[count]; _prediction = new double[count]; _force = new double[_coupling.Nodes.Length]; _residual = new double[count];
         _trial = new double[count]; _trialResidual = new double[count]; _correction = new double[count];
         _derivative = new double[_force.Length, count]; _jacobian = new double[count, count]; _factor = new(count);
@@ -112,7 +114,7 @@ internal sealed class ConverterSolver : MechanicalSolver
 
     internal override bool SetInterval(double duration, Factorization dynamics, GearSolver? gears)
     {
-        if (duration == _model.Dt) { _response = _coupling.Response; _reactions = _coupling.GearReaction; return true; }
+        if (duration == _model.Dt && !_model.HasBatteries) { _response = _coupling.Response; _reactions = _coupling.GearReaction; return true; }
         _response = _variableResponse; _reactions = _variableReactions;
         for (int k = 0; k < _response.Length; ++k)
         {
@@ -138,7 +140,7 @@ internal sealed class ConverterSolver : MechanicalSolver
         return torque;
     }
 
-    private double Tolerance(int k, double value) => k < _coupling.Cranks ? 2e-14
+    private double Tolerance(int k, double value) => k < _coupling.Cranks ? 2e-14 : k < _coupling.Coordinates ? 2e-15 + 64 * GearReference.Epsilon * Math.Abs(value)
         : 2e-12 + 64 * GearReference.Epsilon * (Math.Abs(value) + Math.Abs(_prediction[k]));
 
     private double Residual(double[] old, double[] values, double[] residual, double[] energy, bool derivatives)
@@ -154,13 +156,26 @@ internal sealed class ConverterSolver : MechanicalSolver
         }
         for (int k = 0; k < _model.ConverterComponents.Length; ++k)
         {
-            int a = _coupling.Cranks + 2 * k, b = a + 1;
+            int a = _coupling.Coordinates + 2 * k, b = a + 1;
             var law = _model.Converters[_model.ConverterComponents[k]]!;
             if (!law.Reaction(values[a], values[b], out var r, out double aa, out double ab, out double ba, out double bb)) return double.PositiveInfinity;
             _force[a] = r.PumpTorqueNewtonMeters; _force[b] = r.TurbineTorqueNewtonMeters;
             if (derivatives) { _derivative[a, a] = aa; _derivative[a, b] = ab; _derivative[b, a] = ba; _derivative[b, b] = bb; }
         }
         int mechanical = _force.Length;
+        for (int k = 0; k < _model.PistonComponents.Length; ++k)
+        {
+            int index = _model.PistonComponents[k], row = _coupling.Cranks + k; var c = _model.Components[index]; var law = _model.Pistons[index]!;
+            double delta = values[row], position = old[_coupling.Variables[row]];
+            if (!Numeric.Finite(delta) || Math.Abs(delta) > (law.MaximumPositionMeters - law.MinimumPositionMeters) / 4) return double.PositiveInfinity;
+            int front = mechanical + _model.Nodes[c.B].Index, back = c.C < 0 ? -1 : mechanical + _model.Nodes[c.C].Index;
+            _force[row] = law.PressureForce(values[front], back < 0 ? c.P2 : values[back]) + law.DiscreteElasticReaction(position, position + delta);
+            if (derivatives)
+            {
+                _derivative[row, front] = c.P0; if (back >= 0) _derivative[row, back] = -c.P1;
+                _derivative[row, row] = law.DiscreteElasticDerivative(position, position + delta);
+            }
+        }
         for (int k = 0; k < _model.PumpComponents.Length; ++k)
         {
             var c = _model.Components[_model.PumpComponents[k]];
@@ -169,12 +184,12 @@ internal sealed class ConverterSolver : MechanicalSolver
             _force[row] = -c.P0 * (values[outlet] - (inlet < 0 ? c.P2 : values[inlet]));
             if (derivatives) { _derivative[row, outlet] = -c.P0; if (inlet >= 0) _derivative[row, inlet] = c.P0; }
         }
-        double norm = _hydraulics?.CoupledResidual(_hydraulicState!.Pressure, values, mechanical, _coupling.PumpOffset,
-            _inputs!, _duration, residual, derivatives ? _jacobian : null) ?? 0;
+        double norm = _hydraulics?.CoupledResidual(_hydraulicState!.Pressure, values, mechanical, _coupling.PumpOffset, _coupling.Cranks,
+            _inputs!, _duration, residual, derivatives ? _jacobian : null, old) ?? 0;
         for (int row = 0; row < mechanical; ++row)
         {
             if (!Numeric.Finite(_force[row])) return double.PositiveInfinity;
-            double value = values[row] - _prediction[row], scale = row < _coupling.Cranks ? 2 : 1;
+            double value = values[row] - _prediction[row], scale = row < _coupling.Coordinates ? 2 : 1;
             for (int col = 0; col < mechanical; ++col) value -= scale * _response[col][_coupling.Variables[row]] * _force[col];
             if (!Numeric.Finite(value)) return double.PositiveInfinity;
             residual[row] = value; norm = Math.Max(norm, Math.Abs(value) / Tolerance(row, values[row]));
@@ -189,7 +204,7 @@ internal sealed class ConverterSolver : MechanicalSolver
         for (int k = 0; k < mechanical; ++k)
         {
             int index = _coupling.Variables[k];
-            _value[k] = _prediction[k] = k < _coupling.Cranks ? 2 * (midpoint[index] - old[index]) : midpoint[index];
+            _value[k] = _prediction[k] = k < _coupling.Coordinates ? 2 * (midpoint[index] - old[index]) : midpoint[index];
         }
         if (_hydraulics is not null) Array.Copy(_hydraulicState!.Pressure, 0, _value, mechanical, _model.HydraulicCount);
         for (int iteration = 0; iteration < MaxIterations; ++iteration)
@@ -204,7 +219,7 @@ internal sealed class ConverterSolver : MechanicalSolver
                 for (int k = 0; k < mechanical; ++k)
                 {
                     int index = _coupling.Variables[k];
-                    double actual = k < _coupling.Cranks ? (2 * midpoint[index] - old[index]) - old[index] : midpoint[index];
+                    double actual = k < _coupling.Coordinates ? (2 * midpoint[index] - old[index]) - old[index] : midpoint[index];
                     double rounding = 16 * GearReference.Epsilon * Math.Abs(old[index]);
                     if (!Numeric.Finite(actual) || Math.Abs(actual - _value[k]) > 4 * Tolerance(k, _value[k]) + rounding ||
                         (k < _coupling.Cranks && Math.Abs(actual) > CylinderSolver.MaxAngleStepRadians)) return false;
@@ -216,7 +231,7 @@ internal sealed class ConverterSolver : MechanicalSolver
             {
                 _correction[row] = -_residual[row];
                 if (row >= mechanical) continue;
-                double scale = row < _coupling.Cranks ? 2 : 1;
+                double scale = row < _coupling.Coordinates ? 2 : 1;
                 for (int col = 0; col < n; ++col)
                 {
                     double value = row == col ? 1 : 0;
@@ -245,7 +260,7 @@ internal sealed class ConverterSolver : MechanicalSolver
 
     internal bool Accumulate(int k, ConverterState state, double duration, double[] mid, out double heat)
     {
-        int a = _coupling.Cranks + 2 * k, b = a + 1;
+        int a = _coupling.Coordinates + 2 * k, b = a + 1;
         double tp = _force[a], tt = _force[b], wp = mid[_coupling.Variables[a]], wt = mid[_coupling.Variables[b]];
         heat = -duration * (tp * wp + tt * wt);
         double tolerance = duration * (Math.Abs(tp) + Math.Abs(tt)) * (2e-12 + 64 * GearReference.Epsilon * (Math.Abs(wp) + Math.Abs(wt)));

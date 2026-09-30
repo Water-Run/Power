@@ -23,7 +23,7 @@ internal static class HydraulicAssetChecks
     private static void Replay()
     {
         var original=Asset(); var bytes=AssetCodec.Encode(original); var decoded=AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8))==11);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8))==15);
         Require(decoded.Nodes.SequenceEqual(original.Nodes) && decoded.Components.SequenceEqual(original.Components));
         Require(decoded.Model.Fingerprint==original.Model.Fingerprint && AssetCodec.Encode(decoded).SequenceEqual(bytes));
         var a=original.CreatePlayback(); var b=decoded.CreatePlayback();
@@ -42,12 +42,14 @@ internal static class HydraulicAssetChecks
             Require(first.Advance(old.SampleEveryNanoseconds)==SimulationStatus.Ok && second.Advance(old.SampleEveryNanoseconds)==SimulationStatus.Ok);
             Require(first.ReadSnapshot(new Scalar[old.Model.OutputCount])==second.ReadSnapshot(new Scalar[old.Model.OutputCount]));
         }
-        Require(first.ReadSnapshot(new Scalar[old.Model.OutputCount]).StateHash.ToString("x16")=="834a679376b7a6fd");
+        AssetChecks.Reference(first, (20, Field.FluidHeat, 24.28, .01), (21, Field.FrictionHeat, 22.85, .01),
+            (5, Field.Temperature, 301.43864, 1e-5), (0, Field.SourceWork, -63.19, .01),
+            (21, Field.ClutchMode, 1, 0), (21, Field.SlipSpeed, 0, 1e-8));
     }
     private static void Corruption()
     {
         var asset=Asset(); var bytes=AssetCodec.Encode(asset);
-        int counts=78+Encoding.UTF8.GetByteCount(asset.Name), extension=counts+80+44*asset.Nodes.Count+156*asset.Components.Count;
+        int counts=78+Encoding.UTF8.GetByteCount(asset.Name), extension=counts+104+44*asset.Nodes.Count+156*asset.Components.Count;
         void Reject(byte[] bad)
         { SHA256.HashData(bad.AsSpan(0,bad.Length-32)).CopyTo(bad,bad.Length-32); Throws<ArgumentException>(()=>AssetCodec.Decode(bad)); }
         void Change(int offset,int value)
@@ -60,11 +62,11 @@ internal static class HydraulicAssetChecks
         var missing=bytes.Take(extension).Concat(bytes.Skip(extension+40)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts+64),1); Reject(missing);
         var duplicate=bytes.Take(actuator+64).Concat(bytes.Skip(actuator).Take(64)).Concat(bytes.Skip(actuator+64)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts+68),2); Reject(duplicate);
-        var down=bytes.Take(counts+64).Concat(bytes.Skip(counts+80).Take(extension-counts-80)).Concat(bytes.Skip(actuator+64)).ToArray();
+        var down=bytes.Take(counts+64).Concat(bytes.Skip(counts+104).Take(extension-counts-104)).Concat(bytes.Skip(actuator+64)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(down.AsSpan(8),9); Reject(down);
         // A hydraulic node without any extensions must still reject a pre-v10 downgrade.
         var single=PowerAsset.Create(new(){StepNanoseconds=1_000_000,Nodes=[NodeDefinition.Hydraulic(1,1e-12,1e6)],Components=[]},"Isolated",new string('d',64),1_000_000,1_000_000,[],[]);
         byte[] isolated=AssetCodec.Encode(single); int isolatedCounts=78+Encoding.UTF8.GetByteCount(single.Name);
-        var old=isolated.Take(isolatedCounts+64).Concat(isolated.Skip(isolatedCounts+80)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(old.AsSpan(8),9); Reject(old);
+        var old=isolated.Take(isolatedCounts+64).Concat(isolated.Skip(isolatedCounts+104)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(old.AsSpan(8),9); Reject(old);
     }
 }

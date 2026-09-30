@@ -4,9 +4,105 @@
 
 CLI 的 `export` 命令和 MCP 的 `export_model_asset` 使用同一个编码器。Unity `ScriptedImporter` 把文件导入为 `PowerModelAsset`，仅序列化数据字节；运行时解码后重新编译模型，不加载任意代码或预存 LU 分解。默认资产由 `tools/Build.cs` 生成，可从 JSON 重建。
 
-## Current version 11 and retained readers
+## Current version 15 and retained readers
 
-The encoder writes `power.asset.v11`; versions 1 through 11 remain readable. Version 11
+The encoder writes `power.asset.v15`; versions 1 through 15 remain readable. Its
+26 int32 counts occupy 104 bytes; the header is `182 + UTF-8 name length` bytes.
+One spool-valve count follows the v14 piston/contact counts. After those extension
+tables, each spool record occupies 32 bytes: component-table index int32, referenced
+piston-component ID uint32, closed-position quantity and full-open-position quantity.
+Each quantity is a double value plus int32 unit. Flow parameters and reservoir
+pressure remain in the existing 40-byte hydraulic restriction record.
+
+Kind 27 is `hydraulic_spool_valve`; existing IDs, units and output fields retain
+their values. Spool models add fingerprint tag 17 and both land positions/piston ID.
+Typed complete coverage, bounded counts, length, digest, units and stroke ownership
+are checked. Forged downgrades to v14 reject spool kinds. Authentic v14 piston assets
+retain their digests, fingerprints and same-runtime upgraded replay. See
+[HYDRAULIC_SPOOL.md](HYDRAULIC_SPOOL.md).
+
+## Retained version 14
+
+Version 14's
+count table contains 25 int32 values (100 bytes). Two counts after the v13 battery
+and duty-control counts describe hydraulic pistons and contact-actuated clutches.
+The header is `178 + UTF-8 name length` bytes. After the duty-controller table:
+
+| Extension | Bytes | Fields |
+|---|---:|---|
+| Hydraulic piston | 104 | Component-table index int32, back-node ID uint32; front/back areas, back pressure, minimum/maximum position, stop stiffness, contact position/stiffness as eight quantities |
+| Piston clutch | 40 | Component-table index int32, piston-component ID uint32, effective-radius quantity, static/sliding coefficients as two doubles, friction-surfaces uint32 |
+
+Translational mass/velocity/position and linear spring/force parameters use the
+existing base records. Domain 6 is translational. Kinds 23-26 are linear spring,
+hydraulic piston, piston clutch and force source. Units 47-49 are m/s, N/m and N*s/m;
+fields 60-62 are displacement, linear speed and force. Cumulative spring damping
+heat uses existing field 34. Piston/contact models add fingerprint tag 16, with
+stroke, pad, back boundary, referenced piston and friction geometry included.
+
+Bounded counts, typed indices, distinct complete extensions, exact length, digest
+and the 1 MiB limit are checked before model use. Older versions reject the new
+domain/kinds even when extension records are removed and the digest is recomputed.
+The compiler checks SI units, typed ports, increasing stroke, pad clearance and
+friction ordering. The authentic v13 fixture retains its original digest and
+same-runtime upgraded replay. See [the piston contract](HYDRAULIC_PISTON.md).
+
+## Retained version 13
+
+Version 13
+appends two int32 counts to the v12 table: batteries and duty controllers. Its header
+is `170 + UTF-8 name length` bytes. After the existing voltage-controller records:
+
+| Extension | Bytes | Fields |
+|---|---:|---|
+| Battery | 68 | Node-table index int32, heat-node ID uint32; empty/full OCV, series resistance, polarization resistance and capacitance as five quantities |
+| Duty controller | 80 | Component-table index int32, target channel uint64, sample period uint64; proportional/integral gains, duty bounds and initial integral as five quantities |
+
+Battery capacity, SOC and polarization initial voltage use the existing node fields.
+Battery motors and resistive loads retain their ports, RL parameters, resistance and
+opening/duty in base component records. Domain 5 is battery; kinds 20–22 are battery
+motor, resistive load and pressure duty controller. Units 42–46 are C, F, Ah,
+fraction/Pa and fraction/(Pa·s); fields 53–59 are SOC, charge, terminal/polarization
+voltage, battery current, integral duty and command duty. Previous identifiers remain fixed.
+
+Bounded typed tables, exact coverage/length, digest and 1 MiB limits remain. Old versions
+reject battery domains and new kinds even after their extension tables are removed.
+Compilation checks charge bounds, dimensions, typed sources, OCV ordering and control
+ownership. Battery models add fingerprint tag 14; duty control adds tag 15. Prior models
+retain their fingerprints. Authentic v12 and older fixtures verify original digests
+and same-runtime replay. See [the battery contract](HYDRAULIC_PUMP.md#finite-battery-supply-and-duty-regulation).
+
+## Retained version 12
+
+Version 12
+appends a twenty-first int32 count for pressure-controller records. Its header is
+`162 + UTF-8 name length` bytes. After the pump and relief tables, each controller
+extension occupies 80 bytes:
+
+| Data | Encoding |
+|---|---|
+| Component table index | int32, distinct and referencing kind 19 (`pressure_controller`) |
+| Owned target voltage channel | uint64 |
+| Sample period in nanoseconds | uint64 |
+| Proportional gain, integral gain, minimum/maximum voltage, initial integral | Five quantities, each double value plus int32 unit |
+
+Sensor node, setpoint channel and initial pressure target remain in the base component
+record. Inputs and KPI checks follow the controller table. Exact length, bounded counts,
+typed indices, complete extension coverage, digest and the 1 MiB limit are checked.
+Forged downgrades to v11 reject controller kinds even after their records are removed.
+Compilation checks units, sensor domain, target ownership, bounds and tick-aligned
+periods. Units 40/41 are V/Pa and V/(Pa·s); fields 49–52 are sampled pressure, pressure
+error, integral voltage and held command. Existing identifiers retain their values.
+
+Controlled models add fingerprint tag 13, including sampling period, target channel
+and initial integral. Controller histories are reconstructed through replay rather
+than serialized. Uncontrolled models retain their fingerprints and trajectories. The
+authentic v11 fixture and all previous fixtures remain unchanged. See
+[the pressure regulation contract](HYDRAULIC_PUMP.md#sampled-pressure-regulation).
+
+## Retained version 11
+
+Version 11
 appends pump and relief int32 counts to the eighteen v10 counts. After the existing
 hydraulic restriction and actuator tables come 32-byte pump records (component index,
 inlet-node ID, displacement quantity, reservoir-pressure quantity), then 16-byte relief

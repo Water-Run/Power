@@ -48,6 +48,12 @@ namespace Power.Studio.Tests
         [TestCase("FiredConverter")]
         [TestCase("FiredHydraulic")]
         [TestCase("FiredPump")]
+        [TestCase("FiredPumpLosses")]
+        [TestCase("ElectricPump")]
+        [TestCase("PressureRegulatedPump")]
+        [TestCase("BatteryRegulatedPump")]
+        [TestCase("PistonActuatedClutch")]
+        [TestCase("SpoolRegulatedPump")]
         public void ScriptedImportPreservesPortablePayloadAndReplay(string resource)
         {
             var imported = Resources.Load<PowerModelAsset>(resource);

@@ -53,7 +53,7 @@ internal sealed class HydraulicSolver
 {
     internal const int MaxIterations = 24, MaxLineSearch = 16;
     private readonly CompiledModel _model;
-    private readonly double[] _compliance, _mid, _trial, _next, _residual, _trialResidual, _change, _rates;
+    private readonly double[] _compliance, _mid, _trial, _next, _residual, _trialResidual, _change, _rates, _meteringSlopes;
     private readonly double[,] _jacobian;
     private readonly Factorization _factor;
     internal readonly double[] MidPressure, WallHeat;
@@ -66,9 +66,11 @@ internal sealed class HydraulicSolver
         _mid = new double[count]; _trial = new double[count]; _next = new double[count]; _residual = new double[count];
         _trialResidual = new double[count]; _change = new double[count]; MidPressure = new double[count];
         _rates = new double[model.HydraulicComponents.Length]; WallHeat = new double[model.ThermalCount];
+        _meteringSlopes = new double[model.HasSpoolValves ? model.HydraulicComponents.Length : 0];
         _jacobian = new double[count, count]; _factor = new(count);
     }
-    private double Residual(double[] old, double[] pressures, double[] inputs, double duration, double[] residual, bool derivatives)
+    private double Residual(double[] old, double[] pressures, double[] inputs, double duration, double[] residual, bool derivatives,
+        double[]? coordinates = null, int pistonOffset = 0, double[]? dynamics = null)
     {
         if (derivatives) Array.Clear(_jacobian, 0, _jacobian.Length);
         for (int i = 0; i < pressures.Length; ++i)
@@ -78,7 +80,13 @@ internal sealed class HydraulicSolver
             int index = _model.HydraulicComponents[k]; var c = _model.Components[index];
             int a = _model.Nodes[c.A].Index, b = c.B < 0 ? -1 : _model.Nodes[c.B].Index;
             double difference = pressures[a] - (b < 0 ? c.P2 : pressures[b]);
-            if (!_model.HydraulicLaws[index]!.Evaluate(difference, c.Kind == ComponentKind.HydraulicRelief ? 1 : inputs[index], out double rate, out double slope)) return double.PositiveInfinity;
+            double rate, slope;
+            if (_model.SpoolValves[index] is { } metering)
+            {
+                double position = dynamics![metering.Position] + .5 * coordinates![pistonOffset + metering.Coordinate];
+                if (!metering.Law.Evaluate(difference, position, out rate, out slope, out _meteringSlopes[k])) return double.PositiveInfinity;
+            }
+            else if (!_model.HydraulicLaws[index]!.Evaluate(difference, c.Kind == ComponentKind.HydraulicRelief ? 1 : inputs[index], out rate, out slope)) return double.PositiveInfinity;
             _rates[k] = rate;
             double left = .5 * duration / _compliance[a], right = b < 0 ? 0 : .5 * duration / _compliance[b];
             residual[a] += left * rate; if (b >= 0) residual[b] -= right * rate;
@@ -122,17 +130,27 @@ internal sealed class HydraulicSolver
     }
 
     // The pump's mechanical unknowns and fluid pressures share the same Newton matrix.
-    internal double CoupledResidual(double[] old, double[] values, int offset, int pumpOffset, double[] inputs,
-        double duration, double[] residual, double[,]? jacobian)
+    internal double CoupledResidual(double[] old, double[] values, int offset, int pumpOffset, int pistonOffset, double[] inputs,
+        double duration, double[] residual, double[,]? jacobian, double[] dynamics)
     {
         Array.Copy(values, offset, _mid, 0, _mid.Length);
-        if (!Numeric.Finite(Residual(old, _mid, inputs, duration, _residual, jacobian is not null))) return double.PositiveInfinity;
+        if (!Numeric.Finite(Residual(old, _mid, inputs, duration, _residual, jacobian is not null, values, pistonOffset, dynamics))) return double.PositiveInfinity;
         for (int i = 0; i < _mid.Length; ++i)
         {
             residual[offset + i] = _residual[i];
             if (jacobian is not null)
                 for (int j = 0; j < values.Length; ++j) jacobian[offset + i, j] = j < offset ? 0 : _jacobian[i, j - offset];
         }
+        if (jacobian is not null && _model.HasSpoolValves)
+            for (int k = 0; k < _rates.Length; ++k)
+            {
+                int index = _model.HydraulicComponents[k];
+                if (_model.SpoolValves[index] is not { } metering) continue;
+                var c = _model.Components[index]; int a = _model.Nodes[c.A].Index, b = c.B < 0 ? -1 : _model.Nodes[c.B].Index;
+                double slope = .25 * duration * _meteringSlopes[k];
+                jacobian[offset + a, pistonOffset + metering.Coordinate] += slope / _compliance[a];
+                if (b >= 0) jacobian[offset + b, pistonOffset + metering.Coordinate] -= slope / _compliance[b];
+            }
         for (int k = 0; k < _model.PumpComponents.Length; ++k)
         {
             var c = _model.Components[_model.PumpComponents[k]];
@@ -146,6 +164,14 @@ internal sealed class HydraulicSolver
                 jacobian[offset + outlet, pumpOffset + k] -= delivery * c.P0;
                 if (inlet >= 0) jacobian[offset + inlet, pumpOffset + k] += intake * c.P0;
             }
+        }
+        for (int k = 0; k < _model.PistonComponents.Length; ++k)
+        {
+            var c = _model.Components[_model.PistonComponents[k]]; int front = _model.Nodes[c.B].Index, back = c.C < 0 ? -1 : _model.Nodes[c.C].Index;
+            double delta = values[pistonOffset + k], frontScale = .5 * c.P0 / _compliance[front], backScale = back < 0 ? 0 : .5 * c.P1 / _compliance[back];
+            residual[offset + front] += frontScale * delta; if (back >= 0) residual[offset + back] -= backScale * delta;
+            if (jacobian is not null)
+            { jacobian[offset + front, pistonOffset + k] += frontScale; if (back >= 0) jacobian[offset + back, pistonOffset + k] -= backScale; }
         }
         double norm = 0;
         for (int i = 0; i < _mid.Length; ++i)
@@ -177,6 +203,12 @@ internal sealed class HydraulicSolver
             double transfer = duration * c.P0 * shaftMidpoint![_model.Nodes[c.A].Index + 1];
             _next[outlet] += transfer / _compliance[outlet]; if (inlet >= 0) _next[inlet] -= transfer / _compliance[inlet];
         }
+        foreach (int index in _model.PistonComponents)
+        {
+            var c = _model.Components[index]; int front = _model.Nodes[c.B].Index, back = c.C < 0 ? -1 : _model.Nodes[c.C].Index;
+            double travel = duration * shaftMidpoint![_model.Nodes[c.A].Index + 1];
+            _next[front] -= c.P0 * travel / _compliance[front]; if (back >= 0) _next[back] += c.P1 * travel / _compliance[back];
+        }
         for (int i = 0; i < _mid.Length; ++i)
         {
             if (!Numeric.Finite(_next[i]) || _next[i] < 0) return false; // No hidden cavitation clamp.
@@ -207,6 +239,15 @@ internal sealed class HydraulicSolver
             if (inlet < 0) { volumeIn += duration * flow; BoundaryWork += duration * flow * pin; }
             state.PumpFlow[k] += duration * flow; state.PumpTorque[k] -= duration * c.P0 * difference; state.PumpPower[k] += work;
             Numeric.Accumulate(work, ref state.PumpWork[k], ref state.PumpCorrection[k]);
+        }
+        foreach (int index in _model.PistonComponents)
+        {
+            var c = _model.Components[index];
+            if (c.C < 0)
+            {
+                double backTransfer = duration * c.P1 * shaftMidpoint![_model.Nodes[c.A].Index + 1];
+                volumeIn -= backTransfer; BoundaryWork -= c.P2 * backTransfer;
+            }
         }
         Array.Copy(_next, state.Pressure, _next.Length);
         Numeric.Accumulate(volumeIn, ref state.VolumeIn, ref state.VolumeCorrection);

@@ -27,6 +27,20 @@ internal static class AssetChecks
     private static SnapshotInfo Snapshot(Simulation simulation) => simulation.ReadSnapshot(new Scalar[simulation.Model.OutputCount]);
     private static SnapshotInfo Snapshot(AssetPlayback playback) => playback.ReadSnapshot(new Scalar[playback.Model.OutputCount]);
 
+    // Historical hashes identify their original runtime. Cross-runtime references use physical tolerances.
+    internal static void Reference(AssetPlayback playback, params (uint Id, Field Field, double Expected, double Tolerance)[] references)
+        => Reference(playback, 1e-6, references);
+    internal static void Reference(AssetPlayback playback, double energyTolerance, params (uint Id, Field Field, double Expected, double Tolerance)[] references)
+    {
+        Require(playback.Completed, "Historical reference requires complete playback.");
+        var values = new Scalar[playback.Model.OutputCount];
+        playback.ReadSnapshot(values);
+        foreach (var reference in references)
+            Near(values.Single(v => v.Channel == Channels.Output(reference.Id, reference.Field)).Value,
+                reference.Expected, reference.Tolerance);
+        Near(values.Single(v => v.Channel == Channels.Output(0, Field.EnergyResidual)).Value, 0, energyTolerance);
+    }
+
     private static void RoundTrip()
     {
         var original = Sample();

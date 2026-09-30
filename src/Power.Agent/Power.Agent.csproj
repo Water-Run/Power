@@ -6,7 +6,8 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
 
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
-  <ItemGroup><ProjectReference Include="../Power.Experiments/Power.Experiments.csproj" /></ItemGroup>
+  <ItemGroup><ProjectReference Include="../Power.Experiments/Power.Experiments.csproj" />    <EmbeddedResource Include="../../assets/labs/spool-regulated-pump.power.json" LogicalName="power.spool-regulated-pump.template.json" />
+  </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="../../assets/labs/electrothermal.power.json" LogicalName="power.template.json" />
     <EmbeddedResource Include="../../assets/labs/sealed-cylinder.power.json" LogicalName="power.cylinder.template.json" />
@@ -16,6 +17,11 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <EmbeddedResource Include="../../assets/labs/fired-cylinder.power.json" LogicalName="power.fired-cylinder.template.json" />
     <EmbeddedResource Include="../../assets/labs/fired-clutch.power.json" LogicalName="power.fired-clutch.template.json" />
     <EmbeddedResource Include="../../assets/labs/fired-pump.power.json" LogicalName="power.fired-pump.template.json" />
+    <EmbeddedResource Include="../../assets/labs/fired-pump-losses.power.json" LogicalName="power.fired-pump-losses.template.json" />
+    <EmbeddedResource Include="../../assets/labs/electric-pump.power.json" LogicalName="power.electric-pump.template.json" />
+    <EmbeddedResource Include="../../assets/labs/pressure-regulated-pump.power.json" LogicalName="power.pressure-regulated-pump.template.json" />
+    <EmbeddedResource Include="../../assets/labs/battery-regulated-pump.power.json" LogicalName="power.battery-regulated-pump.template.json" />
+    <EmbeddedResource Include="../../assets/labs/piston-actuated-clutch.power.json" LogicalName="power.piston-actuated-clutch.template.json" />
     <EmbeddedResource Include="../../assets/labs/fired-hydraulic.power.json" LogicalName="power.fired-hydraulic.template.json" />
     <EmbeddedResource Include="../../assets/labs/fired-converter.power.json" LogicalName="power.fired-converter.template.json" />
     <EmbeddedResource Include="../../assets/labs/fired-planetary.power.json" LogicalName="power.fired-planetary.template.json" />

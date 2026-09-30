@@ -1,0 +1,711 @@
+{
+  "schema": "power.model.v1",
+  "description": "Synthetic battery-fed regulated pump driving a dynamic piston-actuated clutch. Front pressure draws swept volume into a massive slider, opposing a return spring, explicit viscous loss and compliant stroke stops. A finite pad clearance must close before elastic contact produces clutch normal force; pressure alone does not engage it. Pad/stroke energy, fluid volume and pressure work, battery/motor heat and rotational friction share the transaction and conservation ledger. All parameters are unverified. Constant fluid compliance, compliant contacts and prescribed valves are research reductions, not cavitation, OEM clutch calibration or complete ECU/TCU. The 15-s/750000-tick global energy threshold is 5 microjoules; independent analytic and component ledgers retain tighter tolerances.",
+  "step_ns": 20000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 2,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-12,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 100,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 4,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.2,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 40,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 5,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.5,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 6,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-12,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 7,
+      "domain": "thermal",
+      "storage": {
+        "value": 100,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 30,
+      "domain": "battery",
+      "storage": {
+        "value": 50,
+        "unit": "c"
+      },
+      "initial": {
+        "value": 0.8,
+        "unit": "fraction"
+      },
+      "position": {
+        "value": 0,
+        "unit": "v"
+      },
+      "battery": {
+        "empty_voltage": {
+          "value": 11.8,
+          "unit": "v"
+        },
+        "full_voltage": {
+          "value": 13.2,
+          "unit": "v"
+        },
+        "series_resistance": {
+          "value": 0.25,
+          "unit": "ohm"
+        },
+        "polarization_resistance": {
+          "value": 0.1,
+          "unit": "ohm"
+        },
+        "polarization_capacitance": {
+          "value": 5,
+          "unit": "f"
+        },
+        "heat_node": 31
+      }
+    },
+    {
+      "id": 31,
+      "domain": "thermal",
+      "storage": {
+        "value": 100,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 32,
+      "domain": "thermal",
+      "storage": {
+        "value": 100,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 40,
+      "domain": "translational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "m"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "battery_motor",
+      "node_a": 1,
+      "heat_node": 3,
+      "input_channel": 100,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "resistance": {
+          "value": 1,
+          "unit": "ohm"
+        },
+        "inductance": {
+          "value": 0.01,
+          "unit": "h"
+        },
+        "coupling": {
+          "value": 0.1,
+          "unit": "nm_a"
+        },
+        "initial_current": {
+          "value": 0,
+          "unit": "a"
+        }
+      },
+      "node_b": 30
+    },
+    {
+      "id": 11,
+      "kind": "hydraulic_pump",
+      "node_a": 1,
+      "node_b": 2,
+      "parameters": {
+        "inlet_node": 0,
+        "displacement": {
+          "value": 1e-07,
+          "unit": "m3_rad"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "kind": "hydraulic_resistance",
+      "node_a": 2,
+      "node_b": 0,
+      "heat_node": 3,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 1e-12,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 13,
+      "kind": "shaft",
+      "node_a": 1,
+      "node_b": 0,
+      "heat_node": 3,
+      "parameters": {
+        "stiffness": {
+          "value": 0,
+          "unit": "nm_rad"
+        },
+        "damping": {
+          "value": 0.02,
+          "unit": "nm_s_rad"
+        },
+        "rest_angle": {
+          "value": 0,
+          "unit": "rad"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 14,
+      "kind": "hydraulic_relief",
+      "node_a": 2,
+      "node_b": 0,
+      "heat_node": 3,
+      "parameters": {
+        "coefficient": {
+          "value": 1e-10,
+          "unit": "m3_s_pa"
+        },
+        "cracking_pressure": {
+          "value": 500000.0,
+          "unit": "pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 15,
+      "kind": "hydraulic_resistance",
+      "node_a": 2,
+      "node_b": 6,
+      "heat_node": 7,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 1e-10,
+          "unit": "m3_s_pa"
+        }
+      },
+      "input_channel": 101
+    },
+    {
+      "id": 16,
+      "kind": "hydraulic_resistance",
+      "node_a": 6,
+      "node_b": 0,
+      "heat_node": 7,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 1e-10,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      },
+      "input_channel": 102
+    },
+    {
+      "id": 17,
+      "kind": "piston_clutch",
+      "node_a": 4,
+      "node_b": 5,
+      "heat_node": 7,
+      "parameters": {
+        "piston_component": 22,
+        "effective_radius": {
+          "value": 0.08,
+          "unit": "m"
+        },
+        "static_friction": 0.4,
+        "sliding_friction": 0.2,
+        "friction_surfaces": 4,
+        "ratio": 1
+      }
+    },
+    {
+      "id": 18,
+      "kind": "torque_source",
+      "node_a": 4,
+      "input_channel": 103,
+      "initial_input": {
+        "value": 10,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 19,
+      "kind": "torque_source",
+      "node_a": 5,
+      "input_channel": 104,
+      "initial_input": {
+        "value": 0,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 20,
+      "kind": "pressure_duty_controller",
+      "node_a": 2,
+      "input_channel": 105,
+      "initial_input": {
+        "value": 300000,
+        "unit": "pa"
+      },
+      "parameters": {
+        "target_channel": 100,
+        "sample_period_ns": 5000000,
+        "proportional_gain": {
+          "value": 1.6666666666666669e-06,
+          "unit": "fraction_pa"
+        },
+        "integral_gain": {
+          "value": 1.25e-06,
+          "unit": "fraction_pa_s"
+        },
+        "minimum_duty": {
+          "value": 0,
+          "unit": "fraction"
+        },
+        "maximum_duty": {
+          "value": 1,
+          "unit": "fraction"
+        },
+        "initial_integral_duty": {
+          "value": 0,
+          "unit": "fraction"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "kind": "resistive_load",
+      "node_a": 30,
+      "heat_node": 32,
+      "input_channel": 106,
+      "initial_input": {
+        "value": 0.2,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "resistance": {
+          "value": 15,
+          "unit": "ohm"
+        }
+      }
+    },
+    {
+      "id": 22,
+      "kind": "hydraulic_piston",
+      "node_a": 40,
+      "node_b": 6,
+      "parameters": {
+        "front_area": {
+          "value": 0.001,
+          "unit": "m2"
+        },
+        "back_area": {
+          "value": 0.001,
+          "unit": "m2"
+        },
+        "back_node": 0,
+        "back_pressure": {
+          "value": 0,
+          "unit": "pa"
+        },
+        "minimum_position": {
+          "value": 0,
+          "unit": "m"
+        },
+        "maximum_position": {
+          "value": 0.006,
+          "unit": "m"
+        },
+        "stop_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        },
+        "contact_position": {
+          "value": 0.002,
+          "unit": "m"
+        },
+        "contact_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        }
+      }
+    },
+    {
+      "id": 23,
+      "kind": "linear_spring",
+      "node_a": 40,
+      "node_b": 0,
+      "heat_node": 7,
+      "parameters": {
+        "stiffness": {
+          "value": 10000,
+          "unit": "n_m"
+        },
+        "damping": {
+          "value": 300,
+          "unit": "n_s_m"
+        },
+        "rest_angle": {
+          "value": 0,
+          "unit": "m"
+        },
+        "ratio": 1
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 15000000000,
+    "sample_every_ns": 20000000,
+    "events": [
+      {
+        "time_ns": 200100000,
+        "values": [
+          {
+            "channel": 101,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 350100000,
+        "values": [
+          {
+            "channel": 104,
+            "value": -2
+          }
+        ]
+      },
+      {
+        "time_ns": 600100000,
+        "values": [
+          {
+            "channel": 101,
+            "value": 0
+          },
+          {
+            "channel": 102,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 900100000,
+        "values": [
+          {
+            "channel": 101,
+            "value": 1
+          },
+          {
+            "channel": 102,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 2000100000,
+        "values": [
+          {
+            "channel": 106,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 3000100000,
+        "values": [
+          {
+            "channel": 105,
+            "value": 350000
+          }
+        ]
+      },
+      {
+        "time_ns": 4000100000,
+        "values": [
+          {
+            "channel": 106,
+            "value": 0.2
+          }
+        ]
+      },
+      {
+        "time_ns": 6000100000,
+        "values": [
+          {
+            "channel": 105,
+            "value": 200000
+          }
+        ]
+      },
+      {
+        "time_ns": 9000100000,
+        "values": [
+          {
+            "channel": 106,
+            "value": 0.6
+          }
+        ]
+      },
+      {
+        "time_ns": 12000100000,
+        "values": [
+          {
+            "channel": 106,
+            "value": 0.2
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 5e-06
+      },
+      {
+        "object_id": 0,
+        "field": "hydraulic_volume_residual",
+        "abs_max": 1e-16
+      },
+      {
+        "object_id": 0,
+        "field": "hydraulic_work",
+        "abs_max": 0
+      },
+      {
+        "object_id": 1,
+        "field": "speed",
+        "min": 1,
+        "max": 120
+      },
+      {
+        "object_id": 2,
+        "field": "pressure",
+        "min": 195000,
+        "max": 205000
+      },
+      {
+        "object_id": 10,
+        "field": "current",
+        "min": 0.1,
+        "max": 12
+      },
+      {
+        "object_id": 11,
+        "field": "hydraulic_work",
+        "min": 0.1
+      },
+      {
+        "object_id": 12,
+        "field": "fluid_heat",
+        "min": 0.01
+      },
+      {
+        "object_id": 3,
+        "field": "temperature",
+        "min": 300.01,
+        "max": 310
+      },
+      {
+        "object_id": 17,
+        "field": "friction_heat",
+        "min": 1
+      },
+      {
+        "object_id": 17,
+        "field": "clutch_mode",
+        "min": 1,
+        "max": 1
+      },
+      {
+        "object_id": 17,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 20,
+        "field": "pressure_error",
+        "abs_max": 5000
+      },
+      {
+        "object_id": 20,
+        "field": "command_duty",
+        "min": 0,
+        "max": 1
+      },
+      {
+        "object_id": 20,
+        "field": "integral_duty",
+        "min": 0.005,
+        "max": 1
+      },
+      {
+        "object_id": 30,
+        "field": "state_of_charge",
+        "min": 0.4,
+        "max": 0.799
+      },
+      {
+        "object_id": 30,
+        "field": "terminal_voltage",
+        "min": 10,
+        "max": 13.2
+      },
+      {
+        "object_id": 31,
+        "field": "temperature",
+        "min": 300.001,
+        "max": 310
+      },
+      {
+        "object_id": 32,
+        "field": "temperature",
+        "min": 300.01,
+        "max": 310
+      },
+      {
+        "object_id": 40,
+        "field": "displacement",
+        "min": 0.002,
+        "max": 0.0065
+      },
+      {
+        "object_id": 17,
+        "field": "clamp_force",
+        "min": 100,
+        "max": 500
+      }
+    ]
+  }
+}

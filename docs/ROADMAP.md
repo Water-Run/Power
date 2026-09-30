@@ -4,11 +4,49 @@ The objective is the complete Power! powertrain platform: modern C# physics, a U
 3D studio and direct agent operation. Passing a laboratory experiment does not complete
 the engine, transmission, controls or vehicle calibration milestones.
 
+**2026-09-30: mechanical spool regulation.** Actual piston motion meters a passive
+turbulent bypass in the shared pressure/motion solve. Steady and independent RK4
+checks, contact refinement, flow/motion energy, rollback and allocation bounds pass.
+Asset v15 and actual MCP retain geometry. This development session stops at the
+owner's request; complete powertrain and actual Unity acceptance remain unfinished.
+See [the spool contract](HYDRAULIC_SPOOL.md).
+
+**2026-09-30: dynamic piston and contact clutch.** Translational mass, swept fluid
+volume, return spring/damping, compliant ends and pad clearance now participate in
+the joint solve. Clutch capacity follows contact force, with independent conservation
+and contact-refinement checks. Asset v14 and actual MCP replay retain the full
+topology. Studio views and tests are prepared; actual Unity, complete DCT/AT control,
+seal friction, cavitation, wear and measured calibration remain open. See
+[the piston contract](HYDRAULIC_PISTON.md).
+
+**2026-09-30: finite battery supply.** Affine OCV/SOC, series resistance and RC
+polarization now feed duty-controlled RL motors and switched accessory loads in the
+coupled solve. Duty PI pressure control preserves charge/control transactions and
+regeneration. Asset v13 and actual MCP replay retain all parameters; the synthetic
+battery-regulated pump has 761 matching boundaries. Battery chemistry/BMS, PWM/current
+control, full electrical integration and calibration remain open. See
+[the supply contract](HYDRAULIC_PUMP.md#finite-battery-supply-and-duty-regulation).
+
+**2026-09-30: sampled pressure feedback.** A PI loop now owns motor voltage and
+reads hydraulic pressure on an integer sampling clock. Voltage limits, clamping
+anti-windup, control-state transactions, asset v12 and actual MCP replay are verified
+on Windows. The regulated-pump laboratory has 757 matching boundaries; complete
+ECU/TCU, actuator mechanics and calibration remain open. See
+[the feedback contract](HYDRAULIC_PUMP.md#sampled-pressure-regulation).
+
+**2026-09-30: development resumed with pump losses and electrical supply.** Explicit
+pressure leakage, viscous shaft drag and an RL motor supply use the shared conserving
+graph and asset v11. The fired-loss and electric-pump laboratories have 89 and 106
+matching JSON/portable/MCP boundaries. Windows serial verification passes; new Linux/
+macOS and actual Unity evidence remain pending. Historical fixture hashes are retained
+as provenance, with same-runtime exact replay and portable physical reference checks.
+See [the pump assembly contract](HYDRAULIC_PUMP.md#explicit-leakage-shaft-friction-and-electrical-supply).
+
 **2026-09-22 closing checkpoint: shaft-driven hydraulic supply.** Ideal displacement
 pumps and finite-conductance relief now share the crank/converter/pressure-clutch solve.
 The fired-pump laboratory replays 89 boundaries with zero external hydraulic supply
 work. JSON/MCP and asset v11 retain complete power and volume ledgers. Development is
-paused at the owner's request. See [the pump contract](HYDRAULIC_PUMP.md).
+paused at that checkpoint; the owner resumed it on 2026-09-30. See [the pump contract](HYDRAULIC_PUMP.md).
 
 **2026-09-22: hydraulic network and pressure-operated clutches.** Compliant gauge-pressure
 chambers, linear/turbulent valve flow and pressure-derived friction capacity now share
@@ -55,20 +93,20 @@ and [validation record](VALIDATION.md).
 
 | Milestone | Acceptance scope | Current status |
 |---|---|---|
-| 1. Managed foundation | Dual-target Core, topology, units, bounded time, replay, rollback and evidence | Implemented; published baseline passed Windows/macOS/Linux. Current coupled physics has local Linux evidence |
+| 1. Managed foundation | Dual-target Core, topology, units, bounded time, replay, rollback and evidence | Implemented; published baseline passed Windows/macOS/Linux. Current physics has local Windows evidence; the preceding source has Linux CI evidence |
 | 2. Agent interface | Schemas, structured diagnostics, MCP, branches, revision conflicts, cancellation and compact reports | Implemented; actual MCP process tests include fired transmission discovery, validation, experiment and export |
 | 3. Unity studio | Real import, Play lifecycle, 3D laboratory, input/UI and desktop Player | Project and tests prepared, including hydraulic/lockup/shift views; Editor/Player acceptance pending |
-| 4. Modeling workbench | Shared model assets, graph editing, channel configuration, saving and replay | Portable v11 and v1–v10 readers verified; graph editing/saving and selectable plots pending |
+| 4. Modeling workbench | Shared model assets, graph editing, channel configuration, saving and replay | Portable v15 and v1–v14 readers verified; graph editing/saving and selectable plots pending |
 | 5. Engine physics | Slider-crank, independent mass/energy, intake/exhaust, combustion, pumping, wall transfer and cylinder cycle | Fixed/moving gas volumes, timed valves and premixed fired cycles implemented. Fuel metering, ignition control, richer thermochemistry, detailed intake/exhaust and calibrated engine behavior pending |
-| 6. Transmission | Clutches, DCT/AT, gears/planetaries, torque converter, hydraulics, heat and hybrid events | Coupled clutches, ideal gears/planetaries, mapped converters, thermal routing and hybrid rollback verified, including fired lockup and shifts. Pressure/flow networks now operate the clutches. Ideal shaft pumps and quasi-steady relief are verified. Complete DCT/AT, pump losses/control, regulator and piston dynamics and richer converter dynamics remain pending. Historical Zig prototypes remain reference |
-| 7. Controls and integration | ECU/TCU cycles, sensors/actuators, torque coordination, power supply, accessories and faults | Incomplete |
+| 6. Transmission | Clutches, DCT/AT, gears/planetaries, torque converter, hydraulics, heat and hybrid events | Coupled clutches, ideal gears/planetaries, mapped converters, thermal routing and hybrid rollback verified, including fired lockup and shifts. Pressure/flow networks now operate the clutches. Shaft pumps, explicit leakage/viscous losses, RL electric supply, finite-charge battery, duty regulation and quasi-steady relief are verified. Complete DCT/AT, measured loss/control maps, measured valve/accumulator and richer converter dynamics remain pending. Dynamic piston/contact actuation is verified as a lumped research model. Historical Zig prototypes remain reference |
+| 7. Controls and integration | ECU/TCU cycles, sensors/actuators, torque coordination, power supply, accessories and faults | Sampled voltage/duty pressure PI feedback, finite battery supply/accessories and explicit actuator ownership implemented, including transactional controller state. Complete ECU/TCU coordination, sensors/actuators, supply/accessories and fault handling remain incomplete |
 | 8. Evidence and release | Two complete powertrains, measured calibration, provenance, error budgets, long-run stability and desktop packaging | Research boundaries preserved; release criteria unmet |
 
 ## Next managed increment
 
-When development resumes, extend ideal shaft pumps and quasi-steady relief with loss
-models, electric supply integration and measured regulation behavior. Retain explicit
-reservoirs, power/volume/energy ledgers and actuator limits. Add piston and accumulator dynamics required by complete DCT/AT power paths.
+Extend constant pump-loss models and RL electrical supply with measured loss/control
+maps, measured battery/BMS/thermal behavior and measured regulation behavior. Retain explicit
+reservoirs, power/volume/energy ledgers and actuator limits. Extend verified piston/contact actuation with measured valve and accumulator dynamics required by complete DCT/AT power paths.
 Build on the coupled converter/gear/clutch solver and independent physical references, retaining
 conservation, bounded events, complete rollback and shared JSON/asset/agent semantics.
 A converter, lockup clutch and scheduled planetary shift do not complete gearbox,
