@@ -4,6 +4,14 @@ The objective is the complete Power! powertrain platform: modern C# physics, a U
 3D studio and direct agent operation. Passing a laboratory experiment does not complete
 the engine, transmission, controls or vehicle calibration milestones.
 
+**2026-09-30: cycle gaseous-fuel metering.** Finite compatible gas rails deliver
+requested kg per cycle through a pressure-dependent one-way port. Quota latching,
+reversal, starvation, mass/enthalpy/chemical transfer and independent evidence are
+verified locally. Asset v17 and actual MCP retain controller history through replay.
+The preceding gas accumulator passes three-platform CI. Liquid fuel hardware,
+evaporation, ignition/ECU, calibration and full powertrain acceptance remain open.
+See [the metering contract](FUEL_METERING.md).
+
 **2026-09-30: finite-energy gas accumulator.** Linear gas geometry and actual
 mass/energy states now couple to hydraulic separator motion. Analytic work/Jacobian,
 independent RK4/refinement, gas transport/heat, recovery and complete transactions
@@ -104,8 +112,8 @@ and [validation record](VALIDATION.md).
 | 1. Managed foundation | Dual-target Core, topology, units, bounded time, replay, rollback and evidence | Implemented; published baseline passed Windows/macOS/Linux. Current physics has local Windows evidence; the preceding source has Linux CI evidence |
 | 2. Agent interface | Schemas, structured diagnostics, MCP, branches, revision conflicts, cancellation and compact reports | Implemented; actual MCP process tests include fired transmission discovery, validation, experiment and export |
 | 3. Unity studio | Real import, Play lifecycle, 3D laboratory, input/UI and desktop Player | Project and tests prepared, including hydraulic/lockup/shift views; Editor/Player acceptance pending |
-| 4. Modeling workbench | Shared model assets, graph editing, channel configuration, saving and replay | Portable v16 and v1–v15 readers verified; graph editing/saving and selectable plots pending |
-| 5. Engine physics | Slider-crank, independent mass/energy, intake/exhaust, combustion, pumping, wall transfer and cylinder cycle | Fixed/moving gas volumes, timed valves and premixed fired cycles implemented. Fuel metering, ignition control, richer thermochemistry, detailed intake/exhaust and calibrated engine behavior pending |
+| 4. Modeling workbench | Shared model assets, graph editing, channel configuration, saving and replay | Portable v17 and v1–v16 readers verified; graph editing/saving and selectable plots pending |
+| 5. Engine physics | Slider-crank, independent mass/energy, intake/exhaust, combustion, pumping, wall transfer and cylinder cycle | Fixed/moving gas volumes, timed valves and premixed fired cycles implemented. Liquid spray/evaporation, ignition control, richer thermochemistry, detailed intake/exhaust and calibrated engine behavior pending |
 | 6. Transmission | Clutches, DCT/AT, gears/planetaries, torque converter, hydraulics, heat and hybrid events | Coupled clutches, ideal gears/planetaries, mapped converters, thermal routing and hybrid rollback verified, including fired lockup and shifts. Pressure/flow networks now operate the clutches. Shaft pumps, explicit leakage/viscous losses, RL electric supply, finite-charge battery, duty regulation and quasi-steady relief are verified. Complete DCT/AT, measured loss/control maps, measured valve/accumulator and richer converter dynamics remain pending. Dynamic piston/contact actuation is verified as a lumped research model. Historical Zig prototypes remain reference |
 | 7. Controls and integration | ECU/TCU cycles, sensors/actuators, torque coordination, power supply, accessories and faults | Sampled voltage/duty pressure PI feedback, finite battery supply/accessories and explicit actuator ownership implemented, including transactional controller state. Complete ECU/TCU coordination, sensors/actuators, supply/accessories and fault handling remain incomplete |
 | 8. Evidence and release | Two complete powertrains, measured calibration, provenance, error budgets, long-run stability and desktop packaging | Research boundaries preserved; release criteria unmet |
@@ -120,7 +128,7 @@ conservation, bounded events, complete rollback and shared JSON/asset/agent sema
 A converter, lockup clutch and scheduled planetary shift do not complete gearbox,
 controller or powertrain acceptance.
 
-The engine now has a synthetic premixed fired cycle. Continue fuel-metering and ignition
+The engine now has a synthetic premixed fired cycle. Continue liquid fuel injection/evaporation and ignition
 control, intake/exhaust dynamics, mechanical losses, richer thermochemistry and measured
 calibration as separate engine work. The present prescribed burn is not a predictive
 combustion or emissions model; none of these remaining requirements is waived.

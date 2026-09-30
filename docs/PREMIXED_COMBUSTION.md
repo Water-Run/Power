@@ -9,8 +9,9 @@ cylinders. Core, JSON, CLI, MCP and asset v6 share these definitions.
 This is a lumped, constant-property premixed model. Every constituent in a connected
 network shares one R and gamma. The three mass classes do not represent detailed species,
 variable heat capacities, reaction kinetics, flame propagation, autoignition, knock,
-emissions, fuel evaporation or injection. The example uses an already mixed gaseous
-inlet. A prescribed burn and passing conservation tests do not establish measured engine
+emissions, fuel evaporation or injection. The original fired example uses an already mixed gaseous
+inlet. [Cycle fuel metering](FUEL_METERING.md) supports a separate finite gaseous
+rail and air admission; liquid spray/evaporation remain outside the model. A prescribed burn and passing conservation tests do not establish measured engine
 performance or complete the full powertrain objective.
 
 ## Composition and ports

@@ -170,3 +170,14 @@ regulator laboratory`. SHA-256:
 Fingerprint: `28aa0965d248e280`. Tests retain its digest, physical references and
 every-boundary exact same-runtime upgraded replay. Do not regenerate it with the
 current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Gas accumulator version 16
+
+`gas-accumulator-pump-v16.powerasset` preserves verified v16 output before adding
+injector records. Source: `assets/labs/gas-accumulator-pump.power.json`; name:
+`Gas accumulator pump laboratory`. The source checkpoint is published at `dc7ec2d`.
+SHA-256: `72f0ee5b3180b763de091674565b2b8f2cbd61f80a3e4ab46e9694ad153a79c7`.
+Fingerprint: `739f2baba8c669a0`. Tests retain original digest, physical references
+and exact same-runtime original/upgraded replay at every event/report boundary.
+Do not regenerate with the current writer. The Power! GPL license and Unity
+Linking Exception apply.

@@ -557,6 +557,15 @@ namespace Power.Studio
                     Connection("Planetary ring " + component.Id, ring, center, steel, 0.08f);
                     Connection("Planetary carrier " + component.Id, carrier, center, blue, 0.08f);
                 }
+                if (component.Kind == ComponentKind.GasFuelInjector)
+                {
+                    Vector3 tip = (a + positions[component.NodeB]) * 0.5f + Vector3.up * 0.4f;
+                    var needle = Shape("Fuel injector " + component.Id, PrimitiveType.Cube, tip, new Vector3(0.25f, 0.4f, 0.2f), copper);
+                    _valves.Add(component.Id, new ValveVisual { Stem = needle.transform, Closed = tip });
+                    Connection("Fuel rail " + component.Id, a, tip, copper, 0.06f);
+                    Connection("Fuel admission " + component.Id, tip, positions[component.NodeB], copper, 0.06f);
+                    Connection("Fuel timing " + component.Id, positions[component.FuelInjector.CrankNode], tip, steel, 0.04f);
+                }
                 if (component.Kind == ComponentKind.GasPiston)
                 {
                     Connection("Gas piston " + component.Id, a, positions[component.NodeB], copper, 0.1f);

@@ -189,6 +189,9 @@ namespace Power.Studio.Tests
         [UnityTest]
         public IEnumerator GasAccumulatorImportsAndReplays() => PumpAssemblyReplay("GasAccumulatorPump", "Gas piston 24");
 
+        [UnityTest]
+        public IEnumerator MeteredFuelImportsAndReplays() => PumpAssemblyReplay("MeteredFiredCylinder", "Fuel injector 16");
+
         private IEnumerator PumpAssemblyReplay(string resource, string pumpName)
         {
             _host = new GameObject(resource + " test");

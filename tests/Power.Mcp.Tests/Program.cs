@@ -94,7 +94,7 @@ var cylinderReport = (await Call("run_experiment", new() { ["document"] = cylind
 Require(cylinderReport.GetProperty("passed").GetBoolean(), "Cylinder experiment failed over MCP");
 Require(cylinderReport.GetProperty("model").GetProperty("fidelity").GetString() == "sealed_adiabatic_gas", "Cylinder fidelity missing");
 var cylinderExport = (await Call("export_model_asset", new() { ["document"] = cylinder, ["name"] = "Sealed cylinder" })).GetProperty("data");
-Require(cylinderExport.GetProperty("format").GetString() == "power.asset.v16", "Wrong cylinder asset version");
+Require(cylinderExport.GetProperty("format").GetString() == "power.asset.v17", "Wrong cylinder asset version");
 var cylinderAsset = AssetCodec.Decode(Convert.FromBase64String(cylinderExport.GetProperty("content").GetString()!));
 var cylinderPlayback = cylinderAsset.CreatePlayback();
 Require(cylinderPlayback.Advance(cylinderAsset.DurationNanoseconds) == Power.Core.SimulationStatus.Ok, "Cylinder playback failed");
@@ -110,7 +110,7 @@ var gasReport = (await Call("run_experiment", new() { ["document"] = gas, ["incl
 Require(gasReport.GetProperty("passed").GetBoolean() && gasReport.GetProperty("model").GetProperty("calibration").GetString() == "unverified", "Gas report evidence mismatch");
 var gasExport = (await Call("export_model_asset", new() { ["document"] = gas })).GetProperty("data");
 byte[] gasPayload = Convert.FromBase64String(gasExport.GetProperty("content").GetString()!);
-Require(gasExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(gasPayload)) == gasExport.GetProperty("asset_sha256").GetString(), "Gas asset integrity mismatch");
+Require(gasExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(gasPayload)) == gasExport.GetProperty("asset_sha256").GetString(), "Gas asset integrity mismatch");
 var gasAsset = AssetCodec.Decode(gasPayload); var gasPlayback = gasAsset.CreatePlayback();
 var gasValues = new Power.Core.Scalar[gasAsset.Model.OutputCount];
 foreach (var boundary in gasReport.GetProperty("samples").EnumerateArray())
@@ -135,7 +135,7 @@ Require(movingValidated.GetProperty("model").GetProperty("fidelity").GetString()
 var movingReport = (await Call("run_experiment", new() { ["document"] = moving, ["include_samples"] = true })).GetProperty("data");
 Require(movingReport.GetProperty("passed").GetBoolean(), "Moving-cylinder experiment failed");
 var movingExport = (await Call("export_model_asset", new() { ["document"] = moving })).GetProperty("data");
-Require(movingExport.GetProperty("format").GetString() == "power.asset.v16", "Moving cylinder export must use the current format");
+Require(movingExport.GetProperty("format").GetString() == "power.asset.v17", "Moving cylinder export must use the current format");
 var movingAsset = AssetCodec.Decode(Convert.FromBase64String(movingExport.GetProperty("content").GetString()!));
 var movingPlayback = movingAsset.CreatePlayback(); var movingValues = new Power.Core.Scalar[movingAsset.Model.OutputCount];
 foreach (var boundary in movingReport.GetProperty("samples").EnumerateArray())
@@ -154,7 +154,7 @@ Require(capabilities.GetProperty("valve_timing").GetProperty("profile").GetStrin
 var timedReport = (await Call("run_experiment", new() { ["document"] = timed, ["include_samples"] = true })).GetProperty("data");
 Require(timedReport.GetProperty("passed").GetBoolean() && timedReport.GetProperty("samples").GetArrayLength() == 63, "Crank-timed experiment failed");
 var timedExport = (await Call("export_model_asset", new() { ["document"] = timed })).GetProperty("data");
-Require(timedExport.GetProperty("format").GetString() == "power.asset.v16", "Timing uses current asset v6");
+Require(timedExport.GetProperty("format").GetString() == "power.asset.v17", "Timing uses current asset v6");
 var timedAsset = AssetCodec.Decode(Convert.FromBase64String(timedExport.GetProperty("content").GetString()!));
 Require(timedAsset.Components.Count(c => c.ValveTiming != null) == 2, "Timing definitions lost in export");
 var timedPlayback = timedAsset.CreatePlayback(); var timedValues = new Power.Core.Scalar[timedAsset.Model.OutputCount];
@@ -180,7 +180,7 @@ Require(capabilities.GetProperty("combustion").GetProperty("model").GetString() 
 var firedReport = (await Call("run_experiment", new() { ["document"] = fired, ["include_samples"] = true })).GetProperty("data");
 Require(firedReport.GetProperty("passed").GetBoolean() && firedReport.GetProperty("samples").GetArrayLength() == 63, "Fired experiment failed");
 var firedExport = (await Call("export_model_asset", new() { ["document"] = fired })).GetProperty("data");
-Require(firedExport.GetProperty("format").GetString() == "power.asset.v16", "Combustion requires asset v6");
+Require(firedExport.GetProperty("format").GetString() == "power.asset.v17", "Combustion requires asset v6");
 byte[] firedPayload = Convert.FromBase64String(firedExport.GetProperty("content").GetString()!);
 Require(Convert.ToHexStringLower(SHA256.HashData(firedPayload)) == firedExport.GetProperty("asset_sha256").GetString(), "Fired asset digest mismatch");
 var firedAsset = AssetCodec.Decode(firedPayload); var firedPlayback = firedAsset.CreatePlayback(); var firedValues = new Power.Core.Scalar[firedAsset.Model.OutputCount];
@@ -207,7 +207,7 @@ var clutchReport = (await Call("run_experiment", new() { ["document"] = clutch, 
 Require(clutchReport.GetProperty("passed").GetBoolean() && clutchReport.GetProperty("samples").GetArrayLength() == 67, "Fired-clutch experiment failed");
 var clutchExport = (await Call("export_model_asset", new() { ["document"] = clutch })).GetProperty("data");
 byte[] clutchPayload = Convert.FromBase64String(clutchExport.GetProperty("content").GetString()!);
-Require(clutchExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(clutchPayload)) == clutchExport.GetProperty("asset_sha256").GetString(), "Clutch asset version or digest differs");
+Require(clutchExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(clutchPayload)) == clutchExport.GetProperty("asset_sha256").GetString(), "Clutch asset version or digest differs");
 var clutchAsset = AssetCodec.Decode(clutchPayload); var clutchPlayback = clutchAsset.CreatePlayback(); var clutchValues = new Power.Core.Scalar[clutchAsset.Model.OutputCount];
 Require(clutchAsset.Components.Single(c => c.Id == 16).Friction!.StaticCapacity.Value == 100, "Clutch capacity lost");
 foreach (var boundary in clutchReport.GetProperty("samples").EnumerateArray())
@@ -233,7 +233,7 @@ var planetaryReport = (await Call("run_experiment", new() { ["document"] = plane
 Require(planetaryReport.GetProperty("passed").GetBoolean() && planetaryReport.GetProperty("samples").GetArrayLength() == 84, "Fired planetary experiment failed");
 var planetaryExport = (await Call("export_model_asset", new() { ["document"] = planetary })).GetProperty("data");
 byte[] planetaryPayload = Convert.FromBase64String(planetaryExport.GetProperty("content").GetString()!);
-Require(planetaryExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(planetaryPayload)) == planetaryExport.GetProperty("asset_sha256").GetString(), "Gear asset version or digest differs");
+Require(planetaryExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(planetaryPayload)) == planetaryExport.GetProperty("asset_sha256").GetString(), "Gear asset version or digest differs");
 var planetaryAsset = AssetCodec.Decode(planetaryPayload); var planetaryPlayback = planetaryAsset.CreatePlayback(); var planetaryValues = new Power.Core.Scalar[planetaryAsset.Model.OutputCount];
 Require(planetaryAsset.Components.Single(c => c.Id == 18).NodeC == 4, "Planetary carrier lost");
 foreach (var boundary in planetaryReport.GetProperty("samples").EnumerateArray())
@@ -259,7 +259,7 @@ var converterReport = (await Call("run_experiment", new() { ["document"] = conve
 Require(converterReport.GetProperty("passed").GetBoolean() && converterReport.GetProperty("samples").GetArrayLength() == 87, "Fired converter experiment failed");
 var converterExport = (await Call("export_model_asset", new() { ["document"] = converter })).GetProperty("data");
 byte[] converterPayload = Convert.FromBase64String(converterExport.GetProperty("content").GetString()!);
-Require(converterExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(converterPayload)) == converterExport.GetProperty("asset_sha256").GetString(), "Converter asset version or digest differs");
+Require(converterExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(converterPayload)) == converterExport.GetProperty("asset_sha256").GetString(), "Converter asset version or digest differs");
 var converterAsset = AssetCodec.Decode(converterPayload); var converterPlayback = converterAsset.CreatePlayback(); var converterValues = new Power.Core.Scalar[converterAsset.Model.OutputCount];
 Require(converterAsset.Components.Single(c => c.Id == 20).Converter!.PumpPositive!.Points.Count == 5, "Converter maps lost");
 foreach (var boundary in converterReport.GetProperty("samples").EnumerateArray())
@@ -285,7 +285,7 @@ var hydraulicReport = (await Call("run_experiment", new() { ["document"] = hydra
 Require(hydraulicReport.GetProperty("passed").GetBoolean() && hydraulicReport.GetProperty("samples").GetArrayLength() == 89, "Fired hydraulic experiment failed");
 var hydraulicExport = (await Call("export_model_asset", new() { ["document"] = hydraulic })).GetProperty("data");
 byte[] hydraulicPayload = Convert.FromBase64String(hydraulicExport.GetProperty("content").GetString()!);
-Require(hydraulicExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(hydraulicPayload)) == hydraulicExport.GetProperty("asset_sha256").GetString(), "Hydraulic asset version or digest differs");
+Require(hydraulicExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(hydraulicPayload)) == hydraulicExport.GetProperty("asset_sha256").GetString(), "Hydraulic asset version or digest differs");
 var hydraulicAsset = AssetCodec.Decode(hydraulicPayload); var hydraulicPlayback = hydraulicAsset.CreatePlayback(); var hydraulicValues = new Power.Core.Scalar[hydraulicAsset.Model.OutputCount];
 Require(hydraulicAsset.Components.Single(c => c.Id == 21).HydraulicClutch!.PressureNode == 32, "Hydraulic pressure port lost");
 foreach (var boundary in hydraulicReport.GetProperty("samples").EnumerateArray())
@@ -311,7 +311,7 @@ var pumpReport = (await Call("run_experiment", new() { ["document"] = pump, ["in
 Require(pumpReport.GetProperty("passed").GetBoolean() && pumpReport.GetProperty("samples").GetArrayLength() == 89, "Fired pump experiment failed");
 var pumpExport = (await Call("export_model_asset", new() { ["document"] = pump })).GetProperty("data");
 byte[] pumpPayload = Convert.FromBase64String(pumpExport.GetProperty("content").GetString()!);
-Require(pumpExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(pumpPayload)) == pumpExport.GetProperty("asset_sha256").GetString(), "Pump asset version or digest differs");
+Require(pumpExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(pumpPayload)) == pumpExport.GetProperty("asset_sha256").GetString(), "Pump asset version or digest differs");
 var pumpAsset = AssetCodec.Decode(pumpPayload); var pumpPlayback = pumpAsset.CreatePlayback(); var pumpValues = new Power.Core.Scalar[pumpAsset.Model.OutputCount];
 Require(pumpAsset.Components.Single(c => c.Id == 46).HydraulicPump!.Displacement.Unit == Power.Core.Unit.CubicMeterPerRadian, "Pump pressure port lost");
 foreach (var boundary in pumpReport.GetProperty("samples").EnumerateArray())
@@ -364,7 +364,7 @@ var regulatedReport = (await Call("run_experiment", new() { ["document"] = regul
 Require(regulatedReport.GetProperty("passed").GetBoolean() && regulatedReport.GetProperty("samples").GetArrayLength() == 757, "Pressure-regulated experiment failed");
 var regulatedExport = (await Call("export_model_asset", new() { ["document"] = regulatedDocument })).GetProperty("data");
 byte[] regulatedPayload = Convert.FromBase64String(regulatedExport.GetProperty("content").GetString()!);
-Require(regulatedExport.GetProperty("format").GetString() == "power.asset.v16" &&
+Require(regulatedExport.GetProperty("format").GetString() == "power.asset.v17" &&
     Convert.ToHexStringLower(SHA256.HashData(regulatedPayload)) == regulatedExport.GetProperty("asset_sha256").GetString(), "Controlled asset integrity differs");
 var regulatedAsset = AssetCodec.Decode(regulatedPayload); var regulatedPlayback = regulatedAsset.CreatePlayback(); var regulatedValues = new Power.Core.Scalar[regulatedAsset.Model.OutputCount];
 Require(regulatedAsset.Components.Single(c => c.Id == 20).PressureController!.SamplePeriodNanoseconds == 5_000_000, "Control period lost");
@@ -400,7 +400,7 @@ var batteryReport = (await Call("run_experiment", new() { ["document"] = battery
 Require(batteryReport.GetProperty("passed").GetBoolean() && batteryReport.GetProperty("samples").GetArrayLength() == 761, "Battery experiment failed");
 var batteryExport = (await Call("export_model_asset", new() { ["document"] = batteryDocument })).GetProperty("data");
 byte[] batteryPayload = Convert.FromBase64String(batteryExport.GetProperty("content").GetString()!);
-Require(batteryExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(batteryPayload)) == batteryExport.GetProperty("asset_sha256").GetString(), "Battery payload integrity differs");
+Require(batteryExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(batteryPayload)) == batteryExport.GetProperty("asset_sha256").GetString(), "Battery payload integrity differs");
 var batteryAsset = AssetCodec.Decode(batteryPayload); var batteryPlayback = batteryAsset.CreatePlayback(); var batteryValues = new Power.Core.Scalar[batteryAsset.Model.OutputCount];
 Require(batteryAsset.Nodes.Single(n => n.Id == 30).Battery!.PolarizationCapacitance.Unit == Power.Core.Unit.Farad, "Polarization parameters lost");
 foreach (var boundary in batteryReport.GetProperty("samples").EnumerateArray())
@@ -435,7 +435,7 @@ var pistonReport = (await Call("run_experiment", new() { ["document"] = pistonDo
 Require(pistonReport.GetProperty("passed").GetBoolean() && pistonReport.GetProperty("samples").GetArrayLength() == 761, "Piston experiment failed");
 var pistonExport = (await Call("export_model_asset", new() { ["document"] = pistonDocument })).GetProperty("data");
 byte[] pistonPayload = Convert.FromBase64String(pistonExport.GetProperty("content").GetString()!);
-Require(pistonExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(pistonPayload)) == pistonExport.GetProperty("asset_sha256").GetString(), "Piston payload integrity differs");
+Require(pistonExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(pistonPayload)) == pistonExport.GetProperty("asset_sha256").GetString(), "Piston payload integrity differs");
 var pistonAsset = AssetCodec.Decode(pistonPayload); var pistonPlayback = pistonAsset.CreatePlayback(); var pistonValues = new Power.Core.Scalar[pistonAsset.Model.OutputCount];
 Require(pistonAsset.Components.Single(c => c.Id == 17).PistonClutch!.PistonComponent == 22, "Contact ownership lost");
 foreach (var boundary in pistonReport.GetProperty("samples").EnumerateArray())
@@ -468,7 +468,7 @@ var spoolReport = (await Call("run_experiment", new() { ["document"] = spoolDocu
 Require(spoolReport.GetProperty("passed").GetBoolean() && spoolReport.GetProperty("samples").GetArrayLength() == 156, "Spool experiment failed");
 var spoolExport = (await Call("export_model_asset", new() { ["document"] = spoolDocument })).GetProperty("data");
 byte[] spoolPayload = Convert.FromBase64String(spoolExport.GetProperty("content").GetString()!);
-Require(spoolExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(spoolPayload)) == spoolExport.GetProperty("asset_sha256").GetString(), "Spool asset integrity differs");
+Require(spoolExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(spoolPayload)) == spoolExport.GetProperty("asset_sha256").GetString(), "Spool asset integrity differs");
 var spoolAsset = AssetCodec.Decode(spoolPayload); var spoolPlayback = spoolAsset.CreatePlayback(); var spoolValues = new Power.Core.Scalar[spoolAsset.Model.OutputCount];
 Require(spoolAsset.Model.HasSpoolValves && spoolAsset.Model.Fidelity == "mechanically_regulated_hydraulics" && spoolAsset.Components.Single(c => c.Id == 14).SpoolValve!.PistonComponent == 21, "Spool topology lost");
 foreach (var boundary in spoolReport.GetProperty("samples").EnumerateArray())
@@ -492,7 +492,7 @@ var accumulatorReport = (await Call("run_experiment", new() { ["document"] = acc
 Require(accumulatorReport.GetProperty("passed").GetBoolean() && accumulatorReport.GetProperty("samples").GetArrayLength() == 306, "Accumulator experiment failed");
 var accumulatorExport = (await Call("export_model_asset", new() { ["document"] = accumulatorDocument })).GetProperty("data");
 byte[] accumulatorPayload = Convert.FromBase64String(accumulatorExport.GetProperty("content").GetString()!);
-Require(accumulatorExport.GetProperty("format").GetString() == "power.asset.v16" && Convert.ToHexStringLower(SHA256.HashData(accumulatorPayload)) == accumulatorExport.GetProperty("asset_sha256").GetString(), "Accumulator asset integrity differs");
+Require(accumulatorExport.GetProperty("format").GetString() == "power.asset.v17" && Convert.ToHexStringLower(SHA256.HashData(accumulatorPayload)) == accumulatorExport.GetProperty("asset_sha256").GetString(), "Accumulator asset integrity differs");
 var accumulatorAsset = AssetCodec.Decode(accumulatorPayload); var accumulatorPlayback = accumulatorAsset.CreatePlayback(); var accumulatorValues = new Power.Core.Scalar[accumulatorAsset.Model.OutputCount];
 Require(accumulatorAsset.Model.HasGasPistons && accumulatorAsset.Model.Fidelity == "gas_accumulator_powertrain", "Gas-fluid geometry lost");
 foreach (var boundary in accumulatorReport.GetProperty("samples").EnumerateArray())
@@ -516,4 +516,26 @@ Require((await Call("read_snapshot", new() { ["session_id"] = accumulatorId })).
 await Call("close_session", new() { ["session_id"] = accumulatorFork, ["expected_revision"] = "2" });
 await Call("close_session", new() { ["session_id"] = accumulatorId, ["expected_revision"] = "1" });
 Console.WriteLine("PASS MCP gas accumulator / actual energy and temperature / complete asset replay / gas-fluid fork independence");
-Console.WriteLine("22/22 MCP integration groups passed against an actual child server process.");
+var meteredDocument=(await Call("get_example_model",new(){["name"]="metered-fired-cylinder"})).GetProperty("data");
+Require(capabilities.GetProperty("gas_fuel_injector").GetProperty("input_unit").GetString()=="kg","Fuel dose contract missing");
+var meteredReport=(await Call("run_experiment",new(){["document"]=meteredDocument,["include_samples"]=true})).GetProperty("data");
+Require(meteredReport.GetProperty("passed").GetBoolean()&&meteredReport.GetProperty("samples").GetArrayLength()==65,"Metered burn experiment failed");
+var meteredExport=(await Call("export_model_asset",new(){["document"]=meteredDocument})).GetProperty("data");byte[] meteredPayload=Convert.FromBase64String(meteredExport.GetProperty("content").GetString()!);
+Require(meteredExport.GetProperty("format").GetString()=="power.asset.v17"&&Convert.ToHexStringLower(SHA256.HashData(meteredPayload))==meteredExport.GetProperty("asset_sha256").GetString(),"Metered asset integrity differs");
+var meteredAsset=AssetCodec.Decode(meteredPayload);var meteredPlayback=meteredAsset.CreatePlayback();var meteredValues=new Power.Core.Scalar[meteredAsset.Model.OutputCount];
+Require(meteredAsset.Model.HasFuelInjectors&&meteredAsset.Model.Fidelity=="metered_fired_powertrain","Metered topology missing");
+foreach(var boundary in meteredReport.GetProperty("samples").EnumerateArray())
+{
+    ulong at=boundary.GetProperty("time_ns").GetUInt64();while(meteredPlayback.TimeNanoseconds<at)Require(meteredPlayback.Advance(Math.Min(257*meteredAsset.Model.StepNanoseconds,at-meteredPlayback.TimeNanoseconds))==Power.Core.SimulationStatus.Ok,"Metered playback failed");
+    Require(meteredPlayback.ReadSnapshot(meteredValues).StateHash.ToString("x16")==boundary.GetProperty("state_hash").GetString()&&meteredValues.All(v=>v.Value==boundary.GetProperty("values").GetProperty(v.Channel.ToString()).GetDouble()),"Metered fuel history differs");
+}
+var meteredCreated=(await Call("create_session",new(){["document"]=meteredDocument})).GetProperty("data");string meteredId=meteredCreated.GetProperty("session_id").GetString()!;
+await Call("set_inputs",new(){["session_id"]=meteredId,["expected_revision"]="0",["values"]=new[]{new{channel="104",value=.001}}},true);
+Require((await Call("read_snapshot",new(){["session_id"]=meteredId})).GetProperty("data").GetProperty("state_hash").GetString()==meteredCreated.GetProperty("snapshot").GetProperty("state_hash").GetString(),"Rejected quota changed fuel state");
+await Call("step_session",new(){["session_id"]=meteredId,["expected_revision"]="0",["delta_ns"]="20000000"});var meteredParent=(await Call("read_snapshot",new(){["session_id"]=meteredId})).GetProperty("data");
+string meteredFork=(await Call("fork_session",new(){["session_id"]=meteredId,["expected_revision"]="1"})).GetProperty("data").GetProperty("session_id").GetString()!;
+await Call("set_inputs",new(){["session_id"]=meteredFork,["expected_revision"]="0",["values"]=new[]{new{channel="104",value=0.0}}});await Call("step_session",new(){["session_id"]=meteredFork,["expected_revision"]="1",["delta_ns"]="20000000"});
+Require((await Call("read_snapshot",new(){["session_id"]=meteredId})).GetProperty("data").GetRawText()==meteredParent.GetRawText(),"Fuel-controller fork changed parent");
+await Call("close_session",new(){["session_id"]=meteredFork,["expected_revision"]="2"});await Call("close_session",new(){["session_id"]=meteredId,["expected_revision"]="1"});
+Console.WriteLine("PASS MCP finite fuel rail / cycle dose contract / every export boundary / invalid quota and independent fork");
+Console.WriteLine("23/23 MCP integration groups passed against an actual child server process.");

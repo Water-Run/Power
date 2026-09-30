@@ -161,7 +161,7 @@ internal static class ValveTimingChecks
         var a = asset.CreatePlayback(); var b = decoded.CreatePlayback(); Ok(a.Advance(400_000_000));
         while (!b.Completed) Ok(b.Advance(Math.Min(1_700_000, decoded.DurationNanoseconds - b.TimeNanoseconds)));
         Require(a.ReadSnapshot(new Scalar[model.OutputCount]) == b.ReadSnapshot(new Scalar[model.OutputCount]));
-        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), extension = counts + 108 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36;
+        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), extension = counts + 112 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36;
         void RejectBytes(byte[] data)
         {
             SHA256.HashData(data.AsSpan(0, data.Length - 32)).CopyTo(data, data.Length - 32);
@@ -173,7 +173,7 @@ internal static class ValveTimingChecks
         BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 32), 0); RejectBytes(missing);
         var duplicate = bytes.Take(extension + 44).Concat(bytes.Skip(extension).Take(44)).Concat(bytes.Skip(extension + 44)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 32), 2); RejectBytes(duplicate);
-        var downgraded = bytes.Take(counts + 32).Concat(bytes.Skip(counts + 108).Take(extension - counts - 108)).Concat(bytes.Skip(extension + 44)).ToArray();
+        var downgraded = bytes.Take(counts + 32).Concat(bytes.Skip(counts + 112).Take(extension - counts - 112)).Concat(bytes.Skip(extension + 44)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgraded.AsSpan(8), 4); RejectBytes(downgraded);
         byte[] v4Bytes = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "moving-cylinder-v4.powerasset"));
         Require(Convert.ToHexStringLower(SHA256.HashData(v4Bytes)) == "1e73cac5346fdafd3ddae159e658e1e8156aaa69281627842372eeecf08cf325");

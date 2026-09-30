@@ -27,5 +27,6 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <EmbeddedResource Include="../../assets/labs/fired-planetary.power.json" LogicalName="power.fired-planetary.template.json" />
     <EmbeddedResource Include="../../schemas/power.model.v1.schema.json" LogicalName="power.model.schema.json" />
       <EmbeddedResource Include="../../assets/labs/gas-accumulator-pump.power.json" LogicalName="power.gas-accumulator-pump.template.json" />
+    <EmbeddedResource Include="../../assets/labs/metered-fired-cylinder.power.json" LogicalName="power.metered-fired-cylinder.template.json" />
   </ItemGroup>
 </Project>

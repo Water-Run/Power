@@ -19,9 +19,9 @@ public sealed class CompiledModel
     public ulong Fingerprint { get; }
     public int NodeCount => Nodes.Length;
     public int ComponentCount => Components.Length;
-    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length;
+    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length;
     public int OutputCount => Outputs.Length;
-    public string Fidelity => HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
+    public string Fidelity => HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
         : HasPremixedGas ? "premixed_gas_transport"
         : HasValveTiming ? "crank_timed_gas_exchange"
         : GasCylinders.Any(c => c is not null) ? "moving_cylinder_gas_exchange"
@@ -44,6 +44,9 @@ public sealed class CompiledModel
     internal PremixedGas?[] NodeMixtures { get; }
     internal MassFractions?[] ReservoirFractions { get; }
     internal bool HasPremixedGas { get; }
+    internal CompiledInjector[] FuelInjectors { get; }
+    internal int[] InjectorByComponent { get; }
+    public bool HasFuelInjectors => FuelInjectors.Length != 0;
     internal Burner?[] Burners { get; }
     internal int[] BurnerByGas { get; }
     internal CylinderCoupling? CylinderCoupling { get; }
@@ -274,6 +277,8 @@ public sealed class CompiledModel
         BurnerByGas = new int[gas]; Array.Fill(BurnerByGas, -1);
         int FindNode(uint id) => Array.FindIndex(Nodes, n => n.Id == id);
         Components = new GraphComponent[cs.Length];
+        int[] injectorComponents = Enumerable.Range(0, cs.Length).Where(i => cs[i].Kind == ComponentKind.GasFuelInjector).ToArray();
+        FuelInjectors = new CompiledInjector[injectorComponents.Length]; InjectorByComponent = new int[cs.Length]; Array.Fill(InjectorByComponent, -1);
         LinearSpringCount = cs.Count(c => c.Kind == ComponentKind.LinearSpring);
         int linearSpringSlot = 0;
         Cylinders = new CylinderPhysics?[cs.Length];
@@ -285,11 +290,12 @@ public sealed class CompiledModel
         {
             var c = cs[i];
             Require(c.Id != 0 && ids.Add(c.Id), DiagnosticCode.Id, c.Id, "id", "IDs must be nonzero and globally unique.");
-            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.GasPiston,
+            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.GasFuelInjector,
                 DiagnosticCode.Schema, c.Id, "kind", "Unknown component kind.");
             Require((c.Kind == ComponentKind.SealedCylinder) == (c.Cylinder is not null),
                 DiagnosticCode.Schema, c.Id, "cylinder", "Cylinder parameters are required only for sealed cylinders.");
-            bool combustion = c.Kind == ComponentKind.PremixedCombustion;
+            bool combustion = c.Kind == ComponentKind.PremixedCombustion, injector = c.Kind == ComponentKind.GasFuelInjector;
+            Require(injector == (c.FuelInjector is not null), DiagnosticCode.Schema, c.Id, "fuel_injector", "Cycle fuel metering parameters apply only to gas fuel injectors.");
             bool pump = c.Kind == ComponentKind.HydraulicPump, relief = c.Kind == ComponentKind.HydraulicRelief;
             bool dutyController = c.Kind == ComponentKind.PressureDutyController;
             bool controller = c.Kind is ComponentKind.PressureController or ComponentKind.PressureDutyController;
@@ -316,7 +322,7 @@ public sealed class CompiledModel
                 DiagnosticCode.Connection, c.Id, "node_c", "Only a planetary gear requires a distinct rotational carrier node.");
             Require((c.Kind == ComponentKind.Clutch) == (c.Friction is not null), DiagnosticCode.Schema, c.Id, "friction", "Friction capacities are required only for clutch components.");
             Require(combustion == (c.Combustion is not null), DiagnosticCode.Schema, c.Id, "combustion", "Burn parameters apply only to premixed combustion components.");
-            bool orifice = c.Kind == ComponentKind.GasOrifice, wall = c.Kind == ComponentKind.GasHeatLink, moving = c.Kind == ComponentKind.GasCylinder, linearGasPiston = c.Kind == ComponentKind.GasPiston;
+            bool orifice = c.Kind == ComponentKind.GasOrifice || injector, wall = c.Kind == ComponentKind.GasHeatLink, moving = c.Kind == ComponentKind.GasCylinder, linearGasPiston = c.Kind == ComponentKind.GasPiston;
             Require(c.ValveTiming is null || orifice, DiagnosticCode.Schema, c.Id, "valve_timing", "Valve timing applies only to gas orifices.");
             if (c.ValveTiming is { } timing)
             {
@@ -356,14 +362,15 @@ public sealed class CompiledModel
             Require(c.HeatNode == 0 || (c.Kind is ComponentKind.Shaft or ComponentKind.LinearSpring or ComponentKind.PistonClutch or ComponentKind.DcMotor or ComponentKind.BatteryMotor or ComponentKind.ResistiveLoad or ComponentKind.Clutch or ComponentKind.TorqueConverter or ComponentKind.HydraulicClutch or ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve &&
                     heat >= 0 && Nodes[heat].Domain == Domain.Thermal),
                 DiagnosticCode.Connection, c.Id, "heat_node", "Loss sinks must be thermal nodes.");
-            bool channelled = input || ((load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool)) && c.InputChannel != 0);
+            bool channelled = injector || input || ((load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool)) && c.InputChannel != 0);
             Require(channelled ? c.InputChannel > 0 && c.InputChannel < 0x8000000000000000UL && !InputIndices.ContainsKey(c.InputChannel)
                                : c.InputChannel == 0, DiagnosticCode.Channel, c.Id, "input_channel", "Invalid or duplicate input channel.");
-            double initial = Convert(c.InitialInput, input ? (c.Kind == ComponentKind.ForceSource ? Unit.Newton : controller ? Unit.Pascal : batteryMotor ? Unit.Fraction : c.Kind == ComponentKind.DcMotor ? Unit.Volt : Unit.NewtonMeter)
+            double initial = Convert(c.InitialInput, injector ? Unit.Kilogram : input ? (c.Kind == ComponentKind.ForceSource ? Unit.Newton : controller ? Unit.Pascal : batteryMotor ? Unit.Fraction : c.Kind == ComponentKind.DcMotor ? Unit.Volt : Unit.NewtonMeter)
                 : load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool) ? Unit.Fraction : Unit.None, c.Id, "initial_input");
             Require(c.DischargeCoefficient == 1 || orifice, DiagnosticCode.Schema, c.Id, "discharge_coefficient",
                 "A discharge coefficient applies only to a gas orifice.");
             bool reservoirMixture = orifice && b < 0 && NodeMixtures[a] is not null;
+            Require(!injector || b >= 0, DiagnosticCode.Connection, c.Id, "node_b", "A gas fuel injector requires a finite receiver; no reservoir endpoint is allowed.");
             Require(reservoirMixture == (c.ReservoirFractions is not null), DiagnosticCode.Schema, c.Id, "reservoir_fractions",
                 "Explicit reservoir fractions are required only for a premixed reservoir boundary.");
             if (reservoirMixture) ReservoirFractions[i] = PremixedGas.ValidateFractions(c.ReservoirFractions, c.Id, "reservoir_fractions");
@@ -542,6 +549,22 @@ public sealed class CompiledModel
                     p1 = Convert(c.AmbientTemperature, b < 0 ? Unit.Kelvin : Unit.None, c.Id, "ambient_temperature");
                     Require(p0 >= 0 && (b >= 0 || p1 > 0), DiagnosticCode.Range, c.Id, "thermal", "Invalid conductance or absolute temperature.");
                     break;
+                case ComponentKind.GasFuelInjector:
+                    var injectorDefinition = c.FuelInjector!; int injectorCrank = FindNode(injectorDefinition.CrankNode);
+                    Require(injectorCrank >= 0 && Nodes[injectorCrank].Domain == Domain.Rotational && b >= 0 && NodeMixtures[a] is not null && NodeMixtures[b] is not null, DiagnosticCode.Connection, c.Id, "fuel_injector", "A fuel injector needs finite tracked source/receiver gas chambers and a rotational timing crank.");
+                    Require(SameGas(NodeGases[a]!, NodeGases[b]!) && NodeMixtures[a]!.Compatible(NodeMixtures[b]), DiagnosticCode.Connection, c.Id, "node_b", "Metered gas ports must share R, gamma, heating value and stoichiometric ratio.");
+                    int geometryOwner = GasCylinderByNode[b];
+                    Require(geometryOwner < 0 || GasPistons[geometryOwner] is not null || cs[geometryOwner].NodeA == injectorDefinition.CrankNode, DiagnosticCode.Connection, c.Id, "fuel_injector.crank_node", "A moving crank chamber uses its own timing crank.");
+                    p0 = Convert(c.Area, Unit.SquareMeter, c.Id, "area"); p1 = c.DischargeCoefficient;
+                    Require(p0 > 0 && Numeric.Finite(p1) && p1 > 0 && p1 <= 1, DiagnosticCode.Range, c.Id, "fuel_injector.area", "Use positive nozzle area and discharge coefficient in (0,1].");
+                    double injectionCycle = Convert(injectorDefinition.CycleAngle, Unit.Radian, c.Id, "fuel_injector.cycle_angle"), injectionStart = Convert(injectorDefinition.StartAngle, Unit.Radian, c.Id, "fuel_injector.start_angle"), injectionDuration = Convert(injectorDefinition.DurationAngle, Unit.Radian, c.Id, "fuel_injector.duration_angle"), maxDose = Convert(injectorDefinition.MaximumDose, Unit.Kilogram, c.Id, "fuel_injector.maximum_dose");
+                    int injectorSlot = Array.IndexOf(injectorComponents, i);
+                    try { FuelInjectors[injectorSlot] = new(i, Nodes[injectorCrank].Index, new(injectionCycle, injectionStart, injectionDuration, maxDose)); }
+                    catch (ArgumentException error) { throw new ModelCompileException(DiagnosticCode.Range, c.Id, "fuel_injector", error.Message); }
+                    Require(initial >= 0 && initial <= maxDose, DiagnosticCode.Range, c.Id, "initial_input", "Fuel dose must be in [0,maximum_dose] kg.");
+                    Require(c.ReservoirPressure == default && c.AmbientTemperature == default && c.Ratio == 1 && c.Stiffness == default && c.Damping == default && c.RestAngle == default && c.Resistance == default && c.Inductance == default && c.Coupling == default && c.InitialCurrent == default && c.Conductance == default && c.ValveTiming is null, DiagnosticCode.Schema, c.Id, "parameters", "A finite gas fuel injector accepts only nozzle geometry, timing and dose.");
+                    InjectorByComponent[i] = injectorSlot;
+                    break;
                 case ComponentKind.GasOrifice:
                     p0 = Convert(c.Area, Unit.SquareMeter, c.Id, "area");
                     p1 = c.DischargeCoefficient;
@@ -562,7 +585,8 @@ public sealed class CompiledModel
                     Require(p0 >= 0, DiagnosticCode.Range, c.Id, "conductance", "Conductance must be nonnegative.");
                     break;
             }
-            if (orifice || combustion || clutch || liquid) { InputMinimum[i] = 0; InputMaximum[i] = 1; }
+            if (orifice && !injector || combustion || clutch || liquid) { InputMinimum[i] = 0; InputMaximum[i] = 1; }
+            if (injector) { InputMinimum[i] = 0; InputMaximum[i] = FuelInjectors[InjectorByComponent[i]].Profile.MaximumDoseKilograms; }
             if (load) { InputMinimum[i] = 0; InputMaximum[i] = 1; }
             if (batteryMotor) { InputMinimum[i] = -1; InputMaximum[i] = 1; }
             if (controller) InputMinimum[i] = 0;
@@ -583,7 +607,7 @@ public sealed class CompiledModel
                 Convert(duty ? dutyControl!.InitialIntegralDuty : control!.InitialIntegralVoltage, duty ? Unit.Fraction : Unit.Volt, c.Id, "pressure_controller.initial_integral"), new(c.P0, c.P1, c.P2, c.P3), duty);
         }
         foreach (ulong channel in ControlledInputs) InputIndices.Remove(channel);
-        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
+        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
         HasValveTiming = Valves.Any(v => v is not null);
         DynamicCount = dynamics; ThermalCount = thermal;
         double[,] matrix = new double[dynamics, dynamics], heatMatrix = new double[thermal, thermal];
@@ -782,6 +806,15 @@ public sealed class CompiledModel
                     if (b >= 0) { HeatConductance[a, b] -= c.P0; HeatConductance[b, a] -= c.P0; HeatConductance[b, b] += c.P0; }
                 }
             }
+            else if (c.Kind == ComponentKind.GasFuelInjector)
+            {
+                channels.Add(new(c.InputChannel, c.Id, true, Unit.Kilogram, "fuel_dose_per_cycle"));
+                Output(c.Id, Field.Opening, i, Unit.Fraction, "current_metering_window", true);
+                Output(c.Id, Field.MassFlow, i, Unit.KilogramPerSecond, "last_tick_mean_delivered_fuel_flow", true);
+                Output(c.Id, Field.RequestedFuelDose, i, Unit.Kilogram, "sampled_cycle_fuel_dose", true);
+                Output(c.Id, Field.DeliveredFuelDose, i, Unit.Kilogram, "delivered_cycle_fuel_dose", true);
+                Output(c.Id, Field.TotalFuelDelivered, i, Unit.Kilogram, "total_delivered_fuel", true);
+            }
             else if (c.Kind == ComponentKind.GasOrifice)
             {
                 if (c.InputChannel != 0) channels.Add(new(c.InputChannel, c.Id, true, Unit.Fraction, Valves[i] is null ? "opening" : "peak_opening"));
@@ -881,6 +914,7 @@ public sealed class CompiledModel
         if (HasPistons || Nodes.Any(n => n.Domain == Domain.Translational)) h = Numeric.Hash(h, 16UL);
         if (HasSpoolValves) h = Numeric.Hash(h, 17UL);
         if (HasGasPistons) h = Numeric.Hash(h, 18UL);
+        if (HasFuelInjectors) h = Numeric.Hash(h, 19UL);
         h = Numeric.Hash(h, StepNanoseconds);
         h = Numeric.Hash(h, (ulong)NodeCount); h = Numeric.Hash(h, (ulong)ComponentCount);
         foreach (var n in Nodes)
@@ -906,6 +940,8 @@ public sealed class CompiledModel
         foreach (var cylinder in Cylinders)
             if (cylinder is not null)
                 foreach (double parameter in cylinder.Parameters) h = Numeric.Hash(h, parameter);
+        foreach (var injector in FuelInjectors)
+        { h = Numeric.Hash(h, (ulong)Nodes.First(n => n.Index == injector.Crank && n.Domain == Domain.Rotational).Id); h = Numeric.Hash(h, injector.Profile.CycleAngleRadians); h = Numeric.Hash(h, injector.Profile.StartAngleRadians); h = Numeric.Hash(h, injector.Profile.DurationAngleRadians); h = Numeric.Hash(h, injector.Profile.MaximumDoseKilograms); }
         foreach (var piston in GasPistons) if (piston is not null)
         { h = Numeric.Hash(h, piston.AreaSquareMeters); h = Numeric.Hash(h, piston.ReferenceVolumeCubicMeters); h = Numeric.Hash(h, piston.ReferencePositionMeters); h = Numeric.Hash(h, piston.ReferencePressurePascals); h = Numeric.Hash(h, unchecked((ulong)piston.CompressionDirection)); }
         foreach (var cylinder in GasCylinders)

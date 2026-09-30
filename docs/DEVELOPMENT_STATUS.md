@@ -20,18 +20,18 @@ and an accepted Unity desktop application remain unfinished.
 | Hydraulics | Compliant chambers, restrictions, pumps/losses, electric supply, relief, dynamic pistons, finite-energy gas accumulators, metered spools and pressure/contact-actuated clutches | Joint mechanical/fluid power, analytic feedback and second-order smooth refinement, volume/energy ledgers and complete rollback |
 | Electrical supply | Finite-charge affine-OCV battery, series/polarization losses, averaged duty motors and switched resistive accessories | Analytic/RK4/refinement, regeneration, charge limits and shared conservation; chemistry/BMS/calibration remain open |
 | Controls | Sampled hydraulic-pressure PI feedback, held bounded motor voltage/duty and conditional integration | Exact integer-clock rules, sampled/RK4 plant reference, transactional memory and ownership; complete ECU/TCU remains open |
-| Integration | Nineteen JSON/CLI laboratories and eighteen discoverable MCP examples | Complete gas/fluid, battery and piston portable/MCP replay; parameters remain synthetic |
-| Assets | v16 retains finite-energy gas geometry, spool/piston actuation and supply/control | Bounded tables, malformed-record rejection, authentic v1–v15 fixtures and unchanged prior fingerprints |
+| Integration | Twenty JSON/CLI laboratories and nineteen discoverable MCP examples | Complete gas/fluid, battery and piston portable/MCP replay; parameters remain synthetic |
+| Assets | v17 retains cycle fuel metering, gas/fluid actuation and supply/control | Bounded tables, malformed-record rejection, authentic v1–v16 fixtures and unchanged prior fingerprints |
 | Agent interface | Twelve tools with schemas, compact evidence, revisions, branches and actionable errors | Actual child-server integration; tool success, passing KPIs and calibration remain distinct |
 | Native archive | Zig 0.15.2 prototypes and preserved binary ABI | Historical reference, separate from the active C#/Unity stack; source audit and baseline checks retained |
 
 The required serial command is `dotnet run --file tools/Build.cs -- verify`. This
 Windows workspace uses SDK 10.0.401, permitted by the pinned SDK's patch roll-forward.
-The resumed checkpoint passes **234/234 managed checks, 183/183 Standard-assembly checks
-and 22/22 MCP groups**, plus **16/16 Zig** and **6/6 C# ABI** tests. All **176** historical baseline values
+The resumed checkpoint passes **247/247 managed checks, 193/193 Standard-assembly checks
+and 23/23 MCP groups**, plus **16/16 Zig** and **6/6 C# ABI** tests. All **176** historical baseline values
 match exactly. The Standard assemblies run under .NET 10, which does not establish
 Unity runtime compatibility. See [VALIDATION.md](VALIDATION.md) and
-`artifacts/reports/gas-accumulator-final-2026-09-30.log` for the local evidence.
+`artifacts/reports/fuel-injector-final-2026-09-30.log` for the local evidence.
 
 ## Development scope
 
@@ -40,8 +40,18 @@ RL electrical supply are implemented using ordinary conserving graph components;
 see [the pump assembly contract](HYDRAULIC_PUMP.md#explicit-leakage-shaft-friction-and-electrical-supply).
 Historical asset checks now retain same-runtime exact replay and compare physical
 reference values with explicit tolerances across runtimes. The fixed Linux hashes
-remain provenance rather than cross-platform assertions. The published spool checkpoint passes Windows/Linux/macOS CI. The new gas-piston
-increment has local Windows evidence; actual Unity verification remains pending.
+remain provenance rather than cross-platform assertions. The published gas-accumulator checkpoint passes Windows/Linux/macOS CI. The new
+fuel-metering increment has local Windows evidence; actual Unity remains pending.
+
+## Cycle fuel metering
+
+[Finite gaseous fuel rails](FUEL_METERING.md) now admit a requested fuel mass through
+a pressure-dependent port in a forward crank window. Requests latch once per cycle;
+starvation, reverse pressure and live-input changes are observable separately from
+delivered fuel. Independent ODE/refinement, analytic burn, constituent/energy ledgers
+and complete controller transactions pass. The experiment uses separate air and
+fuel supply. Liquid spray/evaporation, detailed fuel hardware, ignition/ECU and
+calibrated gasoline injection remain open.
 
 ## Finite-energy gas accumulator
 
@@ -165,7 +175,7 @@ The converter implementation preserves their model fingerprints and replay traje
 
 ## Prepared but not verified in Unity
 
-Studio imports the same Core/Assets assemblies and nineteen generated model assets. It has
+Studio imports the same Core/Assets assemblies and twenty generated model assets. It has
 schematic vessels, moving pistons, timed valves, heat-release markers, clutch phases, hydraulic slider/contact pads,
 ideal/planetary connections, converter pump/turbine/stator views, hydraulic chambers,
 valves, shaft-driven pump ports and pressure-clutch connections. Import,
@@ -182,7 +192,7 @@ compile .NET 10/C# 14 source; the SDK builds the separate Standard assemblies.
    loss/control behavior, measured battery/BMS/temperature dynamics and measured accumulator properties/heat behavior, then
    extend toward complete DCT/AT topologies. The sampled pressure loop now regulates motor supply; prescribed valve
    schedules still need ECU/TCU coordination.
-2. Continue engine fuel metering and ignition control, intake/exhaust dynamics, mechanical
+2. Continue liquid fuel injection/evaporation and ignition control, intake/exhaust dynamics, mechanical
    losses and richer thermochemistry. Prescribed burns do not implement injectors,
    predictive kinetics, knock, emissions or an ECU.
 3. Implement ECU/TCU torque coordination, sensors, actuators, power supply, accessories

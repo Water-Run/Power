@@ -15,7 +15,7 @@ internal static class PistonAssetChecks
 {
     internal static IEnumerable<(string Name, Action Run)> All =>
     [
-        ("piston asset / complete v16 stroke/contact topology / authentic v13 replay", Replay),
+        ("piston asset / complete v17 stroke/contact topology / authentic v13 replay", Replay),
         ("piston asset / bounded records / malformed forces / coverage / downgrade", Corruption)
     ];
     private static PowerAsset Asset() => PowerAsset.Create(PistonChecks.ClutchModel(), "Dynamic clutch", new string('d', 64),
@@ -36,7 +36,7 @@ internal static class PistonAssetChecks
     private static void Replay()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 16);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 17);
         Require(asset.Nodes.SequenceEqual(decoded.Nodes) && asset.Components.SequenceEqual(decoded.Components));
         Require(asset.Model.Fingerprint == decoded.Model.Fingerprint && bytes.SequenceEqual(AssetCodec.Encode(decoded))); Compare(asset, decoded);
         byte[] fixture = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "battery-regulated-pump-v13.powerasset"));
@@ -50,7 +50,7 @@ internal static class PistonAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset);
-        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), piston = counts + 108 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 40 * 2, clutch = piston + 104;
+        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), piston = counts + 112 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 40 * 2, clutch = piston + 104;
         void Reject(byte[] bad)
         { SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(bad)); }
         void Change(int offset, int value)
@@ -61,7 +61,7 @@ internal static class PistonAssetChecks
         var duplicate = bytes.Take(piston + 104).Concat(bytes.Skip(piston).Take(104)).Concat(bytes.Skip(piston + 104)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 92), 2); Reject(duplicate);
         var missing = bytes.Take(piston).Concat(bytes.Skip(piston + 104)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 92), 0); Reject(missing);
-        var downgrade = bytes.Take(counts + 92).Concat(bytes.Skip(counts + 108).Take(piston - counts - 108)).Concat(bytes.Skip(clutch + 40)).ToArray();
+        var downgrade = bytes.Take(counts + 92).Concat(bytes.Skip(counts + 112).Take(piston - counts - 112)).Concat(bytes.Skip(clutch + 40)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgrade.AsSpan(8), 13); Reject(downgrade);
     }
 }

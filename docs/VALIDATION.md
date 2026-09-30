@@ -1,5 +1,88 @@
 # 验证记录
 
+## 2026-09-30: finite fuel rail and cycle-dose metering
+
+The published `dc7ec2d` gas-accumulator checkpoint passes
+[Windows/Linux/macOS CI](https://github.com/Water-Run/Power/actions/runs/36710249585).
+That evidence covers the preceding source, not the new injector or actual Unity.
+
+The required serial command `dotnet run --file tools/Build.cs -- verify` passes
+locally on Windows x64 with SDK 10.0.401/runtime 10.0.12: **247/247** managed checks,
+**193/193** Standard-assembly checks hosted on .NET 10, **23/23** actual MCP groups,
+**16/16** Zig and **6/6** C# ABI checks. All **176** historical numerical values
+match exactly; source audit finds zero C/C++/Lua files. Release build has zero
+warnings/errors. Log: `artifacts/reports/fuel-injector-final-2026-09-30.log`.
+
+Eight physical groups verify forward/wrapped timing, finite rail and exact quota,
+latched requests, reverse-pressure closure and starvation, reversal without quota
+reissue, an independent two-vessel mass/enthalpy ODE with smooth refinement, analytic
+metered premixed burn, complete transactions, dimensions/compatibility/capacity and
+immutable geometry. Warm stepping and snapshots allocate **zero managed bytes**.
+Late torque/volume failure, cancellation, input rejection, exact batching and forks
+preserve all delivery/ordinal histories. Timing discontinuities retain fixed-tick
+refinement requirements; no continuous switching-time claim is made.
+
+Two portable groups verify v17 nozzle/timing, bounded typed records, wrong units,
+missing/duplicate records and forged downgrade rejection. The authentic v16 gas
+accumulator fixture retains SHA-256
+`72f0ee5b3180b763de091674565b2b8f2cbd61f80a3e4ab46e9694ad153a79c7`, fingerprint
+`739f2baba8c669a0` and every-boundary same-runtime upgraded replay. Prior fixtures
+and physical fingerprints remain unchanged. Three integration groups verify actual
+rail depletion, delivered/reacted/boundary fuel, strict contracts and sessions.
+
+All **20** laboratory documents pass structural schema validation; **12** malformed
+injector cases are rejected by jsonschema 4.25.1. Cycle values, finite compatible
+ports, dose maxima and crank ownership remain additional compiler checks. Report:
+`artifacts/reports/fuel-injector-schema-audit.json`. Existing schema audits also pass
+all 20 documents. An invalid reservoir receiver now returns a connection diagnostic
+before reservoir-fraction validation. Different R/gamma/LHV/stoichiometry are rejected
+so internal transfers cannot invent chemical inventory.
+
+The `metered-fired-cylinder` replaces premixed-fuel intake with pure air plus a
+finite gaseous rail. Requested doses are 8/12/4 mg; they latch at the next forward
+window. At 0.6 s the latest observed cycle still holds 12 mg, while the live command
+is 4 mg for a future window. Execution and dose acceptance remain distinct from
+actual delivery. All **65** report/portable/MCP boundaries agree exactly.
+
+| Final quantity | Value |
+|---|---:|
+| Delivered fuel | 28 mg |
+| Burned fuel | 27.9299615615 mg |
+| Released reaction heat | 1228.918308706072 J |
+| Remaining chamber fuel | 0.0055539661 mg |
+| Net boundary fuel | -0.0644844724 mg |
+
+Burned, remaining and boundary-lost fuel account for delivered fuel. Internal rail
+transfer adds no external fuel-energy input or unlimited source. Rail thermal
+enthalpy and chemical energy use the same limited constituent flux.
+
+| Maximum absolute error over the experiment | Value | Asserted bound |
+|---|---:|---:|
+| Rail depletion vs delivery | 3.67e-18 kg | 1e-16 kg |
+| Delivered vs reacted/remaining/boundary fuel | 6.78e-21 kg | 1e-14 kg |
+| Whole-model energy | 1.52e-9 J | 1e-6 J |
+| Total mass | 4.07e-18 kg | 1e-14 kg |
+| Fuel constituent | 3.67e-18 kg | 1e-14 kg |
+| Fresh-air constituent | 1.20e-18 kg | 1e-14 kg |
+
+Fingerprint `099db1021c8df1fe`; final Windows/runtime hash `329e1109392b37f3`.
+Reports: `artifacts/reports/metered-fired-cylinder.json` and
+`fuel-injector-evidence-summary.json`.
+
+Three serial CLI runs, each with two 0.6-s trajectories (24,000 accepted ticks),
+full replay and 65 boundaries, take **0.502 / 0.364 / 0.370 s**, median **0.370 s**
+at ordinary desktop load. Traces agree exactly; zero-allocation warm stepping is
+checked separately against both assemblies. This is observed local cost, not a
+speedup or portable throughput guarantee.
+
+Agent 0.20.0 and actual MCP verify kg-dose discovery, complete export/replay, invalid
+quota rejection and independent controller/fuel forks. Unity injector/rail/timing
+views and Edit/Play tests are prepared in C# 9 source. Actual Unity Editor/Play/
+Mono/IL2CPP/Player and fresh three-platform evidence for this increment remain
+separate. This is ideal gaseous metering with common constant gas properties;
+liquid spray/evaporation, needle/rail/tank hardware, calibrated gasoline injection,
+ignition/ECU and the complete powertrain remain unfinished. Parameters are unverified.
+
 ## 2026-09-30: gas piston and finite-energy accumulator
 
 Development resumed at the owner's request. The prior `cebc978` spool checkpoint

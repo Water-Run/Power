@@ -326,3 +326,15 @@ state validation. Measured before/after replay preserves every value/hash. Bound
 rollback/forks and allocation-free stepping apply to the combined gas/fluid histories.
 Asset v16 and JSON/MCP retain geometry and orientation. See
 [GAS_PISTON.md](GAS_PISTON.md) for thermodynamics, scope and evidence.
+
+## Cycle fuel metering
+
+Finite tracked gas rails and receivers use the existing conservative orifice
+transfers. A per-cycle controller latches requested fuel mass in a forward crank
+window. A fuel-rate ceiling scales the same mass, constituent and enthalpy flux;
+accepted Heun transfers update complete quota/delivery history. Chemical energy
+moves internally and remains separate from reaction heat and external boundaries.
+Reversal does not reset an observed quota. Histories belong to each simulation,
+including speculative clutch intervals, cancellation and forks. Timing travel and
+state counts remain bounded; warm stepping allocates no managed memory. Asset v17
+and JSON/MCP retain nozzle, timing and dose. See [FUEL_METERING.md](FUEL_METERING.md).

@@ -48,7 +48,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
         ["state_of_charge"] = Field.StateOfCharge, ["charge"] = Field.Charge, ["terminal_voltage"] = Field.TerminalVoltage,
         ["polarization_voltage"] = Field.PolarizationVoltage, ["battery_current"] = Field.BatteryCurrent,
         ["integral_duty"] = Field.IntegralDuty, ["command_duty"] = Field.CommandDuty,
-        ["displacement"] = Field.Displacement, ["linear_speed"] = Field.LinearSpeed, ["force"] = Field.Force,
+        ["displacement"] = Field.Displacement, ["linear_speed"] = Field.LinearSpeed, ["force"] = Field.Force, ["requested_fuel_dose"] = Field.RequestedFuelDose, ["delivered_fuel_dose"] = Field.DeliveredFuelDose, ["total_fuel_delivered"] = Field.TotalFuelDelivered,
         ["hydraulic_power"] = Field.HydraulicPower, ["volume_flow"] = Field.VolumeFlow, ["hydraulic_volume_in"] = Field.HydraulicVolumeIn,
         ["hydraulic_volume_residual"] = Field.HydraulicVolumeResidual, ["hydraulic_work"] = Field.HydraulicWork,
         ["clamp_force"] = Field.ClampForce, ["static_capacity"] = Field.StaticCapacity, ["sliding_capacity"] = Field.SlidingCapacity,
@@ -174,7 +174,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 "torque_converter" => ComponentKind.TorqueConverter, "shaft" => ComponentKind.Shaft, "dc_motor" => ComponentKind.DcMotor,
                 "torque_source" => ComponentKind.TorqueSource, "thermal_link" => ComponentKind.ThermalLink,
                 "sealed_cylinder" => ComponentKind.SealedCylinder,
-                "gas_orifice" => ComponentKind.GasOrifice, "gas_heat_link" => ComponentKind.GasHeatLink,
+                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink,
                 "gas_cylinder" => ComponentKind.GasCylinder, "gas_piston" => ComponentKind.GasPiston, "premixed_combustion" => ComponentKind.PremixedCombustion,
                 "clutch" => ComponentKind.Clutch,
                 "ideal_gear" => ComponentKind.IdealGear, "planetary_gear" => ComponentKind.PlanetaryGear,
@@ -186,6 +186,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             else if (kind is ComponentKind.PressureController or ComponentKind.PressureDutyController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if (kind == ComponentKind.BatteryMotor) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"], "heat_node");
             else if (kind == ComponentKind.ResistiveLoad) Object(c, ["id", "kind", "node_a", "initial_input", "parameters"], "input_channel", "heat_node");
+            else if (kind == ComponentKind.GasFuelInjector) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"]);
             else if (kind is ComponentKind.HydraulicPiston or ComponentKind.GasPiston) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind == ComponentKind.PistonClutch) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
             else if (kind == ComponentKind.HydraulicPump) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
@@ -214,6 +215,13 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 return result;
             }
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
+            if (kind == ComponentKind.GasFuelInjector)
+            {
+                Object(parameters, ["area", "discharge_coefficient", "crank_node", "cycle_angle", "start_angle", "duration_angle", "maximum_dose"]);
+                return result with { Area = Quantity(parameters.GetProperty("area")), DischargeCoefficient = Number(parameters.GetProperty("discharge_coefficient")), FuelInjector = new()
+                { CrankNode = Id(parameters, "crank_node"), CycleAngle = Quantity(parameters.GetProperty("cycle_angle")), StartAngle = Quantity(parameters.GetProperty("start_angle")),
+                    DurationAngle = Quantity(parameters.GetProperty("duration_angle")), MaximumDose = Quantity(parameters.GetProperty("maximum_dose")) } };
+            }
             if (kind == ComponentKind.GasPiston)
             {
                 Object(parameters, ["area", "reference_volume", "reference_position", "reference_pressure"], "compression_direction");

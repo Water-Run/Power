@@ -4,9 +4,27 @@
 
 CLI 的 `export` 命令和 MCP 的 `export_model_asset` 使用同一个编码器。Unity `ScriptedImporter` 把文件导入为 `PowerModelAsset`，仅序列化数据字节；运行时解码后重新编译模型，不加载任意代码或预存 LU 分解。默认资产由 `tools/Build.cs` 生成，可从 JSON 重建。
 
-## Current version 16 and retained readers
+## Current version 17 and retained readers
 
-The encoder writes `power.asset.v16`; versions 1 through 16 remain readable. Its
+The encoder writes `power.asset.v17`; versions 1 through 17 remain readable. Its
+28 int32 counts occupy 112 bytes; the header is `190 + UTF-8 name length` bytes.
+An injector count follows the v16 gas-piston count. After gas-piston geometry,
+each injector record occupies 56 bytes: component-table index int32, timing crank
+ID uint32, then cycle/start/duration angles and maximum dose as four quantities.
+Its nozzle area/coefficient also use the existing 36-byte gas-orifice record.
+The base input quantity carries kg per cycle, rather than an opening fraction.
+
+Kind 29 is `gas_fuel_injector`. Fields 63-65 are requested cycle dose, delivered
+cycle dose and cumulative delivered fuel in kg. Existing IDs remain fixed. These
+models add fingerprint tag 19, retaining crank ID, window and dose limit. Typed
+complete coverage, bounded counts/length, digest, units and compatible finite
+ports are required. Forged v16 downgrades reject injectors. Authentic v16 gas
+accumulator assets retain digest/fingerprint and same-runtime upgraded replay.
+See [FUEL_METERING.md](FUEL_METERING.md).
+
+## Retained version 16
+
+Version 16's
 27 int32 counts occupy 108 bytes; the header is `186 + UTF-8 name length` bytes.
 The linear-gas-piston count follows the v15 spool count. After spool geometry,
 each gas-piston record occupies 56 bytes: component-table index int32, compression

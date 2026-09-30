@@ -47,7 +47,7 @@ internal sealed class GasNetwork
         var links = new List<int>();
         for (int i = 0; i < model.ComponentCount; ++i)
         {
-            if (model.Components[i].Kind == ComponentKind.GasOrifice) orifices.Add(i);
+            if (model.Components[i].Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector) orifices.Add(i);
             else if (model.Components[i].Kind == ComponentKind.GasHeatLink) links.Add(i);
         }
         OrificeComponent = orifices.ToArray();
@@ -83,10 +83,11 @@ internal sealed class GasNetwork
 }
 
 /// <summary>Rates produced by one evaluation of the gas network, all in SI per second.</summary>
-internal struct GasRates(int gases, int thermal, int mixtures)
+internal struct GasRates(int gases, int thermal, int mixtures, int injectors)
 {
     internal readonly double[] Mass = new double[gases], Energy = new double[gases], Wall = new double[thermal];
     internal readonly double[] Fuel = new double[mixtures], Air = new double[mixtures], Products = new double[mixtures], Outflow = new double[mixtures];
+    internal readonly double[] InjectorFuel = new double[injectors];
     internal double ReservoirMass = 0, ReservoirEnthalpy = 0, FuelIn = 0, AirIn = 0, ChemicalIn = 0;
 
     internal void Clear()
@@ -94,6 +95,7 @@ internal struct GasRates(int gases, int thermal, int mixtures)
         Array.Clear(Mass, 0, Mass.Length); Array.Clear(Energy, 0, Energy.Length);
         Array.Clear(Wall, 0, Wall.Length);
         Array.Clear(Fuel, 0, Fuel.Length); Array.Clear(Air, 0, Air.Length); Array.Clear(Products, 0, Products.Length); Array.Clear(Outflow, 0, Outflow.Length);
+        Array.Clear(InjectorFuel, 0, InjectorFuel.Length);
         ReservoirMass = 0; ReservoirEnthalpy = 0; FuelIn = 0; AirIn = 0; ChemicalIn = 0;
     }
 }
@@ -119,7 +121,7 @@ internal sealed class GasSolver
     private readonly CompiledModel _model;
     private readonly GasNetwork _network;
     private GasRates _first, _second;
-    private readonly double[] _mass, _energy, _volume, _opening, _fuel, _air, _products;
+    private readonly double[] _mass, _energy, _volume, _opening, _fuel, _air, _products, _injectorCaps;
     internal readonly double[] WallHeat;
     internal double ReservoirMass, ReservoirEnthalpy;
 
@@ -127,11 +129,11 @@ internal sealed class GasSolver
     {
         _model = model; _network = model.Gas!;
         int gases = model.GasCount, thermal = model.ThermalCount;
-        _first = new(gases, thermal, model.HasPremixedGas ? gases : 0); _second = new(gases, thermal, model.HasPremixedGas ? gases : 0);
+        _first = new(gases, thermal, model.HasPremixedGas ? gases : 0, model.FuelInjectors.Length); _second = new(gases, thermal, model.HasPremixedGas ? gases : 0, model.FuelInjectors.Length);
         _fuel = new double[_first.Fuel.Length]; _air = new double[_fuel.Length]; _products = new double[_fuel.Length];
         _mass = new double[gases]; _energy = new double[gases];
         _volume = (double[])_network.Volume.Clone();
-        _opening = new double[model.ComponentCount];
+        _opening = new double[model.ComponentCount]; _injectorCaps = new double[model.FuelInjectors.Length];
         WallHeat = new double[thermal];
     }
 
@@ -156,6 +158,14 @@ internal sealed class GasSolver
             double temperatureB = b < 0 ? c.P3 : Temperature(b, mass, energy);
             if (!_network.Restriction[k].TryEvaluate(composition, Pressure(a, energy), Temperature(a, mass, energy),
                     pressureB, temperatureB, _opening[component], out var flow)) return false;
+            int injectorSlot = _model.InjectorByComponent[component];
+            if (injectorSlot >= 0)
+            {
+                double fraction = fuel[a] / mass[a];
+                double fuelFlow = Math.Max(0, flow.MassFlowKilogramsPerSecond) * fraction;
+                double scale = flow.MassFlowKilogramsPerSecond <= 0 || fraction == 0 ? 0 : fuelFlow <= _injectorCaps[injectorSlot] ? 1 : _injectorCaps[injectorSlot] / fuelFlow;
+                flow = new(flow.MassFlowKilogramsPerSecond * scale, flow.EnthalpyFlowWatts * scale, flow.Choked);
+            }
             // At equal pressure the nozzle derivative is singular. Limit each stage's transfer
             // to the pair's equal-pressure energy so a resting pair cannot oscillate across it.
             // Apply the same factor to mass and upstream enthalpy to preserve both ledgers.
@@ -175,6 +185,7 @@ internal sealed class GasSolver
                 else if (b >= 0) { f = fuel[b] / mass[b]; af = air[b] / mass[b]; pf = products[b] / mass[b]; rates.Outflow[b] -= mdot; }
                 else { var fractions = _model.ReservoirFractions[component]!; f = fractions.Fuel; af = fractions.FreshAir; pf = 1 - (f + af); }
                 double fuelFlow = mdot * f, airFlow = mdot * af, productFlow = mdot * pf;
+                if (injectorSlot >= 0) rates.InjectorFuel[injectorSlot] = fuelFlow;
                 rates.Fuel[a] -= fuelFlow; rates.Air[a] -= airFlow; rates.Products[a] -= productFlow;
                 if (b < 0)
                 {
@@ -217,11 +228,16 @@ internal sealed class GasSolver
     /// Advance the gas states across one whole tick. On success <see cref="WallHeat"/> holds the joules
     /// delivered to each thermal node and the reservoir fields hold the net mass and enthalpy taken in.
     /// </summary>
-    internal bool Advance(double[] mass, double[] energy, double[] wallTemperature, double[] inputs, double[] dynamics, double dt, MixtureState? mixture)
+    internal bool Advance(double[] mass, double[] energy, double[] wallTemperature, double[] inputs, double[] dynamics, double dt, MixtureState? mixture, FuelInjectorState? injectors = null)
     {
         if (_model.HasMovingGas)
             for (int i = 0; i < _volume.Length; ++i) _volume[i] = _network.VolumeAt(i, dynamics);
-        foreach (int component in _network.OrificeComponent) _opening[component] = _network.Opening(component, dynamics, inputs);
+        foreach (int component in _network.OrificeComponent)
+        {
+            int slot = _model.InjectorByComponent[component];
+            if (slot >= 0) { if (!injectors!.Prepare(slot, _model.FuelInjectors[slot], dynamics, inputs[component], dt, out _opening[component], out _injectorCaps[slot])) return false; }
+            else _opening[component] = _network.Opening(component, dynamics, inputs);
+        }
         Array.Clear(WallHeat, 0, WallHeat.Length);
         ReservoirMass = 0; ReservoirEnthalpy = 0;
         double[] fuel = mixture?.Fuel ?? _fuel, air = mixture?.Air ?? _air, products = mixture?.Products ?? _products;
@@ -267,6 +283,9 @@ internal sealed class GasSolver
                 if (fuel[i] < 0 || air[i] < 0 || products[i] < 0 || !Numeric.Finite(fuel[i] + air[i] + products[i])) return false;
                 if (_network.Mixtures[i] is not null) mass[i] = fuel[i] + air[i] + products[i];
             }
+            if (injectors is not null)
+                for (int i = 0; i < _model.FuelInjectors.Length; ++i)
+                    if (!injectors.Accept(i, .5 * h * (_first.InjectorFuel[i] + _second.InjectorFuel[i]))) return false;
             if (mixture is not null)
             {
                 Numeric.Accumulate(.5 * h * (_first.FuelIn + _second.FuelIn), ref mixture.FuelIn, ref mixture.FuelInCorrection);

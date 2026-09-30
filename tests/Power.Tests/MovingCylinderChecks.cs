@@ -211,7 +211,7 @@ internal static class MovingCylinderChecks
         var a = asset.CreatePlayback(); var b = decoded.CreatePlayback(); Ok(a.Advance(100_000_000)); Ok(b.Advance(100_000_000));
         Require(a.ReadSnapshot(new Scalar[a.Model.OutputCount]) == b.ReadSnapshot(new Scalar[b.Model.OutputCount]));
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int extension = counts + 108 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36;
+        int extension = counts + 112 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36;
         var forged = (byte[])bytes.Clone(); BinaryPrimitives.WriteInt32LittleEndian(forged.AsSpan(extension), 1);
         SHA256.HashData(forged.AsSpan(0, forged.Length - 32)).CopyTo(forged, forged.Length - 32);
         Throws<AssetFormatException>(() => AssetCodec.Decode(forged));
@@ -228,7 +228,7 @@ internal static class MovingCylinderChecks
         var mixedDecoded = AssetCodec.Decode(mixedBytes);
         Require(mixedDecoded.Components.SequenceEqual(mixed.Components) && mixedDecoded.Model.Fingerprint == mixed.Model.Fingerprint);
         int mixedCounts = 78 + Encoding.UTF8.GetByteCount(mixed.Name);
-        int movingStart = mixedCounts + 108 + 44 * mixed.Nodes.Count + 156 * mixed.Components.Count + 116 + 24 * 2 + 36;
+        int movingStart = mixedCounts + 112 + 44 * mixed.Nodes.Count + 156 * mixed.Components.Count + 116 + 24 * 2 + 36;
         void RejectBytes(byte[] data)
         {
             SHA256.HashData(data.AsSpan(0, data.Length - 32)).CopyTo(data, data.Length - 32);
@@ -238,7 +238,7 @@ internal static class MovingCylinderChecks
         var negative = (byte[])mixedBytes.Clone(); BinaryPrimitives.WriteInt32LittleEndian(negative.AsSpan(mixedCounts + 28), -1); RejectBytes(negative);
         var missing = mixedBytes.Take(movingStart).Concat(mixedBytes.Skip(movingStart + 72)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(mixedCounts + 28), 1); RejectBytes(missing);
-        var downVersion = mixedBytes.Take(mixedCounts + 28).Concat(mixedBytes.Skip(mixedCounts + 108).Take(movingStart - mixedCounts - 80))
+        var downVersion = mixedBytes.Take(mixedCounts + 28).Concat(mixedBytes.Skip(mixedCounts + 112).Take(movingStart - mixedCounts - 80))
             .Concat(mixedBytes.Skip(movingStart + 144)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downVersion.AsSpan(8), 3); RejectBytes(downVersion);
         byte[] v3Bytes = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "gas-network-v3.powerasset"));

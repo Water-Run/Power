@@ -41,6 +41,8 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Compile Include="../Power.Tests/MovingCylinderChecks.cs" Link="MovingCylinderChecks.cs" />
     <Compile Include="../Power.Tests/ValveTimingChecks.cs" Link="ValveTimingChecks.cs" />
     <Compile Include="../Power.Tests/CombustionChecks.cs" Link="CombustionChecks.cs" />
+    <Compile Include="../Power.Tests/FuelInjectorChecks.cs" Link="FuelInjectorChecks.cs" />
+    <Compile Include="../Power.Tests/FuelInjectorAssetChecks.cs" Link="FuelInjectorAssetChecks.cs" />
     <Compile Include="../Power.Tests/CombustionAssetChecks.cs" Link="CombustionAssetChecks.cs" />
     <None Include="../Power.Tests/Fixtures/*.powerasset" Link="Fixtures/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

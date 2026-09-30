@@ -7,11 +7,12 @@ namespace Power.Core;
 /// <summary>Independent state. Successful stepping and snapshot reads allocate no managed memory.</summary>
 public sealed class Simulation
 {
-    private sealed class State(int dynamics, int thermal, int components, int gases, MixtureState? mixture, int clutches, int gears, int converters, int hydraulicNodes, int hydraulicComponents, int pumps, int controllers, int linearSprings)
+    private sealed class State(int dynamics, int thermal, int components, int gases, MixtureState? mixture, int clutches, int gears, int converters, int hydraulicNodes, int hydraulicComponents, int pumps, int controllers, int linearSprings, int injectors)
     {
         internal readonly double[] X = new double[dynamics], Temperature = new double[thermal], Inputs = new double[components];
         internal readonly double[] Mass = new double[gases], Energy = new double[gases];
         internal readonly MixtureState? Mixture = mixture;
+        internal readonly FuelInjectorState? Injectors = injectors == 0 ? null : new(injectors);
         internal readonly ClutchState? Clutches = clutches == 0 ? null : new(clutches);
         internal readonly HydraulicState? Hydraulic = hydraulicNodes == 0 ? null : new(hydraulicNodes, hydraulicComponents, pumps);
         internal readonly ConverterState? Converters = converters == 0 ? null : new(converters);
@@ -26,7 +27,7 @@ public sealed class Simulation
             Array.Copy(other.X, X, X.Length); Array.Copy(other.Temperature, Temperature, Temperature.Length);
             Array.Copy(other.Inputs, Inputs, Inputs.Length);
             Array.Copy(other.Mass, Mass, Mass.Length); Array.Copy(other.Energy, Energy, Energy.Length);
-            Mixture?.CopyFrom(other.Mixture!);
+            Mixture?.CopyFrom(other.Mixture!); Injectors?.CopyFrom(other.Injectors!);
             Clutches?.CopyFrom(other.Clutches!);
             Converters?.CopyFrom(other.Converters!); Hydraulic?.CopyFrom(other.Hydraulic!);
             Controllers?.CopyFrom(other.Controllers!);
@@ -68,7 +69,7 @@ public sealed class Simulation
         if (model.Gas is not null) _gasSolver = new(model);
         if (model.Burners.Any(b => b is not null)) _combustion = new(model);
         State CreateState() => new(model.DynamicCount, model.ThermalCount, model.ComponentCount, model.GasCount,
-            model.HasPremixedGas ? new(model) : null, model.ClutchComponents.Length, model.GearComponents.Length, model.ConverterComponents.Length, model.HydraulicCount, model.HydraulicComponents.Length, model.PumpComponents.Length, model.PressureControllers.Length, model.LinearSpringCount);
+            model.HasPremixedGas ? new(model) : null, model.ClutchComponents.Length, model.GearComponents.Length, model.ConverterComponents.Length, model.HydraulicCount, model.HydraulicComponents.Length, model.PumpComponents.Length, model.PressureControllers.Length, model.LinearSpringCount, model.FuelInjectors.Length);
         _state = CreateState(); _scratch = CreateState();
         if (model.HasClutches)
         {
@@ -220,7 +221,7 @@ public sealed class Simulation
             s.Inputs[controller.Motor] = result.CommandVoltage;
         }
         Array.Clear(s.GearTorque, 0, s.GearTorque.Length);
-        s.Converters?.BeginTick(); s.Hydraulic?.BeginTick();
+        s.Injectors?.BeginTick(); s.Converters?.BeginTick(); s.Hydraulic?.BeginTick();
         if (_clutches is null)
         {
             if (!Interval(s, _model.Dt, cancellation, out _)) return false;
@@ -264,6 +265,7 @@ public sealed class Simulation
         }
         if (s.Converters is not null && !s.Converters.EndTick(_model.Dt)) return false;
         if (s.Hydraulic is not null && !s.Hydraulic.EndTick(_model.Dt)) return false;
+        if (s.Injectors is not null && !s.Injectors.EndTick(_model.Dt)) return false;
         s.Time += _model.StepNanoseconds;
         return true;
     }
@@ -282,11 +284,11 @@ public sealed class Simulation
         }
         if (_model.HasCoupledHydraulics) _converters!.PrepareHydraulics(s.Hydraulic!, s.Inputs, dt);
         if (!_model.HasCoupledHydraulics && _hydraulics is not null && !_hydraulics.Advance(s.Hydraulic!, s.Inputs, dt, cancellation)) return false;
-        bool splitGas = _model.HasMovingGas || _model.HasValveTiming || _combustion is not null;
+        bool splitGas = _model.HasFuelInjectors || _model.HasMovingGas || _model.HasValveTiming || _combustion is not null;
         double intake = 0, enthalpy = 0;
         // Symmetric flow / adiabatic crank-work / flow split. Wall temperatures remain
         // explicit over the outer tick, so wall-coupled models retain first-order accuracy.
-        if (splitGas && !_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture)) return false;
+        if (splitGas && !_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture, s.Injectors)) return false;
         var force = _electrical?.Force ?? _model.ConstantForce;
         for (int i = 0; i < _mid.Length; ++i) _mid[i] = s.X[i] + 0.5 * dt * force[i];
         for (int i = 0; i < _model.ComponentCount; ++i)
@@ -321,9 +323,11 @@ public sealed class Simulation
             if (!_combustion.Resolve(s.X, _mid, s.Energy, dt)) return false;
             for (int g = 0; g < s.Energy.Length; ++g) s.Energy[g] += .5 * _combustion.Heat[g];
         }
+        foreach (var injector in _model.FuelInjectors)
+            if (Math.Abs(2 * (_mid[injector.Crank] - s.X[injector.Crank])) > injector.Profile.MaximumTravelRadians) return false;
         for (int i = 0; i < _model.Valves.Length; ++i)
             if (s.Inputs[i] != 0 && _model.Valves[i] is { } valve && !valve.Resolved(s.X, _mid, dt)) return false;
-        if (_gasSolver is not null && !splitGas && !_gasSolver.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt, s.Mixture)) return false;
+        if (_gasSolver is not null && !splitGas && !_gasSolver.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt, s.Mixture, s.Injectors)) return false;
         foreach (var n in _model.Nodes)
             if (n.Domain == Domain.Thermal)
                 _temperature[n.Index] = n.Storage * s.Temperature[n.Index] + _model.AmbientForce[n.Index] * (dt / _model.Dt);
@@ -409,7 +413,7 @@ public sealed class Simulation
         }
         if (splitGas)
         {
-            if (!_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture)) return false;
+            if (!_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture, s.Injectors)) return false;
             for (int w = 0; w < _temperature.Length; ++w) _temperature[w] += _gasSolver.WallHeat[w];
             intake += _gasSolver.ReservoirMass; enthalpy += _gasSolver.ReservoirEnthalpy;
         }
@@ -509,6 +513,7 @@ public sealed class Simulation
         foreach (var battery in _model.Batteries)
             if (!BatteryCircuit.Evaluate(_model, battery, s.X, s.Inputs, out _, out _)) return false;
         if (s.Controllers is not null && !s.Controllers.Finite()) return false;
+        if (s.Injectors is not null && !s.Injectors.Finite()) return false;
         for (int i = 0; i < s.DampingHeat.Length; ++i)
             if (!Numeric.Finite(s.DampingHeat[i]) || !Numeric.Finite(s.DampingCorrection[i])) return false;
         if (s.Hydraulic is not null)
@@ -610,6 +615,7 @@ public sealed class Simulation
         if (s.Converters is not null) h = s.Converters.Hash(h);
         if (s.Hydraulic is not null) h = s.Hydraulic.Hash(h);
         if (s.Controllers is not null) h = s.Controllers.Hash(h);
+        if (s.Injectors is not null) h = s.Injectors.Hash(h);
         foreach (double loss in s.DampingHeat) h = Numeric.Hash(h, loss);
         foreach (double correction in s.DampingCorrection) h = Numeric.Hash(h, correction);
         if (_model.GasCount == 0) return h; // Preserve every pre-gas state hash exactly.
@@ -726,10 +732,14 @@ public sealed class Simulation
                     case Field.FuelResidual: value = fuelResidual; break;
                     case Field.FreshAirResidual: value = airResidual; break;
                     case Field.MassFlow:
+                        if (_model.InjectorByComponent[b.Index] >= 0) { value = _state.Injectors!.TickFuel[_model.InjectorByComponent[b.Index]]; break; }
                         if (!TryOrificeMassFlow(_state, b.Index, out value))
                             throw new InvalidOperationException("Invalid gas flow in a committed state.");
                         break;
-                    case Field.Opening: value = _model.SpoolValves[b.Index] is { } metering ? metering.Law.Opening(_state.X[metering.Position]) : _model.Gas!.Opening(b.Index, _state.X, _state.Inputs); break;
+                    case Field.Opening: value = _model.InjectorByComponent[b.Index] >= 0 ? _state.Injectors!.Opening(_model.InjectorByComponent[b.Index], _model.FuelInjectors[_model.InjectorByComponent[b.Index]], _state.X) : _model.SpoolValves[b.Index] is { } metering ? metering.Law.Opening(_state.X[metering.Position]) : _model.Gas!.Opening(b.Index, _state.X, _state.Inputs); break;
+                    case Field.RequestedFuelDose: value = _state.Injectors!.Target[_model.InjectorByComponent[b.Index]]; break;
+                    case Field.DeliveredFuelDose: value = _state.Injectors!.Delivered[_model.InjectorByComponent[b.Index]]; break;
+                    case Field.TotalFuelDelivered: value = _state.Injectors!.Total[_model.InjectorByComponent[b.Index]]; break;
                     case Field.SampledPressure: value = _state.Controllers!.Pressure[_model.Components[b.Index].Index]; break;
                     case Field.PressureError: value = _state.Controllers!.Error[_model.Components[b.Index].Index]; break;
                     case Field.IntegralVoltage: value = _state.Controllers!.Integral[_model.Components[b.Index].Index]; break;
