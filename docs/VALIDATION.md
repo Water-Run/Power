@@ -92,7 +92,7 @@ dotnet run --file tools/Build.cs -- verify
 - All **17** laboratories pass JSON Schema validation. Separate audits each reject
   **12** malformed piston, battery/duty and voltage-control cases with jsonschema
   4.25.1. The reports are `piston-schema-audit.json`, `battery-schema-audit.json` and
-  `pressure-schema-audit.json` under `artifacts/reports`.
+  `pressure-controller-schema-audit.json` under `artifacts/reports`.
 
 [Hydraulic pistons](HYDRAULIC_PISTON.md) add explicit mass, displacement, chamber
 swept volume, spring/damping, pad clearance and compliant stroke ends. Contact
