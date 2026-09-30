@@ -4,9 +4,26 @@
 
 CLI 的 `export` 命令和 MCP 的 `export_model_asset` 使用同一个编码器。Unity `ScriptedImporter` 把文件导入为 `PowerModelAsset`，仅序列化数据字节；运行时解码后重新编译模型，不加载任意代码或预存 LU 分解。默认资产由 `tools/Build.cs` 生成，可从 JSON 重建。
 
-## Current version 15 and retained readers
+## Current version 16 and retained readers
 
-The encoder writes `power.asset.v15`; versions 1 through 15 remain readable. Its
+The encoder writes `power.asset.v16`; versions 1 through 16 remain readable. Its
+27 int32 counts occupy 108 bytes; the header is `186 + UTF-8 name length` bytes.
+The linear-gas-piston count follows the v15 spool count. After spool geometry,
+each gas-piston record occupies 56 bytes: component-table index int32, compression
+direction int32 (+1 or -1), and four quantities for area, reference volume,
+reference position and absolute reference pressure. Each quantity is double plus
+int32 unit. The gas node uses the existing composition record and omits fixed storage.
+
+Kind 28 is `gas_piston`. No existing domain/unit/output IDs change. These models add
+fingerprint tag 18, including geometry/reference values and orientation. Typed
+complete coverage, bounded counts/length, digest and physical compilation remain
+required; forged v15 downgrades reject gas pistons. The authentic v15 spool fixture
+retains its digest, fingerprint, physical references and same-runtime upgraded
+replay. See [GAS_PISTON.md](GAS_PISTON.md).
+
+## Retained version 15
+
+Version 15's
 26 int32 counts occupy 104 bytes; the header is `182 + UTF-8 name length` bytes.
 One spool-valve count follows the v14 piston/contact counts. After those extension
 tables, each spool record occupies 32 bytes: component-table index int32, referenced

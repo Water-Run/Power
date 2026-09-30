@@ -21,7 +21,7 @@ public sealed class CompiledModel
     public int ComponentCount => Components.Length;
     public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length;
     public int OutputCount => Outputs.Length;
-    public string Fidelity => HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
+    public string Fidelity => HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
         : HasPremixedGas ? "premixed_gas_transport"
         : HasValveTiming ? "crank_timed_gas_exchange"
         : GasCylinders.Any(c => c is not null) ? "moving_cylinder_gas_exchange"
@@ -34,6 +34,9 @@ public sealed class CompiledModel
     internal int LinearSpringCount { get; }
     internal CylinderPhysics?[] Cylinders { get; }
     internal GasCylinderPhysics?[] GasCylinders { get; }
+    internal GasPiston?[] GasPistons { get; }
+    internal int[] GasPistonComponents { get; }
+    public bool HasGasPistons => GasPistonComponents.Length != 0;
     internal int[] GasCylinderByNode { get; }
     internal bool HasMovingGas { get; }
     internal TimedValve?[] Valves { get; }
@@ -183,22 +186,34 @@ public sealed class CompiledModel
         ElectricalComponents = Enumerable.Range(0, cs.Length).Where(i => cs[i].Kind is ComponentKind.BatteryMotor or ComponentKind.ResistiveLoad).ToArray();
         HydraulicComponents = Enumerable.Range(0, cs.Length).Where(i => cs[i].Kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve).ToArray();
         HydraulicLaws = new HydraulicRestriction?[cs.Length]; HydraulicActuators = new HydraulicActuator?[cs.Length];
-        GasCylinders = new GasCylinderPhysics?[cs.Length];
+        GasCylinders = new GasCylinderPhysics?[cs.Length]; GasPistons = new GasPiston?[cs.Length];
+        GasPistonComponents = Enumerable.Range(0, cs.Length).Where(i => cs[i].Kind == ComponentKind.GasPiston).ToArray();
         GasCylinderByNode = new int[ns.Length]; Array.Fill(GasCylinderByNode, -1);
         for (int i = 0; i < cs.Length; ++i)
         {
             var c = cs[i];
             Require((c.Kind == ComponentKind.GasCylinder) == (c.MovingCylinder is not null),
                 DiagnosticCode.Schema, c.Id, "moving_cylinder", "Moving-cylinder geometry is required only for gas cylinders.");
-            if (c.Kind != ComponentKind.GasCylinder) continue;
+            Require((c.Kind == ComponentKind.GasPiston) == (c.GasPiston is not null), DiagnosticCode.Schema, c.Id, "gas_piston", "Linear gas geometry applies only to gas piston components.");
+            bool linear = c.Kind == ComponentKind.GasPiston;
+            if (!linear && c.Kind != ComponentKind.GasCylinder) continue;
             int a = Array.FindIndex(ns, n => n.Id == c.NodeA), b = Array.FindIndex(ns, n => n.Id == c.NodeB);
-            Require(a >= 0 && ns[a].Domain == Domain.Rotational, DiagnosticCode.Connection, c.Id, "node_a", "A gas cylinder requires a rotational crank.");
+            Require(a >= 0 && ns[a].Domain == (linear ? Domain.Translational : Domain.Rotational), DiagnosticCode.Connection, c.Id, "node_a", "Moving gas geometry requires its declared rotational crank or translational mass.");
             Require(b >= 0 && ns[b].Domain == Domain.Gas && GasCylinderByNode[b] < 0,
                 DiagnosticCode.Connection, c.Id, "node_b", "A gas cylinder requires a gas chamber with exactly one moving-volume owner.");
             Require(ns[b].Storage == default, DiagnosticCode.Schema, ns[b].Id, "storage", "A moving chamber omits storage; its geometry supplies the volume.");
-            GasCylinderByNode[b] = i; GasCylinders[i] = new(c.MovingCylinder!, c.Id);
+            GasCylinderByNode[b] = i;
+            if (linear)
+            {
+                var geometry = c.GasPiston!;
+                double area = Convert(geometry.Area, Unit.SquareMeter, c.Id, "gas_piston.area"), referenceVolume = Convert(geometry.ReferenceVolume, Unit.CubicMeter, c.Id, "gas_piston.reference_volume"),
+                    referencePosition = Convert(geometry.ReferencePosition, Unit.Meter, c.Id, "gas_piston.reference_position"), referencePressure = Convert(geometry.ReferencePressure, Unit.Pascal, c.Id, "gas_piston.reference_pressure");
+                try { GasPistons[i] = new(area, referenceVolume, referencePosition, referencePressure, geometry.CompressionDirection); }
+                catch (ArgumentException error) { throw new ModelCompileException(DiagnosticCode.Range, c.Id, "gas_piston", error.Message); }
+            }
+            else GasCylinders[i] = new(c.MovingCylinder!, c.Id);
         }
-        HasMovingGas = GasCylinders.Any(c => c is not null);
+        HasMovingGas = GasCylinders.Any(c => c is not null) || HasGasPistons;
         Nodes = new GraphNode[ns.Length];
         BatteryByNode = new CompiledBattery?[ns.Length];
         NodeGases = new IdealGas?[ns.Length]; NodeMixtures = new PremixedGas?[ns.Length];
@@ -221,7 +236,8 @@ public sealed class CompiledModel
             if (moving >= 0)
             {
                 var crank = ns[Array.FindIndex(ns, node => node.Id == cs[moving].NodeA)];
-                storage = GasCylinders[moving]!.GeometryAt(Convert(crank.Position, Unit.Radian, crank.Id, "position")).VolumeCubicMeters;
+                storage = GasPistons[moving] is { } linearGas ? linearGas.VolumeAt(Convert(crank.Position, Unit.Meter, crank.Id, "position"))
+                    : GasCylinders[moving]!.GeometryAt(Convert(crank.Position, Unit.Radian, crank.Id, "position")).VolumeCubicMeters;
             }
             else storage = Convert(n.Storage, storageUnit, n.Id, "storage");
             double initial = Convert(n.Initial, initialUnit, n.Id, "initial");
@@ -269,7 +285,7 @@ public sealed class CompiledModel
         {
             var c = cs[i];
             Require(c.Id != 0 && ids.Add(c.Id), DiagnosticCode.Id, c.Id, "id", "IDs must be nonzero and globally unique.");
-            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.HydraulicSpoolValve,
+            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.GasPiston,
                 DiagnosticCode.Schema, c.Id, "kind", "Unknown component kind.");
             Require((c.Kind == ComponentKind.SealedCylinder) == (c.Cylinder is not null),
                 DiagnosticCode.Schema, c.Id, "cylinder", "Cylinder parameters are required only for sealed cylinders.");
@@ -300,7 +316,7 @@ public sealed class CompiledModel
                 DiagnosticCode.Connection, c.Id, "node_c", "Only a planetary gear requires a distinct rotational carrier node.");
             Require((c.Kind == ComponentKind.Clutch) == (c.Friction is not null), DiagnosticCode.Schema, c.Id, "friction", "Friction capacities are required only for clutch components.");
             Require(combustion == (c.Combustion is not null), DiagnosticCode.Schema, c.Id, "combustion", "Burn parameters apply only to premixed combustion components.");
-            bool orifice = c.Kind == ComponentKind.GasOrifice, wall = c.Kind == ComponentKind.GasHeatLink, moving = c.Kind == ComponentKind.GasCylinder;
+            bool orifice = c.Kind == ComponentKind.GasOrifice, wall = c.Kind == ComponentKind.GasHeatLink, moving = c.Kind == ComponentKind.GasCylinder, linearGasPiston = c.Kind == ComponentKind.GasPiston;
             Require(c.ValveTiming is null || orifice, DiagnosticCode.Schema, c.Id, "valve_timing", "Valve timing applies only to gas orifices.");
             if (c.ValveTiming is { } timing)
             {
@@ -327,11 +343,11 @@ public sealed class CompiledModel
             }
             bool pair = c.Kind is ComponentKind.Shaft or ComponentKind.LinearSpring or ComponentKind.ThermalLink || orifice || clutch || gear || converter || liquid;
             bool input = c.Kind is ComponentKind.DcMotor or ComponentKind.TorqueSource or ComponentKind.PressureController or ComponentKind.PressureDutyController or ComponentKind.BatteryMotor or ComponentKind.ForceSource;
-            Domain domain = piston || linearSpring || c.Kind == ComponentKind.ForceSource ? Domain.Translational : c.Kind == ComponentKind.ThermalLink ? Domain.Thermal
+            Domain domain = linearGasPiston || piston || linearSpring || c.Kind == ComponentKind.ForceSource ? Domain.Translational : c.Kind == ComponentKind.ThermalLink ? Domain.Thermal
                 : orifice || wall ? Domain.Gas : liquid || controller ? Domain.Hydraulic : load ? Domain.Battery : Domain.Rotational;
             int a = FindNode(c.NodeA), b = FindNode(c.NodeB), heat = FindNode(c.HeatNode);
             Require(a >= 0 && Nodes[a].Domain == domain, DiagnosticCode.Connection, c.Id, "node_a", "Missing node or wrong domain.");
-            Require(piston ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : batteryMotor ? b >= 0 && Nodes[b].Domain == Domain.Battery : pump ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : moving || combustion ? b >= 0 && Nodes[b].Domain == Domain.Gas
+            Require(piston ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : batteryMotor ? b >= 0 && Nodes[b].Domain == Domain.Battery : pump ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : moving || linearGasPiston || combustion ? b >= 0 && Nodes[b].Domain == Domain.Gas
                          : gear || converter ? b >= 0 && b != a && Nodes[b].Domain == Domain.Rotational
                          : wall ? b >= 0 && Nodes[b].Domain == Domain.Thermal
                          : c.NodeB == 0 || (pair && b >= 0 && b != a && Nodes[b].Domain == domain),
@@ -369,6 +385,11 @@ public sealed class CompiledModel
                         Convert(pistonDefinition.ContactStiffness, Unit.NewtonPerMeter, c.Id, "hydraulic_piston.contact_stiffness")); }
                     catch (ArgumentException error) { throw new ModelCompileException(DiagnosticCode.Range, c.Id, "hydraulic_piston", error.Message); }
                     state = Array.IndexOf(PistonComponents, i);
+                    break;
+                case ComponentKind.GasPiston:
+                    Require(c.Ratio == 1 && c.Area == default && c.Stiffness == default && c.Damping == default && c.RestAngle == default &&
+                        c.Resistance == default && c.Inductance == default && c.Coupling == default && c.InitialCurrent == default && c.Conductance == default && c.AmbientTemperature == default && c.ReservoirPressure == default,
+                        DiagnosticCode.Schema, c.Id, "parameters", "A gas piston accepts only its geometry, translational mass and gas chamber.");
                     break;
                 case ComponentKind.PistonClutch:
                     var pistonClutchDefinition = c.PistonClutch!;
@@ -576,6 +597,11 @@ public sealed class CompiledModel
                     Math.Max(metering.Law.ClosedPositionMeters, metering.Law.FullOpenPositionMeters) <= piston.MaximumPositionMeters,
                     DiagnosticCode.Range, Components[i].Id, "spool_valve", "Closed/full-open positions must lie within the referenced piston's nominal stroke.");
             }
+        foreach (int i in GasPistonComponents)
+        {
+            int piston = Array.FindIndex(Components, c => c.Kind == ComponentKind.HydraulicPiston && c.A == Components[i].A);
+            if (piston >= 0) Require(Math.Min(GasPistons[i]!.VolumeAt(Pistons[piston]!.MinimumPositionMeters), GasPistons[i]!.VolumeAt(Pistons[piston]!.MaximumPositionMeters)) > 0, DiagnosticCode.Range, Components[i].Id, "gas_piston.reference_volume", "Gas volume must remain positive throughout the shared hydraulic piston's nominal stroke.");
+        }
         var channels = new List<ChannelInfo>();
         var outputs = new List<OutputBinding>();
         void Output(uint id, Field field, int index, Unit unit, string quantity, bool component = false)
@@ -771,6 +797,12 @@ public sealed class CompiledModel
                 Output(c.Id, Field.HeatReleased, i, Unit.Joule, "heat_released", true);
                 Output(c.Id, Field.BurnFrontier, i, Unit.Radian, "burn_frontier_angle", true);
             }
+            else if (c.Kind == ComponentKind.GasPiston)
+            {
+                Output(c.Id, Field.Volume, i, Unit.CubicMeter, "linear_gas_volume", true);
+                Output(c.Id, Field.Force, i, Unit.Newton, "gas_force_at_slider", true);
+                Output(c.Id, Field.SourceWork, i, Unit.Joule, "reference_pressure_work", true);
+            }
             else if (c.Kind == ComponentKind.GasCylinder)
             {
                 Output(c.Id, Field.Volume, i, Unit.CubicMeter, "cylinder_volume", true);
@@ -823,8 +855,8 @@ public sealed class CompiledModel
             0, "forcing", "Compiled force overflows binary64.");
         Dynamics = new(matrix); Thermal = new(heatMatrix);
         if (HasGears) Gears = new(this);
-        if (Cylinders.Any(c => c is not null) || HasMovingGas) CylinderCoupling = new(this);
-        if (HasConverters || HasCoupledHydraulics) ConverterCoupling = new(this);
+        if (Cylinders.Any(c => c is not null) || GasCylinders.Any(c => c is not null)) CylinderCoupling = new(this);
+        if (HasConverters || HasCoupledHydraulics || HasGasPistons) ConverterCoupling = new(this);
         if (GasCount > 0) Gas = new(this);
         Fingerprint = ComputeFingerprint();
         _ = CreateSimulation(); // Validate initial energy and derived observables before publishing.
@@ -848,6 +880,7 @@ public sealed class CompiledModel
         if (PressureControllers.Any(c => c.Duty)) h = Numeric.Hash(h, 15UL);
         if (HasPistons || Nodes.Any(n => n.Domain == Domain.Translational)) h = Numeric.Hash(h, 16UL);
         if (HasSpoolValves) h = Numeric.Hash(h, 17UL);
+        if (HasGasPistons) h = Numeric.Hash(h, 18UL);
         h = Numeric.Hash(h, StepNanoseconds);
         h = Numeric.Hash(h, (ulong)NodeCount); h = Numeric.Hash(h, (ulong)ComponentCount);
         foreach (var n in Nodes)
@@ -873,6 +906,8 @@ public sealed class CompiledModel
         foreach (var cylinder in Cylinders)
             if (cylinder is not null)
                 foreach (double parameter in cylinder.Parameters) h = Numeric.Hash(h, parameter);
+        foreach (var piston in GasPistons) if (piston is not null)
+        { h = Numeric.Hash(h, piston.AreaSquareMeters); h = Numeric.Hash(h, piston.ReferenceVolumeCubicMeters); h = Numeric.Hash(h, piston.ReferencePositionMeters); h = Numeric.Hash(h, piston.ReferencePressurePascals); h = Numeric.Hash(h, unchecked((ulong)piston.CompressionDirection)); }
         foreach (var cylinder in GasCylinders)
             if (cylinder is not null)
                 foreach (double parameter in cylinder.Parameters) h = Numeric.Hash(h, parameter);

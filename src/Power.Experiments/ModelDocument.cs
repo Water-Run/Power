@@ -175,7 +175,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 "torque_source" => ComponentKind.TorqueSource, "thermal_link" => ComponentKind.ThermalLink,
                 "sealed_cylinder" => ComponentKind.SealedCylinder,
                 "gas_orifice" => ComponentKind.GasOrifice, "gas_heat_link" => ComponentKind.GasHeatLink,
-                "gas_cylinder" => ComponentKind.GasCylinder, "premixed_combustion" => ComponentKind.PremixedCombustion,
+                "gas_cylinder" => ComponentKind.GasCylinder, "gas_piston" => ComponentKind.GasPiston, "premixed_combustion" => ComponentKind.PremixedCombustion,
                 "clutch" => ComponentKind.Clutch,
                 "ideal_gear" => ComponentKind.IdealGear, "planetary_gear" => ComponentKind.PlanetaryGear,
                 _ => throw new ArgumentException("Unknown component kind.")
@@ -186,7 +186,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             else if (kind is ComponentKind.PressureController or ComponentKind.PressureDutyController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if (kind == ComponentKind.BatteryMotor) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"], "heat_node");
             else if (kind == ComponentKind.ResistiveLoad) Object(c, ["id", "kind", "node_a", "initial_input", "parameters"], "input_channel", "heat_node");
-            else if (kind == ComponentKind.HydraulicPiston) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
+            else if (kind is ComponentKind.HydraulicPiston or ComponentKind.GasPiston) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind == ComponentKind.PistonClutch) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
             else if (kind == ComponentKind.HydraulicPump) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind is ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
@@ -214,6 +214,14 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 return result;
             }
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
+            if (kind == ComponentKind.GasPiston)
+            {
+                Object(parameters, ["area", "reference_volume", "reference_position", "reference_pressure"], "compression_direction");
+                double direction = parameters.TryGetProperty("compression_direction", out var compression) ? Number(compression) : 1;
+                if (direction is not (-1 or 1)) throw new ArgumentException("compression_direction must be -1 or 1.");
+                return result with { GasPiston = new() { Area = Quantity(parameters.GetProperty("area")), ReferenceVolume = Quantity(parameters.GetProperty("reference_volume")),
+                    ReferencePosition = Quantity(parameters.GetProperty("reference_position")), ReferencePressure = Quantity(parameters.GetProperty("reference_pressure")), CompressionDirection = (int)direction } };
+            }
             if (kind == ComponentKind.HydraulicPiston)
             {
                 uint back = Id(parameters, "back_node", true); string[] required = ["front_area", "back_area", "back_node", "minimum_position", "maximum_position", "stop_stiffness", "contact_position", "contact_stiffness"];

@@ -1,5 +1,84 @@
 # 验证记录
 
+## 2026-09-30: gas piston and finite-energy accumulator
+
+Development resumed at the owner's request. The prior `cebc978` spool checkpoint
+passed [Windows, Linux and macOS CI](https://github.com/Water-Run/Power/actions/runs/36695753045);
+each matrix job completed its required serial verification. Downloaded log:
+`artifacts/reports/spool-three-platform-2026-09-30.log`. That evidence covers the
+published spool source, not the new gas-piston increment or actual Unity.
+
+The new required serial command passes on local Windows x64:
+`dotnet run --file tools/Build.cs -- verify`. Results: **234/234** managed checks,
+**183/183** Standard-assembly checks hosted on .NET 10, **22/22** actual MCP groups,
+**16/16** Zig and **6/6** C# ABI checks. All **176** historical values match exactly;
+the source audit finds zero C/C++/Lua files. Release build has zero warnings/errors.
+Log: `artifacts/reports/gas-accumulator-final-2026-09-30.log`.
+
+Eight physical groups cover analytic adiabatic work and its Jacobian, small travel,
+signed/opposed chambers, independent mass/energy RK4 and smooth second-order
+refinement, common gas/fluid motion, a separate finite-wall RK4 reference with
+first-order wall-coupled refinement, moving-volume gas inflow and reservoir enthalpy,
+complete transactions, geometry/units and allocation-free stepping. The inflow
+ledger measured about `1.14e-17 kg` cumulative floating-point residual after repeated
+mass updates; its `1e-16 kg` bound reflects that accumulation. Closing the port
+preserves the accepted mass exactly. No mass or energy correction forces a pass.
+
+Two portable groups retain complete v16 geometry, signed direction, bounded typed
+counts, malformed units, missing/duplicate records and downgrade rejection. The
+authentic v15 spool fixture matches the published checkpoint package byte-for-byte:
+SHA-256 `67b976a27ca0bd7343ca6b024c5bc736e14f48326945da841785ade43b61f14b`,
+fingerprint `28aa0965d248e280`. All original/upgraded event boundaries match within
+the executing runtime. Earlier fixtures and physical fingerprints remain intact.
+
+All **19** laboratory documents pass schema validation. **12** malformed gas-piston
+documents are separately rejected by jsonschema 4.25.1. Positive nominal volume and
+unique geometry ownership remain additional compiler checks. Reports are under
+`artifacts/reports`, including `gas-piston-schema-audit.json`; the existing piston,
+spool, battery/duty and pressure-controller audits also pass all 19 documents.
+
+The six-second `gas-accumulator-pump` model adds a 50-ml gas chamber and a 50-g
+separator to the electric pump, mechanical spool bypass and pressure clutch. Gas
+starts at 200 kPa absolute/300 K, with a declared 100-kPa reference and 0.1-mm
+compliant seating penetration. During the 3-4-s pulse, motor voltage is 6 V and both
+fill/drain paths are explicitly open. Gas internal energy drops **0.6196209894 J**;
+reference-pressure work is **-0.2094578629 J**. After separator kinetic/stop energy
+and damping, net delivery to liquid is **0.4092090634 J**, with **2.094578629 ml**
+of returned swept volume. Filling resumes and the clutch is locked with zero slip
+at the final boundary. These are synthetic results, not OEM calibration.
+
+| Maximum absolute error over all 306 boundaries | Value | Asserted bound |
+|---|---:|---:|
+| Separate pump/fluid/motion/gas/reference/heat account | 6.09e-13 J | 1e-8 J |
+| Whole-model energy | 1.83e-8 J | 1e-6 J |
+| Liquid reference-volume account | 5.19e-19 m3 | 1e-16 m3 |
+| Normalized closed-gas adiabatic invariant | 6.83e-13 J | 1e-8 J |
+
+Every **306** JSON/portable/MCP boundary has identical hashes and values. Fingerprint
+`739f2baba8c669a0`; final Windows/runtime hash `074917dc8e343131`. Reports:
+`artifacts/reports/gas-accumulator-pump.json` and `gas-accumulator-evidence-summary.json`.
+The gas/fluid account explicitly subtracts reference work and the initial stop
+potential; absolute gas internal energy alone is not labeled delivered fluid energy.
+
+### Measured closed-chamber optimization
+
+Closed, unmixed new gas-piston models with no gas transport or heat links retain
+state validation and skip zero-rate integration. Three serial full CLI runs per
+stage include two six-second trajectories (600,000 accepted ticks) and all 306
+boundaries. Baseline times were **2.727 / 2.603 / 2.496 s**; optimized times were
+**2.382 / 2.362 / 2.357 s**. Median cost decreases about **9.3%** on this desktop.
+All three before/after traces match every observable and state hash exactly.
+Steady Step/ReadSnapshot allocation remains **zero managed bytes**. This is local
+measurement, not a portable throughput guarantee. Ports, wall links and constituent
+transport retain their ordinary integration path and independent tests.
+
+Agent 0.19.0/MCP verify thermodynamic discovery, complete export/replay, revisions
+and independent gas/fluid forks. Studio views and Edit/Play tests are prepared in
+C# 9 source. Actual Unity Editor/Play/Mono/IL2CPP/Player and fresh three-platform
+verification of this new increment remain separate. The complete engine,
+transmission, ECU/TCU, calibrated vehicle samples and accepted desktop application
+remain unfinished. All sample boundaries, licensing and provenance are preserved.
+
 ## 2026-09-30: mechanical spool regulator checkpoint
 
 The required serial command passes on Windows x64, SDK 10.0.401/runtime 10.0.12:

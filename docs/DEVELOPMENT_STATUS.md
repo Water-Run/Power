@@ -17,21 +17,21 @@ and an accepted Unity desktop application remain unfinished.
 | Clutches | Static/sliding reactions, signed ratios, ground brakes, capture/reversal events and thermal routing | Exact reference pair, changing-load refinement, coupled motor/cylinder checks, complete rollback |
 | Gears | Signed ideal gears and three-port planetaries, permanent constraints, reactions and phase preservation | Exact references, reflected inertia, analytic shift capture/heat, conservation and convergence |
 | Converter | Four explicit signed maps, stationary-stator reaction, fluid heat and separate lockup | Passive interpolation, analytic coupling/stall, reverse/coast/counterrotation, shared ports, joint cylinder/clutch/gear solving |
-| Hydraulics | Compliant chambers, restrictions, pumps/losses, electric supply, relief, dynamic pistons, pad contact and pressure/contact-actuated clutches | Joint mechanical/fluid power, analytic feedback and second-order smooth refinement, volume/energy ledgers and complete rollback |
+| Hydraulics | Compliant chambers, restrictions, pumps/losses, electric supply, relief, dynamic pistons, finite-energy gas accumulators, metered spools and pressure/contact-actuated clutches | Joint mechanical/fluid power, analytic feedback and second-order smooth refinement, volume/energy ledgers and complete rollback |
 | Electrical supply | Finite-charge affine-OCV battery, series/polarization losses, averaged duty motors and switched resistive accessories | Analytic/RK4/refinement, regeneration, charge limits and shared conservation; chemistry/BMS/calibration remain open |
 | Controls | Sampled hydraulic-pressure PI feedback, held bounded motor voltage/duty and conditional integration | Exact integer-clock rules, sampled/RK4 plant reference, transactional memory and ownership; complete ECU/TCU remains open |
-| Integration | Eighteen JSON/CLI laboratories and seventeen discoverable MCP examples | Complete battery and piston portable/MCP replay; parameters remain synthetic |
-| Assets | v15 retains spool metering, piston/contact, battery/RC and duty control | Bounded tables, malformed-record rejection, authentic v1–v14 fixtures and unchanged prior fingerprints |
+| Integration | Nineteen JSON/CLI laboratories and eighteen discoverable MCP examples | Complete gas/fluid, battery and piston portable/MCP replay; parameters remain synthetic |
+| Assets | v16 retains finite-energy gas geometry, spool/piston actuation and supply/control | Bounded tables, malformed-record rejection, authentic v1–v15 fixtures and unchanged prior fingerprints |
 | Agent interface | Twelve tools with schemas, compact evidence, revisions, branches and actionable errors | Actual child-server integration; tool success, passing KPIs and calibration remain distinct |
 | Native archive | Zig 0.15.2 prototypes and preserved binary ABI | Historical reference, separate from the active C#/Unity stack; source audit and baseline checks retained |
 
 The required serial command is `dotnet run --file tools/Build.cs -- verify`. This
 Windows workspace uses SDK 10.0.401, permitted by the pinned SDK's patch roll-forward.
-The resumed checkpoint passes **221/221 managed checks, 173/173 Standard-assembly checks
-and 21/21 MCP groups**, plus **16/16 Zig** and **6/6 C# ABI** tests. All **176** historical baseline values
+The resumed checkpoint passes **234/234 managed checks, 183/183 Standard-assembly checks
+and 22/22 MCP groups**, plus **16/16 Zig** and **6/6 C# ABI** tests. All **176** historical baseline values
 match exactly. The Standard assemblies run under .NET 10, which does not establish
 Unity runtime compatibility. See [VALIDATION.md](VALIDATION.md) and
-`artifacts/reports/spool-final-2026-09-30.log` for the local evidence.
+`artifacts/reports/gas-accumulator-final-2026-09-30.log` for the local evidence.
 
 ## Development scope
 
@@ -40,8 +40,18 @@ RL electrical supply are implemented using ordinary conserving graph components;
 see [the pump assembly contract](HYDRAULIC_PUMP.md#explicit-leakage-shaft-friction-and-electrical-supply).
 Historical asset checks now retain same-runtime exact replay and compare physical
 reference values with explicit tolerances across runtimes. The fixed Linux hashes
-remain provenance rather than cross-platform assertions. The current Windows serial
-run passes; this resumed source has not been verified on Linux/macOS or inside Unity.
+remain provenance rather than cross-platform assertions. The published spool checkpoint passes Windows/Linux/macOS CI. The new gas-piston
+increment has local Windows evidence; actual Unity verification remains pending.
+
+## Finite-energy gas accumulator
+
+[Linear gas pistons](GAS_PISTON.md) now share one separator coordinate with hydraulic
+actuation. Actual mass, internal energy, pressure and temperature support adiabatic
+work, gas ports and wall heat. Independent RK4, opposed chambers, transfer ledgers
+and transaction checks pass. The pump experiment demonstrates charge and partial
+energy recovery during a declared demand pulse. A closed-chamber optimization
+preserves every replay value/hash and reduces measured local cost. Gas dissolution,
+bladder/seal behavior, measured property/heat maps and calibration remain open.
 
 ## Mechanical spool regulation
 
@@ -53,9 +63,9 @@ refinement, fluid/motion energy and transaction checks pass. Source, assets and
 actual MCP agree; parameters remain unverified. Axial jet force, seal friction,
 cavitation, complete valve/accumulator behavior and calibration remain open.
 
-Development stops at this verified checkpoint at the owner's request. Complete
+The owner resumed development after the published spool checkpoint. Complete
 engine/transmission/control, calibrated samples and actual Unity acceptance remain
-unfinished. Delivery uses a source package and the current development branch.
+unfinished.
 
 ## Dynamic piston and contact clutch
 
@@ -155,7 +165,7 @@ The converter implementation preserves their model fingerprints and replay traje
 
 ## Prepared but not verified in Unity
 
-Studio imports the same Core/Assets assemblies and eighteen generated model assets. It has
+Studio imports the same Core/Assets assemblies and nineteen generated model assets. It has
 schematic vessels, moving pistons, timed valves, heat-release markers, clutch phases, hydraulic slider/contact pads,
 ideal/planetary connections, converter pump/turbine/stator views, hydraulic chambers,
 valves, shaft-driven pump ports and pressure-clutch connections. Import,
@@ -169,7 +179,7 @@ compile .NET 10/C# 14 source; the SDK builds the separate Standard assemblies.
 ## Next development sequence
 
 1. Extend the explicit constant pump losses and RL electrical supply with measured
-   loss/control behavior, measured battery/BMS/temperature dynamics and required accumulator dynamics, then
+   loss/control behavior, measured battery/BMS/temperature dynamics and measured accumulator properties/heat behavior, then
    extend toward complete DCT/AT topologies. The sampled pressure loop now regulates motor supply; prescribed valve
    schedules still need ECU/TCU coordination.
 2. Continue engine fuel metering and ignition control, intake/exhaust dynamics, mechanical

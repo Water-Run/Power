@@ -38,7 +38,7 @@ internal static class PressureControllerAssetChecks
     private static void Replay()
     {
         var original = Asset(); byte[] bytes = AssetCodec.Encode(original); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 15);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 16);
         Require(original.Components.SequenceEqual(decoded.Components) && original.Nodes.SequenceEqual(decoded.Nodes));
         Require(original.Model.Fingerprint == decoded.Model.Fingerprint && bytes.SequenceEqual(AssetCodec.Encode(decoded)));
         Compare(original, decoded);
@@ -53,7 +53,7 @@ internal static class PressureControllerAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset);
-        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), extension = counts + 104 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 40 + 32;
+        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), extension = counts + 108 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 40 + 32;
         void Reject(byte[] bad)
         { SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(bad)); }
         void Change(int offset, int value)
@@ -66,7 +66,7 @@ internal static class PressureControllerAssetChecks
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 80), 2); Reject(duplicate);
         var missing = bytes.Take(extension).Concat(bytes.Skip(extension + 80)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 80), 0); Reject(missing);
-        var downgrade = bytes.Take(counts + 80).Concat(bytes.Skip(counts + 104).Take(extension - counts - 104)).Concat(bytes.Skip(extension + 80)).ToArray();
+        var downgrade = bytes.Take(counts + 80).Concat(bytes.Skip(counts + 108).Take(extension - counts - 108)).Concat(bytes.Skip(extension + 80)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgrade.AsSpan(8), 11); Reject(downgrade);
         Throws<ArgumentException>(() => PowerAsset.Create(PressureControllerChecks.Plant(), "Owned voltage", new string('b', 64),
             100_000_000, 10_000_000, [new(25_000_000, 100, 0)], []));

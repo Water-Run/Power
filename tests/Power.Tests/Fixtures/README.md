@@ -159,3 +159,14 @@ same-runtime original/upgraded replay including every event boundary. The existi
 5e-6-J long-run energy bound is explicit, with tighter separate ledgers in
 `PistonIntegrationChecks`. Do not regenerate this fixture with the current writer.
 The Power! GPL license and Unity Linking Exception apply.
+
+## Spool-regulated pump version 15
+
+`spool-regulated-pump-v15.powerasset` retains the verified v15 spool checkpoint
+published at `cebc978`, before the writer changed to v16 for gas piston geometry.
+Source: `assets/labs/spool-regulated-pump.power.json`; name: `Mechanical spool
+regulator laboratory`. SHA-256:
+`67b976a27ca0bd7343ca6b024c5bc736e14f48326945da841785ade43b61f14b`.
+Fingerprint: `28aa0965d248e280`. Tests retain its digest, physical references and
+every-boundary exact same-runtime upgraded replay. Do not regenerate it with the
+current writer. The Power! GPL license and Unity Linking Exception apply.

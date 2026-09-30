@@ -310,3 +310,19 @@ volume commit through the existing hydraulic histories. Position slopes use boun
 simulation-owned buffers; successful stepping adds no managed allocations. Asset v15,
 JSON and actual MCP replay retain the geometry. The declared pressure-balanced land
 neglects axial jet force; see [HYDRAULIC_SPOOL.md](HYDRAULIC_SPOOL.md).
+
+## Linear gas/fluid energy coupling
+
+Gas pistons add linear geometry owners to the finite gas network. Initial mass/
+energy use the actual initial geometry; flow and wall heat read the current volume.
+The joint mechanical solver collects unique translational coordinates, so opposed
+gas chambers and a hydraulic separator share one mass. Gas force uses adiabatic
+discrete pressure work, an analytic derivative and stable small-travel series.
+Absolute reference-pressure work is external; gas internal energy remains a normal
+transactional state. No fitted pressure curve replaces that state.
+
+Closed unmixed chambers without transport or heat skip zero-rate integration after
+state validation. Measured before/after replay preserves every value/hash. Bounds,
+rollback/forks and allocation-free stepping apply to the combined gas/fluid histories.
+Asset v16 and JSON/MCP retain geometry and orientation. See
+[GAS_PISTON.md](GAS_PISTON.md) for thermodynamics, scope and evidence.

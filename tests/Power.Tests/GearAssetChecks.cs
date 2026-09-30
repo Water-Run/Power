@@ -16,7 +16,7 @@ internal static class GearAssetChecks
     internal static IEnumerable<(string Name, Action Run)> All =>
     [
         ("gear asset / three-port topology / every replay boundary / authentic v7 fixture", Replay),
-        ("gear asset / v15 counts / wrong ports / missing and duplicate topology / downgrade", Corruption)
+        ("gear asset / v16 counts / wrong ports / missing and duplicate topology / downgrade", Corruption)
     ];
     private static PowerAsset Asset()
     {
@@ -28,7 +28,7 @@ internal static class GearAssetChecks
     private static void Replay()
     {
         var original = Asset(); var bytes = AssetCodec.Encode(original); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 15);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 16);
         Require(decoded.Components.SequenceEqual(original.Components) && decoded.Model.Fingerprint == original.Model.Fingerprint);
         Require(AssetCodec.Encode(decoded).SequenceEqual(bytes));
         var a = original.CreatePlayback(); var b = decoded.CreatePlayback(); var values = new Scalar[a.Model.OutputCount];
@@ -57,7 +57,7 @@ internal static class GearAssetChecks
     {
         var asset = Asset(); var bytes = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int extension = counts + 104 + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
+        int extension = counts + 108 + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
         void Reject(byte[] bad)
         {
             SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32);
@@ -73,7 +73,7 @@ internal static class GearAssetChecks
         BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 52), 1); Reject(missing);
         var duplicate = bytes.Take(extension + 8).Concat(bytes.Skip(extension).Take(8)).Concat(bytes.Skip(extension + 8)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 52), 3); Reject(duplicate);
-        var downgraded = bytes.Take(counts + 52).Concat(bytes.Skip(counts + 104).Take(extension - counts - 104)).Concat(bytes.Skip(extension + 16)).ToArray();
+        var downgraded = bytes.Take(counts + 52).Concat(bytes.Skip(counts + 108).Take(extension - counts - 108)).Concat(bytes.Skip(extension + 16)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgraded.AsSpan(8), 7); Reject(downgraded);
     }
 }

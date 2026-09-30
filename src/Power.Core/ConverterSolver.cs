@@ -50,17 +50,20 @@ internal sealed class ConverterState(int count)
 internal sealed class ConverterCoupling
 {
     internal readonly int Cranks, Coordinates, PumpOffset;
-    internal readonly int[] Nodes, Variables;
+    internal readonly int[] Nodes, Variables, GasPistonRows;
     internal readonly double[][] Response, GearReaction;
     internal ConverterCoupling(CompiledModel model)
     {
         Cranks = model.CylinderCoupling?.Angles.Length ?? 0;
-        Coordinates = Cranks + model.PistonComponents.Length;
+        int[] extraGasNodes = model.GasPistonComponents.Select(i => model.Components[i].A).Distinct().Where(i => !model.PistonComponents.Any(p => model.Components[p].A == i)).OrderBy(i => i).ToArray();
+        Coordinates = Cranks + model.PistonComponents.Length + extraGasNodes.Length;
         PumpOffset = Coordinates + 2 * model.ConverterComponents.Length;
         int count = PumpOffset + model.PumpComponents.Length;
         Nodes = new int[count]; Variables = new int[count]; Response = new double[count][]; GearReaction = new double[count][];
         for (int k = 0; k < Cranks; ++k) Nodes[k] = model.Components[model.CylinderCoupling!.Components[k][0]].A;
         for (int k = 0; k < model.PistonComponents.Length; ++k) Nodes[Cranks + k] = model.Components[model.PistonComponents[k]].A;
+        for (int k = 0; k < extraGasNodes.Length; ++k) Nodes[Cranks + model.PistonComponents.Length + k] = extraGasNodes[k];
+        GasPistonRows = model.GasPistonComponents.Select(i => Array.IndexOf(Nodes, model.Components[i].A, 0, Coordinates)).ToArray();
         for (int k = 0; k < model.ConverterComponents.Length; ++k)
         {
             var c = model.Components[model.ConverterComponents[k]];
@@ -163,6 +166,7 @@ internal sealed class ConverterSolver : MechanicalSolver
             if (derivatives) { _derivative[a, a] = aa; _derivative[a, b] = ab; _derivative[b, a] = ba; _derivative[b, b] = bb; }
         }
         int mechanical = _force.Length;
+        for (int row = _coupling.Cranks; row < _coupling.Coordinates; ++row) _force[row] = 0;
         for (int k = 0; k < _model.PistonComponents.Length; ++k)
         {
             int index = _model.PistonComponents[k], row = _coupling.Cranks + k; var c = _model.Components[index]; var law = _model.Pistons[index]!;
@@ -175,6 +179,13 @@ internal sealed class ConverterSolver : MechanicalSolver
                 _derivative[row, front] = c.P0; if (back >= 0) _derivative[row, back] = -c.P1;
                 _derivative[row, row] = law.DiscreteElasticDerivative(position, position + delta);
             }
+        }
+        for (int k = 0; k < _model.GasPistonComponents.Length; ++k)
+        {
+            int index = _model.GasPistonComponents[k], row = _coupling.GasPistonRows[k]; var c = _model.Components[index]; var law = _model.GasPistons[index]!;
+            double position = old[_coupling.Variables[row]], delta = values[row], volume = law.VolumeAt(position); int gas = _model.Nodes[c.B].Index;
+            if (Math.Abs(law.AreaSquareMeters * delta) > .25 * volume || !law.TryAdiabaticWork(position, position + delta, energy[gas], _model.Gas!.Gases[gas].Gamma, out var work)) return double.PositiveInfinity;
+            _force[row] += work.ForceNewtons; if (derivatives) _derivative[row, row] += work.ForceDerivativeNewtonsPerMeter;
         }
         for (int k = 0; k < _model.PumpComponents.Length; ++k)
         {

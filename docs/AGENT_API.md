@@ -32,6 +32,15 @@ position/flow units, simultaneous solve and omitted jet-force physics. Request
 `spool-regulated-pump` to inspect mechanical pressure regulation; see
 [the metering contract](HYDRAULIC_SPOOL.md).
 
+`gas_piston` links a translational node to a moving gas chamber with explicit area,
+reference volume/position, absolute reference pressure and signed compression
+direction. Observe gas mass, energy, pressure, temperature, volume, force and
+reference work. Combine it with a hydraulic piston on the same mass for an
+accumulator; use explicit gas ports/heat links for transport. Validation checks one
+volume owner and positive nominal gas volume. Capabilities declare the quarter-volume
+interval limit; the contract states the wall-coupled accuracy boundary. Request `gas-accumulator-pump`;
+see [the gas/fluid contract](GAS_PISTON.md).
+
 ## 启动与客户端配置
 
 ```sh
@@ -56,7 +65,7 @@ Windows 同样使用 `dotnet` 和 DLL 的绝对路径。生产连接应直接运
 
 ## 工具与结果
 
-In agent API version 0.18.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch` or `spool-regulated-pump`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v15`; v1–v14 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
+In agent API version 0.19.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump` or `gas-accumulator-pump`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v16`; v1–v15 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
 
 | 工具 | 用途 |
 |---|---|
@@ -382,7 +391,7 @@ Battery work is internal; global `source_work` includes only explicit external p
 boundaries. SOC/voltage violations reject the whole batch. Inspect initial charge,
 capacity, duty, loads and batch length before retrying. There is no silent SOC clamp.
 
-Asset v15 retains all supply/control parameters with authentic prior readers/fixtures.
+Asset v16 retains all supply/control parameters with authentic prior readers/fixtures.
 Cancellation and later failure preserve charge, RC/control memory, inputs and revision.
 Independent forks compare accessory/duty strategies from the same physical history.
 All parameters remain unverified; an ideal averaged duty converter is not a battery

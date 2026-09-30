@@ -14,7 +14,7 @@ public enum Unit
 }
 
 public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
@@ -162,6 +162,7 @@ public sealed record ComponentDefinition
     public Quantity ReservoirPressure { get; init; }
     public SealedCylinderDefinition? Cylinder { get; init; }
     public GasCylinderDefinition? MovingCylinder { get; init; }
+    public GasPistonDefinition? GasPiston { get; init; }
     /// <summary>Optional gas-orifice timing. InitialInput and its channel then specify peak opening.</summary>
     public ValveTimingDefinition? ValveTiming { get; init; }
     public WiebeCombustionDefinition? Combustion { get; init; }
@@ -209,6 +210,8 @@ public sealed record ComponentDefinition
         Id = id, Kind = ComponentKind.ResistiveLoad, NodeA = battery, HeatNode = heat, InputChannel = channel,
         Resistance = new(resistance, Unit.Ohm), InitialInput = new(opening, Unit.Fraction)
     };
+    public static ComponentDefinition GasActuator(uint id, uint slider, uint gas, GasPistonDefinition geometry) => new()
+    { Id = id, Kind = ComponentKind.GasPiston, NodeA = slider, NodeB = gas, GasPiston = geometry };
     public static ComponentDefinition Piston(uint id, uint slider, uint chamber, HydraulicPistonDefinition piston) => new()
     { Id = id, Kind = ComponentKind.HydraulicPiston, NodeA = slider, NodeB = chamber, HydraulicPiston = piston };
     public static ComponentDefinition ContactClutch(uint id, uint a, uint b, PistonClutchDefinition clutch, uint heat = 0, double ratio = 1) => new()

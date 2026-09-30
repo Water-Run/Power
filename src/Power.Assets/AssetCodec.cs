@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 15, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v15";
+    public const int FormatVersion = 16, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v16";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -43,10 +43,10 @@ public static class AssetCodec
         int controllers = asset.Components.Count(c => c.PressureController is not null);
         int batteries = asset.Nodes.Count(n => n.Battery is not null), dutyControllers = asset.Components.Count(c => c.PressureDutyController is not null);
         int pistons = asset.Components.Count(c => c.HydraulicPiston is not null), pistonClutches = asset.Components.Count(c => c.PistonClutch is not null);
-        int spools = asset.Components.Count(c => c.SpoolValve is not null);
-        long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 26 * 4 +
+        int spools = asset.Components.Count(c => c.SpoolValve is not null), gasPistons = asset.Components.Count(c => c.GasPiston is not null);
+        long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 27 * 4 +
             44L * asset.Nodes.Count + 156L * asset.Components.Count + 116L * cylinders + 24L * gases + 36L * orifices +
-            72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
+            72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
         if (size > MaxBytes) throw new AssetFormatException("Asset exceeds 1 MiB.");
         using var stream = new MemoryStream((int)size);
         using var writer = new BinaryWriter(stream, Utf8, true);
@@ -56,7 +56,7 @@ public static class AssetCodec
         for (int i = 0; i < 32; ++i) writer.Write(Convert.ToByte(asset.SourceSha256.Substring(i * 2, 2), 16));
         writer.Write(asset.Nodes.Count); writer.Write(asset.Components.Count); writer.Write(asset.Inputs.Count); writer.Write(asset.Checks.Count);
         writer.Write(cylinders); writer.Write(gases); writer.Write(orifices); writer.Write(moving); writer.Write(valves);
-        writer.Write(mixtures); writer.Write(reservoirMixtures); writer.Write(burners); writer.Write(clutches); writer.Write(gears); writer.Write(converters); writer.Write(points); writer.Write(hydraulicRestrictions); writer.Write(hydraulicClutches); writer.Write(pumps); writer.Write(reliefs); writer.Write(controllers); writer.Write(batteries); writer.Write(dutyControllers); writer.Write(pistons); writer.Write(pistonClutches); writer.Write(spools);
+        writer.Write(mixtures); writer.Write(reservoirMixtures); writer.Write(burners); writer.Write(clutches); writer.Write(gears); writer.Write(converters); writer.Write(points); writer.Write(hydraulicRestrictions); writer.Write(hydraulicClutches); writer.Write(pumps); writer.Write(reliefs); writer.Write(controllers); writer.Write(batteries); writer.Write(dutyControllers); writer.Write(pistons); writer.Write(pistonClutches); writer.Write(spools); writer.Write(gasPistons);
         void Quantity(Quantity quantity) { writer.Write(quantity.Value); writer.Write((int)quantity.Unit); }
         foreach (var n in asset.Nodes)
         {
@@ -179,6 +179,9 @@ public static class AssetCodec
         for (int i = 0; i < asset.Components.Count; ++i)
             if (asset.Components[i].SpoolValve is { } land)
             { writer.Write(i); writer.Write(land.PistonComponent); Quantity(land.ClosedPosition); Quantity(land.FullOpenPosition); }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].GasPiston is { } gasPiston)
+            { writer.Write(i); writer.Write(gasPiston.CompressionDirection); Quantity(gasPiston.Area); Quantity(gasPiston.ReferenceVolume); Quantity(gasPiston.ReferencePosition); Quantity(gasPiston.ReferencePressure); }
         foreach (var input in asset.Inputs) { writer.Write(input.TimeNanoseconds); writer.Write(input.Channel); writer.Write(input.Value); }
         foreach (var c in asset.Checks)
         {
@@ -208,7 +211,7 @@ public static class AssetCodec
             using var reader = new BinaryReader(stream, Utf8);
             if (!reader.ReadBytes(8).AsSpan().SequenceEqual(Magic)) throw new AssetFormatException("Unknown asset signature.");
             int version = reader.ReadInt32();
-            if (version is < 1 or > FormatVersion) throw new AssetFormatException("Unsupported asset format version; supported versions are 1 through 15.");
+            if (version is < 1 or > FormatVersion) throw new AssetFormatException("Unsupported asset format version; supported versions are 1 through 16.");
             ulong fingerprint = reader.ReadUInt64(), step = reader.ReadUInt64(), duration = reader.ReadUInt64(), sample = reader.ReadUInt64();
             int nameLength = reader.ReadUInt16();
             if (nameLength is < 1 or > 512 || stream.Length - stream.Position < nameLength + 32) throw new AssetFormatException("Invalid asset name length.");
@@ -236,7 +239,8 @@ public static class AssetCodec
             int batteries = version >= 13 ? Count(nodes) : 0, dutyControllers = version >= 13 ? Count(components) : 0;
             int pistons = version >= 14 ? Count(components) : 0, pistonClutches = version >= 14 ? Count(components) : 0;
             int spools = version >= 15 ? Count(components) : 0;
-            if (stream.Length - stream.Position != 44L * nodes + 156L * components + 116L * cylinders + 24L * gases + 36L * orifices + 72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 24L * inputs + 33L * checks)
+            int gasPistons = version >= 16 ? Count(components) : 0;
+            if (stream.Length - stream.Position != 44L * nodes + 156L * components + 116L * cylinders + 24L * gases + 36L * orifices + 72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 24L * inputs + 33L * checks)
                 throw new AssetFormatException("Asset length does not match its declared counts.");
             Quantity Quantity() => new(reader.ReadDouble(), (Unit)reader.ReadInt32());
             var ns = new NodeDefinition[nodes]; var cs = new ComponentDefinition[components];
@@ -250,6 +254,8 @@ public static class AssetCodec
                     Ratio = reader.ReadDouble(), Resistance = Quantity(), Inductance = Quantity(), Coupling = Quantity(),
                     InitialCurrent = Quantity(), Conductance = Quantity(), AmbientTemperature = Quantity()
                 };
+            if (version < 16 && cs.Any(c => c.Kind == ComponentKind.GasPiston)) throw new AssetFormatException("Linear gas pistons require asset version 16.");
+            if (gasPistons != cs.Count(c => c.Kind == ComponentKind.GasPiston)) throw new AssetFormatException("Every gas piston requires one matching extension.");
             if (version < 15 && cs.Any(c => c.Kind == ComponentKind.HydraulicSpoolValve))
                 throw new AssetFormatException("Mechanically metered spool valves require asset version 15.");
             if (spools != cs.Count(c => c.Kind == ComponentKind.HydraulicSpoolValve))
@@ -479,6 +485,12 @@ public static class AssetCodec
                 if (index < 0 || index >= components || cs[index].Kind != ComponentKind.HydraulicSpoolValve || cs[index].SpoolValve is not null)
                     throw new AssetFormatException("Spool geometry must reference a distinct hydraulic spool valve.");
                 cs[index] = cs[index] with { SpoolValve = new() { PistonComponent = reader.ReadUInt32(), ClosedPosition = Quantity(), FullOpenPosition = Quantity() } };
+            }
+            for (int i = 0; i < gasPistons; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.GasPiston || cs[index].GasPiston is not null) throw new AssetFormatException("Linear gas geometry must reference a distinct gas piston.");
+                cs[index] = cs[index] with { GasPiston = new() { CompressionDirection = reader.ReadInt32(), Area = Quantity(), ReferenceVolume = Quantity(), ReferencePosition = Quantity(), ReferencePressure = Quantity() } };
             }
             var schedule = new ScheduledInput[inputs];
             for (int i = 0; i < inputs; ++i) schedule[i] = new(reader.ReadUInt64(), reader.ReadUInt64(), reader.ReadDouble());

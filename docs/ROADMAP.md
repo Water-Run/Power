@@ -4,11 +4,19 @@ The objective is the complete Power! powertrain platform: modern C# physics, a U
 3D studio and direct agent operation. Passing a laboratory experiment does not complete
 the engine, transmission, controls or vehicle calibration milestones.
 
+**2026-09-30: finite-energy gas accumulator.** Linear gas geometry and actual
+mass/energy states now couple to hydraulic separator motion. Analytic work/Jacobian,
+independent RK4/refinement, gas transport/heat, recovery and complete transactions
+pass locally. Asset v16 and actual MCP retain the same model; the prior published
+spool source passes three-platform CI. Current gas physics and actual Unity need
+their own acceptance. Development is active after the owner's resume request. See
+[the gas/fluid contract](GAS_PISTON.md).
+
 **2026-09-30: mechanical spool regulation.** Actual piston motion meters a passive
 turbulent bypass in the shared pressure/motion solve. Steady and independent RK4
 checks, contact refinement, flow/motion energy, rollback and allocation bounds pass.
-Asset v15 and actual MCP retain geometry. This development session stops at the
-owner's request; complete powertrain and actual Unity acceptance remain unfinished.
+Asset v15 and actual MCP retain geometry. The owner resumed after that checkpoint; complete powertrain and actual Unity
+acceptance remain unfinished.
 See [the spool contract](HYDRAULIC_SPOOL.md).
 
 **2026-09-30: dynamic piston and contact clutch.** Translational mass, swept fluid
@@ -96,7 +104,7 @@ and [validation record](VALIDATION.md).
 | 1. Managed foundation | Dual-target Core, topology, units, bounded time, replay, rollback and evidence | Implemented; published baseline passed Windows/macOS/Linux. Current physics has local Windows evidence; the preceding source has Linux CI evidence |
 | 2. Agent interface | Schemas, structured diagnostics, MCP, branches, revision conflicts, cancellation and compact reports | Implemented; actual MCP process tests include fired transmission discovery, validation, experiment and export |
 | 3. Unity studio | Real import, Play lifecycle, 3D laboratory, input/UI and desktop Player | Project and tests prepared, including hydraulic/lockup/shift views; Editor/Player acceptance pending |
-| 4. Modeling workbench | Shared model assets, graph editing, channel configuration, saving and replay | Portable v15 and v1–v14 readers verified; graph editing/saving and selectable plots pending |
+| 4. Modeling workbench | Shared model assets, graph editing, channel configuration, saving and replay | Portable v16 and v1–v15 readers verified; graph editing/saving and selectable plots pending |
 | 5. Engine physics | Slider-crank, independent mass/energy, intake/exhaust, combustion, pumping, wall transfer and cylinder cycle | Fixed/moving gas volumes, timed valves and premixed fired cycles implemented. Fuel metering, ignition control, richer thermochemistry, detailed intake/exhaust and calibrated engine behavior pending |
 | 6. Transmission | Clutches, DCT/AT, gears/planetaries, torque converter, hydraulics, heat and hybrid events | Coupled clutches, ideal gears/planetaries, mapped converters, thermal routing and hybrid rollback verified, including fired lockup and shifts. Pressure/flow networks now operate the clutches. Shaft pumps, explicit leakage/viscous losses, RL electric supply, finite-charge battery, duty regulation and quasi-steady relief are verified. Complete DCT/AT, measured loss/control maps, measured valve/accumulator and richer converter dynamics remain pending. Dynamic piston/contact actuation is verified as a lumped research model. Historical Zig prototypes remain reference |
 | 7. Controls and integration | ECU/TCU cycles, sensors/actuators, torque coordination, power supply, accessories and faults | Sampled voltage/duty pressure PI feedback, finite battery supply/accessories and explicit actuator ownership implemented, including transactional controller state. Complete ECU/TCU coordination, sensors/actuators, supply/accessories and fault handling remain incomplete |
@@ -106,7 +114,7 @@ and [validation record](VALIDATION.md).
 
 Extend constant pump-loss models and RL electrical supply with measured loss/control
 maps, measured battery/BMS/thermal behavior and measured regulation behavior. Retain explicit
-reservoirs, power/volume/energy ledgers and actuator limits. Extend verified piston/contact actuation with measured valve and accumulator dynamics required by complete DCT/AT power paths.
+reservoirs, power/volume/energy ledgers and actuator limits. Extend verified piston/contact actuation with measured valve and accumulator property/heat behavior required by complete DCT/AT power paths.
 Build on the coupled converter/gear/clutch solver and independent physical references, retaining
 conservation, bounded events, complete rollback and shared JSON/asset/agent semantics.
 A converter, lockup clutch and scheduled planetary shift do not complete gearbox,

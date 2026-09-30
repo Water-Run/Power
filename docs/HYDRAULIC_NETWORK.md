@@ -23,8 +23,9 @@ limit is `C = V / bulk_modulus`; a compliant actuator/line can have additional e
 storage. Power! tracks reference-volume inventory, not a full variable-density liquid
 mass or temperature-dependent equation of state. A negative final gauge pressure is
 outside this model and rejects the complete batch; it is never silently clamped into a
-cavitation model. Absolute-pressure cavitation, entrained gas, gas-charged accumulator
-laws, free piston travel, inertia and end stops remain separate work.
+cavitation model. Absolute-pressure cavitation, entrained gas, calibrated fluid/bladder
+behavior remains open. [Gas-backed separators](GAS_PISTON.md) and
+[moving hydraulic pistons](HYDRAULIC_PISTON.md) are explicit extensions.
 
 The compressibility basis is documented in [MathWorks Constant Volume Chamber (IL)](https://www.mathworks.com/help/simscape/ref/constantvolumechamberil.html).
 Its general liquid model is broader than Power!'s constant-compliance reduction. No

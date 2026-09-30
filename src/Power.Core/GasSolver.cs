@@ -74,7 +74,7 @@ internal sealed class GasNetwork
     internal double VolumeAt(int gas, double[] dynamics)
     {
         int component = _model.GasCylinderByNode[NodeIndex[gas]];
-        return component < 0 ? Volume[gas] : _model.GasCylinders[component]!
+        return component < 0 ? Volume[gas] : _model.GasPistons[component] is { } piston ? piston.VolumeAt(dynamics[_model.Nodes[_model.Components[component].A].Index]) : _model.GasCylinders[component]!
             .GeometryAt(dynamics[_model.Nodes[_model.Components[component].A].Index]).VolumeCubicMeters;
     }
 
@@ -226,6 +226,8 @@ internal sealed class GasSolver
         ReservoirMass = 0; ReservoirEnthalpy = 0;
         double[] fuel = mixture?.Fuel ?? _fuel, air = mixture?.Air ?? _air, products = mixture?.Products ?? _products;
         if (!Evaluate(mass, energy, wallTemperature, fuel, air, products, ref _first)) return false;
+        // New linear closed chambers need pressure work, but no zero-rate transport integration.
+        if (_model.HasGasPistons && mixture is null && _network.OrificeComponent.Length == 0 && _network.HeatComponent.Length == 0) return true;
         double worst = 0;
         for (int i = 0; i < mass.Length; ++i)
             worst = Math.Max(worst, Math.Max(Math.Abs(_first.Mass[i]) / mass[i], Math.Abs(_first.Energy[i]) / energy[i]));

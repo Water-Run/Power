@@ -66,7 +66,7 @@ internal static class CombustionAssetChecks
     {
         var asset = Asset(); byte[] source = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int mixtures = counts + 104 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 * 2 + 36 * 2 + 72 + 44;
+        int mixtures = counts + 108 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 * 2 + 36 * 2 + 72 + 44;
         int reservoirs = mixtures + 40 * 2, burners = reservoirs + 20;
         void Reject(byte[] bytes)
         {
@@ -85,7 +85,7 @@ internal static class CombustionAssetChecks
         Remove(mixtures, 40, counts + 36, 1); Remove(reservoirs, 20, counts + 40, 0); Remove(burners, 56, counts + 44, 0);
         var duplicate = source.Take(burners + 56).Concat(source.Skip(burners).Take(56)).Concat(source.Skip(burners + 56)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 44), 2); Reject(duplicate);
-        var oldVersion = source.Take(counts + 36).Concat(source.Skip(counts + 104).Take(mixtures - counts - 104)).Concat(source.Skip(burners + 56)).ToArray();
+        var oldVersion = source.Take(counts + 36).Concat(source.Skip(counts + 108).Take(mixtures - counts - 108)).Concat(source.Skip(burners + 56)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(oldVersion.AsSpan(8), 5); Reject(oldVersion);
     }
 }

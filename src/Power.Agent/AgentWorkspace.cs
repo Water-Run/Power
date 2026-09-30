@@ -26,15 +26,20 @@ public sealed class AgentWorkspace
 
     public static AgentReply Capabilities() => AgentReply.Success(new
     {
-        version = "0.18.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
-        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", "power.asset.v11", "power.asset.v12", "power.asset.v13", "power.asset.v14", AssetCodec.FormatName },
+        version = "0.19.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
+        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", "power.asset.v11", "power.asset.v12", "power.asset.v13", "power.asset.v14", "power.asset.v15", AssetCodec.FormatName },
         domains = new[] { "rotational", "thermal", "gas", "hydraulic", "battery", "translational" },
-        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief", "pressure_controller", "battery_motor", "resistive_load", "pressure_duty_controller", "linear_spring", "hydraulic_piston", "piston_clutch", "force_source", "hydraulic_spool_valve" },
-        examples = new[] { "electrothermal", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump" },
+        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief", "pressure_controller", "battery_motor", "resistive_load", "pressure_duty_controller", "linear_spring", "hydraulic_piston", "piston_clutch", "force_source", "hydraulic_spool_valve", "gas_piston" },
+        examples = new[] { "electrothermal", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump", "gas-accumulator-pump" },
         limits = new { nodes = CompiledModel.MaxNodes, components = CompiledModel.MaxComponents, states = CompiledModel.MaxStates,
             sessions = MaxSessions, ticks_per_step = 1_000_000, experiment_ticks = 10_000_000, document_bytes = 1_048_576, asset_bytes = AssetCodec.MaxBytes },
         determinism = "Exact replay within the same binary/runtime/architecture. Compare tolerances across platforms.",
-        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics", "sampled_pressure_control", "battery_electromechanical", "battery_pressure_control", "dynamic_piston_powertrain", "mechanically_regulated_hydraulics" }, calibration = "unverified",
+        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics", "sampled_pressure_control", "battery_electromechanical", "battery_pressure_control", "dynamic_piston_powertrain", "mechanically_regulated_hydraulics", "linear_gas_actuation", "gas_accumulator_powertrain" }, calibration = "unverified",
+        gas_piston = new { component = "gas_piston", motion_domain = "translational", geometry = "V=V_reference-compression_direction*area*(x-x_reference); direction is -1 or 1.",
+            thermodynamics = "Finite ideal-gas mass/internal energy; adiabatic discrete pressure work, explicit absolute reference-pressure work, existing gas ports and wall heat links.",
+            integration = "One shared coordinate for gas and hydraulic piston forces, analytic gas force Jacobian and stable small-travel series; up to 25% current gas-volume change per interval.",
+            units = new { area = "m2", reference_volume = "m3", reference_position = "m", reference_pressure = "pa" },
+            scope = "Constant-caloric ideal gas, explicit separator mass/damping and compliant hydraulic stroke ends; no bladder geometry, seal friction, cavitation, gas dissolution or OEM calibration." },
         hydraulic_spool_valve = new { component = "hydraulic_spool_valve", owner = "piston_component", position_unit = "m", coefficient_unit = "m3_s_sqrt_pa",
             metering = "opening=clamp((x-closed_position)/(full_open_position-closed_position),0,1); signed travel permits reversed lands.",
             integration = "Position and pressure evaluated at the same joint midpoint, with analytic pressure and land-position derivatives; no engagement or opening command channel.",
@@ -162,10 +167,11 @@ public sealed class AgentWorkspace
         "battery-regulated-pump" => AgentReply.Success(Resource("power.battery-regulated-pump.template.json")),
         "piston-actuated-clutch" => AgentReply.Success(Resource("power.piston-actuated-clutch.template.json")),
         "spool-regulated-pump" => AgentReply.Success(Resource("power.spool-regulated-pump.template.json")),
+        "gas-accumulator-pump" => AgentReply.Success(Resource("power.gas-accumulator-pump.template.json")),
         "fired-hydraulic" => AgentReply.Success(Resource("power.fired-hydraulic.template.json")),
         "fired-converter" => AgentReply.Success(Resource("power.fired-converter.template.json")),
         "fired-planetary" => AgentReply.Success(Resource("power.fired-planetary.template.json")),
-        _ => AgentReply.Failure("unknown_example", "Available examples: electrothermal, sealed-cylinder, gas-network, moving-cylinder, crank-timed-cylinder, fired-cylinder, fired-clutch, fired-planetary, fired-converter, fired-hydraulic, fired-pump, fired-pump-losses, electric-pump, pressure-regulated-pump, battery-regulated-pump, piston-actuated-clutch, spool-regulated-pump.", field: "name")
+        _ => AgentReply.Failure("unknown_example", "Available examples: electrothermal, sealed-cylinder, gas-network, moving-cylinder, crank-timed-cylinder, fired-cylinder, fired-clutch, fired-planetary, fired-converter, fired-hydraulic, fired-pump, fired-pump-losses, electric-pump, pressure-regulated-pump, battery-regulated-pump, piston-actuated-clutch, spool-regulated-pump, gas-accumulator-pump.", field: "name")
     };
 
     private static AgentReply Guard(Func<AgentReply> work)

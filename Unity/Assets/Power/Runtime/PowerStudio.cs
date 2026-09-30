@@ -557,6 +557,12 @@ namespace Power.Studio
                     Connection("Planetary ring " + component.Id, ring, center, steel, 0.08f);
                     Connection("Planetary carrier " + component.Id, carrier, center, blue, 0.08f);
                 }
+                if (component.Kind == ComponentKind.GasPiston)
+                {
+                    Connection("Gas piston " + component.Id, a, positions[component.NodeB], copper, 0.1f);
+                    Shape("Gas separator rod " + component.Id, PrimitiveType.Cylinder, a + Vector3.up * 0.45f,
+                        new Vector3(0.12f, 0.4f, 0.12f), steel).transform.SetParent(_sliders[component.NodeA].Piston, true);
+                }
                 if (component.Kind == ComponentKind.HydraulicPiston)
                 {
                     Connection("Piston front chamber " + component.Id, a, positions[component.NodeB], blue, 0.08f);

@@ -63,7 +63,7 @@ public sealed class Simulation
         if (model.HasBatteries) _electrical = new(model);
         if (model.Gears is not null) _gears = new(model.Gears);
         if (model.HasHydraulics) _hydraulics = new(model);
-        if (model.HasConverters || model.HasCoupledHydraulics) { _converters = new(model, _hydraulics); _mechanicalSolver = _converters; }
+        if (model.HasConverters || model.HasCoupledHydraulics || model.HasGasPistons) { _converters = new(model, _hydraulics); _mechanicalSolver = _converters; }
         else if (model.CylinderCoupling is not null) _mechanicalSolver = new CylinderSolver(model);
         if (model.Gas is not null) _gasSolver = new(model);
         if (model.Burners.Any(b => b is not null)) _combustion = new(model);
@@ -372,6 +372,13 @@ public sealed class Simulation
                 int angle = _model.Nodes[c.A].Index;
                 work += _model.Cylinders[i]!.BackPressureWork(s.X[angle], (2 * _mid[angle] - s.X[angle]) - s.X[angle]);
             }
+            else if (c.Kind == ComponentKind.GasPiston)
+            {
+                int position = _model.Nodes[c.A].Index, gas = _model.Nodes[c.B].Index;
+                if (!_model.GasPistons[i]!.TryAdiabaticWork(s.X[position], 2 * _mid[position] - s.X[position], s.Energy[gas], _model.Gas!.Gases[gas].Gamma, out var gasWork)) return false;
+                s.Energy[gas] += gasWork.GasEnergyChangeJoules; work += gasWork.ReferenceWorkJoules;
+                if (!(s.Energy[gas] > 0) || !Numeric.Finite(s.Energy[gas])) return false;
+            }
             else if (c.Kind == ComponentKind.GasCylinder)
             {
                 int angle = _model.Nodes[c.A].Index, gas = _model.Nodes[c.B].Index;
@@ -579,6 +586,7 @@ public sealed class Simulation
         for (int i = 0; i < _model.ComponentCount; ++i)
         {
             if (_model.Cylinders[i] is { } cylinder && !cylinder.Finite(s.X[_model.Nodes[_model.Components[i].A].Index])) return false;
+            if (_model.GasPistons[i] is { } gasPiston && !Numeric.Finite(gasPiston.Force(GasPressure(s, _model.Nodes[_model.Components[i].B].Index)))) return false;
             if (_model.GasCylinders[i] is { } moving)
             {
                 var c = _model.Components[i]; int gas = _model.Nodes[c.B].Index;
@@ -668,6 +676,7 @@ public sealed class Simulation
                 double value;
                 var cylinder = b.IsComponent ? _model.Cylinders[b.Index] : null;
                 var movingCylinder = b.IsComponent ? _model.GasCylinders[b.Index] : null;
+                var gasPiston = b.IsComponent ? _model.GasPistons[b.Index] : null;
                 double crank = cylinder is null && movingCylinder is null ? 0 : _state.X[_model.Nodes[_model.Components[b.Index].A].Index];
                 int volume = !b.IsComponent && b.Index >= 0 && _model.Nodes[b.Index].Domain == Domain.Gas
                     ? _model.Nodes[b.Index].Index : -1;
@@ -684,7 +693,7 @@ public sealed class Simulation
                             : _state.Temperature[_model.Nodes[b.Index].Index];
                         break;
                     case Field.Pressure: value = hydraulicNode ? pressure : cylinder is not null ? cylinder.Pressure(crank) : GasPressure(_state, volume); break;
-                    case Field.Volume: value = hydraulicNode ? _model.Nodes[b.Index].Storage * pressure : cylinder is not null ? cylinder.GeometryAt(crank).VolumeCubicMeters : movingCylinder!.GeometryAt(crank).VolumeCubicMeters; break;
+                    case Field.Volume: value = hydraulicNode ? _model.Nodes[b.Index].Storage * pressure : cylinder is not null ? cylinder.GeometryAt(crank).VolumeCubicMeters : gasPiston is not null ? gasPiston.VolumeAt(_state.X[_model.Nodes[_model.Components[b.Index].A].Index]) : movingCylinder!.GeometryAt(crank).VolumeCubicMeters; break;
                     case Field.Mass: value = cylinder is not null ? cylinder.Mass : _state.Mass[volume]; break;
                     case Field.InternalEnergy:
                         if (b.IsComponent && _model.Components[b.Index].Kind == ComponentKind.HydraulicPiston)
@@ -731,7 +740,8 @@ public sealed class Simulation
                     case Field.LinearSpeed: value = _state.X[_model.Nodes[b.Index].Index + 1]; break;
                     case Field.Force:
                         var forceComponent = _model.Components[b.Index];
-                        value = forceComponent.Kind == ComponentKind.LinearSpring ? -forceComponent.P0 * Relative(forceComponent, _state.X, 0) - forceComponent.P1 * Relative(forceComponent, _state.X, 1)
+                        value = gasPiston is not null ? gasPiston.Force(GasPressure(_state, _model.Nodes[forceComponent.B].Index))
+                            : forceComponent.Kind == ComponentKind.LinearSpring ? -forceComponent.P0 * Relative(forceComponent, _state.X, 0) - forceComponent.P1 * Relative(forceComponent, _state.X, 1)
                             : _model.Pistons[b.Index]!.PressureForce(_state.Hydraulic!.Pressure[_model.Nodes[forceComponent.B].Index], forceComponent.C < 0 ? forceComponent.P2 : _state.Hydraulic.Pressure[_model.Nodes[forceComponent.C].Index]);
                         break;
                     case Field.SlipSpeed:
@@ -818,7 +828,7 @@ public sealed class Simulation
                             : c.Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear ? _state.GearTorque[c.Index] / _model.Gears!.Scale[c.Index] :
                             -c.P0 * Relative(c, _state.X, 0) - c.P1 * Relative(c, _state.X, 1);
                         break;
-                    case Field.SourceWork: value = _state.Work; break;
+                    case Field.SourceWork: value = gasPiston is null ? _state.Work : gasPiston.ReferencePressurePascals * gasPiston.CompressionDirection * gasPiston.AreaSquareMeters * (_state.X[_model.Nodes[_model.Components[b.Index].A].Index] - _model.Nodes[_model.Components[b.Index].A].Position); break;
                     case Field.HeatRejected: value = _state.Heat; break;
                     case Field.StoredEnergyChange: value = stored; break;
                     case Field.EnergyResidual: value = _state.Work + _state.Enthalpy - _state.Heat - stored; break;

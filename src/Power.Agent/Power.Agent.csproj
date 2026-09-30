@@ -6,9 +6,9 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
 
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
-  <ItemGroup><ProjectReference Include="../Power.Experiments/Power.Experiments.csproj" />    <EmbeddedResource Include="../../assets/labs/spool-regulated-pump.power.json" LogicalName="power.spool-regulated-pump.template.json" />
-  </ItemGroup>
+  <ItemGroup><ProjectReference Include="../Power.Experiments/Power.Experiments.csproj" /></ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="../../assets/labs/spool-regulated-pump.power.json" LogicalName="power.spool-regulated-pump.template.json" />
     <EmbeddedResource Include="../../assets/labs/electrothermal.power.json" LogicalName="power.template.json" />
     <EmbeddedResource Include="../../assets/labs/sealed-cylinder.power.json" LogicalName="power.cylinder.template.json" />
     <EmbeddedResource Include="../../assets/labs/gas-network.power.json" LogicalName="power.gas.template.json" />
@@ -26,5 +26,6 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <EmbeddedResource Include="../../assets/labs/fired-converter.power.json" LogicalName="power.fired-converter.template.json" />
     <EmbeddedResource Include="../../assets/labs/fired-planetary.power.json" LogicalName="power.fired-planetary.template.json" />
     <EmbeddedResource Include="../../schemas/power.model.v1.schema.json" LogicalName="power.model.schema.json" />
+      <EmbeddedResource Include="../../assets/labs/gas-accumulator-pump.power.json" LogicalName="power.gas-accumulator-pump.template.json" />
   </ItemGroup>
 </Project>
