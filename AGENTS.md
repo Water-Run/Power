@@ -15,10 +15,18 @@
 
 # Documentation style
 
-User-facing docs (`README.md`, `THIRD_PARTY_NOTICES.md`) are written for people,
-not for agents. Keep them that way when editing. Write them in English; this
-repository has no Chinese README.
+User-facing docs (`README.md`, its translations, `THIRD_PARTY_NOTICES.md`) are
+written for people, not for agents. Keep them that way when editing.
 
+- `README.md` is the English source of truth. Translations live beside it as
+  `README.<locale>.md` (`zh-CN`, `fr`, `ru`, `ja`, `ko`, `de`, `es`, `it`,
+  `pt-BR`) and mirror it section for section; when the English README changes,
+  update the translations in the same change. `docs/`, license files,
+  `THIRD_PARTY_NOTICES.md` and the historical material under `legacy/` and
+  `assets/samples` stay in their existing languages.
+- Every README carries exactly one language-switcher line directly under the
+  logo — the current language in bold, the other nine as links. No badges and
+  no other nav rows under the title.
 - Write for the current version only. No changelogs, release attestations, or
   "since vX.Y" history. Git history is the log. Checkpoint counts and per-lab
   evidence stay in `docs/VALIDATION.md`.
@@ -27,12 +35,13 @@ repository has no Chinese README.
   when something breaks, it doesn't belong in the README.
 - Plain sentences a person would say. No spec-legalese walls, no nested
   qualifiers, no "every X is Y; Z may differ when..." hedging chains.
-- Calm, factual tone. Prefer "doesn't" / "不会" over "never" / "绝不". Soften a
-  behavioral absolute with "by design" / "设计上". Describe what the project
-  does; don't preach absolutes.
+- Calm, factual tone. Prefer "doesn't" over "never". Soften a behavioral
+  absolute with "by design". Describe what the project does; don't preach
+  absolutes.
 - Use GitHub Markdown deliberately: tables for reference data, `<details>`
-  for long lists, blockquote notes for caveats. The area under the title
-  carries no badge or nav-link row.
+  for long lists, GitHub alerts (`> [!NOTE]` and friends) for caveats, and at
+  most one Mermaid diagram where structure helps. Keep license and legal
+  statements untranslated; link to the English originals instead.
 - In `THIRD_PARTY_NOTICES.md`, keep every license, source, and provenance fact.
   Change wording and layout only.
 - Machine-only instructions live here, not in the user docs.
