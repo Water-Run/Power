@@ -1,0 +1,1416 @@
+{
+  "schema": "power.model.v1",
+  "description": "Research Ravigneaux train with resolved planet spin/orbit and a shared shaft-driven hydraulic supply. Each range clutch/brake, plus converter lockup when present, has a compliant oil chamber, moving piston, return spring/damping, elastic stroke stops and contact-derived friction capacity. Explicit fill/drain valves, pump leakage/drag and relief track pressure energy, swept volume, hydraulic work and heat. Prescribed valve schedules are not complete AT control. Tank gauge pressure is zero; parameters, maps and OEM applicability remain unverified. Planet geometry: three synchronous pairs; ring pitch radius 0.1 m; per inner/outer mass 0.3/1 kg and spin inertia 0.000015/0.0005 kg m2; carrier structure 0.03 kg m2 plus orbital inertia 0.0184375 kg m2. Piston front/back areas 0.001/0 m2, nominal stroke 0..0.006 m and contact at 0.002 m are declared research inputs.",
+  "step_ns": 20000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.2,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 60,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 4,
+      "domain": "rotational",
+      "storage": {
+        "value": 10,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 1000,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 100,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 101,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.015,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 102,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.04,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 103,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.0484375,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 104,
+      "domain": "rotational",
+      "storage": {
+        "value": 4.5e-05,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 105,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.0015,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 1100,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-11,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 1000000.0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 1110,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-12,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 1120,
+      "domain": "translational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "m"
+      }
+    },
+    {
+      "id": 1111,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-12,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 1121,
+      "domain": "translational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "m"
+      }
+    },
+    {
+      "id": 1112,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-12,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 1122,
+      "domain": "translational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "m"
+      }
+    },
+    {
+      "id": 1113,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-12,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 1123,
+      "domain": "translational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "m"
+      }
+    },
+    {
+      "id": 1114,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 2e-12,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 1124,
+      "domain": "translational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "m"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 200,
+      "kind": "carrier_gear",
+      "node_a": 100,
+      "node_b": 105,
+      "node_c": 103,
+      "parameters": {
+        "ratio": -0.5
+      }
+    },
+    {
+      "id": 201,
+      "kind": "carrier_gear",
+      "node_a": 101,
+      "node_b": 104,
+      "node_c": 103,
+      "parameters": {
+        "ratio": -0.25000000000000006
+      }
+    },
+    {
+      "id": 202,
+      "kind": "ideal_gear",
+      "node_a": 102,
+      "node_b": 4,
+      "parameters": {
+        "ratio": 4
+      }
+    },
+    {
+      "id": 10,
+      "kind": "torque_source",
+      "node_a": 1,
+      "input_channel": 500,
+      "initial_input": {
+        "value": 20,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 11,
+      "kind": "torque_source",
+      "node_a": 4,
+      "input_channel": 501,
+      "initial_input": {
+        "value": -6,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 203,
+      "kind": "carrier_gear",
+      "node_a": 102,
+      "node_b": 105,
+      "node_c": 103,
+      "parameters": {
+        "ratio": 0.25
+      }
+    },
+    {
+      "id": 204,
+      "kind": "carrier_gear",
+      "node_a": 104,
+      "node_b": 105,
+      "node_c": 103,
+      "parameters": {
+        "ratio": -2.9999999999999996
+      }
+    },
+    {
+      "id": 1200,
+      "kind": "hydraulic_pump",
+      "node_a": 1,
+      "node_b": 1100,
+      "parameters": {
+        "inlet_node": 0,
+        "displacement": {
+          "value": 1e-06,
+          "unit": "m3_rad"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 1201,
+      "kind": "hydraulic_resistance",
+      "node_a": 1100,
+      "heat_node": 3,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 1e-12,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 1202,
+      "kind": "shaft",
+      "node_a": 1,
+      "heat_node": 3,
+      "parameters": {
+        "stiffness": {
+          "value": 0,
+          "unit": "nm_rad"
+        },
+        "damping": {
+          "value": 0.02,
+          "unit": "nm_s_rad"
+        },
+        "ratio": 1,
+        "rest_angle": {
+          "value": 0,
+          "unit": "rad"
+        }
+      }
+    },
+    {
+      "id": 1203,
+      "kind": "hydraulic_relief",
+      "node_a": 1100,
+      "heat_node": 3,
+      "parameters": {
+        "coefficient": {
+          "value": 5e-10,
+          "unit": "m3_s_pa"
+        },
+        "cracking_pressure": {
+          "value": 1000000.0,
+          "unit": "pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 1210,
+      "kind": "hydraulic_piston",
+      "node_a": 1120,
+      "node_b": 1110,
+      "parameters": {
+        "front_area": {
+          "value": 0.001,
+          "unit": "m2"
+        },
+        "back_area": {
+          "value": 0,
+          "unit": "m2"
+        },
+        "back_node": 0,
+        "back_pressure": {
+          "value": 0,
+          "unit": "pa"
+        },
+        "minimum_position": {
+          "value": 0,
+          "unit": "m"
+        },
+        "maximum_position": {
+          "value": 0.006,
+          "unit": "m"
+        },
+        "stop_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        },
+        "contact_position": {
+          "value": 0.002,
+          "unit": "m"
+        },
+        "contact_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        }
+      }
+    },
+    {
+      "id": 1220,
+      "kind": "linear_spring",
+      "node_a": 1120,
+      "heat_node": 3,
+      "parameters": {
+        "stiffness": {
+          "value": 10000,
+          "unit": "n_m"
+        },
+        "damping": {
+          "value": 300,
+          "unit": "n_s_m"
+        },
+        "ratio": 1,
+        "rest_angle": {
+          "value": 0,
+          "unit": "m"
+        }
+      },
+      "node_b": 0
+    },
+    {
+      "id": 300,
+      "kind": "piston_clutch",
+      "node_a": 1,
+      "node_b": 103,
+      "heat_node": 3,
+      "parameters": {
+        "piston_component": 1210,
+        "effective_radius": {
+          "value": 0.08,
+          "unit": "m"
+        },
+        "static_friction": 0.4,
+        "sliding_friction": 0.2,
+        "friction_surfaces": 4,
+        "ratio": 1
+      }
+    },
+    {
+      "id": 1230,
+      "kind": "hydraulic_resistance",
+      "node_a": 1100,
+      "node_b": 1110,
+      "heat_node": 3,
+      "input_channel": 700,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        }
+      }
+    },
+    {
+      "id": 1240,
+      "kind": "hydraulic_resistance",
+      "node_a": 1110,
+      "heat_node": 3,
+      "input_channel": 701,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 1211,
+      "kind": "hydraulic_piston",
+      "node_a": 1121,
+      "node_b": 1111,
+      "parameters": {
+        "front_area": {
+          "value": 0.001,
+          "unit": "m2"
+        },
+        "back_area": {
+          "value": 0,
+          "unit": "m2"
+        },
+        "back_node": 0,
+        "back_pressure": {
+          "value": 0,
+          "unit": "pa"
+        },
+        "minimum_position": {
+          "value": 0,
+          "unit": "m"
+        },
+        "maximum_position": {
+          "value": 0.006,
+          "unit": "m"
+        },
+        "stop_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        },
+        "contact_position": {
+          "value": 0.002,
+          "unit": "m"
+        },
+        "contact_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        }
+      }
+    },
+    {
+      "id": 1221,
+      "kind": "linear_spring",
+      "node_a": 1121,
+      "heat_node": 3,
+      "parameters": {
+        "stiffness": {
+          "value": 10000,
+          "unit": "n_m"
+        },
+        "damping": {
+          "value": 300,
+          "unit": "n_s_m"
+        },
+        "ratio": 1,
+        "rest_angle": {
+          "value": 0,
+          "unit": "m"
+        }
+      },
+      "node_b": 0
+    },
+    {
+      "id": 301,
+      "kind": "piston_clutch",
+      "node_a": 1,
+      "node_b": 101,
+      "heat_node": 3,
+      "parameters": {
+        "piston_component": 1211,
+        "effective_radius": {
+          "value": 0.08,
+          "unit": "m"
+        },
+        "static_friction": 0.4,
+        "sliding_friction": 0.2,
+        "friction_surfaces": 4,
+        "ratio": 1
+      }
+    },
+    {
+      "id": 1231,
+      "kind": "hydraulic_resistance",
+      "node_a": 1100,
+      "node_b": 1111,
+      "heat_node": 3,
+      "input_channel": 702,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        }
+      }
+    },
+    {
+      "id": 1241,
+      "kind": "hydraulic_resistance",
+      "node_a": 1111,
+      "heat_node": 3,
+      "input_channel": 703,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 1212,
+      "kind": "hydraulic_piston",
+      "node_a": 1122,
+      "node_b": 1112,
+      "parameters": {
+        "front_area": {
+          "value": 0.001,
+          "unit": "m2"
+        },
+        "back_area": {
+          "value": 0,
+          "unit": "m2"
+        },
+        "back_node": 0,
+        "back_pressure": {
+          "value": 0,
+          "unit": "pa"
+        },
+        "minimum_position": {
+          "value": 0,
+          "unit": "m"
+        },
+        "maximum_position": {
+          "value": 0.006,
+          "unit": "m"
+        },
+        "stop_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        },
+        "contact_position": {
+          "value": 0.002,
+          "unit": "m"
+        },
+        "contact_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        }
+      }
+    },
+    {
+      "id": 1222,
+      "kind": "linear_spring",
+      "node_a": 1122,
+      "heat_node": 3,
+      "parameters": {
+        "stiffness": {
+          "value": 10000,
+          "unit": "n_m"
+        },
+        "damping": {
+          "value": 300,
+          "unit": "n_s_m"
+        },
+        "ratio": 1,
+        "rest_angle": {
+          "value": 0,
+          "unit": "m"
+        }
+      },
+      "node_b": 0
+    },
+    {
+      "id": 302,
+      "kind": "piston_clutch",
+      "node_a": 1,
+      "node_b": 100,
+      "heat_node": 3,
+      "parameters": {
+        "piston_component": 1212,
+        "effective_radius": {
+          "value": 0.08,
+          "unit": "m"
+        },
+        "static_friction": 0.4,
+        "sliding_friction": 0.2,
+        "friction_surfaces": 4,
+        "ratio": 1
+      }
+    },
+    {
+      "id": 1232,
+      "kind": "hydraulic_resistance",
+      "node_a": 1100,
+      "node_b": 1112,
+      "heat_node": 3,
+      "input_channel": 704,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        }
+      }
+    },
+    {
+      "id": 1242,
+      "kind": "hydraulic_resistance",
+      "node_a": 1112,
+      "heat_node": 3,
+      "input_channel": 705,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 1213,
+      "kind": "hydraulic_piston",
+      "node_a": 1123,
+      "node_b": 1113,
+      "parameters": {
+        "front_area": {
+          "value": 0.001,
+          "unit": "m2"
+        },
+        "back_area": {
+          "value": 0,
+          "unit": "m2"
+        },
+        "back_node": 0,
+        "back_pressure": {
+          "value": 0,
+          "unit": "pa"
+        },
+        "minimum_position": {
+          "value": 0,
+          "unit": "m"
+        },
+        "maximum_position": {
+          "value": 0.006,
+          "unit": "m"
+        },
+        "stop_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        },
+        "contact_position": {
+          "value": 0.002,
+          "unit": "m"
+        },
+        "contact_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        }
+      }
+    },
+    {
+      "id": 1223,
+      "kind": "linear_spring",
+      "node_a": 1123,
+      "heat_node": 3,
+      "parameters": {
+        "stiffness": {
+          "value": 10000,
+          "unit": "n_m"
+        },
+        "damping": {
+          "value": 300,
+          "unit": "n_s_m"
+        },
+        "ratio": 1,
+        "rest_angle": {
+          "value": 0,
+          "unit": "m"
+        }
+      },
+      "node_b": 0
+    },
+    {
+      "id": 303,
+      "kind": "piston_clutch",
+      "node_a": 103,
+      "node_b": 0,
+      "heat_node": 3,
+      "parameters": {
+        "piston_component": 1213,
+        "effective_radius": {
+          "value": 0.08,
+          "unit": "m"
+        },
+        "static_friction": 0.4,
+        "sliding_friction": 0.2,
+        "friction_surfaces": 4,
+        "ratio": 1
+      }
+    },
+    {
+      "id": 1233,
+      "kind": "hydraulic_resistance",
+      "node_a": 1100,
+      "node_b": 1113,
+      "heat_node": 3,
+      "input_channel": 706,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        }
+      }
+    },
+    {
+      "id": 1243,
+      "kind": "hydraulic_resistance",
+      "node_a": 1113,
+      "heat_node": 3,
+      "input_channel": 707,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 1214,
+      "kind": "hydraulic_piston",
+      "node_a": 1124,
+      "node_b": 1114,
+      "parameters": {
+        "front_area": {
+          "value": 0.001,
+          "unit": "m2"
+        },
+        "back_area": {
+          "value": 0,
+          "unit": "m2"
+        },
+        "back_node": 0,
+        "back_pressure": {
+          "value": 0,
+          "unit": "pa"
+        },
+        "minimum_position": {
+          "value": 0,
+          "unit": "m"
+        },
+        "maximum_position": {
+          "value": 0.006,
+          "unit": "m"
+        },
+        "stop_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        },
+        "contact_position": {
+          "value": 0.002,
+          "unit": "m"
+        },
+        "contact_stiffness": {
+          "value": 1000000.0,
+          "unit": "n_m"
+        }
+      }
+    },
+    {
+      "id": 1224,
+      "kind": "linear_spring",
+      "node_a": 1124,
+      "heat_node": 3,
+      "parameters": {
+        "stiffness": {
+          "value": 10000,
+          "unit": "n_m"
+        },
+        "damping": {
+          "value": 300,
+          "unit": "n_s_m"
+        },
+        "ratio": 1,
+        "rest_angle": {
+          "value": 0,
+          "unit": "m"
+        }
+      },
+      "node_b": 0
+    },
+    {
+      "id": 304,
+      "kind": "piston_clutch",
+      "node_a": 100,
+      "node_b": 0,
+      "heat_node": 3,
+      "parameters": {
+        "piston_component": 1214,
+        "effective_radius": {
+          "value": 0.08,
+          "unit": "m"
+        },
+        "static_friction": 0.4,
+        "sliding_friction": 0.2,
+        "friction_surfaces": 4,
+        "ratio": 1
+      }
+    },
+    {
+      "id": 1234,
+      "kind": "hydraulic_resistance",
+      "node_a": 1100,
+      "node_b": 1114,
+      "heat_node": 3,
+      "input_channel": 708,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        }
+      }
+    },
+    {
+      "id": 1244,
+      "kind": "hydraulic_resistance",
+      "node_a": 1114,
+      "heat_node": 3,
+      "input_channel": 709,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "coefficient": {
+          "value": 2e-10,
+          "unit": "m3_s_pa"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 2000000000,
+    "sample_every_ns": 10000000,
+    "events": [
+      {
+        "time_ns": 250000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 0
+          },
+          {
+            "channel": 701,
+            "value": 1
+          },
+          {
+            "channel": 702,
+            "value": 1
+          },
+          {
+            "channel": 703,
+            "value": 0
+          },
+          {
+            "channel": 704,
+            "value": 0
+          },
+          {
+            "channel": 705,
+            "value": 1
+          },
+          {
+            "channel": 706,
+            "value": 0
+          },
+          {
+            "channel": 707,
+            "value": 1
+          },
+          {
+            "channel": 708,
+            "value": 1
+          },
+          {
+            "channel": 709,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 500000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 1
+          },
+          {
+            "channel": 701,
+            "value": 0
+          },
+          {
+            "channel": 702,
+            "value": 1
+          },
+          {
+            "channel": 703,
+            "value": 0
+          },
+          {
+            "channel": 704,
+            "value": 0
+          },
+          {
+            "channel": 705,
+            "value": 1
+          },
+          {
+            "channel": 706,
+            "value": 0
+          },
+          {
+            "channel": 707,
+            "value": 1
+          },
+          {
+            "channel": 708,
+            "value": 0
+          },
+          {
+            "channel": 709,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 750000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 1
+          },
+          {
+            "channel": 701,
+            "value": 0
+          },
+          {
+            "channel": 702,
+            "value": 0
+          },
+          {
+            "channel": 703,
+            "value": 1
+          },
+          {
+            "channel": 704,
+            "value": 0
+          },
+          {
+            "channel": 705,
+            "value": 1
+          },
+          {
+            "channel": 706,
+            "value": 0
+          },
+          {
+            "channel": 707,
+            "value": 1
+          },
+          {
+            "channel": 708,
+            "value": 1
+          },
+          {
+            "channel": 709,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 1000000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 1
+          },
+          {
+            "channel": 701,
+            "value": 0
+          },
+          {
+            "channel": 702,
+            "value": 1
+          },
+          {
+            "channel": 703,
+            "value": 0
+          },
+          {
+            "channel": 704,
+            "value": 0
+          },
+          {
+            "channel": 705,
+            "value": 1
+          },
+          {
+            "channel": 706,
+            "value": 0
+          },
+          {
+            "channel": 707,
+            "value": 1
+          },
+          {
+            "channel": 708,
+            "value": 0
+          },
+          {
+            "channel": 709,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1250000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 0
+          },
+          {
+            "channel": 701,
+            "value": 1
+          },
+          {
+            "channel": 702,
+            "value": 1
+          },
+          {
+            "channel": 703,
+            "value": 0
+          },
+          {
+            "channel": 704,
+            "value": 0
+          },
+          {
+            "channel": 705,
+            "value": 1
+          },
+          {
+            "channel": 706,
+            "value": 0
+          },
+          {
+            "channel": 707,
+            "value": 1
+          },
+          {
+            "channel": 708,
+            "value": 1
+          },
+          {
+            "channel": 709,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 1500000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 0
+          },
+          {
+            "channel": 701,
+            "value": 1
+          },
+          {
+            "channel": 702,
+            "value": 1
+          },
+          {
+            "channel": 703,
+            "value": 0
+          },
+          {
+            "channel": 704,
+            "value": 0
+          },
+          {
+            "channel": 705,
+            "value": 1
+          },
+          {
+            "channel": 706,
+            "value": 1
+          },
+          {
+            "channel": 707,
+            "value": 0
+          },
+          {
+            "channel": 708,
+            "value": 0
+          },
+          {
+            "channel": 709,
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 1e-06
+      },
+      {
+        "object_id": 200,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 200,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 201,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 201,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 202,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 202,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 1,
+        "field": "speed",
+        "min": 10,
+        "max": 500
+      },
+      {
+        "object_id": 4,
+        "field": "speed",
+        "min": 1,
+        "max": 100
+      },
+      {
+        "object_id": 301,
+        "field": "clutch_mode",
+        "min": 1,
+        "max": 1
+      },
+      {
+        "object_id": 303,
+        "field": "clutch_mode",
+        "min": 1,
+        "max": 1
+      },
+      {
+        "object_id": 203,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 203,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 204,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 204,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 0,
+        "field": "hydraulic_volume_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 1100,
+        "field": "pressure",
+        "min": 0,
+        "max": 3000000.0
+      }
+    ]
+  }
+}

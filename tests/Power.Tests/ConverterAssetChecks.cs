@@ -27,7 +27,7 @@ internal static class ConverterAssetChecks
     private static void Replay()
     {
         var original = Asset(); var bytes = AssetCodec.Encode(original); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 17);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 24);
         Require(decoded.Components.SequenceEqual(original.Components) && decoded.Model.Fingerprint == original.Model.Fingerprint);
         Require(AssetCodec.Encode(decoded).SequenceEqual(bytes));
         var a = original.CreatePlayback(); var b = decoded.CreatePlayback(); var values = new Scalar[a.Model.OutputCount];
@@ -53,7 +53,7 @@ internal static class ConverterAssetChecks
     private static void Corruption()
     {
         var asset=Asset(); var bytes=AssetCodec.Encode(asset);
-        int counts=78+Encoding.UTF8.GetByteCount(asset.Name), extension=counts+112+44*asset.Nodes.Count+156*asset.Components.Count;
+        int counts=78+Encoding.UTF8.GetByteCount(asset.Name), extension=counts+140+44*asset.Nodes.Count+156*asset.Components.Count;
         void Reject(byte[] bad)
         {
             SHA256.HashData(bad.AsSpan(0,bad.Length-32)).CopyTo(bad,bad.Length-32);
@@ -70,7 +70,7 @@ internal static class ConverterAssetChecks
         Change(second,0); // Re-signed duplicate extension must not replace the first converter.
         Change(extension+20+24,(int)Unit.NewtonMeter); // Wrong dimension in a map point.
         var altered=(byte[])bytes.Clone(); BinaryPrimitives.WriteDoubleLittleEndian(altered.AsSpan(extension+20),-.9); Reject(altered);
-        var down=bytes.Take(counts+56).Concat(bytes.Skip(counts+112).Take(extension-counts-112)).Concat(bytes.Skip(second+20+28*8)).ToArray();
+        var down=bytes.Take(counts+56).Concat(bytes.Skip(counts+140).Take(extension-counts-140)).Concat(bytes.Skip(second+20+28*8)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(down.AsSpan(8),8); Reject(down);
     }
 }

@@ -39,7 +39,7 @@ Unity 直接引用 Core、Assets 的标准库程序集。场景代码按节点�
 
 `ModelDefinition` 是可组合的拓扑描述。节点声明物理域、储能容量和初态；组件声明端点、参数、输入通道和损耗去向。每项有量纲的参数携带单位，编译时归一为 SI，支持 rpm/rad·s⁻¹ 与 degree/radian 转换。
 
-编译器复制描述，按稳定 ID 排序，检查全局 ID、域、单位、有限值、正值、连接、输入冲突和容量。模型最多 32 个节点、64 个组件、64 个动态/热状态；不满足这些条件或离散系统不可求解时返回定位到对象与字段的诊断。
+The compiler copies definitions, sorts stable IDs and checks units, finiteness, connections, input ownership and capacity. Models are bounded to 32 nodes, 64 components and 128 reported state entries. Unsupported or unsolvable definitions return object/field diagnostics.
 
 `CompiledModel` 保存不变的拓扑、通道表、模型指纹与 LU 分解。多个 `Simulation` 共享模型，各自拥有完整状态及工作区。调用者在编译之后修改原始描述数组不会改变已编译模型。
 
@@ -338,3 +338,151 @@ Reversal does not reset an observed quota. Histories belong to each simulation,
 including speculative clutch intervals, cancellation and forks. Timing travel and
 state counts remain bounded; warm stepping allocates no managed memory. Asset v17
 and JSON/MCP retain nozzle, timing and dose. See [FUEL_METERING.md](FUEL_METERING.md).
+
+## Finite liquid phase and vapor availability
+
+Films add explicit liquid mass and thermal/chemical inventory beside tracked gas
+receivers. The analytic finite-bath law resolves heating, prescribed saturation
+and dryout, using an internal-energy phase offset matched to the receiver's vapor
+heat capacity. Vapor enters the normal gas and fuel states; liquid remains outside
+the reaction inventory. The finite wall pays every phase transfer.
+
+Film/gas/mechanics/gas/film half-steps reverse film order on the second sweep so
+shared-wall film transfers have a symmetric split. Other wall heat sources retain
+the explicit outer-interval wall temperature and its first-order accuracy limit.
+Independent simultaneous ODE refinement checks distinguish these cases. Phase
+inventories, compensated heat/delivery histories and mean flows copy/hash/rollback
+with complete simulation state, including speculative clutch intervals. Asset v18
+and JSON/MCP retain all phase quantities. See [FUEL_FILM.md](FUEL_FILM.md).
+
+## Finite compliant liquid fuel delivery
+
+Liquid injectors own finite source inventory and rail pressure energy. Pressure
+derives from compensated discharged volume through supplied compliance; the
+one-way nozzle integrates fixed-receiver pressure-head decay analytically. Shared
+forward-cycle quotas bound delivery and preserve reversal/command semantics.
+Liquid caloric and chemical energy move to the film without bypassing evaporation.
+Rail pressure work separates into finite-wall nozzle heat and an explicit exported
+receiver displacement-work boundary under the negligible-liquid-volume reduction.
+Only that exported work enters global external work; stored rail energy isn't
+counted twice.
+
+Injection wraps the existing film/gas/mechanical split with reversed second-half
+ordering. Source/film inventories and all quota, pressure/heat and compensated
+histories survive speculative clutch intervals, complete rollback, cancellation
+and independent forks. Independent simultaneous ODE refinement and active
+allocation checks verify the shared path. Asset v19, JSON and actual MCP retain
+source/nozzle/timing definitions. See [LIQUID_FUEL_INJECTION.md](LIQUID_FUEL_INJECTION.md).
+
+## Reciprocal solenoid and physical needle
+
+Flux linkage and linear position-dependent inductance add magnetic stored energy
+and reciprocal force to the joint mechanical solve. An analytic electrical
+elimination and position derivative preserve a symmetric discrete energy identity;
+accepted motion commits magnetic flux, copper heat and electrical work once.
+Elastic travel stops reuse conservative hinge gradients without clamping state.
+Coordinates merge with existing hydraulic/gas-piston coordinates as appropriate.
+
+Actual needle lift meters liquid flow independently of desired-dose/window cutoff.
+A sampled driver owns coil voltage and uses the latched cycle target and measured
+delivery, retaining closing and seat-rebound tails. Complete state includes magnetic,
+sampled/held controller, source/phase and all compensated histories through forks,
+cancellation, speculative clutch capture and late failure. Asset v20 and JSON/MCP
+retain the definitions. Scope, reciprocity and evidence are in
+[NEEDLE_ACTUATION.md](NEEDLE_ACTUATION.md).
+
+## Bounded closure replay and scheduled cutoff
+
+Prediction-enabled drivers copy complete state into one preallocated replay
+state, hold other actuator commands and replay a zero-voltage or delayed-cutoff
+plant future. Normal physical equations and accepted hybrid intervals determine
+additional delivery. Forecasts never commit or run sampled controllers recursively;
+real intervals prepare their solver workspace after each prediction.
+
+Bounded integer candidate search schedules cutoff within the next sample period.
+The per-cycle latch and physical-tick countdown prevent repeated reopening from
+tiny forecast differences. Prediction mass/count, latch/cycle and countdown join
+complete state copy/hash/rollback. Horizon alignment, clock range, finite tick
+budget and candidate monotonicity are checked. Asset v21 retains the optional
+horizon; disabled predictions preserve earlier model/state hashes. See
+[CLOSURE_PREDICTION.md](CLOSURE_PREDICTION.md).
+
+## Dual-clutch graph composition
+
+The immutable DCT assembly lowers seven forward/reverse paths into existing
+rotor, gear and clutch records with caller-owned stable IDs. Free hubs, two input
+shafts, reverse idler and three output/final branches retain explicit inertia.
+Selectors transfer synchronization impulse/heat and drive clutches transfer actual
+power; a gear number doesn't replace the permanent topology.
+
+The large linear graph exposed slow correlated-lock projection at a six/seven
+handoff. The primary bounded projection is retained; when it exhausts iterations,
+independent linear locks use a normalized preallocated Schur factorization with
+the same static limits, mode release, residual and passive-heat checks. Singular
+or nonlinear cases retain their existing behavior. Ordinary JSON/asset/MCP paths
+and original fingerprints remain unchanged. References and scope are in
+[DUAL_CLUTCH_TRANSMISSION.md](DUAL_CLUTCH_TRANSMISSION.md).
+
+## Sampled DCT state and controlled kinematics
+
+The controller owns all ten drive/selector commands and validates their actual
+odd/even/idler/final topology. Integer requests are sampled on bounded clocks;
+physical slip and lock gate preselection and staged exclusive handoff. Neutral,
+direction block, timeout, persistent lock loss and new-request recovery retain
+separate state/fault outputs. Held commands, selections, phase and monitoring
+clocks copy/hash/rollback with complete physical histories.
+
+Controlled models accumulate coordinates from midpoint velocity with compensated
+roundoff. Strict gear phase bounds remain unchanged; compensation is transactional
+and hashed. Preceding models retain their prior integration/replay. The reported
+state bound expands to 128 while node/component limits stay 32/64, with exact-
+boundary and overflow tests. This supports the complete research fired/DCT/control
+composition rather than dropping engine state to fit the earlier limit.
+Asset v22 and JSON/MCP retain all route/timing/tolerance definitions. See
+[DCT_CONTROL.md](DCT_CONTROL.md).
+
+## Compound planetary research assembly
+
+The [Ravigneaux assembly](RAVIGNEAUX_TRANSMISSION.md) combines a single-pinion
+large-sun and double-pinion small-sun constraint sharing ring/carrier. Normalized
+rows preserve summed reaction power; projected responses enter the ordinary
+mechanical/converter/clutch solve. Compound graphs accumulate coordinates with
+transactional compensated correction to preserve long-run phase under load;
+existing graph-only models retain their previous integration/hash path. Four member inertias are explicit research
+values; internal planet spin remains unresolved. Five friction connections select
+four forward ranges or reverse without adding a prescribed speed source.
+
+The assembly returns immutable ordinary definitions with stable port and command
+IDs. Carrier capture generates actual friction heat. Every reaction and heat
+history participates in the existing state copy/hash/rollback contract. JSON and
+asset v23 retain double-pinion topology; earlier component-free fingerprints and
+authentic v22 replay remain unchanged. This does not establish complete AT control
+or measured target-powertrain behavior.
+
+## Resolved internal planet motion
+
+The [resolved Ravigneaux graph](RESOLVED_PLANETS.md) uses four carrier-relative
+mesh rows between six internal rotors. Absolute planet spin retains diagonal
+rotor kinetic storage; declared per-planet masses add exact orbital inertia to
+the carrier. Independent reduced mass matrices, angular momentum, capture heat
+and every replay boundary check the ordinary coupled graph. It does not add a
+prescribed speed signal or separate untracked energy store.
+
+Carrier meshes support finite nonzero signed relative ratios and explicit moving
+carrier reactions. Their normalized Schur projection performs at most three
+relative residual refinements, including small clutch/cylinder/converter force
+responses. Free midpoint targets enforce zero next-endpoint velocity residual,
+avoiding repeated reflection of preceding roundoff through the same force response. Correction multipliers accumulate into actual reactions. Compiled
+factors remain immutable; simulation-owned scratch and constructor-local buffers
+keep branches independent. Existing graphs retain the prior projection path.
+The new primitive adds fingerprint tag 28 and asset v24 topology support.
+
+## Shared hydraulic actuation assembly
+
+The [AT actuation assembly](AT_HYDRAULIC_ACTUATION.md) lowers 1..6 declared clutch
+targets into actual piston/contact clutches, fill/drain restrictions and return
+springs supplied by a shared reversible pump, leakage/drag and relief. Explicit
+front/back areas retain swept inventory and reference-pressure work. Immutable
+ordinary definitions preserve the existing joint pressure/motion/friction solve,
+portable v24 semantics and complete atomic state. Prescribed valve schedules
+remain separate from AT feedback/control and measured valve-body acceptance.

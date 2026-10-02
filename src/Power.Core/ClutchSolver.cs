@@ -39,6 +39,10 @@ internal sealed class ClutchSolver
     private readonly double[,] _matrix, _heatMatrix;
     private readonly double[][] _response, _gearReaction;
     private readonly double[] _free, _diagonal, _staticCapacity, _slidingCapacity;
+    private readonly int[] _lockedIndices;
+    private readonly double[] _lockedRhs;
+    private readonly double[,] _lockedMatrix;
+    private readonly Factorization _lockedFactor;
     internal readonly double[] Torque;
     private double _duration;
     private bool _externalDynamics;
@@ -56,6 +60,8 @@ internal sealed class ClutchSolver
         _gearReaction = model.ClutchComponents.Select(_ => new double[model.GearComponents.Length]).ToArray();
         _staticCapacity = new double[model.ClutchComponents.Length]; _slidingCapacity = new double[model.ClutchComponents.Length];
         _free = new double[model.DynamicCount]; Torque = new double[_response.Length]; _diagonal = new double[_response.Length];
+        _lockedIndices = new int[_response.Length]; _lockedRhs = new double[_response.Length];
+        _lockedMatrix = new double[_response.Length, _response.Length]; _lockedFactor = new(_response.Length);
         if (!Prepare(model.Dt)) throw new ModelCompileException(DiagnosticCode.Solver, 0, "clutch.coupling", "Clutch response is nonfinite, ill-conditioned or fully constrained by permanent gears; inspect the power path, inertia and ratio scales.");
     }
 
@@ -214,7 +220,11 @@ internal sealed class ClutchSolver
                     }
                 if (satisfied) { converged = true; break; }
             }
-            if (!converged) return false;
+            if (!converged)
+            {
+                if (!DirectLinearConstraints(state, old, mid, energy, combustion, cancellation, out bool released)) return false;
+                if (released) continue;
+            }
             bool changed = false;
             for (int k = 0; k < Torque.Length; ++k)
             {
@@ -237,6 +247,51 @@ internal sealed class ClutchSolver
             if (!changed) return true;
         }
         return false;
+    }
+
+    // Independent linear locks can converge slowly under scalar projection when their
+    // gear-reflected responses are strongly correlated. Retain the usual path and use
+    // a bounded normalized Schur solve only after that path exhausts its iterations.
+    private bool DirectLinearConstraints(ClutchState state, double[] old, double[] mid, double[] energy,
+        CombustionSolver? combustion, CancellationToken cancellation, out bool released)
+    {
+        released = false;
+        if (_mechanical is not null || _model.HasCoupledHydraulics || cancellation.IsCancellationRequested) return false;
+        int count = 0;
+        for (int k = 0; k < Torque.Length; ++k)
+            if (state.Mode[k] == ClutchMode.Locked) { _lockedIndices[count++] = k; Torque[k] = 0; }
+        if (count == 0 || !Midpoint(old, mid, energy, combustion, cancellation)) return false;
+        Array.Clear(_lockedMatrix, 0, _lockedMatrix.Length); Array.Clear(_lockedRhs, 0, _lockedRhs.Length);
+        for (int row = 0; row < count; ++row)
+        {
+            int a = _lockedIndices[row]; double scale = Math.Sqrt(_diagonal[a]);
+            _lockedRhs[row] = -Slip(a, mid) / scale;
+            for (int col = 0; col < count; ++col)
+            {
+                int b = _lockedIndices[col];
+                _lockedMatrix[row, col] = Slip(a, _response[b]) / scale / Math.Sqrt(_diagonal[b]);
+            }
+        }
+        for (int k = count; k < Torque.Length; ++k) _lockedMatrix[k, k] = 1;
+        if (!_lockedFactor.Refactor(_lockedMatrix) || !_lockedFactor.Solve(_lockedRhs)) return false;
+        for (int row = 0; row < count; ++row)
+        {
+            int k = _lockedIndices[row]; double required = _lockedRhs[row] / Math.Sqrt(_diagonal[k]);
+            if (!Numeric.Finite(required)) return false;
+            if (Math.Abs(required) > _staticCapacity[k])
+            {
+                state.Mode[k] = required > 0 ? ClutchMode.SlippingNegative : ClutchMode.SlippingPositive;
+                released = true;
+            }
+            else Torque[k] = required;
+        }
+        if (released) return true;
+        if (!Midpoint(old, mid, energy, combustion, cancellation)) return false;
+        for (int row = 0; row < count; ++row)
+        {
+            int k = _lockedIndices[row]; if (Math.Abs(Slip(k, mid)) > Tolerance(k, mid)) return false;
+        }
+        return true;
     }
 
     private bool ProjectHydraulicTorques(ClutchState state, double[] mid, bool apply, ref bool satisfied)

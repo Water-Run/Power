@@ -169,7 +169,9 @@ internal static class CoreChecks
         Throws<ModelCompileException>(() => Make([null!], []));
         var full = Enumerable.Range(1, 32).Select(i => NodeDefinition.Rotor((uint)i, 1)).ToArray();
         Require(Make(full, []).Model.StateCount == 64);
-        Throws<ModelCompileException>(() => Make(full, [ComponentDefinition.Motor(100, 1, 0, 100, 1, 1, 1, 1)]));
+        Require(Make(full, [ComponentDefinition.Motor(100, 1, 0, 100, 1, 1, 1, 1)]).Model.StateCount == 65);
+        var boundary = Make(full, Enumerable.Range(0, 64).Select(i => ComponentDefinition.Motor((uint)(100 + i), 1, 0, (ulong)(100 + i), 1, 1, 1, 0)).ToArray());
+        Require(boundary.Model.StateCount == 128 && boundary.Step(1_000_000) == SimulationStatus.Ok);
         Throws<ModelCompileException>(() => Make([.. full, NodeDefinition.Rotor(33, 1)], []));
     }
 

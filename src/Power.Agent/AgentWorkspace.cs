@@ -26,15 +26,43 @@ public sealed class AgentWorkspace
 
     public static AgentReply Capabilities() => AgentReply.Success(new
     {
-        version = "0.20.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
-        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", "power.asset.v11", "power.asset.v12", "power.asset.v13", "power.asset.v14", "power.asset.v15", "power.asset.v16", AssetCodec.FormatName },
+        version = "0.29.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
+        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", "power.asset.v11", "power.asset.v12", "power.asset.v13", "power.asset.v14", "power.asset.v15", "power.asset.v16", "power.asset.v17", "power.asset.v18", "power.asset.v19", "power.asset.v20", "power.asset.v21", "power.asset.v22", "power.asset.v23", AssetCodec.FormatName },
         domains = new[] { "rotational", "thermal", "gas", "hydraulic", "battery", "translational" },
-        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief", "pressure_controller", "battery_motor", "resistive_load", "pressure_duty_controller", "linear_spring", "hydraulic_piston", "piston_clutch", "force_source", "hydraulic_spool_valve", "gas_piston", "gas_fuel_injector" },
-        examples = new[] { "electrothermal", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump", "gas-accumulator-pump", "metered-fired-cylinder" },
+        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief", "pressure_controller", "battery_motor", "resistive_load", "pressure_duty_controller", "linear_spring", "hydraulic_piston", "piston_clutch", "force_source", "hydraulic_spool_valve", "gas_piston", "gas_fuel_injector", "fuel_film", "liquid_fuel_injector", "solenoid", "travel_stop", "needle_driver", "dct_controller", "double_pinion_planetary_gear", "carrier_gear" },
+        examples = new[] { "electrothermal", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump", "gas-accumulator-pump", "metered-fired-cylinder", "film-fired-cylinder", "liquid-injected-cylinder", "needle-actuated-cylinder", "closure-compensated-cylinder", "dual-clutch-transmission", "fired-dual-clutch", "controlled-dual-clutch", "controlled-fired-dual-clutch", "ravigneaux-transmission", "fired-ravigneaux-converter", "resolved-ravigneaux-transmission", "fired-resolved-ravigneaux-converter", "hydraulic-ravigneaux-transmission", "fired-hydraulic-ravigneaux" },
         limits = new { nodes = CompiledModel.MaxNodes, components = CompiledModel.MaxComponents, states = CompiledModel.MaxStates,
             sessions = MaxSessions, ticks_per_step = 1_000_000, experiment_ticks = 10_000_000, document_bytes = 1_048_576, asset_bytes = AssetCodec.MaxBytes },
         determinism = "Exact replay within the same binary/runtime/architecture. Compare tolerances across platforms.",
-        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics", "sampled_pressure_control", "battery_electromechanical", "battery_pressure_control", "dynamic_piston_powertrain", "mechanically_regulated_hydraulics", "linear_gas_actuation", "gas_accumulator_powertrain", "cycle_fuel_metering", "metered_fired_powertrain" }, calibration = "unverified",
+        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics", "sampled_pressure_control", "battery_electromechanical", "battery_pressure_control", "dynamic_piston_powertrain", "mechanically_regulated_hydraulics", "linear_gas_actuation", "gas_accumulator_powertrain", "cycle_fuel_metering", "metered_fired_powertrain", "finite_liquid_film_evaporation", "film_evaporation_fired_powertrain", "finite_liquid_fuel_delivery", "liquid_injected_fired_powertrain", "electromagnetic_linear_actuation", "elastic_translational_contact", "needle_actuated_liquid_delivery", "needle_actuated_fired_powertrain", "closure_compensated_liquid_delivery", "closure_compensated_fired_powertrain", "sampled_dual_clutch_control" }, calibration = "unverified",
+        dct_controller = new { component = "dct_controller", input = "Integral requested_gear state_code in [-1,7]; zero is neutral.",
+            ownership = "Owns both drive clutches and all eight selectors; write requested gear instead of owned engagement channels.",
+            policy = "Sampled physical selector/drive lock confirmation; unloaded preselection, exclusive release/engagement ramps, neutral abort, timeout/direction faults and new-request recovery.",
+            scope = "Conservative torque-interrupted handoff, ideal command actuators; no complete ECU torque blending, dog/baulk-ring hardware, calibrated TCU or comprehensive faults." },
+        dual_clutch_assembly = new { topology = "Seven forward constant-mesh hubs, even-path reverse idler, two input shafts and three output/final-drive branches.",
+            components = "Ordinary rotor, ideal_gear and clutch records with explicit IDs, inertias, ratios, capacities and actuator channels.",
+            operation = "Selectors preselect unloaded input paths; drive-clutch handoff chooses actual torque paths. Ratios are permanent constraints, not runtime gear-number multiplication.",
+            scope = "Unverified research topology/parameters. Friction selectors, prescribed schedules, no detailed dog/baulk-ring, measured actuation, complete ECU/TCU or calibrated DQ200." },
+        closure_prediction = new { optional_parameter = "closure_prediction_ns", max_physical_ticks = 4096,
+            sampling = "Horizon aligns to physical ticks and covers at least two sample periods. A bounded monotone bracket chooses a physical-tick cutoff before the next sample.",
+            scope = "Full plant replay in separate preallocated state; zero-voltage or delayed-cutoff coil, other actuator commands held, no future external events. Real flow is never clipped.",
+            evidence = "Predicted additional fuel, forecast ticks, cutoff latch and pending closing ticks are observable. Failed/cancelled prediction preserves the entire real batch." },
+        needle_actuation = new { solenoid = "solenoid", stop = "travel_stop", driver = "needle_driver", gradient_unit = "h_m",
+            magnetics = "L(x)=L_ref+gradient*(x-x_ref)>0. Flux state, reciprocal magnetic force, copper heat and electrical work use an energy-conjugate discrete gradient.",
+            flow = "Needle position sets actual nozzle opening. Fluid can continue after target/window closure or reversal; actual delivery is not clipped to requested dose.",
+            control = "Sampled forward-window/delivered-dose feedback owns coil voltage; write the injector kg request. Held voltage, sampled dose and every physical history share integer clocks, rollback and forks.",
+            scope = "Pressure-balanced needle, constant R and linear unsaturated inductance. No nonlinear magnetic maps, hysteresis/eddy losses, flyback/PWM hardware, axial fluid force or calibrated actuation." },
+        liquid_fuel_injector = new { component = "liquid_fuel_injector", source = "Finite compliant liquid inventory; absolute pressure falls with discharged volume.",
+            input_unit = "kg", density_unit = "kg_m3", compliance_unit = "m3_pa",
+            delivery = "Forward cycle quota is latched once. Exact fixed-receiver pressure-head decay limits delivery by pressure, finite inventory and remaining dose.",
+            energy = "Rail caloric/chemical and pressure energy are stored. Released pressure work equals nozzle heat plus exported receiver pressure work. Only liquid joins the film; evaporation remains separate.",
+            scope = "Constant density/compliance/caloric properties; negligible liquid receiver volume with explicit exported displacement work. No pump/refill, needle/electrical actuation, spray/cavitation or calibrated hardware." },
+        fuel_film = new { component = "fuel_film", receiver = "Tracked gas", wall = "Finite thermal node",
+            phases = "Analytic finite-bath sensible heating, declared saturation plateau, heat-limited vaporization and dryout. Only vapor joins the gas reactants.",
+            energy = "Latent input is internal-energy difference in j_kg. Liquid phase offset matches the receiver vapor cv at saturation; signed liquid thermal energy is valid.",
+            units = new { mass = "kg", temperature = "k", specific_heat = "j_kg_k", latent_internal_energy = "j_kg", conductance = "w_k" },
+            integration = "Symmetric film/gas/mechanics/gas/film split; reverse film order on the second half-step. Other wall heat sources use the explicit outer-tick wall temperature and retain first-order coupling accuracy.",
+            scope = "Negligible liquid volume, constant prescribed saturation temperature/properties, no condensation, no liquid injection/rail/needle/spray dynamics or calibrated fuel properties." },
         gas_fuel_injector = new { component = "gas_fuel_injector", source = "Finite tracked gas rail; pressure-dependent one-way fuel/enthalpy transfer.", input_unit = "kg",
             quota = "Requested fuel dose is latched once at each forward metering window. Mid-window writes apply to the next cycle; reversal cannot reissue an observed cycle quota.",
             limiter = "One half-step fuel-rate ceiling preserves the per-cycle budget. The same flow factor transports total mass, constituents and upstream thermal enthalpy.",
@@ -175,10 +203,24 @@ public sealed class AgentWorkspace
         "spool-regulated-pump" => AgentReply.Success(Resource("power.spool-regulated-pump.template.json")),
         "gas-accumulator-pump" => AgentReply.Success(Resource("power.gas-accumulator-pump.template.json")),
         "metered-fired-cylinder" => AgentReply.Success(Resource("power.metered-fired-cylinder.template.json")),
+        "film-fired-cylinder" => AgentReply.Success(Resource("power.film-fired-cylinder.template.json")),
+        "liquid-injected-cylinder" => AgentReply.Success(Resource("power.liquid-injected-cylinder.template.json")),
+        "needle-actuated-cylinder" => AgentReply.Success(Resource("power.needle-actuated-cylinder.template.json")),
+        "closure-compensated-cylinder" => AgentReply.Success(Resource("power.closure-compensated-cylinder.template.json")),
+        "dual-clutch-transmission" => AgentReply.Success(Resource("power.dual-clutch-transmission.template.json")),
+        "fired-dual-clutch" => AgentReply.Success(Resource("power.fired-dual-clutch.template.json")),
+        "hydraulic-ravigneaux-transmission" => AgentReply.Success(Resource("power.hydraulic-ravigneaux-transmission.template.json")),
+        "fired-hydraulic-ravigneaux" => AgentReply.Success(Resource("power.fired-hydraulic-ravigneaux.template.json")),
+        "resolved-ravigneaux-transmission" => AgentReply.Success(Resource("power.resolved-ravigneaux-transmission.template.json")),
+        "fired-resolved-ravigneaux-converter" => AgentReply.Success(Resource("power.fired-resolved-ravigneaux-converter.template.json")),
+        "ravigneaux-transmission" => AgentReply.Success(Resource("power.ravigneaux-transmission.template.json")),
+        "fired-ravigneaux-converter" => AgentReply.Success(Resource("power.fired-ravigneaux-converter.template.json")),
+        "controlled-dual-clutch" => AgentReply.Success(Resource("power.controlled-dual-clutch.template.json")),
+        "controlled-fired-dual-clutch" => AgentReply.Success(Resource("power.controlled-fired-dual-clutch.template.json")),
         "fired-hydraulic" => AgentReply.Success(Resource("power.fired-hydraulic.template.json")),
         "fired-converter" => AgentReply.Success(Resource("power.fired-converter.template.json")),
         "fired-planetary" => AgentReply.Success(Resource("power.fired-planetary.template.json")),
-        _ => AgentReply.Failure("unknown_example", "Available examples: electrothermal, sealed-cylinder, gas-network, moving-cylinder, crank-timed-cylinder, fired-cylinder, fired-clutch, fired-planetary, fired-converter, fired-hydraulic, fired-pump, fired-pump-losses, electric-pump, pressure-regulated-pump, battery-regulated-pump, piston-actuated-clutch, spool-regulated-pump, gas-accumulator-pump, metered-fired-cylinder.", field: "name")
+        _ => AgentReply.Failure("unknown_example", "Available examples: electrothermal, sealed-cylinder, gas-network, moving-cylinder, crank-timed-cylinder, fired-cylinder, fired-clutch, fired-planetary, fired-converter, fired-hydraulic, fired-pump, fired-pump-losses, electric-pump, pressure-regulated-pump, battery-regulated-pump, piston-actuated-clutch, spool-regulated-pump, gas-accumulator-pump, metered-fired-cylinder, film-fired-cylinder, liquid-injected-cylinder, needle-actuated-cylinder, closure-compensated-cylinder, dual-clutch-transmission, fired-dual-clutch, controlled-dual-clutch, controlled-fired-dual-clutch, ravigneaux-transmission, fired-ravigneaux-converter, resolved-ravigneaux-transmission, fired-resolved-ravigneaux-converter, hydraulic-ravigneaux-transmission, fired-hydraulic-ravigneaux.", field: "name")
     };
 
     private static AgentReply Guard(Func<AgentReply> work)
@@ -293,7 +335,13 @@ public sealed class AgentWorkspace
     {
         if (values is null || values.Length == 0 || values.Length > CompiledModel.MaxComponents || values.Any(v => v is null))
             throw new ArgumentException("Provide 1..64 input values.");
-        var status = s.Simulation.SubmitInputs(values.Select(v => new Scalar(ParseInteger(v.Channel), v.Value)).ToArray());
+        var parsed = values.Select(v => new Scalar(ParseInteger(v.Channel), v.Value)).ToArray();
+        var status = s.Simulation.SubmitInputs(parsed);
+        if (status == SimulationStatus.ControlledInput)
+            foreach (var value in parsed)
+                if (s.Simulation.Model.TryGetControlCommand(value.Channel, out var command))
+                    return AgentReply.Failure("controlled_input", $"Input channel {value.Channel} is controller-owned. Write {command.Quantity} on channel {command.Id} ({command.Unit}) instead; state and revision are unchanged.",
+                        revision: s.Revision.ToString(CultureInfo.InvariantCulture));
         if (status != SimulationStatus.Ok) return Status(status, s);
         ++s.Revision;
         return AgentReply.Success(Snapshot(s));
@@ -311,7 +359,7 @@ public sealed class AgentWorkspace
     private static AgentReply Status(SimulationStatus status, Session s) => AgentReply.Failure(
         JsonNamingPolicy.SnakeCaseLower.ConvertName(status.ToString()),
         status == SimulationStatus.NumericalFailure
-            ? "Numerical solve failed; state and revision are unchanged. Reduce step_ns and recreate the model/session. For cylinders keep crank travel below 0.25 rad per interval; for gas networks inspect flow area, volume, conductance and initial conditions. Timed valves require crank travel per interval <= min(0.25 rad, duration_angle/8). Premixed combustion also requires travel <= min(0.25 rad, burn duration/32) and heat release <= 25% of pre-burn thermal energy. For hydraulics inspect compliance, valve coefficients, gauge pressures and actuator geometry; reduce step_ns if pressures become negative. For converters inspect map slopes and speed/inertia scales. For ideal gears inspect constraint rank and inertia/ratio scales. For clutches inspect inertia/ratio scales, redundant constraints, capacity schedules and the bounded interval/constraint limits in capabilities."
+            ? "Numerical solve failed; state and revision are unchanged. Reduce step_ns and recreate the model/session. For cylinders keep crank travel below 0.25 rad per interval; for gas networks inspect flow area, volume, conductance and initial conditions. Timed valves require crank travel per interval <= min(0.25 rad, duration_angle/8). Premixed combustion also requires travel <= min(0.25 rad, burn duration/32) and heat release <= 25% of pre-burn thermal energy. For hydraulics inspect compliance, valve coefficients, gauge pressures and actuator geometry; reduce step_ns if pressures become negative. For closure prediction inspect the aligned finite horizon, available integer time and monotone cutoff bracket; reduce the sample period/horizon when control assumptions fail. For solenoids keep L(x)>0, resolve needle travel and inspect R/L/gradient and stroke scales; reducing step_ns also resolves controller/closing dynamics. For converters inspect map slopes and speed/inertia scales. For ideal gears inspect constraint rank and inertia/ratio scales. For clutches inspect inertia/ratio scales, redundant constraints, capacity schedules and the bounded interval/constraint limits in capabilities."
             : status == SimulationStatus.ControlledInput ? "This actuator input is owned by a pressure controller. Write its pressure_setpoint input instead; state and revision are unchanged."
             : "Operation rejected; session state and revision are unchanged. Inspect capabilities, channels and fixed step before retrying. Gas openings, burn multipliers and clutch engagement must be finite fractions in [0, 1]; pressure setpoints must be nonnegative.",
         status is SimulationStatus.Cancelled or SimulationStatus.Busy, revision: s.Revision.ToString(CultureInfo.InvariantCulture));

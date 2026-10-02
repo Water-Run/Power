@@ -4,9 +4,134 @@
 
 CLI 的 `export` 命令和 MCP 的 `export_model_asset` 使用同一个编码器。Unity `ScriptedImporter` 把文件导入为 `PowerModelAsset`，仅序列化数据字节；运行时解码后重新编译模型，不加载任意代码或预存 LU 分解。默认资产由 `tools/Build.cs` 生成，可从 JSON 重建。
 
-## Current version 17 and retained readers
+## Current version 24 and retained readers
 
-The encoder writes `power.asset.v17`; versions 1 through 17 remain readable. Its
+The encoder writes `power.asset.v24`; versions 1 through 24 remain readable.
+The count table and record sizes remain those of v23. Kind 37 is `carrier_gear`:
+its base ratio is finite, signed and nonzero; its 8-byte gear extension retains
+component index and the distinct moving carrier. Typed counts cover every
+carrier mesh. A digest-resealed v23 downgrade rejects the new kind.
+
+Carrier meshes add fingerprint tag 28, compensated coordinates, endpoint
+constraint consistency and bounded relative projection refinement with
+accumulated reactions. Plain rotor records
+retain absolute planet spin and total carrier orbital inertia. An authentic
+v23 reduced Ravigneaux fixture retains its digest/fingerprint and exact upgraded
+replay. See [RESOLVED_PLANETS.md](RESOLVED_PLANETS.md).
+
+## Retained version 23
+
+Version 23 retains the v22 count table and record sizes. Kind 36 is
+`double_pinion_planetary_gear`: the base signed ratio and existing 8-byte gear
+extension retain the distinct carrier. Counts and typed coverage include the new
+kind. Older versions reject it, including a digest-resealed v22 downgrade.
+
+Compound models add fingerprint tag 27, including compensated coordinate
+accumulation. Their complete row enters the ordinary
+reaction/phase/replay contract; existing models keep preceding fingerprints.
+An authentic controlled-DCT v22 fixture retains its digest and exact upgraded
+replay. See [RAVIGNEAUX_TRANSMISSION.md](RAVIGNEAUX_TRANSMISSION.md).
+
+## Retained version 22
+
+Version 22's
+count table has 35 int32 values (140 bytes); header size is
+`218 + UTF-8 name length`. The DCT controller count follows the v21 actuation
+counts. After driver records, each DCT record is 104 bytes: component index int32;
+vehicle, odd/even clutch IDs uint32; eight selector IDs uint32; sample/release/
+engagement/timeout values uint64; and two quantities for synchronization tolerance
+and direction speed limit.
+
+Kind 35 is `dct_controller`. Fields 73-79 are requested/actual gear, odd/even
+selection, shift phase, synchronization error and control fault. Existing IDs
+are unchanged. Controller models add fingerprint tag 26 with stable routes,
+timing and tolerances. Initial released commands, sole ownership, full topology,
+integral request, bounded state count and timing alignment are checked at compile.
+Forged v21 downgrades reject controller records/kinds. An authentic v21 DCT graph
+retains its digest/fingerprint and same-runtime upgraded replay. See
+[DCT_CONTROL.md](DCT_CONTROL.md).
+
+## Retained version 21
+
+Version 21's
+v20 count table and `214 + UTF-8 name length` header remain unchanged. Each needle
+driver record is 40 bytes: the v20 fields plus optional closure horizon uint64.
+Older driver records are 32 bytes and decode with prediction disabled.
+
+Prediction models add fingerprint tag 25 and horizon nanoseconds; disabled models
+retain prior fingerprints and state hashes. Fields 69-72 are predicted fuel mass,
+prediction ticks, driver cutoff state and pending closing ticks. Existing IDs
+remain fixed. Horizon/alignment/budget and clock rules belong to physical/control
+compilation. Forged downgrades that strip enabled prediction fail fingerprint
+validation. Authentic v20 assets retain their digests and same-runtime upgraded
+replay. See [CLOSURE_PREDICTION.md](CLOSURE_PREDICTION.md).
+
+## Retained version 20
+
+Version 20's
+34 int32 counts occupy 136 bytes; the header is `214 + UTF-8 name length` bytes.
+Four counts after the liquid-injector count describe solenoids, travel stops,
+optional injector needles and sampled needle drivers. After the liquid table:
+
+| Table | Bytes | Data |
+|---|---:|---|
+| Solenoid | 28 | Component index int32; reference-position and inductance-gradient quantities |
+| Travel stop | 40 | Component index int32; minimum/maximum position and stiffness quantities |
+| Needle | 32 | Injector component index int32; needle-node ID uint32; closed/full-open quantities |
+| Driver | 32 | Component index int32; injector/solenoid IDs uint32; period uint64; drive-voltage quantity |
+
+Solenoid R/L/initial current, voltage input and thermal sink use base records.
+Kinds 32-34 are `solenoid`, `travel_stop` and `needle_driver`; `HenryPerMeter` is
+appended to the unit enum (`h_m`), and field 68 is `copper_heat`. Existing IDs retain
+their values. Magnetic/stop models add fingerprint tag 22, physical needle opening
+adds tag 23, and driver definitions add tag 24. Parameters, stable references and
+sampling periods enter the fingerprint.
+
+Typed bounded records, units, distinct owners, complete coverage and physical
+compilation remain required. Forged v19 downgrades reject actuation kinds; stripping
+a needle extension changes the compiled fingerprint. An authentic v19 liquid
+fixture retains its digest/fingerprint and same-runtime upgraded replay. See
+[NEEDLE_ACTUATION.md](NEEDLE_ACTUATION.md).
+
+## Retained version 19
+
+Version 19's
+30 int32 counts occupy 120 bytes; the header is `198 + UTF-8 name length` bytes.
+The liquid-injector count follows the v18 film count. After the film phase table,
+each liquid record occupies 120 bytes: component-table index int32, target film ID
+uint32, crank ID uint32, then nine quantities for cycle/start/duration angles,
+maximum dose, initial source mass, supply temperature, density, initial absolute
+pressure and pressure compliance. Each quantity is double plus int32 unit. Nozzle
+area/coefficient use the existing 36-byte orifice extension.
+
+Kind 31 is `liquid_fuel_injector`; `KilogramPerCubicMeter` is appended to the unit
+enum, with JSON name `kg_m3`. Existing domain/unit/output IDs remain fixed. Liquid
+models add fingerprint tag 21, including stable film/crank IDs, timing and source
+properties. Bounded typed complete coverage, digest, units and physical ownership
+are required; forged v18 downgrades reject liquid injectors. An authentic v18 film
+fixture retains digest/fingerprint and same-runtime upgraded replay. See
+[LIQUID_FUEL_INJECTION.md](LIQUID_FUEL_INJECTION.md).
+
+## Retained version 18
+
+Version 18's
+29 int32 counts occupy 116 bytes; the header is `194 + UTF-8 name length` bytes.
+A film count follows the v17 fuel-injector count. After the injector records,
+each film record occupies 64 bytes: component-table index int32, then initial
+mass, initial temperature, liquid specific heat, saturation temperature and latent
+internal energy as five quantities (double plus int32 unit). Conductance and the
+receiver/wall IDs remain in the base component record.
+
+Kind 30 is `fuel_film`; fields 66-67 are cumulative evaporated fuel mass in kg and
+film wall heat in J. Existing IDs remain fixed. Film models add fingerprint tag 20,
+including initial phase energy, liquid mass and the phase constants. Typed complete
+coverage, bounded counts/length, digest, units and physical compilation are required.
+Forged v17 downgrades reject films. The authentic v17 metered-cylinder fixture retains
+its digest/fingerprint and same-runtime upgraded replay. See [FUEL_FILM.md](FUEL_FILM.md).
+
+## Retained version 17
+
+Version 17's
 28 int32 counts occupy 112 bytes; the header is `190 + UTF-8 name length` bytes.
 An injector count follows the v16 gas-piston count. After gas-piston geometry,
 each injector record occupies 56 bytes: component-table index int32, timing crank

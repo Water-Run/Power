@@ -125,7 +125,7 @@ internal static class FuelInjectorChecks
         Require(!CompiledModel.TryCompile(definition with{Nodes=[definition.Nodes[0],definition.Nodes[1],incompatible]},out _,out _));
         incompatible=definition.Nodes[2] with{Gas=definition.Nodes[2].Gas! with{Premixed=definition.Nodes[2].Gas!.Premixed! with{LowerHeatingValue=new(50e6,Unit.JoulePerKilogram)}}};
         Require(!CompiledModel.TryCompile(definition with{Nodes=[definition.Nodes[0],definition.Nodes[1],incompatible]},out _,out _));
-        var crowded=definition with{Components=[..definition.Components,..Enumerable.Range(0,8).Select(i=>meter with{Id=(uint)(20+i),InputChannel=(ulong)(200+i)})]};
+        var crowded=definition with{Components=[..definition.Components,..Enumerable.Range(0,20).Select(i=>meter with{Id=(uint)(20+i),InputChannel=(ulong)(200+i)})]};
         Require(!CompiledModel.TryCompile(crowded,out _,out var capacity)&&capacity!.Code==DiagnosticCode.Capacity);
         var fast=CompiledModel.Compile(definition with{Nodes=[NodeDefinition.Rotor(1,1,1e6),definition.Nodes[1],definition.Nodes[2]]}).CreateSimulation();var unchanged=Snapshot(fast);
         Require(fast.Step(50_000)==SimulationStatus.NumericalFailure&&Snapshot(fast)==unchanged);

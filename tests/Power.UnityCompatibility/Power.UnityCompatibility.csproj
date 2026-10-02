@@ -30,6 +30,14 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Compile Include="../Power.Tests/PressureControllerAssetChecks.cs" Link="PressureControllerAssetChecks.cs" />
     <Compile Include="../Power.Tests/HydraulicChecks.cs" Link="HydraulicChecks.cs" />
     <Compile Include="../Power.Tests/ConverterChecks.cs" Link="ConverterChecks.cs" />
+    <Compile Include="../Power.Tests/DctControllerAssetChecks.cs" Link="DctControllerAssetChecks.cs" />
+    <Compile Include="../Power.Tests/DctControllerChecks.cs" Link="DctControllerChecks.cs" />
+    <Compile Include="../Power.Tests/ResolvedPlanetAssetChecks.cs" Link="ResolvedPlanetAssetChecks.cs" />
+    <Compile Include="../Power.Tests/HydraulicActuationChecks.cs" Link="HydraulicActuationChecks.cs" />
+    <Compile Include="../Power.Tests/ResolvedPlanetChecks.cs" Link="ResolvedPlanetChecks.cs" />
+    <Compile Include="../Power.Tests/RavigneauxChecks.cs" Link="RavigneauxChecks.cs" />
+    <Compile Include="../Power.Tests/RavigneauxAssetChecks.cs" Link="RavigneauxAssetChecks.cs" />
+    <Compile Include="../Power.Tests/DualClutchChecks.cs" Link="DualClutchChecks.cs" />
     <Compile Include="../Power.Tests/GearModelChecks.cs" Link="GearModelChecks.cs" />
     <Compile Include="../Power.Tests/GearAssetChecks.cs" Link="GearAssetChecks.cs" />
     <Compile Include="../Power.Tests/ClutchModelChecks.cs" Link="ClutchModelChecks.cs" />
@@ -42,6 +50,14 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Compile Include="../Power.Tests/ValveTimingChecks.cs" Link="ValveTimingChecks.cs" />
     <Compile Include="../Power.Tests/CombustionChecks.cs" Link="CombustionChecks.cs" />
     <Compile Include="../Power.Tests/FuelInjectorChecks.cs" Link="FuelInjectorChecks.cs" />
+    <Compile Include="../Power.Tests/LiquidFuelInjectorAssetChecks.cs" Link="LiquidFuelInjectorAssetChecks.cs" />
+    <Compile Include="../Power.Tests/SolenoidAssetChecks.cs" Link="SolenoidAssetChecks.cs" />
+    <Compile Include="../Power.Tests/ClosurePredictionAssetChecks.cs" Link="ClosurePredictionAssetChecks.cs" />
+    <Compile Include="../Power.Tests/ClosurePredictionChecks.cs" Link="ClosurePredictionChecks.cs" />
+    <Compile Include="../Power.Tests/SolenoidChecks.cs" Link="SolenoidChecks.cs" />
+    <Compile Include="../Power.Tests/LiquidFuelInjectorChecks.cs" Link="LiquidFuelInjectorChecks.cs" />
+    <Compile Include="../Power.Tests/FuelFilmChecks.cs" Link="FuelFilmChecks.cs" />
+    <Compile Include="../Power.Tests/FuelFilmAssetChecks.cs" Link="FuelFilmAssetChecks.cs" />
     <Compile Include="../Power.Tests/FuelInjectorAssetChecks.cs" Link="FuelInjectorAssetChecks.cs" />
     <Compile Include="../Power.Tests/CombustionAssetChecks.cs" Link="CombustionAssetChecks.cs" />
     <None Include="../Power.Tests/Fixtures/*.powerasset" Link="Fixtures/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

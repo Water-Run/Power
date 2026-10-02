@@ -192,6 +192,48 @@ namespace Power.Studio.Tests
         [UnityTest]
         public IEnumerator MeteredFuelImportsAndReplays() => PumpAssemblyReplay("MeteredFiredCylinder", "Fuel injector 16");
 
+        [UnityTest]
+        public IEnumerator FuelFilmImportsAndReplays() => PumpAssemblyReplay("FilmFiredCylinder", "Liquid fuel film 16");
+
+        [UnityTest]
+        public IEnumerator LiquidInjectionImportsAndReplays() => PumpAssemblyReplay("LiquidInjectedCylinder", "Liquid fuel film 16");
+
+        [UnityTest]
+        public IEnumerator NeedleActuationImportsAndReplays() => PumpAssemblyReplay("NeedleActuatedCylinder", "Needle solenoid 19");
+
+        [UnityTest]
+        public IEnumerator ClosureCompensationImportsAndReplays() => PumpAssemblyReplay("ClosureCompensatedCylinder", "Needle solenoid 19");
+
+        [UnityTest]
+        public IEnumerator DualClutchImportsAndReplays() => PumpAssemblyReplay("DualClutchTransmission", "Ideal gear 200");
+
+        [UnityTest]
+        public IEnumerator FiredDualClutchImportsAndReplays() => PumpAssemblyReplay("FiredDualClutch", "Ideal gear 200");
+
+        [UnityTest]
+        public IEnumerator ControlledDualClutchImportsAndReplays() => PumpAssemblyReplay("ControlledDualClutch", "DCT sampled controller 800");
+
+        [UnityTest]
+        public IEnumerator ControlledFiredDualClutchImportsAndReplays() => PumpAssemblyReplay("ControlledFiredDualClutch", "DCT sampled controller 800");
+
+        [UnityTest]
+        public IEnumerator RavigneauxImportsAndReplays() => PumpAssemblyReplay("RavigneauxTransmission", "Planetary gear 201");
+
+        [UnityTest]
+        public IEnumerator FiredRavigneauxImportsAndReplays() => PumpAssemblyReplay("FiredRavigneauxConverter", "Planetary gear 201");
+
+        [UnityTest]
+        public IEnumerator ResolvedPlanetsImportAndReplay() => PumpAssemblyReplay("ResolvedRavigneauxTransmission", "Carrier gear 204");
+
+        [UnityTest]
+        public IEnumerator FiredResolvedPlanetsImportAndReplay() => PumpAssemblyReplay("FiredResolvedRavigneauxConverter", "Carrier gear 204");
+
+        [UnityTest]
+        public IEnumerator HydraulicRavigneauxImportsAndReplays() => PumpAssemblyReplay("HydraulicRavigneauxTransmission", "Piston actuator 300");
+
+        [UnityTest]
+        public IEnumerator FiredHydraulicRavigneauxImportsAndReplays() => PumpAssemblyReplay("FiredHydraulicRavigneaux", "Piston actuator 21");
+
         private IEnumerator PumpAssemblyReplay(string resource, string pumpName)
         {
             _host = new GameObject(resource + " test");

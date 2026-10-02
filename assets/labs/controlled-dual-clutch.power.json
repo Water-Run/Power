@@ -1,0 +1,849 @@
+{
+  "schema": "power.model.v1",
+  "description": "Sampled sensor-driven dual-clutch research state machine on the complete seven-forward/reverse, three-output power path. The controller owns all ten drive/selector commands, preselects an unloaded target path, confirms physical synchronization and lock before declaring an active gear, and uses bounded release/engagement ramps with an explicit torque interruption. Neutral abort, synchronization timeout, moving direction-change block and new-request recovery are observable. Requested gear is an integral state_code input, distinct from confirmed actual gear. Engine torque coordination, fault diagnostics beyond these states, detailed dog/baulk-ring and clutch actuator dynamics, full OEM calibration and complete ECU/TCU remain open. All parameters are unverified. The final downshift and subsequent unloaded-path preselection are observed through 4.2 s, allowing physical lock confirmation rather than assuming completion at a fixed nominal handoff time.",
+  "step_ns": 100000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.2,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 62.83185307179586,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 4,
+      "domain": "rotational",
+      "storage": {
+        "value": 10,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 1000,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 100,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.015,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 101,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.012,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 102,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 103,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.018,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 104,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.01,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 105,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.002,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 110,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 111,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 112,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 113,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 114,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 115,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 116,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 117,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 400,
+      "kind": "clutch",
+      "node_a": 1,
+      "node_b": 100,
+      "heat_node": 3,
+      "input_channel": 500,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 180,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 150,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 401,
+      "kind": "clutch",
+      "node_a": 1,
+      "node_b": 101,
+      "heat_node": 3,
+      "input_channel": 501,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 180,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 150,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 402,
+      "kind": "ideal_gear",
+      "node_a": 102,
+      "node_b": 4,
+      "parameters": {
+        "ratio": -4.1
+      }
+    },
+    {
+      "id": 403,
+      "kind": "ideal_gear",
+      "node_a": 103,
+      "node_b": 4,
+      "parameters": {
+        "ratio": -3.7
+      }
+    },
+    {
+      "id": 404,
+      "kind": "ideal_gear",
+      "node_a": 104,
+      "node_b": 4,
+      "parameters": {
+        "ratio": -4.1
+      }
+    },
+    {
+      "id": 405,
+      "kind": "ideal_gear",
+      "node_a": 101,
+      "node_b": 105,
+      "parameters": {
+        "ratio": -1
+      }
+    },
+    {
+      "id": 200,
+      "kind": "ideal_gear",
+      "node_a": 100,
+      "node_b": 110,
+      "parameters": {
+        "ratio": -3.8
+      }
+    },
+    {
+      "id": 300,
+      "kind": "clutch",
+      "node_a": 110,
+      "node_b": 102,
+      "heat_node": 3,
+      "input_channel": 600,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 201,
+      "kind": "ideal_gear",
+      "node_a": 101,
+      "node_b": 111,
+      "parameters": {
+        "ratio": -2.3
+      }
+    },
+    {
+      "id": 301,
+      "kind": "clutch",
+      "node_a": 111,
+      "node_b": 102,
+      "heat_node": 3,
+      "input_channel": 601,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 202,
+      "kind": "ideal_gear",
+      "node_a": 100,
+      "node_b": 112,
+      "parameters": {
+        "ratio": -1.65
+      }
+    },
+    {
+      "id": 302,
+      "kind": "clutch",
+      "node_a": 112,
+      "node_b": 102,
+      "heat_node": 3,
+      "input_channel": 602,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 203,
+      "kind": "ideal_gear",
+      "node_a": 101,
+      "node_b": 113,
+      "parameters": {
+        "ratio": -1.26
+      }
+    },
+    {
+      "id": 303,
+      "kind": "clutch",
+      "node_a": 113,
+      "node_b": 102,
+      "heat_node": 3,
+      "input_channel": 603,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 204,
+      "kind": "ideal_gear",
+      "node_a": 100,
+      "node_b": 114,
+      "parameters": {
+        "ratio": -1.02
+      }
+    },
+    {
+      "id": 304,
+      "kind": "clutch",
+      "node_a": 114,
+      "node_b": 103,
+      "heat_node": 3,
+      "input_channel": 604,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 205,
+      "kind": "ideal_gear",
+      "node_a": 101,
+      "node_b": 115,
+      "parameters": {
+        "ratio": -0.86
+      }
+    },
+    {
+      "id": 305,
+      "kind": "clutch",
+      "node_a": 115,
+      "node_b": 103,
+      "heat_node": 3,
+      "input_channel": 605,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 206,
+      "kind": "ideal_gear",
+      "node_a": 100,
+      "node_b": 116,
+      "parameters": {
+        "ratio": -0.72
+      }
+    },
+    {
+      "id": 306,
+      "kind": "clutch",
+      "node_a": 116,
+      "node_b": 103,
+      "heat_node": 3,
+      "input_channel": 606,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 207,
+      "kind": "ideal_gear",
+      "node_a": 105,
+      "node_b": 117,
+      "parameters": {
+        "ratio": -3.3
+      }
+    },
+    {
+      "id": 307,
+      "kind": "clutch",
+      "node_a": 117,
+      "node_b": 104,
+      "heat_node": 3,
+      "input_channel": 607,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 10,
+      "kind": "torque_source",
+      "node_a": 1,
+      "input_channel": 100,
+      "initial_input": {
+        "value": 20,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 11,
+      "kind": "torque_source",
+      "node_a": 4,
+      "input_channel": 101,
+      "initial_input": {
+        "value": -6,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 800,
+      "kind": "dct_controller",
+      "node_a": 1,
+      "input_channel": 700,
+      "initial_input": {
+        "value": 1,
+        "unit": "state_code"
+      },
+      "parameters": {
+        "vehicle_node": 4,
+        "odd_clutch": 400,
+        "even_clutch": 401,
+        "selectors": [
+          300,
+          301,
+          302,
+          303,
+          304,
+          305,
+          306,
+          307
+        ],
+        "sample_period_ns": 1000000,
+        "release_ns": 5000000,
+        "engage_ns": 20000000,
+        "synchronize_timeout_ns": 500000000,
+        "synchronize_tolerance": {
+          "value": 1e-06,
+          "unit": "rad_s"
+        },
+        "direction_speed_limit": {
+          "value": 0.1,
+          "unit": "rad_s"
+        }
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 4200000000,
+    "sample_every_ns": 10000000,
+    "events": [
+      {
+        "time_ns": 400000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 2
+          }
+        ]
+      },
+      {
+        "time_ns": 800000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 3
+          }
+        ]
+      },
+      {
+        "time_ns": 1200000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 4
+          }
+        ]
+      },
+      {
+        "time_ns": 1600000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 5
+          }
+        ]
+      },
+      {
+        "time_ns": 2000000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 6
+          }
+        ]
+      },
+      {
+        "time_ns": 2400000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 7
+          }
+        ]
+      },
+      {
+        "time_ns": 2800000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 6
+          }
+        ]
+      },
+      {
+        "time_ns": 3200000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 4
+          }
+        ]
+      },
+      {
+        "time_ns": 3600000000,
+        "values": [
+          {
+            "channel": 700,
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 1e-06
+      },
+      {
+        "object_id": 4,
+        "field": "speed",
+        "min": 0,
+        "max": 300
+      },
+      {
+        "object_id": 3,
+        "field": "temperature",
+        "min": 300,
+        "max": 500
+      },
+      {
+        "object_id": 200,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 201,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 202,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 203,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 204,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 205,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 206,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 207,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 402,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 403,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 404,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 405,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 800,
+        "field": "control_fault",
+        "abs_max": 0
+      },
+      {
+        "object_id": 800,
+        "field": "actual_gear",
+        "min": 1,
+        "max": 1
+      }
+    ]
+  }
+}

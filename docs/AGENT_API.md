@@ -74,7 +74,7 @@ Windows 同样使用 `dotnet` 和 DLL 的绝对路径。生产连接应直接运
 
 ## 工具与结果
 
-In agent API version 0.20.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump` or `metered-fired-cylinder`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v17`; v1–v16 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
+In agent API version 0.29.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` or `fired-hydraulic-ravigneaux`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v24`; v1–v23 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
 
 | 工具 | 用途 |
 |---|---|
@@ -400,8 +400,195 @@ Battery work is internal; global `source_work` includes only explicit external p
 boundaries. SOC/voltage violations reject the whole batch. Inspect initial charge,
 capacity, duty, loads and batch length before retrying. There is no silent SOC clamp.
 
-Asset v17 retains all supply/control parameters with authentic prior readers/fixtures.
+Asset v22 retains all supply/control parameters with authentic prior readers/fixtures.
 Cancellation and later failure preserve charge, RC/control memory, inputs and revision.
 Independent forks compare accessory/duty strategies from the same physical history.
 All parameters remain unverified; an ideal averaged duty converter is not a battery
 BMS, PWM/current loop, complete vehicle electrical system or calibration.
+
+## Liquid film workflow
+
+Request `film-fired-cylinder`. The `fuel_film` capability declares finite gas/wall
+ports, phase-energy reference, units, split accuracy and scope. Supply explicit
+initial liquid inventory, temperature, specific heat, saturation temperature,
+latent internal energy and conductance. Validate and discover output IDs before
+running or exporting the model. Films don't expose a writable input channel.
+
+Read remaining `mass`, signed `internal_energy`, `chemical_energy`,
+`evaporated_fuel_mass`, last-tick mean `mass_flow`, cumulative `film_wall_heat` and
+instantaneous `heat_flow` alongside receiver fuel and reaction heat. Dry films
+report the declared saturation temperature and zero heat flow. Actual vapor
+availability governs reaction; a valid film definition doesn't imply evaporation
+or passing heat-release KPIs.
+
+Asset v18 retains phase quantities and earlier readers. Revision checks,
+cancellation, independent forks and late-failure rollback include all liquid,
+thermal, constituent and compensated histories. Wrong units/ports, superheated
+initial liquid and excess state counts return structured errors. Inspect the
+reported object/field and the finite heat budget before retrying a failed model.
+The [film contract](FUEL_FILM.md) records the equations and accuracy boundary.
+Initial wetting doesn't establish liquid injection, calibrated fuel properties,
+complete engine control or actual Unity acceptance.
+
+## Finite liquid injection workflow
+
+Request `liquid-injected-cylinder`. The `liquid_fuel_injector` capability declares
+the finite compliant source, `kg` cycle input, density/compliance units, energy
+ledger and receiver boundary. Supply all rail quantities, nozzle geometry and an
+existing film/crank reference. Validate first and discover output IDs/units.
+
+The example's `104` input requests kg per cycle. Changes latch at a later observed
+forward window; current delivery may remain limited by source pressure. Read rail
+`mass`, `pressure`, stored `internal_energy`, chemical energy and volume beside
+`requested_fuel_dose`, `delivered_fuel_dose`, `total_fuel_delivered` and last-tick mean
+`mass_flow`. Film mass/temperature/evaporation and separate reaction heat identify
+the delay between accepting a dose and actual vapor combustion.
+
+Component `source_work` is released stored rail pressure work, `hydraulic_work` is
+exported receiver pressure work, and `fluid_heat` is nozzle dissipation routed to
+the film wall. Their identities are distinct from global external source work.
+The negligible-liquid-volume receiver exports displacement work explicitly;
+it doesn't add hidden crank work or model spray geometry.
+
+Asset v19 retains complete source, nozzle and timing with v1-v18 readers. Revisions,
+cancellation, forks and late/speculative failure include every rail/quota/heat
+history. Wrong units, impossible compliant volume, superheated liquid and mismatched
+film/crank ownership produce structured diagnostics. Inspect the failed object/field
+and pressure/dose boundaries before retrying. Successful tool execution doesn't
+imply full delivery, passing KPIs or calibrated hardware. See
+[LIQUID_FUEL_INJECTION.md](LIQUID_FUEL_INJECTION.md).
+
+## Physical needle workflow
+
+Request `needle-actuated-cylinder`. Capabilities declare magnetic slope units,
+flux energy, actual opening, sampled control and research limits. The injector's
+`104` kg command is writable; driver-owned coil voltage `107` is not. Rejected
+writes return `controlled_input` with the correct command name/channel and preserve
+state/revision. Update requested fuel mass and advance exact physical ticks.
+
+Read actual needle displacement/velocity and injector opening beside coil current,
+magnetic energy, copper heat, electrical work, held voltage and last-sample target/
+delivery. Fluid can continue after voltage is removed, the window closes or target
+delivery is reached. Remaining liquid, gas fuel, unburned/boundary fuel and reaction
+stay separately observable. A valid request or successful tool doesn't establish
+exact dose delivery or calibrated control.
+
+Asset v20 retains magnetic/stroke/needle/driver tables and v1-v19 readers. Sampling
+periods must align to ticks; voltage has one owner; needle, coil and crank references
+must match. For solver errors inspect positive `L(x)`, R/L/gradient, stroke travel
+and timestep; refine physical/control intervals before claiming dynamic accuracy.
+Cancellation, forks and rejected/speculative batches include all flux, thermal,
+sampled/held and phase histories. See [NEEDLE_ACTUATION.md](NEEDLE_ACTUATION.md).
+
+## Closure-compensated needle workflow
+
+Request `closure-compensated-cylinder`. Its driver enables an aligned finite
+`closure_prediction_ns` horizon. Capabilities give the 4096-tick limit, held-input
+assumption and bounded cutoff search. Source kg requests remain writable; voltage
+stays driver-owned. Discover predicted mass/count, cutoff latch and pending tick
+channels beside actual needle position, delivery and held voltage.
+
+Prediction is a separate full-state plant replay. It holds other commands and
+doesn't know future external input events, so inspect actual post-closure delivery
+and horizon/timestep refinement rather than treating forecast as measured fuel.
+Failed/cancelled prediction commits no part of the real batch. Clock overflow,
+invalid horizon or nonmonotone cutoff candidates require revising timing/model
+assumptions; partial forecasts aren't silently accepted.
+
+Asset v21 writes the horizon and retains earlier readers. Revisions, independent
+forks and whole-batch rollback include the prediction latch and countdown. Core
+clients can issue read-only `PredictNeedleClosure`; MCP snapshots expose the last
+sampled selected-candidate estimate. Scope and evidence are in
+[CLOSURE_PREDICTION.md](CLOSURE_PREDICTION.md).
+
+## Dual-clutch power-path workflow
+
+Request `dual-clutch-transmission` or `fired-dual-clutch`. Capabilities describe
+the ordinary seven-forward/reverse graph, two input paths, three output branches
+and research limits. Validate and discover every gear reaction, clutch slip/mode/
+heat and rotor speed before changing selector/drive commands.
+
+The examples use drive channels `500`/`501` and selector channels `600`-`607`
+for forward 1-7 and reverse. Commands are fractions; ratios remain permanent
+constraints. Preselect an unloaded path by releasing its prior selector and
+engaging the target, then coordinate drive-clutch handoff separately. Core's
+`DualClutchGraph.SelectPath` produces that path's atomic selector command set.
+It doesn't implement TCU sensing, interlocks or actuator dynamics.
+
+Snapshots expose all free/selected hubs, input/output speeds, synchronization and
+drive heat, gear phase error and global source/energy/fuel evidence. Unsafe
+combinations can bind or brake the physical transmission; a successful input
+write doesn't establish a valid shift. Revision checks, cancellation, independent
+forks and late failure preserve every state/history. Existing portable format
+and prior readers are retained. See
+[DUAL_CLUTCH_TRANSMISSION.md](DUAL_CLUTCH_TRANSMISSION.md).
+
+## Sampled DCT control workflow
+
+Request `controlled-dual-clutch` or `controlled-fired-dual-clutch`. Write an
+integral `requested_gear` to channel `700`: 1-7 forward, -1 reverse, 0 neutral.
+The controller owns drive `500`/`501` and selectors `600`-`607`; direct writes
+return `controlled_input` with the correct requested-gear channel. Fractional
+gears are invalid and don't alter state/revision.
+
+Read confirmed actual gear, commanded selections, phase, target selector slip
+and fault. Requested gear doesn't imply completed shift. The state machine
+preselects unloaded paths, confirms physical lock, uses staged torque-interrupted
+handoff and exposes timeout/direction/persistent-lock faults. Neutral aborts on a
+due sample; another target can recover a fault. A transient slip can report
+unconfirmed actual gear while the controller monitors its duration.
+
+The explicit reported-state limit is 128, with 32 nodes/64 components unchanged.
+Actual fired/controller composition and near/over-limit checks are verified;
+Standard checks still run on .NET 10 and aren't Unity evidence. Asset v22 retains
+immutable routes and timed state with prior readers. Cancellation, forks, late
+failure and compensated coordinate history remain whole-batch transactions.
+Full ECU torque blending, actuators and calibration remain separate requirements.
+See [DCT_CONTROL.md](DCT_CONTROL.md).
+
+## Compound planetary paths
+
+`double_pinion_planetary_gear` requires sun/ring/carrier ports A/B/C and ratio
+`k > 1`. Its constraint is `sun - k ring + (k-1) carrier = 0`. Existing
+`planetary_gear` retains its single-pinion sign. Both expose speed/phase residuals
+and all three reaction torques. Incompatible initial speeds, wrong domains,
+redundant rows and incomplete carriers return actionable compile errors.
+
+Request `ravigneaux-transmission` or `fired-ravigneaux-converter` for explicit
+five-element research schedules, converter/lockup integration and complete
+physical replay. Engagement inputs are fractions; a successful command does not
+prove a locked range. No AT controller owns these prescribed inputs. Asset v23
+retains topology and reads v1-v22. See [RAVIGNEAUX_TRANSMISSION.md](RAVIGNEAUX_TRANSMISSION.md).
+
+## Carrier-relative meshes and internal planet dynamics
+
+`carrier_gear` requires distinct rotational A/B/C ports, finite nonzero signed
+ratio and compatible initial speeds. The constraint is
+`A - ratio B + (ratio-1) C = 0`; negative external and positive internal ratios,
+including one, are supported. C is an actual moving carrier with its own reaction
+torque, not an implicit ground. Channels expose all three mean torques and
+speed/phase residuals. Zero ratios, missing carriers, wrong domains and dependent
+constraints return typed compile errors.
+
+Request `resolved-ravigneaux-transmission` or
+`fired-resolved-ravigneaux-converter`. Both retain four physical meshes, two
+absolute planet-spin states and declared orbital inertia in the carrier.
+Plain rotor storage includes their actual kinetic energies; inputs remain
+prescribed engagement fractions, not full AT control. The flat graph records
+aggregate inertias and ratios, while source descriptions retain the declared
+geometry/masses that generated them. Asset v24 includes this primitive and
+reads v1-v23. See [RESOLVED_PLANETS.md](RESOLVED_PLANETS.md).
+
+## Pump-fed AT piston actuation
+
+Request `hydraulic-ravigneaux-transmission` or `fired-hydraulic-ravigneaux`.
+Use explicit fill/drain fractions on 700/701 through 708/709; the fired lockup
+uses 710/711. Previous range engagement IDs are absent. Validate/discover channels
+before writing. Piston pressure/travel/contact determine capacities; a command
+accepted by the API does not confirm physical lock.
+
+Reports retain line/chamber pressure, travel, contact capacity, pump work, swept
+volume, friction/restriction/damping heat and every model hash. Full revisions,
+cancellation, late rollback and independent valve-release forks use the ordinary
+contracts. The graph uses existing asset v24 records, not a new serialization
+format. See [AT_HYDRAULIC_ACTUATION.md](AT_HYDRAULIC_ACTUATION.md).

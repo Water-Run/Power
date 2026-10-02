@@ -1,0 +1,570 @@
+{
+  "schema": "power.model.v1",
+  "description": "Resolved Ravigneaux research graph with four physical carrier-relative meshes and two absolute planet-spin rotors. Three synchronous evenly spaced pairs: ring pitch radius 0.1 m; per inner/outer planet mass 0.3/1 kg and spin inertia 0.000015/0.0005 kg m2. Carrier structure 0.03 kg m2 plus exact orbital mass inertia. Prescribed friction commands, ideal rigid meshes and synthetic converter maps where present; no complete AT control or OEM calibration. Parameters are unverified.",
+  "step_ns": 100000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.2,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 60,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 4,
+      "domain": "rotational",
+      "storage": {
+        "value": 10,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 1000,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 100,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 101,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.015,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 102,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.04,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 103,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.0484375,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 104,
+      "domain": "rotational",
+      "storage": {
+        "value": 4.5e-05,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 105,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.0015,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 200,
+      "kind": "carrier_gear",
+      "node_a": 100,
+      "node_b": 105,
+      "node_c": 103,
+      "parameters": {
+        "ratio": -0.5
+      }
+    },
+    {
+      "id": 201,
+      "kind": "carrier_gear",
+      "node_a": 101,
+      "node_b": 104,
+      "node_c": 103,
+      "parameters": {
+        "ratio": -0.25000000000000006
+      }
+    },
+    {
+      "id": 202,
+      "kind": "ideal_gear",
+      "node_a": 102,
+      "node_b": 4,
+      "parameters": {
+        "ratio": 4
+      }
+    },
+    {
+      "id": 300,
+      "kind": "clutch",
+      "node_a": 1,
+      "node_b": 103,
+      "heat_node": 3,
+      "input_channel": 600,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 400,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 300,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 301,
+      "kind": "clutch",
+      "node_a": 1,
+      "node_b": 101,
+      "heat_node": 3,
+      "input_channel": 601,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 400,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 300,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 302,
+      "kind": "clutch",
+      "node_a": 1,
+      "node_b": 100,
+      "heat_node": 3,
+      "input_channel": 602,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 400,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 300,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 303,
+      "kind": "clutch",
+      "node_a": 103,
+      "node_b": 0,
+      "heat_node": 3,
+      "input_channel": 603,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 400,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 300,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 304,
+      "kind": "clutch",
+      "node_a": 100,
+      "node_b": 0,
+      "heat_node": 3,
+      "input_channel": 604,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 400,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 300,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 10,
+      "kind": "torque_source",
+      "node_a": 1,
+      "input_channel": 500,
+      "initial_input": {
+        "value": 20,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 11,
+      "kind": "torque_source",
+      "node_a": 4,
+      "input_channel": 501,
+      "initial_input": {
+        "value": -6,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 203,
+      "kind": "carrier_gear",
+      "node_a": 102,
+      "node_b": 105,
+      "node_c": 103,
+      "parameters": {
+        "ratio": 0.25
+      }
+    },
+    {
+      "id": 204,
+      "kind": "carrier_gear",
+      "node_a": 104,
+      "node_b": 105,
+      "node_c": 103,
+      "parameters": {
+        "ratio": -2.9999999999999996
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 2000000000,
+    "sample_every_ns": 10000000,
+    "events": [
+      {
+        "time_ns": 250000000,
+        "values": [
+          {
+            "channel": 600,
+            "value": 0
+          },
+          {
+            "channel": 601,
+            "value": 1
+          },
+          {
+            "channel": 602,
+            "value": 0
+          },
+          {
+            "channel": 603,
+            "value": 0
+          },
+          {
+            "channel": 604,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 500000000,
+        "values": [
+          {
+            "channel": 600,
+            "value": 1
+          },
+          {
+            "channel": 601,
+            "value": 1
+          },
+          {
+            "channel": 602,
+            "value": 0
+          },
+          {
+            "channel": 603,
+            "value": 0
+          },
+          {
+            "channel": 604,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 750000000,
+        "values": [
+          {
+            "channel": 600,
+            "value": 1
+          },
+          {
+            "channel": 601,
+            "value": 0
+          },
+          {
+            "channel": 602,
+            "value": 0
+          },
+          {
+            "channel": 603,
+            "value": 0
+          },
+          {
+            "channel": 604,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1000000000,
+        "values": [
+          {
+            "channel": 600,
+            "value": 1
+          },
+          {
+            "channel": 601,
+            "value": 1
+          },
+          {
+            "channel": 602,
+            "value": 0
+          },
+          {
+            "channel": 603,
+            "value": 0
+          },
+          {
+            "channel": 604,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 1250000000,
+        "values": [
+          {
+            "channel": 600,
+            "value": 0
+          },
+          {
+            "channel": 601,
+            "value": 1
+          },
+          {
+            "channel": 602,
+            "value": 0
+          },
+          {
+            "channel": 603,
+            "value": 0
+          },
+          {
+            "channel": 604,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1500000000,
+        "values": [
+          {
+            "channel": 600,
+            "value": 0
+          },
+          {
+            "channel": 601,
+            "value": 1
+          },
+          {
+            "channel": 602,
+            "value": 0
+          },
+          {
+            "channel": 603,
+            "value": 1
+          },
+          {
+            "channel": 604,
+            "value": 0
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 1e-06
+      },
+      {
+        "object_id": 200,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 200,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 201,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 201,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 202,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 202,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 1,
+        "field": "speed",
+        "min": 10,
+        "max": 500
+      },
+      {
+        "object_id": 4,
+        "field": "speed",
+        "min": 1,
+        "max": 100
+      },
+      {
+        "object_id": 301,
+        "field": "clutch_mode",
+        "min": 1,
+        "max": 1
+      },
+      {
+        "object_id": 303,
+        "field": "clutch_mode",
+        "min": 1,
+        "max": 1
+      },
+      {
+        "object_id": 203,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 203,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 204,
+        "field": "slip_speed",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 204,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      }
+    ]
+  }
+}

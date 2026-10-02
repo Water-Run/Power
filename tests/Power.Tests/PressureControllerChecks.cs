@@ -140,7 +140,7 @@ internal static class PressureControllerChecks
         Require(compiled.Fingerprint != CompiledModel.Compile(definition).Fingerprint);
         var simulation = compiled.CreateSimulation(); Ok(simulation.Step(10_000_000)); Require(Value(simulation, 20, Field.CommandVoltage) > 0);
         var crowded = Plant(); var extra = new List<ComponentDefinition>(crowded.Components);
-        for (uint i = 0; i < 10; ++i)
+        for (uint i = 0; i < 26; ++i)
         {
             extra.Add(ComponentDefinition.Motor(60 + 2 * i, 1, 3, 300 + i, 1, .01, .1, 0));
             extra.Add(ComponentDefinition.PressureLoop(61 + 2 * i, 2, 400 + i, 3e5, Control() with { TargetChannel = 300 + i }));

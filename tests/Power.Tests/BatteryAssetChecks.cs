@@ -50,7 +50,7 @@ internal static class BatteryAssetChecks
     private static void Replay()
     {
         var original = Asset(); byte[] bytes = AssetCodec.Encode(original); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 17);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 24);
         Require(original.Components.SequenceEqual(decoded.Components) && original.Nodes.SequenceEqual(decoded.Nodes));
         Require(original.Model.Fingerprint == decoded.Model.Fingerprint && bytes.SequenceEqual(AssetCodec.Encode(decoded))); Compare(original, decoded);
         byte[] fixture = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "pressure-regulated-pump-v12.powerasset"));
@@ -67,7 +67,7 @@ internal static class BatteryAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset);
-        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), battery = counts + 112 + 44 * asset.Nodes.Count + 156 * asset.Components.Count, duty = battery + 68;
+        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), battery = counts + 140 + 44 * asset.Nodes.Count + 156 * asset.Components.Count, duty = battery + 68;
         void Reject(byte[] bad)
         { SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(bad)); }
         void Change(int offset, int value)
@@ -78,7 +78,7 @@ internal static class BatteryAssetChecks
         var duplicate = bytes.Take(battery + 68).Concat(bytes.Skip(battery).Take(68)).Concat(bytes.Skip(battery + 68)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 84), 2); Reject(duplicate);
         var missing = bytes.Take(battery).Concat(bytes.Skip(battery + 68)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 84), 0); Reject(missing);
-        var downgrade = bytes.Take(counts + 84).Concat(bytes.Skip(counts + 112).Take(battery - counts - 112)).Concat(bytes.Skip(duty + 80)).ToArray();
+        var downgrade = bytes.Take(counts + 84).Concat(bytes.Skip(counts + 140).Take(battery - counts - 140)).Concat(bytes.Skip(duty + 80)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgrade.AsSpan(8), 12); Reject(downgrade);
         var isolated = PowerAsset.Create(BatteryChecks.LoadModel() with { Components = [] }, "Isolated battery", new string('a', 64), 100_000_000, 10_000_000, [], []);
         Require(AssetCodec.Decode(AssetCodec.Encode(isolated)).Model.HasBatteries);

@@ -53,14 +53,14 @@ public sealed class HydraulicPiston
         ContactStiffnessNewtonsPerMeter = contactStiffnessNewtonsPerMeter;
     }
     private static double Hinge(double x, double limit, double direction) => Math.Max(0, direction * (x - limit));
-    private static double Gradient(double old, double next, double limit, double direction, double stiffness)
+    internal static double Gradient(double old, double next, double limit, double direction, double stiffness)
     {
         double a = Hinge(old, limit, direction), b = Hinge(next, limit, direction), delta = next - old;
         if (a > 0 && b > 0) return .5 * stiffness * direction * (a + b);
         if (a == 0 && b == 0) return 0;
         return delta == 0 ? stiffness * direction * a : .5 * stiffness * (a + b) * ((b - a) / delta);
     }
-    private static double GradientDerivative(double old, double next, double limit, double direction, double stiffness)
+    internal static double GradientDerivative(double old, double next, double limit, double direction, double stiffness)
     {
         double a = Hinge(old, limit, direction), b = Hinge(next, limit, direction), delta = next - old;
         if (a > 0 && b > 0) return .5 * stiffness;

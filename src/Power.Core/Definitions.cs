@@ -10,11 +10,11 @@ public enum Unit
     NewtonMeterPerRadian, NewtonMeterSecondPerRadian, Kelvin, JoulePerKelvin,
     WattPerKelvin, Ohm, Henry, NewtonMeterPerAmpere, Ampere, Volt, Joule, Rpm, Degree,
     Meter, Millimeter, CubicMeter, Pascal, Bar, Kilogram, JoulePerKilogramKelvin,
-    Liter, SquareMeter, SquareMillimeter, KilogramPerSecond, Watt, Fraction, JoulePerKilogram, StateCode, NewtonMeterSecondSquaredPerRadianSquared, CubicMeterPerPascal, CubicMeterPerSecondPascal, CubicMeterPerSecondSqrtPascal, CubicMeterPerSecond, Newton, CubicMeterPerRadian, VoltPerPascal, VoltPerPascalSecond, Coulomb, Farad, AmpereHour, FractionPerPascal, FractionPerPascalSecond, MeterPerSecond, NewtonPerMeter, NewtonSecondPerMeter
+    Liter, SquareMeter, SquareMillimeter, KilogramPerSecond, Watt, Fraction, JoulePerKilogram, StateCode, NewtonMeterSecondSquaredPerRadianSquared, CubicMeterPerPascal, CubicMeterPerSecondPascal, CubicMeterPerSecondSqrtPascal, CubicMeterPerSecond, Newton, CubicMeterPerRadian, VoltPerPascal, VoltPerPascalSecond, Coulomb, Farad, AmpereHour, FractionPerPascal, FractionPerPascalSecond, MeterPerSecond, NewtonPerMeter, NewtonSecondPerMeter, KilogramPerCubicMeter, HenryPerMeter
 }
 
 public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
@@ -23,7 +23,7 @@ public enum Field
     SourceWork = 16, HeatRejected, StoredEnergyChange, EnergyResidual,
     ReservoirEnthalpy = 20, MassResidual = 21,
     FuelMass = 22, FreshAirMass, ProductMass, ChemicalEnergy, FuelBurned, HeatReleased,
-    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower, SampledPressure, PressureError, IntegralVoltage, CommandVoltage, StateOfCharge, Charge, TerminalVoltage, PolarizationVoltage, BatteryCurrent, IntegralDuty, CommandDuty, Displacement, LinearSpeed, Force, RequestedFuelDose, DeliveredFuelDose, TotalFuelDelivered
+    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower, SampledPressure, PressureError, IntegralVoltage, CommandVoltage, StateOfCharge, Charge, TerminalVoltage, PolarizationVoltage, BatteryCurrent, IntegralDuty, CommandDuty, Displacement, LinearSpeed, Force, RequestedFuelDose, DeliveredFuelDose, TotalFuelDelivered, EvaporatedFuelMass, FilmWallHeat, CopperHeat, PredictedFuelMass, PredictionTicks, DriverState, ClosingDelayTicks, RequestedGear, ActualGear, SelectedOddGear, SelectedEvenGear, ShiftPhase, SyncError, ControlFault
 }
 public enum SimulationStatus { Ok, InvalidTimeStep, InvalidInput, UnknownChannel, NumericalFailure, Busy, Cancelled, ControlledInput }
 public enum DiagnosticCode { Schema, Capacity, Id, Unit, Range, Connection, Channel, Solver }
@@ -164,6 +164,12 @@ public sealed record ComponentDefinition
     public GasCylinderDefinition? MovingCylinder { get; init; }
     public GasPistonDefinition? GasPiston { get; init; }
     public GasFuelInjectorDefinition? FuelInjector { get; init; }
+    public FuelFilmDefinition? FuelFilm { get; init; }
+    public LiquidFuelInjectorDefinition? LiquidFuelInjector { get; init; }
+    public SolenoidDefinition? Solenoid { get; init; }
+    public TravelStopDefinition? TravelStop { get; init; }
+    public NeedleDriverDefinition? NeedleDriver { get; init; }
+    public DualClutchControllerDefinition? DualClutchController { get; init; }
     /// <summary>Optional gas-orifice timing. InitialInput and its channel then specify peak opening.</summary>
     public ValveTimingDefinition? ValveTiming { get; init; }
     public WiebeCombustionDefinition? Combustion { get; init; }
@@ -211,6 +217,28 @@ public sealed record ComponentDefinition
         Id = id, Kind = ComponentKind.ResistiveLoad, NodeA = battery, HeatNode = heat, InputChannel = channel,
         Resistance = new(resistance, Unit.Ohm), InitialInput = new(opening, Unit.Fraction)
     };
+    public static ComponentDefinition LiquidFilm(uint id,uint receiver,uint wall,double conductance,FuelFilmDefinition film)=>new()
+    {Id=id,Kind=ComponentKind.FuelFilm,NodeA=receiver,NodeB=wall,Conductance=new(conductance,Unit.WattPerKelvin),FuelFilm=film};
+    public static ComponentDefinition SolenoidCoil(uint id, uint slider, uint heat, ulong voltageChannel,
+        double resistance, double inductance, double gradient, double reference = 0, double voltage = 0, double current = 0) => new()
+    {
+        Id = id, Kind = ComponentKind.Solenoid, NodeA = slider, HeatNode = heat, InputChannel = voltageChannel,
+        Resistance = new(resistance, Unit.Ohm), Inductance = new(inductance, Unit.Henry), InitialCurrent = new(current, Unit.Ampere),
+        InitialInput = new(voltage, Unit.Volt), Solenoid = new() { ReferencePosition = new(reference, Unit.Meter), InductanceGradient = new(gradient, Unit.HenryPerMeter) }
+    };
+    public static ComponentDefinition StrokeStop(uint id, uint slider, double minimum, double maximum, double stiffness) => new()
+    { Id = id, Kind = ComponentKind.TravelStop, NodeA = slider, TravelStop = new() { MinimumPosition = new(minimum, Unit.Meter), MaximumPosition = new(maximum, Unit.Meter), Stiffness = new(stiffness, Unit.NewtonPerMeter) } };
+    public static ComponentDefinition NeedleDrive(uint id, uint crank, NeedleDriverDefinition driver) => new()
+    { Id = id, Kind = ComponentKind.NeedleDriver, NodeA = crank, NeedleDriver = driver };
+    public static ComponentDefinition DctControl(uint id, uint engine, ulong requestedGearChannel, int requestedGear, DualClutchControllerDefinition controller) => new()
+    { Id = id, Kind = ComponentKind.DualClutchController, NodeA = engine, InputChannel = requestedGearChannel, InitialInput = new(requestedGear, Unit.StateCode), DualClutchController = controller };
+    public static ComponentDefinition LiquidFuelMeter(uint id, uint receiver, double area, double coefficient,
+        ulong doseChannel, double doseKilograms, LiquidFuelInjectorDefinition injector) => new()
+    {
+        Id = id, Kind = ComponentKind.LiquidFuelInjector, NodeA = receiver, Area = new(area, Unit.SquareMeter),
+        DischargeCoefficient = coefficient, InputChannel = doseChannel, InitialInput = new(doseKilograms, Unit.Kilogram),
+        LiquidFuelInjector = injector
+    };
     public static ComponentDefinition FuelMeter(uint id, uint source, uint receiver, double area, double coefficient, ulong doseChannel, double doseKilograms, GasFuelInjectorDefinition timing) => new()
     { Id = id, Kind = ComponentKind.GasFuelInjector, NodeA = source, NodeB = receiver, Area = new(area, Unit.SquareMeter), DischargeCoefficient = coefficient, InputChannel = doseChannel, InitialInput = new(doseKilograms, Unit.Kilogram), FuelInjector = timing };
     public static ComponentDefinition GasActuator(uint id, uint slider, uint gas, GasPistonDefinition geometry) => new()
@@ -231,6 +259,13 @@ public sealed record ComponentDefinition
     public static ComponentDefinition IdealGear(uint id, uint a, uint b, double ratio) => new()
     { Id = id, Kind = ComponentKind.IdealGear, NodeA = a, NodeB = b, Ratio = ratio };
 
+    /// <summary>Carrier-relative constraint: A - ratio * B + (ratio - 1) * carrier = 0.</summary>
+    public static ComponentDefinition CarrierGear(uint id, uint a, uint b, uint carrier, double ratio) => new()
+    { Id = id, Kind = ComponentKind.CarrierGear, NodeA = a, NodeB = b, NodeC = carrier, Ratio = ratio };
+
+    /// <summary>Double-pinion constraint: sun - ratio * ring + (ratio - 1) * carrier = 0.</summary>
+    public static ComponentDefinition DoublePinionPlanetary(uint id, uint sun, uint ring, uint carrier, double ringToSunTeethRatio) => new()
+    { Id = id, Kind = ComponentKind.DoublePinionPlanetaryGear, NodeA = sun, NodeB = ring, NodeC = carrier, Ratio = ringToSunTeethRatio };
     /// <summary>Permanent Willis constraint: sun + ratio * ring = (1 + ratio) * carrier.</summary>
     public static ComponentDefinition PlanetaryGear(uint id, uint sun, uint ring, uint carrier, double ringToSunTeethRatio) => new()
     { Id = id, Kind = ComponentKind.PlanetaryGear, NodeA = sun, NodeB = ring, NodeC = carrier, Ratio = ringToSunTeethRatio };

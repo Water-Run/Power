@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 17, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v17";
+    public const int FormatVersion = 24, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v24";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -25,14 +25,14 @@ public static class AssetCodec
         // Check the exact maximum allocation before writing caller-provided data.
         int cylinders = asset.Components.Count(c => c.Kind == ComponentKind.SealedCylinder);
         int gases = asset.Nodes.Count(n => n.Domain == Domain.Gas);
-        int orifices = asset.Components.Count(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector);
+        int orifices = asset.Components.Count(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector);
         int moving = asset.Components.Count(c => c.Kind == ComponentKind.GasCylinder);
         int valves = asset.Components.Count(c => c.ValveTiming is not null);
         int mixtures = asset.Nodes.Count(n => n.Gas?.Premixed is not null);
         int reservoirMixtures = asset.Components.Count(c => c.ReservoirFractions is not null);
         int burners = asset.Components.Count(c => c.Combustion is not null);
         int clutches = asset.Components.Count(c => c.Friction is not null);
-        int gears = asset.Components.Count(c => c.Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear);
+        int gears = asset.Components.Count(c => c.Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear);
         int converters = asset.Components.Count(c => c.Converter is not null);
         int points = asset.Components.Where(c => c.Converter is not null).Sum(c => c.Converter!.PumpPositive!.Points.Count +
             c.Converter.PumpNegative!.Points.Count + c.Converter.TurbinePositive!.Points.Count + c.Converter.TurbineNegative!.Points.Count);
@@ -44,10 +44,13 @@ public static class AssetCodec
         int batteries = asset.Nodes.Count(n => n.Battery is not null), dutyControllers = asset.Components.Count(c => c.PressureDutyController is not null);
         int pistons = asset.Components.Count(c => c.HydraulicPiston is not null), pistonClutches = asset.Components.Count(c => c.PistonClutch is not null);
         int spools = asset.Components.Count(c => c.SpoolValve is not null), gasPistons = asset.Components.Count(c => c.GasPiston is not null);
-        int injectors = asset.Components.Count(c => c.FuelInjector is not null);
-        long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 28 * 4 +
+        int injectors = asset.Components.Count(c => c.FuelInjector is not null),films=asset.Components.Count(c=>c.FuelFilm is not null), liquidInjectors=asset.Components.Count(c=>c.LiquidFuelInjector is not null);
+        int solenoids = asset.Components.Count(c => c.Solenoid is not null), stops = asset.Components.Count(c => c.TravelStop is not null);
+        int needles = asset.Components.Count(c => c.LiquidFuelInjector?.Needle is not null), needleDrivers = asset.Components.Count(c => c.NeedleDriver is not null);
+        int dctControllers = asset.Components.Count(c => c.DualClutchController is not null);
+        long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 35 * 4 +
             44L * asset.Nodes.Count + 156L * asset.Components.Count + 116L * cylinders + 24L * gases + 36L * orifices +
-            72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
+            72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 64L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + 40L * needleDrivers + 104L * dctControllers + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
         if (size > MaxBytes) throw new AssetFormatException("Asset exceeds 1 MiB.");
         using var stream = new MemoryStream((int)size);
         using var writer = new BinaryWriter(stream, Utf8, true);
@@ -57,7 +60,7 @@ public static class AssetCodec
         for (int i = 0; i < 32; ++i) writer.Write(Convert.ToByte(asset.SourceSha256.Substring(i * 2, 2), 16));
         writer.Write(asset.Nodes.Count); writer.Write(asset.Components.Count); writer.Write(asset.Inputs.Count); writer.Write(asset.Checks.Count);
         writer.Write(cylinders); writer.Write(gases); writer.Write(orifices); writer.Write(moving); writer.Write(valves);
-        writer.Write(mixtures); writer.Write(reservoirMixtures); writer.Write(burners); writer.Write(clutches); writer.Write(gears); writer.Write(converters); writer.Write(points); writer.Write(hydraulicRestrictions); writer.Write(hydraulicClutches); writer.Write(pumps); writer.Write(reliefs); writer.Write(controllers); writer.Write(batteries); writer.Write(dutyControllers); writer.Write(pistons); writer.Write(pistonClutches); writer.Write(spools); writer.Write(gasPistons); writer.Write(injectors);
+        writer.Write(mixtures); writer.Write(reservoirMixtures); writer.Write(burners); writer.Write(clutches); writer.Write(gears); writer.Write(converters); writer.Write(points); writer.Write(hydraulicRestrictions); writer.Write(hydraulicClutches); writer.Write(pumps); writer.Write(reliefs); writer.Write(controllers); writer.Write(batteries); writer.Write(dutyControllers); writer.Write(pistons); writer.Write(pistonClutches); writer.Write(spools); writer.Write(gasPistons); writer.Write(injectors);writer.Write(films); writer.Write(liquidInjectors); writer.Write(solenoids); writer.Write(stops); writer.Write(needles); writer.Write(needleDrivers); writer.Write(dctControllers);
         void Quantity(Quantity quantity) { writer.Write(quantity.Value); writer.Write((int)quantity.Unit); }
         foreach (var n in asset.Nodes)
         {
@@ -84,7 +87,7 @@ public static class AssetCodec
                 writer.Write(i); Quantity(gas.GasConstant); writer.Write(gas.Gamma);
             }
         for (int i = 0; i < asset.Components.Count; ++i)
-            if (asset.Components[i].Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector)
+            if (asset.Components[i].Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector)
             {
                 var c = asset.Components[i];
                 writer.Write(i); Quantity(c.Area); writer.Write(c.DischargeCoefficient); Quantity(c.ReservoirPressure);
@@ -120,7 +123,7 @@ public static class AssetCodec
             if (asset.Components[i].Friction is { } friction)
             { writer.Write(i); Quantity(friction.StaticCapacity); Quantity(friction.SlidingCapacity); }
         for (int i = 0; i < asset.Components.Count; ++i)
-            if (asset.Components[i].Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear)
+            if (asset.Components[i].Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear)
             { writer.Write(i); writer.Write(asset.Components[i].NodeC); }
         for (int i = 0; i < asset.Components.Count; ++i)
             if (asset.Components[i].Converter is { } converter)
@@ -186,6 +189,32 @@ public static class AssetCodec
         for (int i = 0; i < asset.Components.Count; ++i)
             if (asset.Components[i].FuelInjector is { } injector)
             { writer.Write(i); writer.Write(injector.CrankNode); Quantity(injector.CycleAngle); Quantity(injector.StartAngle); Quantity(injector.DurationAngle); Quantity(injector.MaximumDose); }
+        for(int i=0;i<asset.Components.Count;++i)if(asset.Components[i].FuelFilm is { } film)
+        {writer.Write(i);Quantity(film.InitialMass);Quantity(film.InitialTemperature);Quantity(film.LiquidSpecificHeat);Quantity(film.SaturationTemperature);Quantity(film.LatentInternalEnergy);}
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].LiquidFuelInjector is { } injector)
+            {
+                writer.Write(i); writer.Write(injector.FilmComponent); writer.Write(injector.CrankNode);
+                Quantity(injector.CycleAngle); Quantity(injector.StartAngle); Quantity(injector.DurationAngle); Quantity(injector.MaximumDose);
+                Quantity(injector.InitialMass); Quantity(injector.SupplyTemperature); Quantity(injector.LiquidDensity);
+                Quantity(injector.InitialPressure); Quantity(injector.PressureCompliance);
+            }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].Solenoid is { } coil) { writer.Write(i); Quantity(coil.ReferencePosition); Quantity(coil.InductanceGradient); }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].TravelStop is { } stop) { writer.Write(i); Quantity(stop.MinimumPosition); Quantity(stop.MaximumPosition); Quantity(stop.Stiffness); }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].LiquidFuelInjector?.Needle is { } needle) { writer.Write(i); writer.Write(needle.NeedleNode); Quantity(needle.ClosedPosition); Quantity(needle.FullOpenPosition); }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].NeedleDriver is { } driver) { writer.Write(i); writer.Write(driver.InjectorComponent); writer.Write(driver.SolenoidComponent); writer.Write(driver.SamplePeriodNanoseconds); Quantity(driver.DriveVoltage); writer.Write(driver.ClosurePredictionNanoseconds); }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].DualClutchController is { } controller)
+            {
+                writer.Write(i); writer.Write(controller.VehicleNode); writer.Write(controller.OddClutch); writer.Write(controller.EvenClutch);
+                foreach (uint selector in controller.Selectors) writer.Write(selector);
+                writer.Write(controller.SamplePeriodNanoseconds); writer.Write(controller.ReleaseNanoseconds); writer.Write(controller.EngageNanoseconds); writer.Write(controller.SynchronizeTimeoutNanoseconds);
+                Quantity(controller.SynchronizeTolerance); Quantity(controller.DirectionChangeSpeedLimit);
+            }
         foreach (var input in asset.Inputs) { writer.Write(input.TimeNanoseconds); writer.Write(input.Channel); writer.Write(input.Value); }
         foreach (var c in asset.Checks)
         {
@@ -215,7 +244,7 @@ public static class AssetCodec
             using var reader = new BinaryReader(stream, Utf8);
             if (!reader.ReadBytes(8).AsSpan().SequenceEqual(Magic)) throw new AssetFormatException("Unknown asset signature.");
             int version = reader.ReadInt32();
-            if (version is < 1 or > FormatVersion) throw new AssetFormatException("Unsupported asset format version; supported versions are 1 through 17.");
+            if (version is < 1 or > FormatVersion) throw new AssetFormatException("Unsupported asset format version; supported versions are 1 through 24.");
             ulong fingerprint = reader.ReadUInt64(), step = reader.ReadUInt64(), duration = reader.ReadUInt64(), sample = reader.ReadUInt64();
             int nameLength = reader.ReadUInt16();
             if (nameLength is < 1 or > 512 || stream.Length - stream.Position < nameLength + 32) throw new AssetFormatException("Invalid asset name length.");
@@ -245,7 +274,12 @@ public static class AssetCodec
             int spools = version >= 15 ? Count(components) : 0;
             int gasPistons = version >= 16 ? Count(components) : 0;
             int injectors = version >= 17 ? Count(components) : 0;
-            if (stream.Length - stream.Position != 44L * nodes + 156L * components + 116L * cylinders + 24L * gases + 36L * orifices + 72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 24L * inputs + 33L * checks)
+            int films=version>=18?Count(components):0;
+            int liquidInjectors = version >= 19 ? Count(components) : 0;
+            int solenoids = version >= 20 ? Count(components) : 0, stops = version >= 20 ? Count(components) : 0;
+            int needles = version >= 20 ? Count(components) : 0, needleDrivers = version >= 20 ? Count(components) : 0;
+            int dctControllers = version >= 22 ? Count(components) : 0;
+            if (stream.Length - stream.Position != 44L * nodes + 156L * components + 116L * cylinders + 24L * gases + 36L * orifices + 72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 64L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + (version >= 21 ? 40L : 32L) * needleDrivers + 104L * dctControllers + 24L * inputs + 33L * checks)
                 throw new AssetFormatException("Asset length does not match its declared counts.");
             Quantity Quantity() => new(reader.ReadDouble(), (Unit)reader.ReadInt32());
             var ns = new NodeDefinition[nodes]; var cs = new ComponentDefinition[components];
@@ -259,6 +293,17 @@ public static class AssetCodec
                     Ratio = reader.ReadDouble(), Resistance = Quantity(), Inductance = Quantity(), Coupling = Quantity(),
                     InitialCurrent = Quantity(), Conductance = Quantity(), AmbientTemperature = Quantity()
                 };
+            if (version < 24 && cs.Any(c => c.Kind == ComponentKind.CarrierGear)) throw new AssetFormatException("Carrier-relative meshes require version 24.");
+            if (version < 23 && cs.Any(c => c.Kind == ComponentKind.DoublePinionPlanetaryGear)) throw new AssetFormatException("Double-pinion topology requires version 23.");
+            if (version < 22 && cs.Any(c => c.Kind == ComponentKind.DualClutchController)) throw new AssetFormatException("Sampled DCT control requires version 22.");
+            if (dctControllers != cs.Count(c => c.Kind == ComponentKind.DualClutchController)) throw new AssetFormatException("Every DCT controller requires one typed record.");
+            if (version < 20 && cs.Any(c => c.Kind is ComponentKind.Solenoid or ComponentKind.TravelStop or ComponentKind.NeedleDriver)) throw new AssetFormatException("Electromagnetic needle actuation requires asset version 20.");
+            if (solenoids != cs.Count(c => c.Kind == ComponentKind.Solenoid) || stops != cs.Count(c => c.Kind == ComponentKind.TravelStop) || needleDrivers != cs.Count(c => c.Kind == ComponentKind.NeedleDriver))
+                throw new AssetFormatException("Every solenoid, travel stop and needle driver requires one typed record.");
+            if (version < 19 && cs.Any(c => c.Kind == ComponentKind.LiquidFuelInjector)) throw new AssetFormatException("Liquid fuel injection requires asset version 19.");
+            if (liquidInjectors != cs.Count(c => c.Kind == ComponentKind.LiquidFuelInjector)) throw new AssetFormatException("Every liquid injector requires one finite-source timing record.");
+            if(version<18&&cs.Any(c=>c.Kind==ComponentKind.FuelFilm))throw new AssetFormatException("Liquid fuel film requires asset version 18.");
+            if(films!=cs.Count(c=>c.Kind==ComponentKind.FuelFilm))throw new AssetFormatException("Every liquid film requires one phase-property record.");
             if (version < 17 && cs.Any(c => c.Kind == ComponentKind.GasFuelInjector)) throw new AssetFormatException("Cycle fuel metering requires asset version 17.");
             if (injectors != cs.Count(c => c.Kind == ComponentKind.GasFuelInjector)) throw new AssetFormatException("Every gas fuel injector requires one timing extension.");
             if (version < 16 && cs.Any(c => c.Kind == ComponentKind.GasPiston)) throw new AssetFormatException("Linear gas pistons require asset version 16.");
@@ -284,7 +329,7 @@ public static class AssetCodec
             if (version < 3 && (ns.Any(n => n.Domain == Domain.Gas) || cs.Any(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasHeatLink)))
                 throw new AssetFormatException("Finite gas networks require asset version 3.");
             if (cylinders != cs.Count(c => c.Kind == ComponentKind.SealedCylinder) || gases != ns.Count(n => n.Domain == Domain.Gas) ||
-                orifices != cs.Count(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector) || moving != cs.Count(c => c.Kind == ComponentKind.GasCylinder) || burners != cs.Count(c => c.Kind == ComponentKind.PremixedCombustion) || clutches != cs.Count(c => c.Kind == ComponentKind.Clutch) || gears != cs.Count(c => c.Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear) || converters != cs.Count(c => c.Kind == ComponentKind.TorqueConverter) ||
+                orifices != cs.Count(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector) || moving != cs.Count(c => c.Kind == ComponentKind.GasCylinder) || burners != cs.Count(c => c.Kind == ComponentKind.PremixedCombustion) || clutches != cs.Count(c => c.Kind == ComponentKind.Clutch) || gears != cs.Count(c => c.Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) || converters != cs.Count(c => c.Kind == ComponentKind.TorqueConverter) ||
                 hydraulicRestrictions != cs.Count(c => c.Kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve) || hydraulicClutches != cs.Count(c => c.Kind == ComponentKind.HydraulicClutch) || pumps != cs.Count(c => c.Kind == ComponentKind.HydraulicPump) || reliefs != cs.Count(c => c.Kind == ComponentKind.HydraulicRelief) || controllers != cs.Count(c => c.Kind == ComponentKind.PressureController))
                 throw new AssetFormatException("Every cylinder, gas node, orifice, burner, clutch, gear, converter and hydraulic component requires exactly one matching extension of a supported version.");
             for (int i = 0; i < cylinders; ++i)
@@ -309,7 +354,7 @@ public static class AssetCodec
             for (int i = 0; i < orifices; ++i)
             {
                 int index = reader.ReadInt32();
-                if (index < 0 || index >= components || cs[index].Kind is not (ComponentKind.GasOrifice or ComponentKind.GasFuelInjector) || seenOrifices[index])
+                if (index < 0 || index >= components || cs[index].Kind is not (ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector) || seenOrifices[index])
                     throw new AssetFormatException("Orifice extension must reference a distinct gas-orifice component.");
                 seenOrifices[index] = true;
                 cs[index] = cs[index] with { Area = Quantity(), DischargeCoefficient = reader.ReadDouble(), ReservoirPressure = Quantity() };
@@ -375,7 +420,7 @@ public static class AssetCodec
             for (int i = 0; i < gears; ++i)
             {
                 int index = reader.ReadInt32();
-                if (index < 0 || index >= components || cs[index].Kind is not (ComponentKind.IdealGear or ComponentKind.PlanetaryGear) || seenGears[index])
+                if (index < 0 || index >= components || cs[index].Kind is not (ComponentKind.IdealGear or ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) || seenGears[index])
                     throw new AssetFormatException("Gear topology must reference a distinct ideal or planetary gear component.");
                 seenGears[index] = true; cs[index] = cs[index] with { NodeC = reader.ReadUInt32() };
             }
@@ -504,6 +549,55 @@ public static class AssetCodec
                 int index = reader.ReadInt32();
                 if (index < 0 || index >= components || cs[index].Kind != ComponentKind.GasFuelInjector || cs[index].FuelInjector is not null) throw new AssetFormatException("Injector timing must reference a distinct gas fuel injector.");
                 cs[index] = cs[index] with { FuelInjector = new() { CrankNode = reader.ReadUInt32(), CycleAngle = Quantity(), StartAngle = Quantity(), DurationAngle = Quantity(), MaximumDose = Quantity() } };
+            }
+            for(int i=0;i<films;++i)
+            {int index=reader.ReadInt32();if(index<0||index>=components||cs[index].Kind!=ComponentKind.FuelFilm||cs[index].FuelFilm is not null)throw new AssetFormatException("Phase properties must reference a distinct fuel film.");
+             cs[index]=cs[index] with{FuelFilm=new(){InitialMass=Quantity(),InitialTemperature=Quantity(),LiquidSpecificHeat=Quantity(),SaturationTemperature=Quantity(),LatentInternalEnergy=Quantity()}};}
+            for (int i = 0; i < liquidInjectors; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.LiquidFuelInjector || cs[index].LiquidFuelInjector is not null)
+                    throw new AssetFormatException("Finite liquid source must reference a distinct liquid injector.");
+                cs[index] = cs[index] with { LiquidFuelInjector = new()
+                {
+                    FilmComponent = reader.ReadUInt32(), CrankNode = reader.ReadUInt32(),
+                    CycleAngle = Quantity(), StartAngle = Quantity(), DurationAngle = Quantity(), MaximumDose = Quantity(),
+                    InitialMass = Quantity(), SupplyTemperature = Quantity(), LiquidDensity = Quantity(), InitialPressure = Quantity(), PressureCompliance = Quantity()
+                } };
+            }
+            for (int i = 0; i < solenoids; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.Solenoid || cs[index].Solenoid is not null) throw new AssetFormatException("Solenoid record must reference a distinct solenoid.");
+                cs[index] = cs[index] with { Solenoid = new() { ReferencePosition = Quantity(), InductanceGradient = Quantity() } };
+            }
+            for (int i = 0; i < stops; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.TravelStop || cs[index].TravelStop is not null) throw new AssetFormatException("Travel-stop record must reference a distinct stop.");
+                cs[index] = cs[index] with { TravelStop = new() { MinimumPosition = Quantity(), MaximumPosition = Quantity(), Stiffness = Quantity() } };
+            }
+            for (int i = 0; i < needles; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].LiquidFuelInjector is null || cs[index].LiquidFuelInjector!.Needle is not null) throw new AssetFormatException("Needle record must reference a distinct liquid injector.");
+                cs[index] = cs[index] with { LiquidFuelInjector = cs[index].LiquidFuelInjector! with { Needle = new() { NeedleNode = reader.ReadUInt32(), ClosedPosition = Quantity(), FullOpenPosition = Quantity() } } };
+            }
+            for (int i = 0; i < needleDrivers; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.NeedleDriver || cs[index].NeedleDriver is not null) throw new AssetFormatException("Needle-driver record must reference a distinct driver.");
+                cs[index] = cs[index] with { NeedleDriver = new() { InjectorComponent = reader.ReadUInt32(), SolenoidComponent = reader.ReadUInt32(), SamplePeriodNanoseconds = reader.ReadUInt64(), DriveVoltage = Quantity(), ClosurePredictionNanoseconds = version >= 21 ? reader.ReadUInt64() : 0 } };
+            }
+            for (int i = 0; i < dctControllers; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.DualClutchController || cs[index].DualClutchController is not null) throw new AssetFormatException("DCT record must reference a distinct controller.");
+                uint vehicle = reader.ReadUInt32(), odd = reader.ReadUInt32(), even = reader.ReadUInt32(); var selectors = new uint[8];
+                for (int gear = 0; gear < 8; ++gear) selectors[gear] = reader.ReadUInt32();
+                cs[index] = cs[index] with { DualClutchController = new() { VehicleNode = vehicle, OddClutch = odd, EvenClutch = even, Selectors = selectors,
+                    SamplePeriodNanoseconds = reader.ReadUInt64(), ReleaseNanoseconds = reader.ReadUInt64(), EngageNanoseconds = reader.ReadUInt64(), SynchronizeTimeoutNanoseconds = reader.ReadUInt64(),
+                    SynchronizeTolerance = Quantity(), DirectionChangeSpeedLimit = Quantity() } };
             }
             var schedule = new ScheduledInput[inputs];
             for (int i = 0; i < inputs; ++i) schedule[i] = new(reader.ReadUInt64(), reader.ReadUInt64(), reader.ReadDouble());

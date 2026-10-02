@@ -1,207 +1,138 @@
-# Development status — 2026-09-30
+# Development status
 
-Power! has a verified managed simulation foundation and a synthetic fired powertrain
-path: open gas cylinders, prescribed combustion, mapped torque converter, lockup clutch,
-pressure-operated planetary shift elements and final drive. JSON, CLI, MCP and portable assets share the
-same definitions. This is a numerical development checkpoint. Complete engine behavior,
-DCT/AT topology, measured loss/control maps, measured valve/accumulator dynamics, ECU/TCU coordination, calibrated vehicle samples
-and an accepted Unity desktop application remain unfinished.
+Power! has a managed simulation core, shared model documents and portable assets,
+a headless CLI, an MCP agent service, and a prepared Unity studio. Synthetic
+laboratories exercise engine, transmission, hydraulic and electrical behavior.
+Complete powertrains, coordinated ECU/TCU control, measured calibration and an
+accepted Unity desktop application remain unfinished.
 
-## Implemented and verified locally
+## Current implementation
 
-| Area | Available behavior | Evidence and boundary |
+| Area | Implemented | Remaining acceptance |
 |---|---|---|
-| Core | Immutable compiled models, explicit units/IDs, bounded integer ticks, replay, cancellation, independent forks and whole-batch rollback | Dependency-free `net10.0` and `netstandard2.1` assemblies |
-| Engine physics | Sealed/open cylinders, bidirectional gas flow, timed valves, wall transfer and prescribed premixed combustion | Analytic and independent ODE checks, conservation and refinement; no predictive combustion or calibrated engine |
-| Fuel and gas | Fuel/air/product transport, explicit reservoir fractions, chemical energy and irreversible burn history | Nonnegative inventories, mass/constituent/energy ledgers and allocation-free stepping |
-| Clutches | Static/sliding reactions, signed ratios, ground brakes, capture/reversal events and thermal routing | Exact reference pair, changing-load refinement, coupled motor/cylinder checks, complete rollback |
-| Gears | Signed ideal gears and three-port planetaries, permanent constraints, reactions and phase preservation | Exact references, reflected inertia, analytic shift capture/heat, conservation and convergence |
-| Converter | Four explicit signed maps, stationary-stator reaction, fluid heat and separate lockup | Passive interpolation, analytic coupling/stall, reverse/coast/counterrotation, shared ports, joint cylinder/clutch/gear solving |
-| Hydraulics | Compliant chambers, restrictions, pumps/losses, electric supply, relief, dynamic pistons, finite-energy gas accumulators, metered spools and pressure/contact-actuated clutches | Joint mechanical/fluid power, analytic feedback and second-order smooth refinement, volume/energy ledgers and complete rollback |
-| Electrical supply | Finite-charge affine-OCV battery, series/polarization losses, averaged duty motors and switched resistive accessories | Analytic/RK4/refinement, regeneration, charge limits and shared conservation; chemistry/BMS/calibration remain open |
-| Controls | Sampled hydraulic-pressure PI feedback, held bounded motor voltage/duty and conditional integration | Exact integer-clock rules, sampled/RK4 plant reference, transactional memory and ownership; complete ECU/TCU remains open |
-| Integration | Twenty JSON/CLI laboratories and nineteen discoverable MCP examples | Complete gas/fluid, battery and piston portable/MCP replay; parameters remain synthetic |
-| Assets | v17 retains cycle fuel metering, gas/fluid actuation and supply/control | Bounded tables, malformed-record rejection, authentic v1–v16 fixtures and unchanged prior fingerprints |
-| Agent interface | Twelve tools with schemas, compact evidence, revisions, branches and actionable errors | Actual child-server integration; tool success, passing KPIs and calibration remain distinct |
-| Native archive | Zig 0.15.2 prototypes and preserved binary ABI | Historical reference, separate from the active C#/Unity stack; source audit and baseline checks retained |
+| Core | Explicit units and stable IDs; immutable compilation; bounded integer time; observable ledgers; replay, cancellation, independent forks and whole-batch rollback | Long-run and complete powertrain evidence |
+| Engine | Sealed/open cylinders, slider-crank pressure work, bidirectional gas flow, crank-timed valves, wall heat and prescribed premixed combustion | Detailed intake/exhaust, ignition, mechanical losses, richer thermochemistry and measured engine behavior |
+| Fuel | Tracked fuel/air/products, finite gaseous rails with cycle-dose metering, finite compliant liquid rails feeding films, wall-paid evaporation and vapor-only reaction | Rail pump/refill, nonlinear magnetic/electronic/spray behavior, pressure-dependent phase equilibrium and measured fuel properties |
+| Transmission | Static/sliding clutches, contact actuation, signed gears/planetaries, mapped converter/lockup and seven-forward/reverse DCT and four-forward/reverse Ravigneaux paths with resolved planet spin/orbital inertia | Mesh compliance/losses and load sharing, DCT actuation, complete AT pressure/shift control and measured routing, coordinated shifts, measured losses and richer converter behavior |
+| Hydraulics | Compliant volumes, restrictions, pumps with explicit leakage/drag, relief, dynamic pistons, metered spools and finite-energy gas accumulators | Measured valve/accumulator/pump maps, seal friction, cavitation and complete transmission hydraulics |
+| Electrical | RL motors, reciprocal variable-inductance solenoids, finite-charge battery, resistance/RC polarization, averaged duty conversion and accessories | Measured chemistry/thermal behavior, BMS, current control and complete supply integration |
+| Controls | Sampled pressure PI, needle feedback/closure prediction and sensor-confirmed staged DCT control with actuator ownership, integer clocks and transactional memory | ECU/TCU torque coordination, sensors, actuators and fault handling |
+| Documents and assets | Thirty-four JSON/CLI laboratories, thirty-three MCP examples, asset v24 with v1-v23 readers | Workbench editing/saving and calibrated model collections |
+| Agents | Twelve schema-defined MCP tools; compact evidence, revision checks and actionable diagnostics | Complete workflows for the remaining physical/control scope |
+| Unity | Model import, exact-tick playback, schematic 3D components, controls, reset and prepared lifecycle tests | Actual Editor/Play acceptance, selectable plots, graph editing/saving and Player/IL2CPP |
+| Native archive | Zig 0.15.2 research prototypes, preserved ABI and original source provenance | Historical reference; managed migration remains separate from full functionality |
 
-The required serial command is `dotnet run --file tools/Build.cs -- verify`. This
-Windows workspace uses SDK 10.0.401, permitted by the pinned SDK's patch roll-forward.
-The resumed checkpoint passes **247/247 managed checks, 193/193 Standard-assembly checks
-and 23/23 MCP groups**, plus **16/16 Zig** and **6/6 C# ABI** tests. All **176** historical baseline values
-match exactly. The Standard assemblies run under .NET 10, which does not establish
-Unity runtime compatibility. See [VALIDATION.md](VALIDATION.md) and
-`artifacts/reports/fuel-injector-final-2026-09-30.log` for the local evidence.
+Core and Assets target both `net10.0` and `netstandard2.1`; the Core has no Unity,
+transport, model-provider or third-party dependencies. Unity Assets scripts use
+C# 9. Unity loads the Standard assemblies built by the external SDK; it doesn't
+compile .NET 10/C# 14 source.
 
-## Development scope
+## Evidence and limits
 
-The owner resumed development on 2026-09-30. Explicit pump leakage/viscous losses and
-RL electrical supply are implemented using ordinary conserving graph components;
-see [the pump assembly contract](HYDRAULIC_PUMP.md#explicit-leakage-shaft-friction-and-electrical-supply).
-Historical asset checks now retain same-runtime exact replay and compare physical
-reference values with explicit tolerances across runtimes. The fixed Linux hashes
-remain provenance rather than cross-platform assertions. The published gas-accumulator checkpoint passes Windows/Linux/macOS CI. The new
-fuel-metering increment has local Windows evidence; actual Unity remains pending.
-
-## Cycle fuel metering
-
-[Finite gaseous fuel rails](FUEL_METERING.md) now admit a requested fuel mass through
-a pressure-dependent port in a forward crank window. Requests latch once per cycle;
-starvation, reverse pressure and live-input changes are observable separately from
-delivered fuel. Independent ODE/refinement, analytic burn, constituent/energy ledgers
-and complete controller transactions pass. The experiment uses separate air and
-fuel supply. Liquid spray/evaporation, detailed fuel hardware, ignition/ECU and
-calibrated gasoline injection remain open.
-
-## Finite-energy gas accumulator
-
-[Linear gas pistons](GAS_PISTON.md) now share one separator coordinate with hydraulic
-actuation. Actual mass, internal energy, pressure and temperature support adiabatic
-work, gas ports and wall heat. Independent RK4, opposed chambers, transfer ledgers
-and transaction checks pass. The pump experiment demonstrates charge and partial
-energy recovery during a declared demand pulse. A closed-chamber optimization
-preserves every replay value/hash and reduces measured local cost. Gas dissolution,
-bladder/seal behavior, measured property/heat maps and calibration remain open.
-
-## Mechanical spool regulation
-
-The [metering contract](HYDRAULIC_SPOOL.md) connects actual piston motion to a
-passive turbulent port, including simultaneous pressure/position derivatives.
-The synthetic electric-pump bypass regulates pressure mechanically and operates
-the pressure clutch through its fill/drain schedule. Independent steady/RK4,
-refinement, fluid/motion energy and transaction checks pass. Source, assets and
-actual MCP agree; parameters remain unverified. Axial jet force, seal friction,
-cavitation, complete valve/accumulator behavior and calibration remain open.
-
-The owner resumed development after the published spool checkpoint. Complete
-engine/transmission/control, calibrated samples and actual Unity acceptance remain
+The [AT hydraulic actuation graph](AT_HYDRAULIC_ACTUATION.md) supplies all five
+range elements and optional converter lockup from a shared shaft-driven pump.
+Explicit fill/drain paths, finite piston motion, return springs and pad-derived
+capacity retain hydraulic displacement work and actual capture/release behavior.
+Prescribed valves are not sensor-confirmed AT control or measured valve-body
+acceptance. Complete powertrain behavior and measured acceptance remain
 unfinished.
 
-## Dynamic piston and contact clutch
 
-The [piston contract](HYDRAULIC_PISTON.md) adds explicit mass, stroke, swept fluid
-volume, return spring/damping and an elastic pad. Clutch force follows pad contact;
-positive chamber pressure during free fill does not immediately engage the clutch.
-Analytic motion/contact work, RK4 contact refinement, independent fluid/electrical/
-rotational ledgers, transactional damping histories and allocation-free stepping
-are verified. The synthetic battery-fed piston laboratory has 761 matching JSON,
-portable and actual MCP boundaries. Its remaining global residual is separately
-bounded and documented. Seal friction, cavitation, measured valve/accumulator behavior, wear,
-complete transmission control and calibration remain open.
+The required serial `dotnet run --file tools/Build.cs -- verify` passes locally on
+Windows x64. It covers both assembly targets hosted on .NET 10, an actual MCP child
+process, all laboratory reports, the Zig archive and the C# ABI. Current counts,
+log paths, schema checks, numerical results and retained CI provenance live in
+[VALIDATION.md](VALIDATION.md). Standard-assembly tests on .NET 10 don't establish
+Unity runtime compatibility.
 
-## Battery supply checkpoint
+The [liquid film increment](FUEL_FILM.md) now has analytic heating/saturation/dryout
+checks, independent simultaneous ODE references, mass/chemical/thermal conservation,
+portable replay and complete session transactions. Symmetric film ordering gives
+second-order smooth refinement for films sharing a wall. Coupling to other wall
+heat sources retains the existing first-order explicit-wall limit. Exact replay
+is separate from timestep accuracy, passing KPIs and calibrated physics.
 
-Finite charge, series resistance and RC polarization now supply the pump motor through
-an explicit averaged-duty transformer. Accessory pulses cause observable voltage sag;
-the pressure PI loop regulates duty. Charge drops from 0.8 to about 0.627 over the
-15-s synthetic experiment, with pressure about 200.828 kPa for a 200 kPa target.
-All 761 report/portable/MCP boundaries agree. Chemical/RC and motor inductive energy,
-losses and source work share the ledger. Charge-limit failure rolls back the full
-batch. See [the contract](HYDRAULIC_PUMP.md#finite-battery-supply-and-duty-regulation).
+The [Ravigneaux research graph](RAVIGNEAUX_TRANSMISSION.md) adds single/double
+pinion constraints, five friction paths, four forward ranges and reverse.
+Independent free-mass, reflected-inertia and brake-capture references check
+port reactions and heat. Shared torque and fired/converter experiments preserve
+full replay and explicit research boundaries. The reduced path omits planet spin; detailed hydraulics,
+AT control and OEM topology/calibration remain unfinished. The [resolved option](RESOLVED_PLANETS.md)
+adds four actual meshes, two absolute spin rotors and explicit orbital inertia;
+independent six-rotor mass, angular-momentum and capture references retain those
+energies. Detailed tooth/lubrication/load-sharing behavior still needs evidence.
 
-## Pressure feedback checkpoint
+The [sampled DCT controller](DCT_CONTROL.md) now owns drive/selector commands,
+preselects unloaded paths, waits for physical synchronization/lock, and performs
+exclusive staged release/engagement. Integral gear requests, neutral abort,
+direction/timeout/persistent-lock faults and new-request recovery are observable.
+Confirmed gear can be temporarily zero during transient slip even after a prior
+confirmation. Controlled long gear runs use transactional compensated coordinates,
+with strict phase tolerances unchanged. The explicit state bound is 128; node and
+component bounds remain 32/64, allowing the 70-state fired/controller composition.
+Full torque-blended shifts, actuators and comprehensive ECU/TCU faults remain open.
 
-The pressure-regulated electric pump reads actual line pressure every 5 ms, with
-voltage limits and clamping anti-windup. It responds to clutch fill/drain disturbances
-and pressure target changes, ending within 0.551 kPa of the 200 kPa target. The
-controlled voltage input has one owner; agents write the pressure setpoint instead.
-All 757 report/portable/MCP boundaries agree. Controller memory shares complete
-rollback, cancellation and forks. The observed tracking is synthetic numerical
-evidence, not calibration or a complete ECU/TCU. See
-[the control contract](HYDRAULIC_PUMP.md#sampled-pressure-regulation).
+The [dual-clutch increment](DUAL_CLUTCH_TRANSMISSION.md) now assembles seven
+forward paths, an even-path reverse idler, three output/final-drive branches and
+explicit friction selectors. Independent signed/reflected-inertia and preselection
+impulse/heat references verify the power paths. Torque and fired experiments replay
+through all ordinary graph/asset/agent layers. A bounded normalized linear lock
+fallback resolves the previously failing six/seven handoff while keeping existing
+trajectories as regressions. Prescribed selection/handoff isn't complete TCU or
+detailed dog/baulk-ring/actuator behavior; parameters and OEM samples remain unverified.
 
-## Retained pump/relief checkpoint
+The [closure-compensation increment](CLOSURE_PREDICTION.md) replays a bounded
+held-input plant future without committing state. It predicts residual needle
+flow and schedules voltage removal on the physical tick grid. The isolated dose
+tracking improves while real closing/rebound and fuel/energy histories remain
+unchanged physical mechanisms. Read-only predictions, integer bounds, horizon
+refinement, zero allocations and complete transactions are verified. Prediction
+holds other commands and omits future external input events; its model and finite
+horizon are explicit limits, rather than calibration or complete ECU acceptance.
 
-The [pump contract](HYDRAULIC_PUMP.md) connects crank motion to hydraulic flow and pressure
-reaction in the shared solve. The `fired-pump` laboratory replaces the fixed-pressure
-supply with a shaft-driven pump, compliant line and pressure relief. All 89 report,
-portable and MCP boundaries agree. Pump work is 53.94250162 J; external hydraulic work
-is zero. Energy residual is about `1.07e-9 J`. Fingerprint `d0bd8f29a706fd89`, final hash
-`572150ab5d66a2f6`. Asset v11 preserves authentic v1–v10 fixtures.
+The [needle increment](NEEDLE_ACTUATION.md) couples magnetic flux energy and
+reciprocal force to actual needle mass, spring/damping and elastic stops. Integer
+sampling owns coil voltage from delivered-dose feedback. Fluid remains governed by
+physical lift through closing delay and rebound; it isn't clipped to the target.
+Independent magnetic/RL/motion references, source/phase/electrical/thermal ledgers,
+portable/MCP replay and full controller transactions pass. Excess delivery and
+remaining liquid at the experiment boundary remain observable; these results don't
+establish calibrated dose tracking or complete injector electronics/magnetics.
 
-The full powertrain objective remains unfinished. Continue with the sequence below;
-no calibration or actual Unity acceptance is claimed.
+The [liquid injection increment](LIQUID_FUEL_INJECTION.md) now starts from a dry
+film and draws from a finite compliant source. Analytic rail pressure/work,
+independent simultaneous refinement, complete source/film/chemical/thermal ledgers,
+actual MCP replay and speculative clutch rollback pass. Rail pressure energy is
+stored; nozzle heat and exported receiver pressure work remain distinct. The
+negligible-liquid-volume receiver reduction is explicit and isn't credited as
+additional gas-volume or crank work. Refined magnetic/electronic/spray behavior, pump/refill and measured hardware
+remain open.
 
-## Retained hydraulic checkpoint
+The `film-fired-cylinder` initially contains a declared liquid inventory. It heats
+and evaporates that inventory before prescribed reaction; it doesn't implement a
+liquid injector. Prepared Studio markers and tests consume the same definitions.
+`POWER_UNITY_EDITOR` is unset, so actual Editor/Play, rendering and Player/IL2CPP
+remain unverified.
 
-The [hydraulic contract](HYDRAULIC_NETWORK.md) now connects solved pressure to clutch
-force and capacity. Six explicit valves charge/drain three compliant chambers in the
-[fired-hydraulic laboratory](../assets/labs/fired-hydraulic.power.json). Commands change
-valve opening; pressure follows from flow and storage. Source work, restriction heat,
-reference-volume inventory and all clutch histories share the transaction and ledgers.
-
-The 0.8-s experiment has 89 matching replay boundaries. Reservoirs supply 8 J of
-hydraulic work; restriction loss is 7 J and stored hydraulic energy increases by 1 J.
-The final crank/turbine speed is 70.94321138 rad/s and load speed 6.75649632 rad/s.
-Total-energy residual is about `1.09e-9 J`; hydraulic reference-volume residual is
-`-1.08e-18 m³`. Fingerprint `01b69cb3abe52211`, final hash `46a01d103e6159d3`.
-
-Analytic charging/equalization, independent nonlinear flow integration and pressure-driven
-clutch impulse verify conservation and second-order smooth refinement. Tests also cover
-preload, capture/release, zero-allocation stepping, branches, cancellation and rollback.
-Asset replay caught a missing reservoir-pressure field during development; v10 now
-retains that physical boundary explicitly, with a regression check.
-
-This is constant effective compliance and rigid-contact pressure actuation. Internal pump and
-regulator dynamics, piston travel/inertia, cavitation, gas accumulator behavior and
-ECU/TCU valve control remain open. Fixed pressure reservoirs are explicit external power
-boundaries, not engine-driven or electric pumps. Parameters remain unverified.
-
-## Retained converter checkpoint
-
-The [converter contract](CONVERTER_NETWORK.md) defines explicit forward/reverse pump and
-coast maps, their units, passivity and continuity checks, observable semantics and solver
-limits. Converter torque responds to the jointly solved midpoint speeds, including
-cylinder work, gear reactions and clutch capture intervals. Heat enters the same thermal
-and total-energy ledger. Runtime histories, inputs and physical states roll back together.
-
-The [fired-converter laboratory](../assets/labs/fired-converter.power.json) schedules
-lockup, release, recapture and a reduction/direct upshift and downshift over 0.8 s.
-At 50,000-ns ticks it records -63.19 J of net external work, produces 24.28 J of fluid heat,
-22.85 J of lockup heat and 240.60 J across the two shift elements. The shared thermal
-node reaches 301.43864 K. Final energy residual is approximately `3.30e-11 J`.
-Its fingerprint is `839d03901973668d`; final replay hash is `834a679376b7a6fd`.
-
-Standalone fluid-coupling and stall solutions show second-order convergence. A separate
-five-step fired-model study checks combined convergence across fluid, combustion and
-clutch transitions. Individual small heat differences can be nonmonotone near events;
-this coupled model does not claim uniform second order. These are synthetic transient
-results, not measured converter efficiency, vehicle performance or calibration.
-
-Earlier laboratories and independent references remain regression evidence. See
-[coupled gears](GEAR_NETWORK.md), [clutches](CLUTCH_NETWORK.md),
-[premixed combustion](PREMIXED_COMBUSTION.md) and the chronological validation record.
-The converter implementation preserves their model fingerprints and replay trajectories.
-
-## Prepared but not verified in Unity
-
-Studio imports the same Core/Assets assemblies and twenty generated model assets. It has
-schematic vessels, moving pistons, timed valves, heat-release markers, clutch phases, hydraulic slider/contact pads,
-ideal/planetary connections, converter pump/turbine/stator views, hydraulic chambers,
-valves, shaft-driven pump ports and pressure-clutch connections. Import,
-lockup/shift playback, reset and cleanup tests are prepared. Plots still show rotor
-speeds; general channel selection, graph editing and saving remain unfinished.
-
-`POWER_UNITY_EDITOR` is unset. Editor import, Play Mode, rendering, Mono/IL2CPP and a
-desktop Player remain unverified. Unity Assets scripts remain C# 9. Unity does not
-compile .NET 10/C# 14 source; the SDK builds the separate Standard assemblies.
+All research parameters remain `unverified`. EA211 DJS + DQ200 and PSA EC5 + AT8
+retain their complete powertrain boundaries and evidence manifests in
+[assets/samples](../assets/samples). Missing OEM measurements stay missing.
+Licenses and historical source provenance are preserved.
 
 ## Next development sequence
 
-1. Extend the explicit constant pump losses and RL electrical supply with measured
-   loss/control behavior, measured battery/BMS/temperature dynamics and measured accumulator properties/heat behavior, then
-   extend toward complete DCT/AT topologies. The sampled pressure loop now regulates motor supply; prescribed valve
-   schedules still need ECU/TCU coordination.
-2. Continue liquid fuel injection/evaporation and ignition control, intake/exhaust dynamics, mechanical
-   losses and richer thermochemistry. Prescribed burns do not implement injectors,
-   predictive kinetics, knock, emissions or an ECU.
-3. Implement ECU/TCU torque coordination, sensors, actuators, power supply, accessories
-   and faults within the full powertrain boundaries, with independent evidence.
-4. Run `unity-test` with the pinned Editor, then obtain Player/IL2CPP evidence. Complete
-   Studio channel selection, graph editing and saving as separate deliverables.
-5. Collect missing measurements and uncertainty budgets for EA211 DJS + DQ200 and
-   PSA EC5 + AT8 before declaring calibrated samples or release readiness.
-
-All sample parameters remain `unverified`. Full sample boundaries, evidence manifests,
-licenses and historical source provenance are preserved. Research inputs never silently
-substitute for missing OEM measurements.
+1. Add conserving rail pump/refill and measured magnetic/electronic actuation on top of
+   [finite compliant liquid delivery](LIQUID_FUEL_INJECTION.md). Replace the declared
+   exported displacement-work boundary when finite liquid volume and spray
+   momentum are resolved. Keep delivered liquid, evaporated fuel and reaction
+   separately observable and retain independent references.
+2. Extend the engine with ignition control, intake/exhaust dynamics, mechanical
+   losses and richer thermochemistry. Preserve the complete engine objective.
+3. Extend the verified DCT research paths with detailed actuation, measured planet properties/losses and complete AT
+   hydraulics/control, then build ECU/TCU shift/torque coordination from
+   the verified gear, clutch, converter and hydraulic primitives. Add bounded
+   controller state, sensor/actuator behavior and fault recovery.
+4. Run `unity-test` with the pinned Editor, then obtain Player/IL2CPP evidence.
+   Complete channel selection, graph editing and saving as distinct features.
+5. Obtain measured maps, OEM data and uncertainty budgets for the two target
+   powertrains before declaring calibrated samples or release readiness.

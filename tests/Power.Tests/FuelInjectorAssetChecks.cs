@@ -34,7 +34,7 @@ internal static class FuelInjectorAssetChecks
     private static void Replay()
     {
         var asset=Asset();byte[] data=AssetCodec.Encode(asset);var decoded=AssetCodec.Decode(data);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(8))==17&&decoded.Model.Fidelity=="cycle_fuel_metering");
+        Require(BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(8))==24&&decoded.Model.Fidelity=="cycle_fuel_metering");
         Require(asset.Components.SequenceEqual(decoded.Components)&&data.SequenceEqual(AssetCodec.Encode(decoded)));Compare(asset,decoded);
         byte[] fixture=File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory,"Fixtures","gas-accumulator-pump-v16.powerasset"));
         Require(Convert.ToHexStringLower(SHA256.HashData(fixture))=="72f0ee5b3180b763de091674565b2b8f2cbd61f80a3e4ab46e9694ad153a79c7");
@@ -44,12 +44,12 @@ internal static class FuelInjectorAssetChecks
     }
     private static void Corruption()
     {
-        var asset=Asset();byte[] source=AssetCodec.Encode(asset);int counts=78+Encoding.UTF8.GetByteCount(asset.Name),record=counts+112+44*asset.Nodes.Count+156*asset.Components.Count+24*2+36+40*2;
+        var asset=Asset();byte[] source=AssetCodec.Encode(asset);int counts=78+Encoding.UTF8.GetByteCount(asset.Name),record=counts+140+44*asset.Nodes.Count+156*asset.Components.Count+24*2+36+40*2;
         void Reject(byte[] data){SHA256.HashData(data.AsSpan(0,data.Length-32)).CopyTo(data,data.Length-32);Throws<ArgumentException>(()=>AssetCodec.Decode(data));}
         foreach(int count in new[]{-1,65,int.MaxValue}){var bad=source.ToArray();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(counts+108),count);Reject(bad);}
         foreach(var change in new[]{(0,1),(4,2),(52,(int)Unit.Joule)}){var bad=source.ToArray();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(record+change.Item1),change.Item2);Reject(bad);}
         var duplicate=source.Take(record+56).Concat(source.Skip(record).Take(56)).Concat(source.Skip(record+56)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts+108),2);Reject(duplicate);
         var missing=source.Take(record).Concat(source.Skip(record+56)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts+108),0);Reject(missing);
-        var downgraded=source.Take(counts+108).Concat(source.Skip(counts+112).Take(record-counts-112)).Concat(source.Skip(record+56)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(downgraded.AsSpan(8),16);Reject(downgraded);
+        var downgraded=source.Take(counts+108).Concat(source.Skip(counts+140).Take(record-counts-140)).Concat(source.Skip(record+56)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(downgraded.AsSpan(8),16);Reject(downgraded);
     }
 }

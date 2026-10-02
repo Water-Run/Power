@@ -15,7 +15,7 @@ internal static class SpoolAssetChecks
 {
     internal static IEnumerable<(string Name, Action Run)> All =>
     [
-        ("spool asset / complete v17 metering topology / authentic v14 upgrade", Replay),
+        ("spool asset / complete v18 metering topology / authentic v14 upgrade", Replay),
         ("spool asset / typed counts and geometry / corruption and downgrade", Corruption)
     ];
     private static PowerAsset Asset() => PowerAsset.Create(SpoolChecks.Model(), "Spool regulator", new string('e', 64),
@@ -36,7 +36,7 @@ internal static class SpoolAssetChecks
     private static void Replay()
     {
         var asset = Asset(); byte[] data = AssetCodec.Encode(asset); var decoded = AssetCodec.Decode(data);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(8)) == 17 && decoded.Model.Fidelity == "mechanically_regulated_hydraulics");
+        Require(BinaryPrimitives.ReadInt32LittleEndian(data.AsSpan(8)) == 24 && decoded.Model.Fidelity == "mechanically_regulated_hydraulics");
         Require(asset.Components.SequenceEqual(decoded.Components) && data.SequenceEqual(AssetCodec.Encode(decoded))); Compare(asset, decoded);
         byte[] fixture = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "piston-actuated-clutch-v14.powerasset"));
         Require(Convert.ToHexStringLower(SHA256.HashData(fixture)) == "72e0605d00972a58e2f5358aa8cbd44417e81cf1c452a20ab9661eac0919bae0");
@@ -48,7 +48,7 @@ internal static class SpoolAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] source = AssetCodec.Encode(asset);
-        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), land = counts + 112 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 80 + 104;
+        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), land = counts + 140 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 80 + 104;
         void Reject(byte[] data) { SHA256.HashData(data.AsSpan(0, data.Length - 32)).CopyTo(data, data.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(data)); }
         foreach (int count in new[] { -1, 65, int.MaxValue }) { var bad = source.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(counts + 100), count); Reject(bad); }
         foreach (var replacement in new[] { (0, 0), (4, 999), (16, (int)Unit.Radian) })
@@ -56,7 +56,7 @@ internal static class SpoolAssetChecks
         var duplicate = source.Take(land + 32).Concat(source.Skip(land).Take(32)).Concat(source.Skip(land + 32)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 100), 2); Reject(duplicate);
         var missing = source.Take(land).Concat(source.Skip(land + 32)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 100), 0); Reject(missing);
-        var downgraded = source.Take(counts + 100).Concat(source.Skip(counts + 112).Take(land - counts - 112)).Concat(source.Skip(land + 32)).ToArray();
+        var downgraded = source.Take(counts + 100).Concat(source.Skip(counts + 140).Take(land - counts - 140)).Concat(source.Skip(land + 32)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgraded.AsSpan(8), 14); Reject(downgraded);
     }
 }

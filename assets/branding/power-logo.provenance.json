@@ -1,0 +1,20 @@
+{
+  "asset": "power-logo.png",
+  "media_type": "image/png",
+  "pixel_dimensions": [
+    1983,
+    793
+  ],
+  "transparent_background": true,
+  "generated_on": "2026-10-01",
+  "tool": "Built-in image_gen.imagegen",
+  "sha256": "29ff11c323f4bda95db47f96b52d973eab11aceafa3902a60c35f6d253a3ed50",
+  "generation_prompt": "Use case: logo-brand. Asset type: a reusable transparent PNG logo for Power!, an open-source powertrain modeling studio with engine, transmission, thermal and electrical physics. Primary request: design one polished, distinctive logo with a compact mechanical rotation / flowing energy symbol beside the exact wordmark \"Power!\". Style: flat vector-like graphic, strong clean geometry, restrained technical character, readable at small sizes. Composition: one horizontal lockup, ample transparent margin, centered, no presentation board. The symbol should suggest coupled rotation and energy transfer with a subtle P-shaped silhouette; avoid a generic power-button icon. Text (verbatim): \"Power!\" with a clear exclamation mark, confident contemporary sans-serif. Use a restrained high-contrast treatment suited to a dark desktop studio while remaining visible on a light background. Constraints: genuinely transparent background; no mockup, photo, 3D rendering, gradients, bevels, tagline, extra text, watermark or existing company marks. Deliver the actual logo asset.",
+  "refinement_prompt": "Use case: logo-brand. Edit the provided Power! logo. Preserve the exact symbol geometry, wordmark spelling \"Power!\", layout, green rotating arrow and genuinely transparent background. Make one targeted palette correction: change every dark navy element, including all lettering and the outer gear and hub, to a solid medium blue #2366C4 so the logo is readable on both white and dark backgrounds. Make the other blue arrow and lightning bolt solid bright cyan-blue #159EEF. Use perfectly flat solid fills throughout, no gradients, textures, shading, glow or bevel. Keep the same sharp edges and composition. No new text or objects.",
+  "project_license": "GPL-3.0-or-later with the Unity Linking Exception",
+  "license_notices": [
+    "../../COPYING.NOTICE",
+    "../../LICENSE",
+    "../../UNITY-LINKING-EXCEPTION.md"
+  ]
+}

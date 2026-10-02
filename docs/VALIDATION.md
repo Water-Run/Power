@@ -1,5 +1,777 @@
 # 验证记录
 
+
+
+
+## 2026-10-02: shared AT hydraulic supply and dynamic piston actuation
+
+The required serial `dotnet run --file tools/Build.cs -- verify` passes locally
+on Windows x64/.NET 10.0.12: **354/354** managed checks, **273/273**
+Standard-assembly checks hosted on .NET 10, **37/37** actual MCP groups,
+**16/16** Zig tests and six native-model C# checks. The Release build reports
+zero warnings/errors. All **34** laboratories pass and all **176** original
+baseline values match exactly. C/C++/Lua audits remain empty. Actual Unity and
+new Linux/macOS acceptance remain unverified.
+
+Evidence files:
+
+- `artifacts/reports/at-actuation-closed-2026-10-02.log`: complete serial run.
+- `artifacts/reports/at-actuation-evidence-2026-10-02.json`: log/report/source
+  digests, pressure/travel/contact state, pump work and full inventory/energy bounds.
+- `artifacts/reports/at-actuation-schema-audit-2026-10-02.json`: all 34 documents
+  validate with jsonschema 4.25.1.
+- `artifacts/reports/at-finer-10000.json` and `at-finer-5000.json`: finer coupled
+  fired references, with explicitly retained authoring documents.
+
+Six physical/transaction groups check immutable ordinary graph lowering,
+actual pressure/travel/contact capacity, independent simultaneous RK4
+pump-pressure-motion refinement, complete swept inventory, pump work and routed
+heat, six common-supply branches, explicit units/stroke/reference/channel errors,
+cancellation, late rollback, independent forks and allocation-free stepping.
+The single-actuator thermal check independently derives shaft drag heat from
+source work, shaft kinetic change and pump work. Front/back areas remain explicit;
+the examples use 0.001/0 m2 and therefore retain front swept volume in inventory.
+
+Three integration groups and two new actual MCP scenarios preserve every scalar
+and state hash at **201** five-branch torque-train and **87** six-branch fired
+boundaries. Helper and JSON fingerprints agree. The previous engagement channels
+are absent; only actual fill/drain inputs drive pressure and motion. Zero initial
+pad capacity remains zero despite an apply command. Physical locks are confirmed
+through all four forward up/down paths. The fired lockup also uses actual piston
+motion. Both pressure energy and piston/return/pad/stop energy remain in the
+complete transaction and global energy ledger.
+
+The coarser 40/20/10-us final-state comparison was nonmonotone: normalized errors
+against 10 us were `1.74505e-5` at 40 us and `2.19913e-5` at 20 us. That failed
+criterion is not treated as a passing convergence result. A finer **20/10/5-us**
+comparison enters a decreasing-error range: relative to 5 us, the normalized
+maximum over eight engine/vehicle/pressure/travel/work/heat outputs decreases
+from **2.01463e-5** at 20 us to **6.51409e-6** at 10 us. All reference runs meet
+physical KPIs and exact own-runtime replay. No global convergence order or OEM
+accuracy is inferred from prescribed hybrid handoffs.
+
+| Final quantity | Five-branch train (2 s) | Fired six-branch train (0.8 s) |
+|---|---:|---:|
+| Engine/source speed | 102.2242615437 rad/s | 36.2608726849 rad/s |
+| Vehicle speed | 8.5186884620 rad/s | 13.5978272568 rad/s |
+| Line pressure | 1.1963842937 MPa | 1.0666023745 MPa |
+| Pump work | 117.4226709117 J | 37.6491650676 J |
+| Reported states | 83 | 106 |
+| Maximum sampled energy residual | `1.64680e-7 J` | `1.29307e-8 J` |
+| Maximum swept inventory residual | `1.18076e-18 m3` | `2.94767e-19 m3` |
+| Maximum gear phase residual | `5.68434e-14 rad` | `1.42109e-14 rad` |
+| Fingerprint | `f61d582874bd086b` | `4e83efb34de63922` |
+| Final hash | `9307fb49117dad0a` | `70e00a107ef1ca6d` |
+
+Source SHA-256 values are
+`119008206e0d1a5372ec399665d30669ac41bbf2f0fbc0c27c56bf3bc90c8f02`
+(torque train) and
+`9659b282454202857b16ee2dbc0226f30b79549fedab88b4c79f92c6c6e66801`
+(fired). The dense fired plant fits the existing 128-state limit at 106 states
+without removing engine, converter, pressure or actuator state. Existing v24
+records suffice; no new asset format is introduced. The actual 37-scenario MCP
+suite remains bounded at 300 s, including these larger coupled plants.
+
+Parameters and maps remain `unverified`. Valve schedules are prescribed;
+complete AT feedback, ECU torque coordination, measured valve-body behavior,
+seal/cavitation/aeration/temperature models and OEM calibration remain open.
+Prepared Studio imports/playback do not establish actual Editor/Play/Player/
+IL2CPP acceptance. The full objective remains unfinished. See
+[AT_HYDRAULIC_ACTUATION.md](AT_HYDRAULIC_ACTUATION.md).
+
+## 2026-10-02: absolute planet spin, orbital inertia and four physical meshes
+
+The required serial `dotnet run --file tools/Build.cs -- verify` passes locally
+on Windows x64/.NET 10.0.12: **345/345** managed checks, **267/267**
+Standard-assembly checks hosted on .NET 10, **35/35** actual MCP groups,
+**16/16** Zig tests and six native-model C# checks. The Release build reports
+zero warnings/errors. All **32** laboratories pass and all **176** historical
+baseline values match exactly. C/C++ and Lua audits remain empty. Actual Unity
+and new Linux/macOS acceptance remain unverified.
+
+Evidence files:
+
+- `artifacts/reports/resolved-planets-endpoint-2026-10-02.log`: full serial run.
+- `artifacts/reports/resolved-planets-evidence-2026-10-02.json`: log/report/source
+  digests, geometry, spin/orbit energies, residuals and numerical diagnostics.
+- `artifacts/reports/resolved-planets-schema-audit-2026-10-02.json`: 32 valid
+  documents and eight malformed carrier-mesh cases rejected by jsonschema 4.25.1.
+- `artifacts/reports/resolved-planet-failure-2026-10-02.json` and
+  `resolved-planet-refinement-failure-2026-10-02.json`: preserved pre-fix traces.
+
+Eight physical/transaction groups check signed carrier-relative ratios,
+independent acceleration-space mass matrices, rigid pitch geometry, per-planet
+mass/spin aggregation and orbital inertia, all four forward/reverse reflected
+inertias, angular momentum, zero summed mesh reaction power, carrier-capture
+impulse/heat, 20-second loaded overdrive, unit/packing/reference errors,
+cancellation, late rollback, forks and allocation-free stepping/readback.
+Two portable groups retain complete signed ratios, carriers and spin storage,
+reject malformed records and digest-resealed v23 downgrades, and replay the
+authentic v23 reduced graph. Its SHA-256 is
+`f2bd390e8ecf013e5843ed3352ccf2a2828133b541fc61d7927995f8ac1dc2e2`;
+fingerprint `63d28eb32bc4cfb2` and every-boundary upgraded replay remain intact.
+
+The initial torque-train run stopped after **1.4033 s**. The large-sun/outer-planet
+speed residual was `1.2406076e-11 rad/s`, near the unchanged
+`1.2406654e-11 rad/s` bound; phase error was zero and energy residual
+`5.26143e-10 J`. Relative Schur refinement alone delayed the stop to **1.4494 s**.
+The free midpoint solve now enforces `G v_next=0` using
+`v_next=2 v_mid-v_old`, rather than repeatedly reflecting preceding roundoff.
+At exact compatible old states this is the ordinary zero midpoint constraint.
+All changes use actual force-response multipliers, which accumulate into mean
+reactions. Three bounded relative refinements improve small force responses;
+scratch is simulation-owned or constructor-local, and compiled factors remain
+immutable. Existing graphs keep their preceding projection/replay behavior.
+No inertia or velocity/phase tolerance was reduced or increased to pass the case.
+
+Three integration groups and two new actual MCP scenarios match every scalar
+and state hash at **201** torque-train and **87** fired/converter boundaries.
+The helper and flat JSON fingerprints agree. Absolute inner/outer spin, orbital
+carrier storage, all mesh reactions and complete friction/converter thermal
+ledgers remain observable. Agent revisions, cancellation, invalid ratio repair
+and independent neutral forks remain covered.
+
+| Final quantity | Torque train (2 s) | Fired train (0.8 s) |
+|---|---:|---:|
+| Engine/source speed | 117.3118882900 rad/s | 40.9899766814 rad/s |
+| Vehicle speed | 9.7759906908 rad/s | 15.3712412555 rad/s |
+| Inner planet absolute speed | -469.2475531599 rad/s | -204.9498834069 rad/s |
+| Outer planet absolute speed | 156.4158510533 rad/s | 122.9699300441 rad/s |
+| Planet spin energy | 23.3037873338 J | 12.2863030022 J |
+| Planet orbital energy | Near zero with carrier held | 15.4891426738 J |
+| Reported states | 27 | 41 |
+| Maximum sampled energy residual | `4.01224e-9 J` | `3.00179e-9 J` |
+| Maximum gear phase residual | `1.13687e-13 rad` | `2.84217e-14 rad` |
+| Maximum gear speed residual | `3.97904e-13 rad/s` | `2.27374e-13 rad/s` |
+| Fingerprint | `d3010be4b33fdbaf` | `faf9384667ece88d` |
+| Final hash | `8e1da00bda34941b` | `e606196f7b345c99` |
+
+The fired train burns **38.0629762199 mg** and releases **1674.7709536768 J**.
+Relative to a 12.5-us final-state reference, the normalized maximum error across
+engine/vehicle/planet speeds and work/heat outputs decreases from `1.13450e-6`
+at 50 us to `1.04173e-6` at 25 us. This is bounded refinement through prescribed
+hybrid handoffs; no global convergence order is claimed.
+
+The declared three synchronous pairs use ring radius **0.1 m**, per inner/outer
+planet masses **0.3/1 kg**, and spin inertias **0.000015/0.0005 kg m2**.
+Carrier structure **0.03 kg m2** receives explicit orbital inertia
+**0.0184375 kg m2**. Source SHA-256 values are
+`c45d90282097303da44c9405eb6945637b578db84617f0b749efc58ed879f0a5`
+(torque) and
+`e71d9ea4755826b1dcd916fd0157827b2e845dd48506e32f6291674d56f315f3`
+(fired). Geometry, masses and maps remain `unverified`. Rigid synchronous meshes
+don't establish manufacturing load sharing, tooth compliance, lubrication/losses,
+complete AT hydraulics/control, OEM identity or calibrated vehicle behavior.
+Prepared Studio cases include all three carrier-mesh ports; they don't establish
+actual Editor/Play/Player/IL2CPP results. See [RESOLVED_PLANETS.md](RESOLVED_PLANETS.md).
+
+## 2026-10-02: Ravigneaux compound paths and fired converter composition
+
+The required serial `dotnet run --file tools/Build.cs -- verify` passes locally
+on Windows x64 with .NET 10.0.12: **332/332** managed checks, **257/257**
+Standard-assembly checks hosted on .NET 10, **33/33** actual MCP groups,
+**16/16** Zig tests and six native-model C# checks. The Release build reports
+zero warnings/errors. All **176** original baseline values match exactly;
+C/C++ and Lua source inventories remain empty. All **30** laboratories pass.
+Actual Unity and new Linux/macOS acceptance remain unverified.
+
+Evidence files:
+
+- `artifacts/reports/ravigneaux-confirmed-2026-10-02.log`: complete serial run.
+- `artifacts/reports/ravigneaux-evidence-2026-10-02.json`: log/source/report
+  digests, state bounds, numerical ledgers and declared limitations.
+- `artifacts/reports/ravigneaux-schema-audit-2026-10-02.json`: all 30 documents
+  pass jsonschema 4.25.1; eight malformed topology cases reject.
+- `artifacts/reports/ravigneaux-phase-failure-2026-10-02.json`: isolated
+  diagnosis before coordinate compensation.
+
+Six physical/transaction groups check the independently reduced 2x2 free mass
+matrix, all four forward and reverse reflected inertias, member reactions and
+zero summed gear reaction power, carrier-brake capture impulse/heat, long loaded
+overdrive, malformed units/geometry/ports, cancellation, late rollback,
+independent forks and allocation-free stepping/readback. Two portable groups
+check complete carrier records, typed counts, duplicate references and forged
+v22 downgrade rejection. Authentic v22 controlled-DCT fixture SHA-256 is
+`db90df5fa9ca90067341abdcaf8c3a4a38316794a4b3c8ecc7c89a852375c24e`;
+fingerprint `72122eae163df98e` and exact upgraded replay remain intact.
+
+Long loaded overdrive initially stopped after the last committed **2.9668 s**
+boundary. The double-pinion phase residual was `-8.27754e-10 rad`, near the
+`8.27906e-10 rad` bound, while speed residual was `-1.77991e-12 rad/s` against
+`5.21235e-11 rad/s`. Compound models now use transactional compensated coordinate
+accumulation. The same **20-second** analytic load check passes without increasing
+phase/speed tolerances or projecting positions. Correction state copies, hashes
+and rolls back with every interval; previous compound-free models retain their
+existing integration/hash behavior.
+
+Three integration groups and two actual MCP scenarios retain every output and
+state hash at **201** torque-train and **87** fired/converter boundaries.
+The five friction elements physically enact prescribed forward up/down handoffs;
+command acceptance isn't treated as completed lock. Thermal storage matches the
+sum of all routed clutch/converter heat. Revision checks, cancellation, bounded
+input rejection and independent neutral forks remain covered.
+
+| Final quantity | Torque train (2 s) | Fired converter train (0.8 s) |
+|---|---:|---:|
+| Input/engine speed | 119.6764605858 rad/s | 42.4589002302 rad/s |
+| Vehicle speed | 9.9730383821 rad/s | 15.9220875863 rad/s |
+| Reported states | 21 | 35 |
+| Friction heat in the five range elements | 546.0473656082 J | 117.6775595348 J |
+| Maximum sampled energy residual | `1.87947e-9 J` | `1.96445e-9 J` |
+| Maximum gear phase residual | `3.19744e-14 rad` | `1.06581e-14 rad` |
+| Maximum thermal ledger difference | `1.52568e-10 J` | `2.41471e-9 J` |
+| Fingerprint | `63d28eb32bc4cfb2` | `7c207499d9050fc6` |
+| Final hash | `4eb3c05eeef034c6` | `0cbed5442969c06f` |
+
+The fired train burns **37.7116554560 mg**, releases **1659.3128400630 J**,
+dissipates **66.4214778376 J** in the converter and **125.9622150447 J** in
+lockup. Relative to the 12.5-us final-state reference, the normalized maximum
+error across engine/vehicle speed and three work/heat outputs decreases from
+`9.92882e-7` at 50 us to `7.19762e-7` at 25 us. This is bounded refinement
+through prescribed hybrid events, not a claimed global order of convergence.
+
+Source SHA-256 values are
+`8063388dbd341fd16b05ab971f6c2cc23d87ebfee3681da9d1ffcf95fffa52a0`
+(torque train) and
+`55587bff2a2e5f33c6e876ed0d539615cfee1daf938d72dc4946c39a36a74d44`
+(fired train). Research parameters/maps remain `unverified`. Internal planet
+spin, detailed gear losses, AT hydraulics/control, ECU coordination, exact OEM
+topology and measured samples remain open. Unity import/playback tests are
+prepared as individual resource cases, including repaired earlier argument-count
+errors; no Editor/Play or IL2CPP result is inferred from the managed run.
+See [RAVIGNEAUX_TRANSMISSION.md](RAVIGNEAUX_TRANSMISSION.md).
+
+## 2026-10-01: sampled DCT synchronization, staged handoff and combined fired control
+
+The required serial `dotnet run --file tools/Build.cs -- verify` passes locally
+on Windows x64 with SDK 10.0.401/runtime 10.0.12: **321/321** managed checks,
+**249/249** Standard-assembly checks hosted on .NET 10, **31/31** actual MCP
+groups, **16/16** Zig and **6/6** C# ABI checks. Release build reports zero
+warnings/errors. All **176** historical baseline values match exactly and
+C/C++/Lua audit is empty. Actual Unity and new Linux/macOS acceptance are unverified.
+
+Evidence files:
+
+- `artifacts/reports/tcu-final-2026-10-01.log` — complete serial run.
+- `artifacts/reports/tcu-evidence-2026-10-01.json` — scope, log/source digests,
+  actual gear/fault/phase, state bounds, phase and energy residuals.
+- `artifacts/reports/tcu-schema-audit-2026-10-01.json` — all **28** laboratories
+  pass jsonschema 4.25.1; **10** malformed controller cases reject.
+- `artifacts/reports/controlled-dual-clutch.json` and
+  `artifacts/reports/controlled-fired-dual-clutch.json` — complete reports.
+
+Eight physical/control groups verify all seven confirmed paths, unloaded
+preselection, staged exclusive drive handoff, signed reverse, moving-direction
+block, synchronization timeout, persistent confirmed-lock loss, neutral/new-target
+recovery, integral static/immediate/scheduled input checks, ten-channel ownership,
+integer sampling, immutable routes, cancellation/late rollback, forks and zero
+allocation. A 20-second controlled run verifies strict gear phase preservation
+and energy. Controller outcomes remain observable faults; they aren't silently
+treated as a successful shift or numerical failure.
+
+Long loaded synchronization first exposed accumulated coordinate roundoff at
+3.7688 s. Gear speed residual was within its bound, while normalized phase error
+`-3.2883917811e-10` marginally exceeded the existing `3.2882809435e-10` bound.
+New controlled models now accumulate midpoint-velocity coordinates with
+transactional compensated correction. Strict tolerances weren't increased and
+no state position was projected onto a chosen ratio. Prior models keep their
+preceding integration/hash behavior; new compensation copies/hashes/rolls back
+with every actual and speculative interval.
+
+The explicit reported-state bound is **128**. Node/component limits remain
+**32/64**; serial build/test behavior is unchanged. A 32-rotor/64-RL-state model
+compiles and steps at exactly 128 reported states. Higher tracked-gas, film,
+injection and controller models reject capacity. The complete fired/DCT/controller
+composition now fits at 70 states, rather than omitting engine/control state to
+fit the preceding limit. This doesn't establish sparse/Burst or Unity performance.
+
+Two portable groups verify v22 routes, periods, ramps, tolerances, ownership and
+fault/replay history, bounded typed counts, wrong references/units, missing records
+and forged v21 downgrades. Authentic v21 graph fixture SHA-256 is
+`706618f7d32a5ef4b8a18ca801d2c3ba0b293eac03b584d88d584e9290a38437`;
+fingerprint `7466a75b99fbfd78` and same-runtime upgraded replay remain intact.
+Earlier fixtures and physical fingerprints are retained regression evidence.
+
+Three integration groups and two actual MCP scenarios check sampled state,
+integer request, actionable owned-channel guidance, revisions, cancelled/failed
+batches and independent gear-command forks. All **421** controlled-train and
+**83** controlled-fired report/portable/MCP boundaries match exactly.
+
+| Final quantity | Controlled train (4.2 s) | Controlled fired train (0.8 s) |
+|---|---:|---:|
+| Requested / confirmed gear | 1 / 1 | 3 / 3 |
+| Shift phase / fault | Driving / None | Driving / None |
+| Engine speed | 197.0169047878 rad/s | 51.7225290420 rad/s |
+| Vehicle rotor speed | 12.6455009492 rad/s | 7.6456066581 rad/s |
+| Reported states | 64 | 70 |
+| Maximum sampled energy residual | `1.18562e-8 J` | `1.19940e-9 J` |
+| Maximum reported gear phase error | `7.16227e-14 rad` | `7.10543e-15 rad` |
+| Fingerprint | `72122eae163df98e` | `1d2b1a0c1eabf259` |
+| Final hash | `ef2843acbb273e6d` | `b50dea693d6af82a` |
+
+The final loaded downshift and subsequent unloaded preselection are observed
+through physical confirmation at 4.2 s. At 4.0 s the prior confirmation was
+temporarily disturbed by real selector/drive slip, so actual gear correctly
+reported zero rather than assuming completion. The fired combination burns
+**37.2949777641 mg** and releases **1640.9790216183 J**.
+
+Source SHA-256 values are
+`f15629d3fc8d8915f5884f77603458053c83e7835cf34d434fa607d85442bc87`
+(controlled) and
+`c3a6d491fd614d526a99831d7dfdc4285bca3c10a57ac811959023cfb9e40d5b`
+(controlled fired). All parameters remain `unverified`. This controller deliberately
+uses torque-interrupted handoff; complete ECU torque blending, sensors/actuators,
+dog/baulk-ring mechanisms, comprehensive faults, AT, measured target powertrains
+and actual Unity remain open. See [DCT_CONTROL.md](DCT_CONTROL.md).
+
+## 2026-10-01: seven-forward/reverse dual-clutch power paths
+
+The required serial `dotnet run --file tools/Build.cs -- verify` passes locally
+on Windows x64 with SDK 10.0.401/runtime 10.0.12: **308/308** managed checks,
+**239/239** Standard-assembly checks hosted on .NET 10, **29/29** actual MCP groups,
+**16/16** Zig and **6/6** C# ABI checks. Release build has zero warnings/errors.
+All **176** historical baseline values match exactly; C/C++/Lua audit is empty.
+Actual Unity and new Linux/macOS acceptance remain unverified.
+
+Evidence files:
+
+- `artifacts/reports/dct-final-2026-10-01.log` — full serial verification.
+- `artifacts/reports/dct-evidence-2026-10-01.json` — scope, digests, graph/replay,
+  final quantities and measured refinement.
+- `artifacts/reports/dct-schema-audit-2026-10-01.json` — all **26** laboratories
+  pass the existing jsonschema 4.25.1 structural contract.
+- `artifacts/reports/dual-clutch-transmission.json` and
+  `artifacts/reports/fired-dual-clutch.json` — complete experiment reports.
+
+Six physical groups verify an ordinary graph with fourteen internal rotors,
+twelve permanent gears and ten friction clutches, caller-owned stable bindings,
+seven forward and signed reverse paths, three final-drive branches and immutable
+parameters. Independent reflected-inertia/constant-torque references cover every
+selected path with and without inactive-path preselection. Independent two-coordinate
+capture projection checks synchronization impulse, final speeds and heat.
+Complete forks, cancellation, late rollback, capacity/unit/ID/selection contracts
+and zero managed allocation for successful stepping/readback pass.
+
+The full torque scenario exposed a six-to-seven handoff failure immediately
+after old-clutch release. Correlated gear-reflected locks exhausted the scalar
+projection budget. A normalized, preallocated linear Schur fallback now solves
+independent locks after that budget is exhausted, with the same static limits,
+bounded active-set release, residual and passive-heat checks. Singular/nonlinear
+cases retain their existing limits. Direct six/seven independent acceleration
+and the formerly failing handoff are regression evidence; older physics and
+authentic asset trajectories remain verified. No iteration-limit increase or
+failed-residual acceptance was used.
+
+Three integration groups verify assembly/JSON fingerprint identity, launch,
+preselection, all forward up/down handoffs, thermal routing, structured diagnostics,
+revisions/cancellation and independent selector forks. Both laboratories replay
+through portable assets and an actual MCP child server. All **281** torque-lab
+and **83** fired-lab report/portable/MCP boundaries agree exactly.
+
+The torque scenario reaches each declared effective ratio after handoff:
+
+| Forward gear | Verified engine/vehicle speed ratio |
+|---|---:|
+| 1 | 15.58 |
+| 2 | 9.43 |
+| 3 | 6.765 |
+| 4 | 5.166 |
+| 5 | 3.774 |
+| 6 | 3.182 |
+| 7 | 2.664 |
+
+These are declared research reductions, not OEM measurements. Reverse sign and
+preselected reflected inertia have independent constant-load evidence; the road
+scenario doesn't claim moving-vehicle reverse engagement.
+
+| Final quantity | Torque DCT (2.8 s) | Fired DCT (0.8 s) |
+|---|---:|---:|
+| Engine speed | 161.3549080416 rad/s | 53.8218438613 rad/s |
+| Vehicle rotor speed | 10.3565409526 rad/s | 7.9559266609 rad/s |
+| Total clutch/synchronization heat | 870.3601867183 J | 224.4917038405 J |
+| Thermal node | 300.8703601867 K | 351.7212768995 K |
+| Maximum sampled energy residual | `5.22732e-9 J` | `1.23919e-9 J` |
+| Reported state count | 55 | 61 |
+| Model fingerprint | `7466a75b99fbfd78` | `b7216a2ed8c88dc3` |
+| Final hash | `c8932376afe516c6` | `35b434aca827c3a6` |
+
+The fired example burns **39.1255750233 mg** and releases **1721.5253010267 J**.
+Its full seven-forward/reverse graph drives 1-to-2-to-3 scheduled handoff within
+the current bounded state budget. Versus a 12.5-microsecond reference, maximum
+scaled final differences for engine/vehicle speeds, source work and selected
+clutch heats are **4.9008455434e-6** at 50 microseconds and **4.3731765238e-6** at
+25 microseconds. Error decreases modestly; this alone doesn't establish uniform
+hybrid-event order or complete asymptotic convergence. Independent gear/clutch
+references and conservation remain separate evidence.
+
+Source SHA-256 values are
+`f5db9f0a9f3a0585eff261d71285e4a390c099ec1a3bec27d1b9194beb311294`
+(torque) and
+`0dfc3ed92930b649c8312043625789a4a4394811fed9e0c88a615a18a6b07473`
+(fired). Existing component kinds, units, asset format and prior readers are retained.
+All parameters remain `unverified`; this research train arrangement isn't
+calibrated DQ200. Friction selectors don't complete dog/baulk-ring actuation,
+and prescribed schedules don't implement full TCU/ECU torque coordination.
+Complete AT, measured losses/actuation, full target powertrains and actual Unity
+remain open. See [DUAL_CLUTCH_TRANSMISSION.md](DUAL_CLUTCH_TRANSMISSION.md).
+
+## 2026-10-01: bounded closure replay and physical-tick cutoff compensation
+
+The serial `dotnet run --file tools/Build.cs -- verify` passes locally on Windows
+x64 with SDK 10.0.401/runtime 10.0.12: **299/299** managed checks, **233/233**
+Standard-assembly checks hosted on .NET 10, **27/27** actual MCP groups,
+**16/16** Zig and **6/6** C# ABI checks. Release build has zero warnings/errors.
+All **176** historical numerical values match exactly; C/C++/Lua source audit
+remains empty. Actual Unity and new Linux/macOS CI are unverified.
+
+Evidence files:
+
+- `artifacts/reports/closure-final-2026-10-01.log` — full serial verification.
+- `artifacts/reports/closure-evidence-2026-10-01.json` — machine-readable scope,
+  source/log digests, replay fingerprints, tracking and horizon evidence.
+- `artifacts/reports/closure-schema-audit-2026-10-01.json` — all **24** laboratory
+  documents pass jsonschema 4.25.1; **6** malformed horizon cases reject.
+- `artifacts/reports/closure-compensated-cylinder.json` — fired experiment.
+
+Five Core groups verify exact independent manual zero-voltage replay, unchanged
+committed values/hash/time, improved actual delivery, cutoff memory, horizon
+refinement, alignment/budget/immutability, read and batch cancellation, late
+failure, independent forks, zero managed allocation for forecasts and active
+predictive stepping, and complete speculative clutch histories. Every candidate
+uses separate preallocated state and normal plant equations; no predicted fuel
+is added to a real ledger. Disabled predictions retain previous fingerprints and
+hashes. Cancellation or an invalid prediction rejects the complete real batch.
+
+At 1 ms the isolated benchmark forecasts about **2.9894117019 mg** of additional fuel
+under immediate voltage removal, and its separate manual closure replay agrees
+to the declared `1e-15 kg` comparison tolerance. The held-input forecast is
+distinct from actual future events or measured device behavior.
+
+Finite-horizon tracking retains late seat rebound:
+
+| Prediction horizon | Actual delivered fuel for an 8-mg request |
+|---|---:|
+| 8 ms | 8.2537740284 mg |
+| 12 ms | 8.0606880453 mg |
+| 20 ms | 8.0101785078 mg |
+| 30 ms | 8.0101785078 mg |
+
+The preceding on/off feedback delivers **9.8939438959 mg**. With a 20-ms forecast
+and physical-tick cutoff, relative error drops from **23.6743%** to **0.12723%**,
+about **186 times** smaller in this synthetic benchmark. The 20/30-ms decision
+agrees, while 8 ms truncates a material tail. This is bounded model-based tracking
+evidence, not calibrated injector accuracy. Electrical/contact timestep and
+controller/horizon refinement remain separate acceptance controls.
+
+Two portable groups verify v21 horizon/cutoff replay, exact re-encoding, malformed
+driver horizons and forged v20 downgrade rejection. Authentic v20 fixture SHA-256
+`4d87e996d92a50508cfcffac610551b84220f2b3055f5b104c8ec7ec64ca9a2e`
+retains fingerprint `3fa813ff44b95a79` and same-runtime upgraded replay. Older
+fixtures and ideal/on-off model trajectories remain regression evidence.
+
+Three integration groups plus an actual MCP child server verify model horizons,
+prediction observables, owned voltage, actionable errors, revisions, cancellation,
+independent forks and complete source/phase/energy ledgers. All **65** fired
+report/portable/MCP boundaries match. At the 0.6-s boundary:
+
+| Quantity | Value |
+|---|---:|
+| Delivered and evaporated liquid | 28.0021908833 mg |
+| Rail pressure | 725.327490978 kPa |
+| Remaining liquid film | 0 mg |
+| Burned vapor | 27.9775490263 mg |
+| Reaction heat | 1231.0121571575 J |
+| Latest requested / delivered cycle dose | 12 mg / 12.0346025230 mg |
+| Last selected closing prediction | 2.7431038678 mg |
+| Prediction length | 2000 physical ticks |
+| Cutoff latch / pending cutoff ticks | 1 / 0 |
+| Maximum sampled absolute energy residual | `1.51078e-8 J` |
+| Maximum sampled absolute mass residual | `4.06576e-18 kg` |
+| Maximum sampled absolute fuel residual | `8.97855e-20 kg` |
+
+Fingerprint is `ddefea6d870e7e75`; final hash is `b8edcd36b58805b6`; model source
+SHA-256 is `106bde4e86ccb10cd214d1372cff300c09f277c88ee8811d2d9a144d72ca8326`.
+The live next-cycle command remains 4 mg; prediction and measured delivery are
+reported separately from that command.
+
+Forecasts hold other actuator commands, ignore future external input events,
+respect a finite integer horizon and require a monotone local cutoff bracket.
+Those assumptions and the unverified physical parameters limit this evidence.
+Full ECU/TCU, rail refill, magnetic/electronic/fluid refinement, actual Unity and
+calibrated powertrain acceptance remain open. See
+[CLOSURE_PREDICTION.md](CLOSURE_PREDICTION.md).
+
+## 2026-10-01: electromagnetic needle and sampled delivery feedback
+
+The required serial command `dotnet run --file tools/Build.cs -- verify` passes
+locally on Windows x64 with SDK 10.0.401/runtime 10.0.12: **289/289** managed
+checks, **226/226** Standard-assembly checks on .NET 10, **26/26** actual MCP
+groups, **16/16** Zig and **6/6** C# ABI checks. Release compilation has zero
+warnings/errors. All **176** historical numerical values match exactly; source
+audit finds zero C/C++/Lua files. No new Linux/macOS CI or actual Unity
+Editor/Play/Player/IL2CPP acceptance is claimed.
+
+Evidence files:
+
+- `artifacts/reports/needle-final-2026-10-01.log` — complete serial run.
+- `artifacts/reports/needle-evidence-2026-10-01.json` — machine-readable scope,
+  source/log digests, laboratory fingerprints, final quantities and refinement.
+- `artifacts/reports/needle-schema-audit-2026-10-01.json` — all **23** laboratories
+  pass jsonschema 4.25.1; **16** malformed magnetic/stop/needle/driver cases reject.
+- `artifacts/reports/needle-actuated-cylinder.json` — complete experiment/replay.
+
+Nine physical groups verify the magnetic discrete energy identity, signed supply
+work and nonnegative copper heat, analytic force Jacobian, stationary analytic RL
+current, simultaneous magnetic/spring dynamics, conservative travel-stop hinges,
+actual needle delivery outside quota/window, owned voltage, delayed unseating and
+closure, dose overshoot, complete transactions and immutable/dimensional contracts.
+Active stepping and snapshots allocate **zero managed bytes**. Speculative clutch
+capture tests preserve flux, source/phase, mean force, compensated heat/work and
+sampled/held control history through exact batching and a later failed batch.
+
+An independent five-state ODE integrates needle position/velocity, magnetic flux,
+copper heat and electrical work. RK4 references at **20,000/40,000** steps agree
+within `1e-10` scaled tolerance. Over 5 ms, smooth physical refinement is:
+
+| Tick | Maximum scaled error | Previous error / current error |
+|---|---:|---:|
+| 25 microseconds | `8.4976116406e-4` | — |
+| 12.5 microseconds | `2.1110507406e-4` | 4.02530 |
+| 6.25 microseconds | `5.2689855150e-5` | 4.00656 |
+| 3.125 microseconds | `1.3167017353e-5` | 4.00165 |
+
+This is second-order smooth electromagnetic/mechanical refinement. Contact,
+window/driver switching and the existing explicit wall coupling keep separate
+accuracy limits; exact replay doesn't prove uniform order or calibrated control.
+
+The isolated 8-mg request delivers **9.8939438959 mg** after passive electrical/
+mechanical closure and seat rebound, an excess of **1.8939438959 mg**. A zero
+opening at 20 ms is followed by about **0.0001200614 mg** of additional rebound
+delivery before settling. The model retains that flow instead of clipping mass
+at the target or equating a zero-voltage command with a closed valve. These are
+research dynamics, not accepted dose tracking or measured injector behavior.
+
+Two portable groups check complete v20 magnetic, stop, needle and driver records,
+same-runtime all-boundary replay, exact re-encoding, bounded typed counts, wrong
+units/references, missing/duplicate tables and forged v19 downgrade rejection.
+Authentic v19 fixture SHA-256 is
+`4ff5f6180006d53be5ffb6ef0663cc6de4af45f35f39dc4d52fd7e00e8cdd8c5`;
+fingerprint `4f74c6da6d89ab08` and same-runtime upgraded replay remain intact.
+The legacy ideal quota path, older fixtures and existing physical fingerprints
+remain regression evidence.
+
+Three integration groups plus an actual MCP child server verify strict dimensions/
+references, owned-voltage command guidance, revisions, cancellation, independent
+forks and magnetic/source/phase/thermal ledgers. All **65** report/portable/MCP
+boundaries agree. The 0.6-s fired laboratory ends with:
+
+| Quantity | Value |
+|---|---:|
+| Delivered liquid | 40.3903592511 mg |
+| Rail pressure | 692.292375330 kPa |
+| Evaporated fuel | 34.5106221450 mg |
+| Remaining liquid film | 5.8797371061 mg |
+| Burned vapor | 31.2333851260 mg |
+| Reaction heat | 1374.2689455424 J |
+| Electrical supply work | 0.168028754073 J |
+| Copper heat | 0.167510468341 J |
+| Magnetic energy | `6.30199e-16 J` |
+| Held coil command | 0 V |
+| Actual needle lift | 0.4842244877 micrometers |
+| Actual needle velocity | -0.1290065607 m/s |
+| Latest latched request / actual delivered dose | 4 mg / 5.8930695115 mg |
+| Maximum sampled absolute energy residual | `1.57642e-8 J` |
+| Maximum sampled absolute mass residual | `3.30682e-18 kg` |
+| Maximum sampled absolute fuel residual | `9.48677e-20 kg` |
+
+The final boundary still has a moving, almost-seated needle and an incompletely
+evaporated film. The new experiment therefore checks finite remaining inventory
+and the complete fuel ledger instead of inheriting the ideal-injector laboratory's
+dry-film condition. Passing numerical KPIs doesn't establish exact commanded dose.
+Model fingerprint is `3fa813ff44b95a79`; final hash is `de68045d420b9ffa`; source
+SHA-256 is `d8c7472a3335a523821209cb183cf34687e454f326d9ac1946c618b7ca73050c`.
+
+All parameters remain `unverified`. Linear unsaturated inductance, constant R,
+pressure-balanced needle, elastic stops and ideal voltage drive are declared
+reductions. Nonlinear magnetic/thermal maps, switching/flyback/battery drive,
+axial fluid forces, spray/displacement, rail pump/refill, full ECU/TCU and measured
+powertrains remain open. Prepared Unity coil/stop/controller views and needle
+stroke scaling require actual Editor/Play verification. See
+[NEEDLE_ACTUATION.md](NEEDLE_ACTUATION.md).
+
+## 2026-10-01: compliant liquid rail and cycle injection
+
+The required serial command `dotnet run --file tools/Build.cs -- verify` passes
+locally on Windows x64 with SDK 10.0.401/runtime 10.0.12: **275/275** managed
+checks, **215/215** Standard-assembly checks hosted on .NET 10, **25/25** actual
+MCP groups, **16/16** Zig tests and **6/6** C# ABI checks. Release build reports
+zero warnings/errors. All **176** historical baseline values match exactly;
+source audit finds zero C/C++/Lua files. This doesn't establish new Linux/macOS CI
+or actual Unity Editor/Play/Player/IL2CPP acceptance.
+
+Evidence files:
+
+- `artifacts/reports/liquid-injector-final-2026-10-01.log` — complete serial run.
+- `artifacts/reports/liquid-injector-evidence-2026-10-01.json` — machine-readable
+  scope, log digest, current laboratory/source fingerprints, final quantities and
+  independent refinement.
+- `artifacts/reports/liquid-injector-schema-audit-2026-10-01.json` — all **22**
+  laboratories pass jsonschema 4.25.1; **16** malformed liquid-injector cases reject.
+- `artifacts/reports/liquid-injected-cylinder.json` — experiment and complete replay.
+
+Eight physical groups check analytic pressure-head decay, finite compliant source
+inventory, exact rail work, passive nozzle heat, caloric/chemical/pressure ledgers,
+quota latching, reverse-pressure closure and reversal without quota reissue.
+Starvation reaches the prescribed receiver pressure without inventing fuel.
+Independent forks, rejected/cancelled inputs, late failure after accepted injection,
+and speculative clutch capture preserve every source/film/quota/heat history.
+Warm active injection and snapshots allocate **zero managed bytes**. Explicit
+properties, source-volume feasibility, units, film/crank ownership, bounded state
+capacity and immutable compilation are exercised.
+
+An independent simultaneous eight-state ODE integrates delivered liquid, film mass,
+wall temperature, receiver gas mass/internal energy and three pressure/heat
+histories. Independent RK4 runs at **20,000/40,000** steps agree within the declared
+`1e-10` scaled tolerance. Over 0.2 s in a smooth forward window, physical
+20/10/5/2.5-ms ticks give maximum scaled errors:
+
+| Tick | Maximum scaled error | Previous error / current error |
+|---|---:|---:|
+| 20 ms | `2.9306688569e-7` | — |
+| 10 ms | `7.3266958993e-8` | 3.999987 |
+| 5 ms | `1.8316757833e-8` | 3.999996 |
+| 2.5 ms | `4.5791930144e-9` | 3.999997 |
+
+This establishes second-order smooth injection/evaporation coupling under the
+declared reduction. Fixed-tick window events, starvation and other explicit wall
+sources retain their separate accuracy limits; no uniform fired-powertrain order
+is claimed.
+
+Two portable groups verify v19 source/nozzle/timing records, exact re-encoding,
+every-boundary replay, bounded typed counts, wrong units/ownership, duplicate/
+missing records and forged v18 downgrades. The authentic v18 film fixture retains
+SHA-256 `c0e59c6f6527b2b59ee1094cd6627c0829ecbd4ab0eb2e6ec06394ccfe15da97`,
+fingerprint `cb103bce098f4e82` and same-runtime upgraded replay. Earlier fixtures
+and film-free physics remain regression evidence. The review also updates current
+header offsets in malformed-record tests while retaining old-version table sizes.
+
+Three integration groups plus an actual MCP child server check the shared finite
+source, liquid deposition, vapor-only reaction, source/film/wall balances, strict
+documents and session revisions/cancellation/forks. All **65** report/portable/MCP
+boundaries agree. The 0.6-s laboratory starts with a dry film and **500 mg** of
+liquid at **800 kPa**, and ends with:
+
+| Quantity | Value |
+|---|---:|
+| Delivered and evaporated liquid | 28 mg |
+| Remaining source liquid | 472 mg |
+| Rail pressure | 725.333333333 kPa |
+| Remaining film liquid | 0 mg |
+| Released rail pressure work | 0.028472888889 J |
+| Exported receiver pressure work | 0.003236038241 J |
+| Nozzle heat | 0.025236850648 J |
+| Film heat drawn from the wall | 14 J |
+| Film wall temperature | 498.602523685 K |
+| Burned vapor | 27.9759472237 mg |
+| Reaction heat | 1230.9416778442 J |
+| Maximum sampled absolute energy residual | `5.52370e-9 J` |
+| Maximum sampled absolute mass residual | `1.08420e-18 kg` |
+| Maximum sampled absolute fuel residual | `7.45389e-20 kg` |
+
+The final observed cycle retains a **12-mg** request/delivery while the live
+command is **4 mg** for a future window. Dose acceptance, delivery and reaction
+remain distinct. Model fingerprint is `4f74c6da6d89ab08`; final hash is
+`ddf5b1c4b0678451`; source SHA-256 is
+`85b9cba983e31258d9341943dab3c844a18c05c5320dda3d9d610a3935a14d09`.
+
+Rail pressure energy is internal stored energy; nozzle heat enters the finite
+wall. The negligible-liquid-volume receiver exports displacement pressure work
+explicitly instead of crediting hidden gas-volume or crank work. Its zero-pressure
+compliance reference and constant properties are declared research reductions.
+All parameters remain `unverified`. Pump/refill, backing-pressure/property maps,
+needle/electrical/spray dynamics, finite-liquid-volume coupling, ignition/ECU,
+complete transmission/control and calibrated vehicle powertrains remain open.
+Unity rail/nozzle views and lifecycle tests are prepared but require the pinned
+Editor. See [LIQUID_FUEL_INJECTION.md](LIQUID_FUEL_INJECTION.md).
+
+## 2026-10-01: finite liquid fuel film and symmetric transport
+
+The required serial command `dotnet run --file tools/Build.cs -- verify` passes
+on Windows x64 with SDK 10.0.401/runtime 10.0.12: **262/262** managed checks,
+**205/205** Standard-assembly checks hosted on .NET 10, **24/24** actual MCP groups,
+**16/16** Zig tests and **6/6** C# ABI checks. All **176** retained historical
+baseline values match exactly. Source audit finds zero C/C++/Lua files. The Release
+build reports zero warnings/errors. This is local working-tree evidence, with no
+new Linux/macOS CI or actual Unity Editor/Play/Player/IL2CPP acceptance.
+
+Evidence files:
+
+- `artifacts/reports/fuel-film-final-2026-10-01.log` — complete serial run.
+- `artifacts/reports/fuel-film-evidence-2026-10-01.json` — machine-readable scope,
+  log digest, laboratory fingerprints, phase quantities and refinement errors.
+- `artifacts/reports/fuel-film-schema-audit-2026-10-01.json` — all **21** laboratory
+  documents pass jsonschema 4.25.1; **12** malformed film cases are rejected.
+- `artifacts/reports/film-fired-cylinder.json` — experiment and complete replay.
+
+Ten physical groups verify analytic finite-bath heating, signed phase reference,
+saturation/dryout, limited heat availability, cooling, zero conductance, actual
+vapor-only reaction and independent constituent/chemical/thermal ledgers. Complete
+forks, cancelled and late-rejected batches preserve all histories; warm stepping
+and snapshot reads allocate **zero managed bytes**. Wrong ports/units, invalid phase
+properties, state-capacity overflow and immutable compilation are exercised.
+
+The review corrected the second half-step from film/gas to gas/film and reversed
+the shared-wall film sweep. This makes film/gas/mechanics/gas/film symmetric, while
+preserving the existing solver path for film-free models. Independent simultaneous
+RK4 references at 20,000 and 40,000 steps agree within the declared `1e-10` scaled
+tolerance. A two-second smooth saturated-film study uses 40/20/10/5 ms physical
+ticks and the maximum scaled error across liquid/gas mass, wall temperature, gas
+internal energy and transported constituents:
+
+| Coupling | Error at 40 ms | Error at 5 ms | Successive halving ratios |
+|---|---:|---:|---|
+| Two films sharing a finite wall | `3.43324e-8` | `5.36263e-10` | 4.0000, 4.0002, 4.0012 |
+| Film vapor leaving through a choked gas port | `3.17195e-5` | `4.89033e-7` | 4.0495, 4.0029, 4.0014 |
+| Film plus gas-wall heat exchange | `5.30200e-4` | `6.61364e-5` | 2.0024, 2.0012, 2.0006 |
+
+Shared-film and vapor-transport cases show second-order smooth refinement. Other
+wall heat sources retain the explicit outer-interval temperature and first-order
+coupling limit. These checks don't establish uniform second order across dryout,
+valve/reaction events or a complete fired powertrain.
+
+Two asset groups verify v18 phase quantities, deterministic encoding, every-boundary
+replay, typed bounded records, malformed units/counts, duplicate/missing records
+and forged v17 downgrade rejection. Authentic v17 metering fixture SHA-256
+`d51dc0968bc3d154b2c3b227f74b7210215d4ee00c5a47e8dd16dc1d71cd5da1`
+retains fingerprint `099db1021c8df1fe` and same-runtime upgraded replay. Earlier
+fixtures and film-free model fingerprints remain regression evidence.
+
+Three integration groups and the actual MCP child server verify the same finite
+inventory, phase energy, vapor-only reaction, strict documents and revision/fork/
+cancellation behavior. All **63** JSON/report/portable/MCP boundaries agree. The
+0.6-second laboratory begins with **40 mg** of explicit wetting and ends with:
+
+| Quantity | Value |
+|---|---:|
+| Remaining liquid | 0 mg |
+| Evaporated fuel | 40 mg |
+| Heat drawn from the finite wall | 20 J |
+| Film wall temperature | 498 K |
+| Burned vapor | 31.1117599551 mg |
+| Reaction heat | 1368.9174380261 J |
+| Final energy residual | `-1.58434e-9 J` |
+| Maximum sampled absolute energy residual | `2.15960e-9 J` |
+| Maximum sampled absolute mass residual | `1.49078e-18 kg` |
+| Maximum sampled absolute fuel residual | `2.09641e-19 kg` |
+
+Model fingerprint is `cb103bce098f4e82`; final hash is `495582b10f40832c`.
+Source SHA-256 is
+`8c933a5889d3b8f22f37738e307989d2c0fa5c7dfe9018ffe50a21f19e2aa416`.
+All parameters remain `unverified`. Initial wetting isn't liquid injection;
+pressure-dependent phase properties, replenishment, ignition/ECU, complete
+transmission/controls and measured powertrains remain open. Prepared Unity film
+markers and lifecycle tests need the pinned Editor. See [FUEL_FILM.md](FUEL_FILM.md).
+
 ## 2026-09-30: finite fuel rail and cycle-dose metering
 
 The published `dc7ec2d` gas-accumulator checkpoint passes

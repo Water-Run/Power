@@ -50,12 +50,14 @@ internal sealed class ConverterState(int count)
 internal sealed class ConverterCoupling
 {
     internal readonly int Cranks, Coordinates, PumpOffset;
-    internal readonly int[] Nodes, Variables, GasPistonRows;
+    internal readonly int[] Nodes, Variables, GasPistonRows, SolenoidRows, StopRows;
     internal readonly double[][] Response, GearReaction;
     internal ConverterCoupling(CompiledModel model)
     {
         Cranks = model.CylinderCoupling?.Angles.Length ?? 0;
-        int[] extraGasNodes = model.GasPistonComponents.Select(i => model.Components[i].A).Distinct().Where(i => !model.PistonComponents.Any(p => model.Components[p].A == i)).OrderBy(i => i).ToArray();
+        int[] extraGasNodes = model.GasPistonComponents.Select(i => model.Components[i].A)
+            .Concat(model.Solenoids.Select(s => model.Components[s.Component].A)).Concat(model.TravelStops.Select(s => model.Components[s.Component].A))
+            .Distinct().Where(i => !model.PistonComponents.Any(p => model.Components[p].A == i)).OrderBy(i => i).ToArray();
         Coordinates = Cranks + model.PistonComponents.Length + extraGasNodes.Length;
         PumpOffset = Coordinates + 2 * model.ConverterComponents.Length;
         int count = PumpOffset + model.PumpComponents.Length;
@@ -64,12 +66,15 @@ internal sealed class ConverterCoupling
         for (int k = 0; k < model.PistonComponents.Length; ++k) Nodes[Cranks + k] = model.Components[model.PistonComponents[k]].A;
         for (int k = 0; k < extraGasNodes.Length; ++k) Nodes[Cranks + model.PistonComponents.Length + k] = extraGasNodes[k];
         GasPistonRows = model.GasPistonComponents.Select(i => Array.IndexOf(Nodes, model.Components[i].A, 0, Coordinates)).ToArray();
+        SolenoidRows = model.Solenoids.Select(s => Array.IndexOf(Nodes, model.Components[s.Component].A, 0, Coordinates)).ToArray();
+        StopRows = model.TravelStops.Select(s => Array.IndexOf(Nodes, model.Components[s.Component].A, 0, Coordinates)).ToArray();
         for (int k = 0; k < model.ConverterComponents.Length; ++k)
         {
             var c = model.Components[model.ConverterComponents[k]];
             Nodes[Coordinates + 2 * k] = c.A; Nodes[Coordinates + 2 * k + 1] = c.B;
         }
         for (int k = 0; k < model.PumpComponents.Length; ++k) Nodes[PumpOffset + k] = model.Components[model.PumpComponents[k]].A;
+        var gearCorrection = new double[model.GearComponents.Length];
         for (int k = 0; k < count; ++k)
         {
             var node = model.Nodes[Nodes[k]];
@@ -77,7 +82,7 @@ internal sealed class ConverterCoupling
             var response = Response[k] = new double[model.DynamicCount];
             var reactions = GearReaction[k] = new double[model.GearComponents.Length];
             response[node.Index + 1] = .5 * model.Dt / node.Storage;
-            if (!model.Dynamics.Solve(response) || (model.Gears is not null && !model.Gears.FullInterval.Project(response, reactions)))
+            if (!model.Dynamics.Solve(response) || (model.Gears is not null && !model.Gears.FullInterval.Project(response, reactions, gearCorrection)))
                 throw new ModelCompileException(DiagnosticCode.Solver, 0, "converter.coupling", "Converter/cylinder force response exceeds the supported numerical range.");
         }
     }
@@ -99,6 +104,9 @@ internal sealed class ConverterSolver : MechanicalSolver
     private HydraulicState? _hydraulicState;
     private double[]? _inputs;
     private double _duration;
+    private SolenoidState? _solenoidState;
+    internal void PrepareSolenoids(SolenoidState state, double[] inputs, double duration)
+    { _solenoidState = state; _inputs = inputs; _duration = duration; }
     internal void PrepareHydraulics(HydraulicState state, double[] inputs, double duration)
     { _hydraulicState = state; _inputs = inputs; _duration = duration; }
 
@@ -179,6 +187,21 @@ internal sealed class ConverterSolver : MechanicalSolver
                 _derivative[row, front] = c.P0; if (back >= 0) _derivative[row, back] = -c.P1;
                 _derivative[row, row] = law.DiscreteElasticDerivative(position, position + delta);
             }
+        }
+        for (int k = 0; k < _model.TravelStops.Length; ++k)
+        {
+            var stop = _model.TravelStops[k]; int row = _coupling.StopRows[k];
+            double oldPosition = old[stop.Position], delta = values[row];
+            if (!Numeric.Finite(delta) || Math.Abs(delta) > (stop.Law.MaximumPositionMeters - stop.Law.MinimumPositionMeters) / 4) return double.PositiveInfinity;
+            _force[row] += stop.Law.Reaction(oldPosition, oldPosition + delta);
+            if (derivatives) _derivative[row, row] += stop.Law.Derivative(oldPosition, oldPosition + delta);
+        }
+        for (int k = 0; k < _model.Solenoids.Length; ++k)
+        {
+            var coil = _model.Solenoids[k]; int row = _coupling.SolenoidRows[k]; double oldPosition = old[coil.Position];
+            if (!coil.Law.TryInterval(oldPosition, oldPosition + values[row], _solenoidState!.Flux[k], _inputs![coil.Component], _duration, out var response)) return double.PositiveInfinity;
+            _force[row] += response.ForceNewtons;
+            if (derivatives) _derivative[row, row] += response.ForceDerivativeNewtonsPerMeter;
         }
         for (int k = 0; k < _model.GasPistonComponents.Length; ++k)
         {

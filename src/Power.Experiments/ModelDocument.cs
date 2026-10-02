@@ -37,18 +37,20 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
         ["w_k"] = Unit.WattPerKelvin, ["ohm"] = Unit.Ohm, ["h"] = Unit.Henry, ["nm_a"] = Unit.NewtonMeterPerAmpere,
         ["a"] = Unit.Ampere, ["v"] = Unit.Volt, ["j"] = Unit.Joule, ["rpm"] = Unit.Rpm, ["deg"] = Unit.Degree,
         ["m"] = Unit.Meter, ["mm"] = Unit.Millimeter, ["m3"] = Unit.CubicMeter, ["pa"] = Unit.Pascal,
-        ["bar"] = Unit.Bar, ["kg"] = Unit.Kilogram, ["j_kg_k"] = Unit.JoulePerKilogramKelvin,
+        ["state_code"] = Unit.StateCode, ["h_m"] = Unit.HenryPerMeter, ["kg_m3"] = Unit.KilogramPerCubicMeter, ["bar"] = Unit.Bar, ["kg"] = Unit.Kilogram, ["j_kg_k"] = Unit.JoulePerKilogramKelvin,
         ["l"] = Unit.Liter, ["m2"] = Unit.SquareMeter, ["mm2"] = Unit.SquareMillimeter,
         ["kg_s"] = Unit.KilogramPerSecond, ["w"] = Unit.Watt, ["fraction"] = Unit.Fraction, ["j_kg"] = Unit.JoulePerKilogram
     };
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
+        ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault,
+        ["copper_heat"] = Field.CopperHeat, ["predicted_fuel_mass"] = Field.PredictedFuelMass, ["prediction_ticks"] = Field.PredictionTicks, ["driver_state"] = Field.DriverState, ["closing_delay_ticks"] = Field.ClosingDelayTicks,
         ["sampled_pressure"] = Field.SampledPressure, ["pressure_error"] = Field.PressureError,
         ["integral_voltage"] = Field.IntegralVoltage, ["command_voltage"] = Field.CommandVoltage,
         ["state_of_charge"] = Field.StateOfCharge, ["charge"] = Field.Charge, ["terminal_voltage"] = Field.TerminalVoltage,
         ["polarization_voltage"] = Field.PolarizationVoltage, ["battery_current"] = Field.BatteryCurrent,
         ["integral_duty"] = Field.IntegralDuty, ["command_duty"] = Field.CommandDuty,
-        ["displacement"] = Field.Displacement, ["linear_speed"] = Field.LinearSpeed, ["force"] = Field.Force, ["requested_fuel_dose"] = Field.RequestedFuelDose, ["delivered_fuel_dose"] = Field.DeliveredFuelDose, ["total_fuel_delivered"] = Field.TotalFuelDelivered,
+        ["displacement"] = Field.Displacement, ["linear_speed"] = Field.LinearSpeed, ["force"] = Field.Force, ["requested_fuel_dose"] = Field.RequestedFuelDose, ["delivered_fuel_dose"] = Field.DeliveredFuelDose, ["total_fuel_delivered"] = Field.TotalFuelDelivered, ["evaporated_fuel_mass"] = Field.EvaporatedFuelMass, ["film_wall_heat"] = Field.FilmWallHeat,
         ["hydraulic_power"] = Field.HydraulicPower, ["volume_flow"] = Field.VolumeFlow, ["hydraulic_volume_in"] = Field.HydraulicVolumeIn,
         ["hydraulic_volume_residual"] = Field.HydraulicVolumeResidual, ["hydraulic_work"] = Field.HydraulicWork,
         ["clamp_force"] = Field.ClampForce, ["static_capacity"] = Field.StaticCapacity, ["sliding_capacity"] = Field.SlidingCapacity,
@@ -174,18 +176,23 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 "torque_converter" => ComponentKind.TorqueConverter, "shaft" => ComponentKind.Shaft, "dc_motor" => ComponentKind.DcMotor,
                 "torque_source" => ComponentKind.TorqueSource, "thermal_link" => ComponentKind.ThermalLink,
                 "sealed_cylinder" => ComponentKind.SealedCylinder,
-                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink,
+                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink, "fuel_film" => ComponentKind.FuelFilm, "liquid_fuel_injector" => ComponentKind.LiquidFuelInjector, "solenoid" => ComponentKind.Solenoid, "travel_stop" => ComponentKind.TravelStop, "needle_driver" => ComponentKind.NeedleDriver, "dct_controller" => ComponentKind.DualClutchController,
                 "gas_cylinder" => ComponentKind.GasCylinder, "gas_piston" => ComponentKind.GasPiston, "premixed_combustion" => ComponentKind.PremixedCombustion,
                 "clutch" => ComponentKind.Clutch,
-                "ideal_gear" => ComponentKind.IdealGear, "planetary_gear" => ComponentKind.PlanetaryGear,
+                "ideal_gear" => ComponentKind.IdealGear, "planetary_gear" => ComponentKind.PlanetaryGear, "double_pinion_planetary_gear" => ComponentKind.DoublePinionPlanetaryGear, "carrier_gear" => ComponentKind.CarrierGear,
                 _ => throw new ArgumentException("Unknown component kind.")
             };
             if (kind == ComponentKind.IdealGear) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
-            else if (kind == ComponentKind.PlanetaryGear) Object(c, ["id", "kind", "node_a", "node_b", "node_c", "parameters"]);
+            else if (kind is ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) Object(c, ["id", "kind", "node_a", "node_b", "node_c", "parameters"]);
             else if (kind == ComponentKind.TorqueConverter) Object(c, ["id", "kind", "node_a", "node_b", "parameters"], "heat_node");
             else if (kind is ComponentKind.PressureController or ComponentKind.PressureDutyController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if (kind == ComponentKind.BatteryMotor) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"], "heat_node");
             else if (kind == ComponentKind.ResistiveLoad) Object(c, ["id", "kind", "node_a", "initial_input", "parameters"], "input_channel", "heat_node");
+            else if (kind == ComponentKind.DualClutchController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
+            else if (kind == ComponentKind.Solenoid) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"], "heat_node");
+            else if (kind is ComponentKind.TravelStop or ComponentKind.NeedleDriver) Object(c, ["id", "kind", "node_a", "parameters"]);
+            else if (kind == ComponentKind.LiquidFuelInjector) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
+            else if(kind==ComponentKind.FuelFilm)Object(c,["id","kind","node_a","node_b","parameters"]);
             else if (kind == ComponentKind.GasFuelInjector) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"]);
             else if (kind is ComponentKind.HydraulicPiston or ComponentKind.GasPiston) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind == ComponentKind.PistonClutch) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
@@ -215,6 +222,64 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 return result;
             }
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
+            if (kind == ComponentKind.DualClutchController)
+            {
+                Object(parameters, ["vehicle_node", "odd_clutch", "even_clutch", "selectors", "sample_period_ns", "release_ns", "engage_ns", "synchronize_timeout_ns", "synchronize_tolerance", "direction_speed_limit"]);
+                var selectors = parameters.GetProperty("selectors");
+                if (selectors.ValueKind != JsonValueKind.Array || selectors.GetArrayLength() != 8) throw new ArgumentException("DCT selectors require eight IDs for forward 1-7 and reverse.");
+                return result with { DualClutchController = new()
+                {
+                    VehicleNode = Id(parameters, "vehicle_node"), OddClutch = Id(parameters, "odd_clutch"), EvenClutch = Id(parameters, "even_clutch"),
+                    Selectors = selectors.EnumerateArray().Select(value => (uint)Integer(value, uint.MaxValue, 1)).ToArray(),
+                    SamplePeriodNanoseconds = Integer(parameters.GetProperty("sample_period_ns"), 1_000_000_000, 1),
+                    ReleaseNanoseconds = Integer(parameters.GetProperty("release_ns"), 10_000_000_000, 1), EngageNanoseconds = Integer(parameters.GetProperty("engage_ns"), 10_000_000_000, 1),
+                    SynchronizeTimeoutNanoseconds = Integer(parameters.GetProperty("synchronize_timeout_ns"), 10_000_000_000, 1),
+                    SynchronizeTolerance = Quantity(parameters.GetProperty("synchronize_tolerance")), DirectionChangeSpeedLimit = Quantity(parameters.GetProperty("direction_speed_limit"))
+                } };
+            }
+            if (kind == ComponentKind.Solenoid)
+            {
+                Object(parameters, ["resistance", "inductance", "inductance_gradient", "reference_position", "initial_current"]);
+                return result with { Resistance = Quantity(parameters.GetProperty("resistance")), Inductance = Quantity(parameters.GetProperty("inductance")),
+                    InitialCurrent = Quantity(parameters.GetProperty("initial_current")), Solenoid = new()
+                    { ReferencePosition = Quantity(parameters.GetProperty("reference_position")), InductanceGradient = Quantity(parameters.GetProperty("inductance_gradient")) } };
+            }
+            if (kind == ComponentKind.TravelStop)
+            {
+                Object(parameters, ["minimum_position", "maximum_position", "stiffness"]);
+                return result with { TravelStop = new() { MinimumPosition = Quantity(parameters.GetProperty("minimum_position")),
+                    MaximumPosition = Quantity(parameters.GetProperty("maximum_position")), Stiffness = Quantity(parameters.GetProperty("stiffness")) } };
+            }
+            if (kind == ComponentKind.NeedleDriver)
+            {
+                Object(parameters, ["injector_component", "solenoid_component", "sample_period_ns", "drive_voltage"], "closure_prediction_ns");
+                return result with { NeedleDriver = new() { InjectorComponent = Id(parameters, "injector_component"), SolenoidComponent = Id(parameters, "solenoid_component"),
+                    SamplePeriodNanoseconds = Integer(parameters.GetProperty("sample_period_ns"), 1_000_000_000, 1), DriveVoltage = Quantity(parameters.GetProperty("drive_voltage")),
+                    ClosurePredictionNanoseconds = parameters.TryGetProperty("closure_prediction_ns", out var horizon) ? Integer(horizon, ulong.MaxValue) : 0 } };
+            }
+            if (kind == ComponentKind.LiquidFuelInjector)
+            {
+                Object(parameters, ["film_component", "crank_node", "cycle_angle", "start_angle", "duration_angle", "maximum_dose",
+                    "initial_mass", "supply_temperature", "liquid_density", "initial_pressure", "pressure_compliance", "area", "discharge_coefficient"], "needle");
+                InjectorNeedleDefinition? needle = null;
+                if (parameters.TryGetProperty("needle", out var needleData))
+                { Object(needleData, ["needle_node", "closed_position", "full_open_position"]); needle = new() { NeedleNode = Id(needleData, "needle_node"), ClosedPosition = Quantity(needleData.GetProperty("closed_position")), FullOpenPosition = Quantity(needleData.GetProperty("full_open_position")) }; }
+                return result with
+                {
+                    Area = Quantity(parameters.GetProperty("area")), DischargeCoefficient = Number(parameters.GetProperty("discharge_coefficient")),
+                    LiquidFuelInjector = new()
+                    {
+                        FilmComponent = Id(parameters, "film_component"), CrankNode = Id(parameters, "crank_node"),
+                        CycleAngle = Quantity(parameters.GetProperty("cycle_angle")), StartAngle = Quantity(parameters.GetProperty("start_angle")),
+                        DurationAngle = Quantity(parameters.GetProperty("duration_angle")), MaximumDose = Quantity(parameters.GetProperty("maximum_dose")),
+                        InitialMass = Quantity(parameters.GetProperty("initial_mass")), SupplyTemperature = Quantity(parameters.GetProperty("supply_temperature")),
+                        LiquidDensity = Quantity(parameters.GetProperty("liquid_density")), InitialPressure = Quantity(parameters.GetProperty("initial_pressure")),
+                        PressureCompliance = Quantity(parameters.GetProperty("pressure_compliance")), Needle = needle
+                    }
+                };
+            }
+            if(kind==ComponentKind.FuelFilm)
+            {Object(parameters,["initial_mass","initial_temperature","liquid_specific_heat","saturation_temperature","latent_internal_energy","conductance"]);return result with{Conductance=Quantity(parameters.GetProperty("conductance")),FuelFilm=new(){InitialMass=Quantity(parameters.GetProperty("initial_mass")),InitialTemperature=Quantity(parameters.GetProperty("initial_temperature")),LiquidSpecificHeat=Quantity(parameters.GetProperty("liquid_specific_heat")),SaturationTemperature=Quantity(parameters.GetProperty("saturation_temperature")),LatentInternalEnergy=Quantity(parameters.GetProperty("latent_internal_energy"))}};}
             if (kind == ComponentKind.GasFuelInjector)
             {
                 Object(parameters, ["area", "discharge_coefficient", "crank_node", "cycle_angle", "start_angle", "duration_angle", "maximum_dose"]);
@@ -319,7 +384,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 return result with { Converter = new() { PumpPositive = Map("pump_positive"), PumpNegative = Map("pump_negative"),
                     TurbinePositive = Map("turbine_positive"), TurbineNegative = Map("turbine_negative") } };
             }
-            if (kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear)
+            if (kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear)
             {
                 Object(parameters, ["ratio"]);
                 return result with { Ratio = Number(parameters.GetProperty("ratio")) };

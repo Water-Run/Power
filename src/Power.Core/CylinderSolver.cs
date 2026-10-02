@@ -15,6 +15,7 @@ internal sealed class CylinderCoupling
         int[] nodes = model.Components.Where(c => c.Kind is ComponentKind.SealedCylinder or ComponentKind.GasCylinder).Select(c => c.A).Distinct().OrderBy(i => i).ToArray();
         Angles = nodes.Select(i => model.Nodes[i].Index).ToArray();
         Components = new int[nodes.Length][]; Response = new double[nodes.Length][]; GearReaction = new double[nodes.Length][];
+        var gearCorrection = new double[model.GearComponents.Length];
         for (int k = 0; k < nodes.Length; ++k)
         {
             Components[k] = Enumerable.Range(0, model.ComponentCount).Where(i => (model.Cylinders[i] is not null || model.GasCylinders[i] is not null) && model.Components[i].A == nodes[k]).ToArray();
@@ -23,7 +24,7 @@ internal sealed class CylinderCoupling
             if (!model.Dynamics.Solve(response))
                 throw new ModelCompileException(DiagnosticCode.Solver, 0, "cylinder.coupling", "Cylinder response overflows binary64.");
             GearReaction[k] = new double[model.GearComponents.Length];
-            if (model.Gears is { } gears && !gears.FullInterval.Project(response, GearReaction[k]))
+            if (model.Gears is { } gears && !gears.FullInterval.Project(response, GearReaction[k], gearCorrection))
                 throw new ModelCompileException(DiagnosticCode.Solver, 0, "cylinder.gears", "Constrained cylinder response exceeds the supported numerical range.");
             Response[k] = response;
         }

@@ -409,8 +409,9 @@ namespace Power.Studio
                 else if (node.Domain == Domain.Translational)
                 {
                     var owner = _asset.Components.FirstOrDefault(c => c.Kind == ComponentKind.HydraulicPiston && c.NodeA == node.Id);
-                    double minimum = owner == null ? 0 : Meters(owner.HydraulicPiston.MinimumPosition);
-                    double stroke = owner == null ? .1 : Meters(owner.HydraulicPiston.MaximumPosition) - minimum;
+                    var stop = _asset.Components.FirstOrDefault(c => c.Kind == ComponentKind.TravelStop && c.NodeA == node.Id);
+                    double minimum = owner != null ? Meters(owner.HydraulicPiston.MinimumPosition) : stop != null ? Meters(stop.TravelStop.MinimumPosition) : 0;
+                    double stroke = owner != null ? Meters(owner.HydraulicPiston.MaximumPosition) - minimum : stop != null ? Meters(stop.TravelStop.MaximumPosition) - minimum : .1;
                     var slider = Shape("Slider " + node.Id, PrimitiveType.Cube, position, new Vector3(0.7f, 0.2f, 0.7f), copper);
                     _sliders.Add(node.Id, new PistonVisual { Piston = slider.transform, Top = position, MinimumMeters = minimum, StrokeMeters = stroke });
                     Shape("Slider guide " + node.Id, PrimitiveType.Cube, position + new Vector3(-0.5f, 0.5f, 0), new Vector3(0.08f, 1.5f, 0.7f), steel);
@@ -545,17 +546,53 @@ namespace Power.Studio
                     Connection("Gear port A " + component.Id, a, center, copper, 0.08f);
                     Connection("Gear port B " + component.Id, center, b, steel, 0.08f);
                 }
-                if (component.Kind == ComponentKind.PlanetaryGear)
+                if ((component.Kind == ComponentKind.PlanetaryGear || component.Kind == ComponentKind.DoublePinionPlanetaryGear || component.Kind == ComponentKind.CarrierGear))
                 {
                     Vector3 ring = positions[component.NodeB], carrier = positions[component.NodeC];
                     Vector3 center = (a + ring + carrier) / 3 + Vector3.up * 0.65f;
                     // Schematic members identify the three ports; these are not tooth geometry.
-                    Shape("Planetary gear " + component.Id, PrimitiveType.Cylinder, center, new Vector3(1.1f, 0.08f, 1.1f), steel);
+                    string gearName = component.Kind == ComponentKind.CarrierGear ? "Carrier gear " : "Planetary gear ";
+                    Shape(gearName + component.Id, PrimitiveType.Cylinder, center, new Vector3(1.1f, 0.08f, 1.1f), steel);
                     Shape("Planetary carrier marker " + component.Id, PrimitiveType.Cylinder, center + Vector3.up * 0.15f, new Vector3(0.8f, 0.05f, 0.8f), blue);
                     Shape("Planetary sun marker " + component.Id, PrimitiveType.Cylinder, center + Vector3.up * 0.27f, new Vector3(0.35f, 0.08f, 0.35f), copper);
-                    Connection("Planetary sun " + component.Id, a, center, copper, 0.08f);
-                    Connection("Planetary ring " + component.Id, ring, center, steel, 0.08f);
+                    Connection((component.Kind == ComponentKind.CarrierGear ? "Carrier mesh port A " : "Planetary sun ") + component.Id, a, center, copper, 0.08f);
+                    Connection((component.Kind == ComponentKind.CarrierGear ? "Carrier mesh port B " : "Planetary ring ") + component.Id, ring, center, steel, 0.08f);
                     Connection("Planetary carrier " + component.Id, carrier, center, blue, 0.08f);
+                }
+                if (component.Kind == ComponentKind.DualClutchController)
+                {
+                    Shape("DCT sampled controller " + component.Id, PrimitiveType.Cube, a + Vector3.up * 1.4f, new Vector3(0.55f, 0.35f, 0.45f), blue);
+                    continue;
+                }
+                if (component.Kind == ComponentKind.Solenoid)
+                {
+                    Shape("Needle solenoid " + component.Id, PrimitiveType.Cylinder, a + Vector3.up * 0.3f, new Vector3(0.35f, 0.3f, 0.35f), copper);
+                    if (component.HeatNode != 0) Connection("Solenoid heat " + component.Id, a, positions[component.HeatNode], copper, 0.035f);
+                    continue;
+                }
+                if (component.Kind == ComponentKind.TravelStop)
+                {
+                    Shape("Needle stroke stop " + component.Id, PrimitiveType.Cube, a + Vector3.right * 0.5f, new Vector3(0.12f, 0.5f, 0.5f), steel);
+                    continue;
+                }
+                if (component.Kind == ComponentKind.NeedleDriver)
+                {
+                    Shape("Needle drive controller " + component.Id, PrimitiveType.Cube, a + Vector3.up * 1.1f, new Vector3(0.4f, 0.3f, 0.4f), blue);
+                    continue;
+                }
+                if (component.Kind == ComponentKind.LiquidFuelInjector)
+                {
+                    var center = positions[component.NodeA] + new Vector3(-1.4f, 1.2f, 0.5f);
+                    Shape("Liquid fuel rail " + component.Id, PrimitiveType.Cylinder, center, new Vector3(0.3f, 0.5f, 0.3f), copper);
+                    Connection("Liquid nozzle " + component.Id, center, positions[component.NodeA], copper, 0.045f);
+                    continue;
+                }
+                if (component.Kind == ComponentKind.FuelFilm)
+                {
+                    Vector3 center=(a+positions[component.NodeB])*0.5f+Vector3.up*0.4f;
+                    Shape("Liquid fuel film "+component.Id,PrimitiveType.Cube,center,new Vector3(0.7f,0.08f,0.6f),copper);
+                    Connection("Film heat source "+component.Id,positions[component.NodeB],center,copper,0.05f);
+                    Connection("Fuel vapor admission "+component.Id,center,a,copper,0.06f);
                 }
                 if (component.Kind == ComponentKind.GasFuelInjector)
                 {

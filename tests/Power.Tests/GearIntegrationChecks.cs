@@ -83,7 +83,7 @@ internal static class GearIntegrationChecks
         Require(JsonNode.DeepEquals(JsonNode.Parse(Source), JsonNode.Parse(example.GetRawText())));
         var capabilities = Data(AgentWorkspace.Capabilities());
         Require(capabilities.GetProperty("gears").GetProperty("initial_speed_policy").GetString() == "require_compatible_no_impulse");
-        Require(capabilities.GetProperty("asset_format").GetString() == "power.asset.v17" && capabilities.GetProperty("readable_asset_formats").GetArrayLength() == 17);
+        Require(capabilities.GetProperty("asset_format").GetString() == "power.asset.v24" && capabilities.GetProperty("readable_asset_formats").GetArrayLength() == 24);
         var workspace = new AgentWorkspace(); var created = Data(workspace.CreateSession(example)); string id = created.GetProperty("session_id").GetString()!;
         string before = Data(workspace.ReadSnapshot(id)).GetRawText();
         Require(workspace.SetInputs(id, "0", [new("104", 1), new("105", 1.01)]).Error is { Code: "invalid_input", CurrentRevision: "0" });

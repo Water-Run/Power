@@ -20,11 +20,13 @@ internal sealed class GearCoupling
         for (int k = 0; k < Components.Length; ++k)
         {
             var c = model.Components[Components[k]];
-            double scale = c.Kind == ComponentKind.IdealGear ? Math.Max(1, Math.Abs(c.P3)) : 1 + c.P3;
+            bool doublePinion = c.Kind == ComponentKind.DoublePinionPlanetaryGear;
+            bool carrierRelative = c.Kind == ComponentKind.CarrierGear;
+            double scale = carrierRelative ? Math.Max(1, Math.Max(Math.Abs(c.P3), Math.Abs(c.P3 - 1))) : c.Kind == ComponentKind.IdealGear ? Math.Max(1, Math.Abs(c.P3)) : doublePinion ? c.P3 : 1 + c.P3;
             var row = Rows[k] = new double[model.DynamicCount]; Scale[k] = scale;
             row[model.Nodes[c.A].Index + 1] = 1 / scale;
-            row[model.Nodes[c.B].Index + 1] = (c.Kind == ComponentKind.IdealGear ? -c.P3 : c.P3) / scale;
-            if (c.C >= 0) row[model.Nodes[c.C].Index + 1] = -1;
+            row[model.Nodes[c.B].Index + 1] = (c.Kind == ComponentKind.IdealGear || doublePinion || carrierRelative ? -c.P3 : c.P3) / scale;
+            if (c.C >= 0) row[model.Nodes[c.C].Index + 1] = doublePinion || carrierRelative ? (c.P3 - 1) / scale : -1;
             double slip = 0, magnitude = 0;
             foreach (var n in model.Nodes)
                 if (n.Domain == Domain.Rotational)
@@ -79,6 +81,7 @@ internal sealed class GearProjection
     private readonly double[][] _response;
     private readonly double[,] _matrix;
     private readonly Factorization _factor;
+    private readonly bool _refine;
 
     internal GearProjection(GearCoupling coupling)
     {
@@ -86,6 +89,7 @@ internal sealed class GearProjection
         int count = coupling.Rows.Length;
         _response = Enumerable.Range(0, count).Select(_ => new double[coupling.Model.DynamicCount]).ToArray();
         _matrix = new double[count, count]; _factor = new(count);
+        _refine = coupling.Model.Components.Any(c => c.Kind == ComponentKind.CarrierGear);
     }
 
     internal bool Prepare(double duration, Factorization dynamics)
@@ -102,12 +106,36 @@ internal sealed class GearProjection
     }
 
     // The caller owns the multiplier buffer; immutable factors never own mutable solve state.
-    internal bool Project(double[] x, double[] multipliers)
+    internal bool Project(double[] x, double[] multipliers, double[] correction, double[]? previous = null)
     {
-        for (int k = 0; k < multipliers.Length; ++k) multipliers[k] = -_coupling.Dot(k, x);
+        // Enforce G v_next = 0 with v_next = 2 v_mid - v_old. With exact
+        // preceding constraints this is the ordinary zero midpoint target.
+        for (int k = 0; k < multipliers.Length; ++k) multipliers[k] = (previous is null ? 0 : .5 * _coupling.Dot(k, previous)) - _coupling.Dot(k, x);
         if (!_factor.Solve(multipliers)) return false;
         for (int k = 0; k < multipliers.Length; ++k)
             for (int j = 0; j < x.Length; ++j) x[j] += _response[k][j] * multipliers[k];
+        // Relative residual refinement also applies to small clutch force responses.
+        // Factors remain immutable; the caller owns this scratch and all reactions.
+        if (_refine)
+            for (int iteration = 0; iteration < 3; ++iteration)
+            {
+                bool resolved = true;
+                for (int k = 0; k < correction.Length; ++k)
+                {
+                    correction[k] = (previous is null ? 0 : .5 * _coupling.Dot(k, previous)) - _coupling.Dot(k, x);
+                    double magnitude = 0;
+                    foreach (var node in _coupling.Model.Nodes)
+                        if (node.Domain == Domain.Rotational) magnitude += Math.Abs(_coupling.Rows[k][node.Index + 1] * x[node.Index + 1]);
+                    if (Math.Abs(correction[k]) > 32 * GearReference.Epsilon * magnitude) resolved = false;
+                }
+                if (resolved) break;
+                if (!_factor.Solve(correction)) return false;
+                for (int k = 0; k < correction.Length; ++k)
+                {
+                    multipliers[k] += correction[k];
+                    for (int j = 0; j < x.Length; ++j) x[j] += _response[k][j] * correction[k];
+                }
+            }
         for (int j = 0; j < x.Length; ++j) if (!Numeric.Finite(x[j])) return false;
         return true;
     }
@@ -120,12 +148,16 @@ internal sealed class GearSolver
     private readonly GearProjection _variable;
     private GearProjection _projection;
     private double _duration;
+    private readonly double[] _correction;
+    private readonly bool _endpointConstraint;
     internal readonly double[] Torque;
 
     internal GearSolver(GearCoupling coupling)
     {
         _coupling = coupling; _projection = coupling.FullInterval; _variable = new(coupling);
         _duration = coupling.Model.Dt; Torque = new double[coupling.Rows.Length];
+        _correction = new double[coupling.Rows.Length];
+        _endpointConstraint = coupling.Model.Components.Any(c => c.Kind == ComponentKind.CarrierGear);
     }
 
     internal bool Prepare(double duration, Factorization dynamics, bool force = false)
@@ -141,6 +173,6 @@ internal sealed class GearSolver
         _duration = duration; return true;
     }
 
-    internal bool Project(double[] x, double[] reactions) => _projection.Project(x, reactions);
-    internal bool ProjectFree(double[] x) => Project(x, Torque);
+    internal bool Project(double[] x, double[] reactions) => _projection.Project(x, reactions, _correction);
+    internal bool ProjectFree(double[] x, double[] previous) => _projection.Project(x, Torque, _correction, _endpointConstraint ? previous : null);
 }

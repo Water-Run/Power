@@ -181,3 +181,39 @@ Fingerprint: `739f2baba8c669a0`. Tests retain original digest, physical referenc
 and exact same-runtime original/upgraded replay at every event/report boundary.
 Do not regenerate with the current writer. The Power! GPL license and Unity
 Linking Exception apply.
+
+## Local incremental fixtures, versions 17 through 22
+
+These fixtures retain the preceding verified local writer outputs before the
+next physical/control extension. Fixture retention is local; source revision
+provenance remains in Git and `docs/VALIDATION.md`. Each original source digest remains
+in its payload, alongside the stable fingerprint. Sources are the correspondingly
+named JSON laboratories under `assets/labs`. Do not regenerate these files with
+the current writer. The Power! GPL license and Unity Linking Exception apply.
+
+| Fixture | Fingerprint | SHA-256 |
+|---|---|---|
+| `metered-fired-cylinder-v17.powerasset` | `099db1021c8df1fe` | `d51dc0968bc3d154b2c3b227f74b7210215d4ee00c5a47e8dd16dc1d71cd5da1` |
+| `film-fired-cylinder-v18.powerasset` | `cb103bce098f4e82` | `c0e59c6f6527b2b59ee1094cd6627c0829ecbd4ab0eb2e6ec06394ccfe15da97` |
+| `liquid-injected-cylinder-v19.powerasset` | `4f74c6da6d89ab08` | `4ff5f6180006d53be5ffb6ef0663cc6de4af45f35f39dc4d52fd7e00e8cdd8c5` |
+| `needle-actuated-cylinder-v20.powerasset` | `3fa813ff44b95a79` | `4d87e996d92a50508cfcffac610551b84220f2b3055f5b104c8ec7ec64ca9a2e` |
+| `dual-clutch-transmission-v21.powerasset` | `7466a75b99fbfd78` | `706618f7d32a5ef4b8a18ca801d2c3ba0b293eac03b584d88d584e9290a38437` |
+| `controlled-dual-clutch-v22.powerasset` | `72122eae163df98e` | `db90df5fa9ca90067341abdcaf8c3a4a38316794a4b3c8ecc7c89a852375c24e` |
+
+The v22 controlled-DCT payload was copied on 2026-10-02 before changing the
+writer to v23. Its every-boundary old/upgraded replay is checked by
+`RavigneauxAssetChecks`; earlier retained fixtures remain regression evidence.
+
+## Reduced Ravigneaux version 23
+
+`ravigneaux-transmission-v23.powerasset` retains the verified v23 writer output
+before introducing signed carrier-relative meshes and planet spin. Source:
+`assets/labs/ravigneaux-transmission.power.json`; name: `Ravigneaux transmission
+laboratory`. Retained locally on 2026-10-02; no additional published source
+revision is inferred. SHA-256:
+`f2bd390e8ecf013e5843ed3352ccf2a2828133b541fc61d7927995f8ac1dc2e2`.
+Fingerprint: `63d28eb32bc4cfb2`. Source SHA-256:
+`8063388dbd341fd16b05ab971f6c2cc23d87ebfee3681da9d1ffcf95fffa52a0`.
+`ResolvedPlanetAssetChecks` retains its digest and exact every-boundary upgraded
+replay. Do not regenerate the fixture with the current writer. The Power! GPL
+license and Unity Linking Exception apply.

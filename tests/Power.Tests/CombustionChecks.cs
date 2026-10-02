@@ -271,6 +271,6 @@ internal static class CombustionChecks
             { Premixed = Mixture() with { LowerHeatingValue = new(44e6, Unit.Joule) } } }] }, DiagnosticCode.Unit);
         Reject(d with { Nodes = [d.Nodes[0], d.Nodes[1] with { Gas = d.Nodes[1].Gas! with
             { Premixed = Mixture() with { InitialFractions = null } } }] }, DiagnosticCode.Schema);
-        Reject(new() { Nodes = Enumerable.Range(1, 13).Select(i => Reactive(NodeDefinition.GasVolume((uint)i, .001, 1e5, 300))).ToArray(), Components = [] }, DiagnosticCode.Capacity);
+        Reject(new() { Nodes = Enumerable.Range(1, 26).Select(i => Reactive(NodeDefinition.GasVolume((uint)i, .001, 1e5, 300))).ToArray(), Components = [] }, DiagnosticCode.Capacity);
     }
 }

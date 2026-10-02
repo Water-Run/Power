@@ -1,0 +1,1171 @@
+{
+  "schema": "power.model.v1",
+  "description": "Synthetic seven-speed dual-clutch power path with two input shafts, seven constant-mesh forward hubs, an even-path reverse idler, three output/final-drive branches and separate friction selectors. Scheduled launch, preselection, upshift and downshift operate actual inertias and reactions; no runtime ratio replacement is used. Parameters, tooth/train arrangement and capacities are unverified research inputs, not calibrated DQ200 data. Selectors are conserving friction synchronizers, not a detailed dog/baulk-ring actuator; schedules are not complete ECU/TCU, and mesh losses/backlash, measured actuation and vehicle acceptance remain open.",
+  "step_ns": 100000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.2,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 62.83185307179586,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 4,
+      "domain": "rotational",
+      "storage": {
+        "value": 10,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 1000,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 100,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.015,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 101,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.012,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 102,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 103,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.018,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 104,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.01,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 105,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.002,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 110,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 111,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 112,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 113,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 114,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 115,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 116,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 117,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.001,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 400,
+      "kind": "clutch",
+      "node_a": 1,
+      "node_b": 100,
+      "heat_node": 3,
+      "input_channel": 500,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 180,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 150,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 401,
+      "kind": "clutch",
+      "node_a": 1,
+      "node_b": 101,
+      "heat_node": 3,
+      "input_channel": 501,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 180,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 150,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 402,
+      "kind": "ideal_gear",
+      "node_a": 102,
+      "node_b": 4,
+      "parameters": {
+        "ratio": -4.1
+      }
+    },
+    {
+      "id": 403,
+      "kind": "ideal_gear",
+      "node_a": 103,
+      "node_b": 4,
+      "parameters": {
+        "ratio": -3.7
+      }
+    },
+    {
+      "id": 404,
+      "kind": "ideal_gear",
+      "node_a": 104,
+      "node_b": 4,
+      "parameters": {
+        "ratio": -4.1
+      }
+    },
+    {
+      "id": 405,
+      "kind": "ideal_gear",
+      "node_a": 101,
+      "node_b": 105,
+      "parameters": {
+        "ratio": -1
+      }
+    },
+    {
+      "id": 200,
+      "kind": "ideal_gear",
+      "node_a": 100,
+      "node_b": 110,
+      "parameters": {
+        "ratio": -3.8
+      }
+    },
+    {
+      "id": 300,
+      "kind": "clutch",
+      "node_a": 110,
+      "node_b": 102,
+      "heat_node": 3,
+      "input_channel": 600,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 201,
+      "kind": "ideal_gear",
+      "node_a": 101,
+      "node_b": 111,
+      "parameters": {
+        "ratio": -2.3
+      }
+    },
+    {
+      "id": 301,
+      "kind": "clutch",
+      "node_a": 111,
+      "node_b": 102,
+      "heat_node": 3,
+      "input_channel": 601,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 202,
+      "kind": "ideal_gear",
+      "node_a": 100,
+      "node_b": 112,
+      "parameters": {
+        "ratio": -1.65
+      }
+    },
+    {
+      "id": 302,
+      "kind": "clutch",
+      "node_a": 112,
+      "node_b": 102,
+      "heat_node": 3,
+      "input_channel": 602,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 203,
+      "kind": "ideal_gear",
+      "node_a": 101,
+      "node_b": 113,
+      "parameters": {
+        "ratio": -1.26
+      }
+    },
+    {
+      "id": 303,
+      "kind": "clutch",
+      "node_a": 113,
+      "node_b": 102,
+      "heat_node": 3,
+      "input_channel": 603,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 204,
+      "kind": "ideal_gear",
+      "node_a": 100,
+      "node_b": 114,
+      "parameters": {
+        "ratio": -1.02
+      }
+    },
+    {
+      "id": 304,
+      "kind": "clutch",
+      "node_a": 114,
+      "node_b": 103,
+      "heat_node": 3,
+      "input_channel": 604,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 205,
+      "kind": "ideal_gear",
+      "node_a": 101,
+      "node_b": 115,
+      "parameters": {
+        "ratio": -0.86
+      }
+    },
+    {
+      "id": 305,
+      "kind": "clutch",
+      "node_a": 115,
+      "node_b": 103,
+      "heat_node": 3,
+      "input_channel": 605,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 206,
+      "kind": "ideal_gear",
+      "node_a": 100,
+      "node_b": 116,
+      "parameters": {
+        "ratio": -0.72
+      }
+    },
+    {
+      "id": 306,
+      "kind": "clutch",
+      "node_a": 116,
+      "node_b": 103,
+      "heat_node": 3,
+      "input_channel": 606,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 207,
+      "kind": "ideal_gear",
+      "node_a": 105,
+      "node_b": 117,
+      "parameters": {
+        "ratio": -3.3
+      }
+    },
+    {
+      "id": 307,
+      "kind": "clutch",
+      "node_a": 117,
+      "node_b": 104,
+      "heat_node": 3,
+      "input_channel": 607,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "static_capacity": {
+          "value": 120,
+          "unit": "nm"
+        },
+        "sliding_capacity": {
+          "value": 100,
+          "unit": "nm"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 10,
+      "kind": "torque_source",
+      "node_a": 1,
+      "input_channel": 100,
+      "initial_input": {
+        "value": 20,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 11,
+      "kind": "torque_source",
+      "node_a": 4,
+      "input_channel": 101,
+      "initial_input": {
+        "value": -6,
+        "unit": "nm"
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 2800000000,
+    "sample_every_ns": 10000000,
+    "events": [
+      {
+        "time_ns": 50000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 250000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0.5
+          },
+          {
+            "channel": 501,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 260000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0
+          },
+          {
+            "channel": 501,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 370000000,
+        "values": [
+          {
+            "channel": 600,
+            "value": 0
+          },
+          {
+            "channel": 602,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 450000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0.5
+          },
+          {
+            "channel": 500,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 460000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0
+          },
+          {
+            "channel": 500,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 570000000,
+        "values": [
+          {
+            "channel": 601,
+            "value": 0
+          },
+          {
+            "channel": 603,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 650000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0.5
+          },
+          {
+            "channel": 501,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 660000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0
+          },
+          {
+            "channel": 501,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 770000000,
+        "values": [
+          {
+            "channel": 602,
+            "value": 0
+          },
+          {
+            "channel": 604,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 850000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0.5
+          },
+          {
+            "channel": 500,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 860000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0
+          },
+          {
+            "channel": 500,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 970000000,
+        "values": [
+          {
+            "channel": 603,
+            "value": 0
+          },
+          {
+            "channel": 605,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1050000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0.5
+          },
+          {
+            "channel": 501,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 1060000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0
+          },
+          {
+            "channel": 501,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1170000000,
+        "values": [
+          {
+            "channel": 604,
+            "value": 0
+          },
+          {
+            "channel": 606,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1250000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0.5
+          },
+          {
+            "channel": 500,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 1260000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0
+          },
+          {
+            "channel": 500,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1450000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0.5
+          },
+          {
+            "channel": 501,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 1460000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0
+          },
+          {
+            "channel": 501,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1570000000,
+        "values": [
+          {
+            "channel": 606,
+            "value": 0
+          },
+          {
+            "channel": 604,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1650000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0.5
+          },
+          {
+            "channel": 500,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 1660000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0
+          },
+          {
+            "channel": 500,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1770000000,
+        "values": [
+          {
+            "channel": 605,
+            "value": 0
+          },
+          {
+            "channel": 603,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1850000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0.5
+          },
+          {
+            "channel": 501,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 1860000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0
+          },
+          {
+            "channel": 501,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 1970000000,
+        "values": [
+          {
+            "channel": 604,
+            "value": 0
+          },
+          {
+            "channel": 602,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 2050000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0.5
+          },
+          {
+            "channel": 500,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 2060000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0
+          },
+          {
+            "channel": 500,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 2170000000,
+        "values": [
+          {
+            "channel": 603,
+            "value": 0
+          },
+          {
+            "channel": 601,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 2250000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0.5
+          },
+          {
+            "channel": 501,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 2260000000,
+        "values": [
+          {
+            "channel": 500,
+            "value": 0
+          },
+          {
+            "channel": 501,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 2370000000,
+        "values": [
+          {
+            "channel": 602,
+            "value": 0
+          },
+          {
+            "channel": 600,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 2450000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0.5
+          },
+          {
+            "channel": 500,
+            "value": 0.5
+          }
+        ]
+      },
+      {
+        "time_ns": 2460000000,
+        "values": [
+          {
+            "channel": 501,
+            "value": 0
+          },
+          {
+            "channel": 500,
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 1e-06
+      },
+      {
+        "object_id": 4,
+        "field": "speed",
+        "min": 0,
+        "max": 300
+      },
+      {
+        "object_id": 3,
+        "field": "temperature",
+        "min": 300,
+        "max": 500
+      },
+      {
+        "object_id": 200,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 201,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 202,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 203,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 204,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 205,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 206,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 207,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 402,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 403,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 404,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      },
+      {
+        "object_id": 405,
+        "field": "constraint_error",
+        "abs_max": 1e-08
+      }
+    ]
+  }
+}

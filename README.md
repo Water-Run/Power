@@ -1,5 +1,7 @@
 # Power!
 
+<img src="assets/branding/power-logo.png" alt="Power! logo" width="360">
+
 Power! is a powertrain modeling and experimentation project: a cross-platform C# physics core, a Unity 3D studio, and agent-facing MCP interfaces. Models, solvers, experiments, and presentation are separate concerns, so agents can build models, run and branch experiments, and inspect physical evidence through explicit contracts.
 
 The public repository is [Water-Run/Power](https://github.com/Water-Run/Power).
@@ -46,7 +48,7 @@ Model documents specify units, fixed nanosecond ticks, input events, and KPI bou
 
 ## Unity studio
 
-1. Run `dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- build`. This creates the Core and Assets assemblies in `Unity/Assets/Plugins` and twenty sample `.powerasset` files in `Unity/Assets/Generated/Resources`.
+1. Run `dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- build`. This creates the Core and Assets assemblies in `Unity/Assets/Plugins` and sample `.powerasset` files in `Unity/Assets/Generated/Resources`.
 2. Add the repository's `Unity` directory to Unity Hub and select **6000.6.0f1**.
 3. Let package resolution and script import finish — first-time preparation generates URP and material assets.
 4. Open `Assets/Scenes/PowerLab.unity`, or choose **Power > Open laboratory**, then enter Play Mode.
@@ -89,11 +91,29 @@ The [agent API](docs/AGENT_API.md) documents client configuration and operation 
 
 The executable C# models today cover rotational inertia, elastic shafts with positive or negative ratios, RL DC motors, torque sources, thermal capacities, heat-conduction networks, sealed adiabatic cylinders, and open gas chambers with slider-crank pressure-work coupling, crank-timed 360/720-degree valve profiles, and prescribed premixed combustion with fuel/air/product transport. Validated [gas-exchange physics](docs/GAS_EXCHANGE.md) — ideal gas, finite volume tracked by independent mass and internal energy, and a compressible orifice with choked and subcritical flow — feeds fixed and moving-volume gas networks. Clutches with static/sliding capacities, ideal gear and planetary constraints, mapped torque converters, and a hydraulic network with explicit valves, compliance, and a crank-driven pump supply join the same coupled solve. Explicit pressure leakage and viscous drag model pump losses; a DC motor can supply the pump through the same electrical and thermal system. A sampled pressure regulator adjusts motor voltage or battery-fed motor duty from measured hydraulic pressure. Finite charge, battery resistance and polarization, and switched accessory loads feed the same energy ledger. These models share coupled integration and an energy ledger. All sample parameters are `unverified` — research values, not calibrated measurements.
 
-The laboratories below share definitions across JSON, CLI, MCP and Studio imports (asset `power.asset.v17`; readers for asset v1–v16 remain supported):
+Finite compliant liquid rails now supply cycle-metered fuel into films. A finite wall pays evaporation heat, and only vapor becomes available to the prescribed burn. A position-dependent solenoid and sampled dose driver can move an actual needle, including closing delay and seat rebound. Bounded plant replay can plan earlier voltage removal for dose tracking. Refined magnetic/electronic/spray behavior, pump/refill and measured properties remain open. See [needle actuation](docs/NEEDLE_ACTUATION.md), [liquid injection](docs/LIQUID_FUEL_INJECTION.md) and [the film contract](docs/FUEL_FILM.md).
+
+A seven-speed dual-clutch research graph adds odd/even input shafts, reverse,
+three output branches and explicit synchronization/shift heat. It uses the same
+gear/clutch primitives; prescribed shifts and research parameters don't establish
+calibrated DQ200 control. A sampled state machine can own selectors and staged drive handoff, confirming actual lock and exposing faults. See [the transmission](docs/DUAL_CLUTCH_TRANSMISSION.md) and [control](docs/DCT_CONTROL.md) contracts.
+
+A four-range Ravigneaux research graph adds compound planetary paths and a
+converter/lockup experiment. A resolved option includes internal planet spin and
+orbital inertia. Hydraulic piston actuation now supplies the five range elements and converter
+lockup. AT control and measured properties remain open; see [the physical contract](docs/RAVIGNEAUX_TRANSMISSION.md).
+
+The laboratories below share definitions across JSON, CLI, MCP and Studio imports. Exports use `power.asset.v24`, with readers for earlier assets retained.
+
+<details>
+<summary>Available laboratories</summary>
+
 
 | Example name (`get_example_model`) | Laboratory | What it exercises |
 |---|---|---|
 | `electrothermal` | `assets/labs/electrothermal.power.json` | default braking/recovery sequence |
+| CLI only | `assets/labs/thermal-network.power.json` | thermal exchange without external inputs |
+| `sealed-cylinder` | `assets/labs/sealed-cylinder.power.json` | sealed adiabatic compression and expansion |
 | `gas-network` | `assets/labs/gas-network.power.json` | fixed-volume chambers, orifices, wall heat links |
 | `moving-cylinder` | `assets/labs/moving-cylinder.power.json` | motoring with crank-dependent volume |
 | `crank-timed-cylinder` | `assets/labs/crank-timed-cylinder.power.json` | 720° intake/exhaust profiles at changing speed |
@@ -111,6 +131,22 @@ The laboratories below share definitions across JSON, CLI, MCP and Studio import
 | `spool-regulated-pump` | `assets/labs/spool-regulated-pump.power.json` | mechanical pressure feedback, metered bypass and pressure-clutch capture |
 | `gas-accumulator-pump` | `assets/labs/gas-accumulator-pump.power.json` | finite gas storage, hydraulic separator motion and transient energy recovery |
 | `metered-fired-cylinder` | `assets/labs/metered-fired-cylinder.power.json` | finite fuel rail, cycle dose control and a separate premixed burn |
+| `film-fired-cylinder` | `assets/labs/film-fired-cylinder.power.json` | finite liquid inventory, wall-paid evaporation and vapor-only burn |
+| `liquid-injected-cylinder` | `assets/labs/liquid-injected-cylinder.power.json` | finite liquid rail, cycle injection, film replenishment and separate evaporation |
+| `needle-actuated-cylinder` | `assets/labs/needle-actuated-cylinder.power.json` | solenoid/needle dynamics, sampled dose feedback and observable excess delivery |
+| `closure-compensated-cylinder` | `assets/labs/closure-compensated-cylinder.power.json` | bounded closure replay and physical-tick cutoff planning |
+| `dual-clutch-transmission` | `assets/labs/dual-clutch-transmission.power.json` | launch, preselection, seven forward paths and up/down handoffs |
+| `fired-dual-clutch` | `assets/labs/fired-dual-clutch.power.json` | fired engine with the complete research DCT power path |
+| `controlled-dual-clutch` | `assets/labs/controlled-dual-clutch.power.json` | sampled synchronization, staged handoff and actual gear confirmation |
+| `hydraulic-ravigneaux-transmission` | `assets/labs/hydraulic-ravigneaux-transmission.power.json` | pump-fed dynamic piston actuation of five range elements |
+| `fired-hydraulic-ravigneaux` | `assets/labs/fired-hydraulic-ravigneaux.power.json` | fired converter train with six hydraulic actuators |
+| `resolved-ravigneaux-transmission` | `assets/labs/resolved-ravigneaux-transmission.power.json` | planet spin/orbit inertia with four actual mesh constraints |
+| `fired-resolved-ravigneaux-converter` | `assets/labs/fired-resolved-ravigneaux-converter.power.json` | fired converter train with resolved planet motion |
+| `ravigneaux-transmission` | `assets/labs/ravigneaux-transmission.power.json` | four-range compound planetary up/down handoffs |
+| `fired-ravigneaux-converter` | `assets/labs/fired-ravigneaux-converter.power.json` | fired engine, converter/lockup and compound transmission |
+| `controlled-fired-dual-clutch` | `assets/labs/controlled-fired-dual-clutch.power.json` | fired engine with sampled DCT control and full evidence |
+
+</details>
 
 Request `get_example_model` with a `name`, or run one directly:
 
@@ -120,7 +156,7 @@ dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.
 
 The build exports a matching `.powerasset` for each laboratory. Replay evidence — matched report boundaries, work and heat totals, energy residuals — is recorded in [docs/VALIDATION.md](docs/VALIDATION.md) and the contract documents: [gas network](docs/GAS_NETWORK.md), [moving cylinder](docs/MOVING_CYLINDER.md), [valve timing](docs/VALVE_TIMING.md), [premixed combustion](docs/PREMIXED_COMBUSTION.md), [clutches](docs/CLUTCH_NETWORK.md) with an [independent constant-load reference](docs/CLUTCH_PHYSICS.md), [gears](docs/GEAR_NETWORK.md) with [constant-load references](docs/IDEAL_GEARS.md), [converter](docs/CONVERTER_NETWORK.md), [hydraulics](docs/HYDRAULIC_NETWORK.md), [pump](docs/HYDRAULIC_PUMP.md), [piston actuation](docs/HYDRAULIC_PISTON.md), [spool regulation](docs/HYDRAULIC_SPOOL.md), [gas accumulators](docs/GAS_PISTON.md), and [fuel metering](docs/FUEL_METERING.md).
 
-Still open: complete engine behavior (intake/exhaust modeling, liquid fuel injection/evaporation, richer thermochemistry, ignition control), complete DCT/AT topology and transmission controls (ECU/TCU), measured pump loss/control maps, measured battery chemistry and BMS, measured valve/accumulator dynamics, and calibrated powertrains. Earlier native prototypes and tests are ported to Zig in [legacy/native](legacy/native/README.md) as a separate research library; their functionality hasn't all been migrated to C#. The original C sources were replaced by Zig ports, with original hashes and Git provenance in [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). The [native Zig boundary](docs/NATIVE_ZIG.md) keeps the versioned binary ABI without adding a native dependency to the C#/Unity application. OEM research for EA211 DJS + DQ200 and PSA EC5 + AT8 stays in [assets/samples](assets/samples), with its evidence and calibration boundaries intact.
+Still open: complete engine behavior (intake/exhaust modeling, liquid pump/refill, refined magnetic/electronic/spray behavior, pressure-dependent phase behavior, richer thermochemistry, ignition control), complete DCT actuation, AT topology and transmission controls (ECU/TCU), measured pump loss/control maps, measured battery chemistry and BMS, measured valve/accumulator dynamics, and calibrated powertrains. Earlier native prototypes and tests are ported to Zig in [legacy/native](legacy/native/README.md) as a separate research library; their functionality hasn't all been migrated to C#. The original C sources were replaced by Zig ports, with original hashes and Git provenance in [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). The [native Zig boundary](docs/NATIVE_ZIG.md) keeps the versioned binary ABI without adding a native dependency to the C#/Unity application. OEM research for EA211 DJS + DQ200 and PSA EC5 + AT8 stays in [assets/samples](assets/samples), with its evidence and calibration boundaries intact.
 
 ## Documentation
 

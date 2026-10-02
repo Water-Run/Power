@@ -56,6 +56,20 @@ namespace Power.Studio.Tests
         [TestCase("SpoolRegulatedPump")]
         [TestCase("GasAccumulatorPump")]
         [TestCase("MeteredFiredCylinder")]
+        [TestCase("FilmFiredCylinder")]
+        [TestCase("LiquidInjectedCylinder")]
+        [TestCase("NeedleActuatedCylinder")]
+        [TestCase("ClosureCompensatedCylinder")]
+        [TestCase("DualClutchTransmission")]
+        [TestCase("FiredDualClutch")]
+        [TestCase("ControlledDualClutch")]
+        [TestCase("ControlledFiredDualClutch")]
+        [TestCase("HydraulicRavigneauxTransmission")]
+        [TestCase("FiredHydraulicRavigneaux")]
+        [TestCase("ResolvedRavigneauxTransmission")]
+        [TestCase("FiredResolvedRavigneauxConverter")]
+        [TestCase("RavigneauxTransmission")]
+        [TestCase("FiredRavigneauxConverter")]
         public void ScriptedImportPreservesPortablePayloadAndReplay(string resource)
         {
             var imported = Resources.Load<PowerModelAsset>(resource);

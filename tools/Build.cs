@@ -84,6 +84,20 @@ try
         (File: "spool-regulated-pump", Asset: "SpoolRegulatedPump", Name: "Mechanical spool regulator laboratory"),
         (File: "gas-accumulator-pump", Asset: "GasAccumulatorPump", Name: "Gas accumulator pump laboratory"),
         (File: "metered-fired-cylinder", Asset: "MeteredFiredCylinder", Name: "Metered fuel fired cylinder laboratory"),
+        (File: "film-fired-cylinder", Asset: "FilmFiredCylinder", Name: "Finite liquid film fired cylinder laboratory"),
+        (File: "liquid-injected-cylinder", Asset: "LiquidInjectedCylinder", Name: "Liquid injection and evaporation laboratory"),
+        (File: "needle-actuated-cylinder", Asset: "NeedleActuatedCylinder", Name: "Electromagnetic needle fired cylinder laboratory"),
+        (File: "closure-compensated-cylinder", Asset: "ClosureCompensatedCylinder", Name: "Predictive needle closing laboratory"),
+        (File: "dual-clutch-transmission", Asset: "DualClutchTransmission", Name: "Seven-speed dual-clutch laboratory"),
+        (File: "fired-dual-clutch", Asset: "FiredDualClutch", Name: "Fired dual-clutch powertrain laboratory"),
+        (File: "hydraulic-ravigneaux-transmission", Asset: "HydraulicRavigneauxTransmission", Name: "Hydraulic Ravigneaux actuation laboratory"),
+        (File: "fired-hydraulic-ravigneaux", Asset: "FiredHydraulicRavigneaux", Name: "Fired hydraulic Ravigneaux laboratory"),
+        (File: "resolved-ravigneaux-transmission", Asset: "ResolvedRavigneauxTransmission", Name: "Resolved planet transmission laboratory"),
+        (File: "fired-resolved-ravigneaux-converter", Asset: "FiredResolvedRavigneauxConverter", Name: "Fired resolved planet laboratory"),
+        (File: "ravigneaux-transmission", Asset: "RavigneauxTransmission", Name: "Ravigneaux transmission laboratory"),
+        (File: "fired-ravigneaux-converter", Asset: "FiredRavigneauxConverter", Name: "Fired Ravigneaux converter laboratory"),
+        (File: "controlled-dual-clutch", Asset: "ControlledDualClutch", Name: "Sampled DCT controller laboratory"),
+        (File: "controlled-fired-dual-clutch", Asset: "ControlledFiredDualClutch", Name: "Controlled fired DCT laboratory"),
         (File: "fired-hydraulic", Asset: "FiredHydraulic", Name: "Fired hydraulic transmission laboratory"),
         (File: "fired-converter", Asset: "FiredConverter", Name: "Fired torque converter laboratory"),
         (File: "fired-planetary", Asset: "FiredPlanetary", Name: "Fired planetary transmission laboratory") })
@@ -93,7 +107,7 @@ try
     {
         foreach (string project in new[] { "Power.Tests", "Power.UnityCompatibility", "Power.Mcp.Tests" })
             await Run(dotnet, Path.Combine(root, "tests", project, "bin", "Release", "net10.0", project + ".dll"));
-        foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump", "gas-accumulator-pump", "metered-fired-cylinder" })
+        foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump", "gas-accumulator-pump", "metered-fired-cylinder", "film-fired-cylinder", "liquid-injected-cylinder", "needle-actuated-cylinder", "closure-compensated-cylinder", "dual-clutch-transmission", "fired-dual-clutch", "controlled-dual-clutch", "controlled-fired-dual-clutch", "ravigneaux-transmission", "fired-ravigneaux-converter", "resolved-ravigneaux-transmission", "fired-resolved-ravigneaux-converter", "hydraulic-ravigneaux-transmission", "fired-hydraulic-ravigneaux" })
             await Run(dotnet, cli, $"assets/labs/{lab}.power.json", "--output", $"artifacts/reports/{lab}.json");
         Console.WriteLine("Managed verification passed. Unity Editor/Play/IL2CPP require separate Unity validation.");
         return NativeVerify.Run(root);

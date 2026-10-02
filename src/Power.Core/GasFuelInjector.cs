@@ -76,12 +76,12 @@ internal sealed class FuelInjectorState(int count)
         opening = remaining > 0 ? window.Opening : 0; fuelRateLimit = remaining / duration;
         return Numeric.Finite(fuelRateLimit);
     }
-    internal bool Accept(int index, double fuelKilograms)
+    internal bool Accept(int index, double fuelKilograms, bool enforceQuota = true)
     {
         if (!Numeric.Finite(fuelKilograms) || fuelKilograms < 0) return false;
         Numeric.Accumulate(fuelKilograms, ref Delivered[index], ref DeliveredCorrection[index]);
         Numeric.Accumulate(fuelKilograms, ref Total[index], ref TotalCorrection[index]); TickFuel[index] += fuelKilograms;
-        return Delivered[index] <= Target[index] + 16 * GearReference.Epsilon * Math.Max(Target[index], Delivered[index]);
+        return !enforceQuota || Delivered[index] <= Target[index] + 16 * GearReference.Epsilon * Math.Max(Target[index], Delivered[index]);
     }
     internal double Opening(int index, CompiledInjector injector, double[] dynamics)
     {
