@@ -1,0 +1,29 @@
+# Azionamento idraulico della trasmissione
+
+[English](AT_HYDRAULIC_ACTUATION.md) · [简体中文](AT_HYDRAULIC_ACTUATION.zh-CN.md) · [Français](AT_HYDRAULIC_ACTUATION.fr.md) · [Русский](AT_HYDRAULIC_ACTUATION.ru.md) · [日本語](AT_HYDRAULIC_ACTUATION.ja.md) · [한국어](AT_HYDRAULIC_ACTUATION.ko.md) · [Deutsch](AT_HYDRAULIC_ACTUATION.de.md) · [Español](AT_HYDRAULIC_ACTUATION.es.md) · **Italiano** · [Português](AT_HYDRAULIC_ACTUATION.pt-BR.md)
+
+Il grafo di ricerca Ravigneaux può ora usare stantuffi idraulici reali per tutti e cinque gli elementi di frizione e freno di gamma e, nell'esperimento del convertitore acceso, per il blocco. Una pompa condivisa comandata dall'albero fornisce la pressione di una linea cedevole. Valvole esplicite di riempimento e scarico muovono l'olio in ogni camera dell'attuatore. La pressione sposta uno stantuffo di massa finita attraverso il gioco della pastiglia; il contatto elastico determina la capacità della frizione. Molle di richiamo e smorzamento rilasciano la pastiglia dopo lo sfiato. Un comando di valvola da solo non implica il blocco.
+
+## Contratto di assemblaggio
+
+`HydraulicActuationAssembly` riceve proprietà SI esplicite di alimentazione e di attuatore. Restituisce definizioni ordinarie immutabili, usando la fisica esistente di pompa, pressione, stantuffo, molla, valvola e frizione a contatto. Il chiamante fornisce l'albero della pompa, il pozzo termico comune e 1..6 frizioni di destinazione dichiarate. Ogni ramo richiede ID distinti di camera, corsoio, stantuffo, molla e valvola, e due canali di input.
+
+L'assemblaggio sostituisce l'innesto di attrito prescritto della destinazione con una `piston_clutch`. Il suo vecchio input di innesto è assente. `ValveInputs` mappa una frazione di applicazione ai comandi di riempimento e di scarico complementare; entrambe le valvole si possono anche comandare in modo esplicito. È un ausilio di instradamento idraulico, non un controllore AT. Solo pressione, corsa e contatto della pastiglia fisici stabiliscono capacità e blocco.
+
+Cilindrata della pompa, trafilamento e trascinamento dell'albero sono espliciti. Lo scarico instrada l'olio verso il confine di serbatoio dichiarato. Nessuna sorgente di pressione sostituisce il lavoro della pompa. La cedevolezza immagazzina `C p^2/2`; gli stantuffi in moto scambiano lavoro di pressione con energia di molla, cinetica e di contatto. Le aree anteriore e posteriore e la pressione del serbatoio sono esplicite. Con aree diverse, l'inventario netto di fluido include il termine corrispondente di volume spazzato. Restrizione, scarico, smorzamento di richiamo, trascinamento dell'albero e slittamento della frizione instradano le perdite reali verso il pozzo termico comune. Il lavoro di contropressione usa il confine di serbatoio esplicito esistente.
+
+I finecorsa della corsa sono accumuli di energia elastica, non saturazioni di posizione. La pressione manometrica è vincolata dal modello idraulico esistente; una pressione negativa è un fallimento numerico o fisico, non una saturazione silenziosa di cavitazione. Trafilamento e attrito delle tenute, aerazione del fluido, cavitazione e proprietà misurate dipendenti dalla temperatura richiedono altri modelli e altri dati.
+
+## Esperimenti condivisi
+
+`hydraulic-ravigneaux-transmission` applica i cinque elementi di gamma attraverso il moto reale di riempimento e di ritorno durante i passaggi avanti in salita e in discesa. `fired-hydraulic-ravigneaux` aggiunge il motore, il convertitore e il sesto attuatore idraulico di blocco. Entrambi conservano la rotazione assoluta dei satelliti e l'inerzia orbitale, con geometria e proprietà di authoring registrate nelle descrizioni dei sorgenti.
+
+L'alimentazione di ricerca usa cilindrata 1e-6 m3/rad, trafilamento 1e-12 m3/(s Pa), trascinamento 0.02 Nm s/rad, cedevolezza di linea 2e-11 m3/Pa e pressione di linea iniziale 1 MPa. Lo scarico si apre a 1 MPa con conduttanza 5e-10 m3/(s Pa); la pressione manometrica del serbatoio è zero. Ogni ramo ha cedevolezza 2e-12 m3/Pa, aree anteriore/posteriore 0.001/0 m2, massa dello stantuffo 0.02 kg, una corsa 0..6 mm e contatto della pastiglia a 2 mm. La rigidezza di richiamo è 10000 N/m, lo smorzamento 300 N s/m, e le rigidezze di pastiglia e finecorsa 1e6 N/m. Queste proprietà restano ingressi di ricerca `unverified`.
+
+Cinque rami di gamma usano coppie di valvole da 700/701 fino a 708/709. Il blocco acceso usa 710/711. I canali espongono pressioni di linea e di camera, corsa e velocità dello stantuffo, forza di contatto, capacità, modalità reali della frizione, lavoro della pompa, volume di fluido e calore. Lo stato meccanico, di pressione, di gas e termico completo partecipa agli stessi hash, fork, annullamento e rollback del batch.
+
+Il grafo usa l'asset portabile v24 e i record di componente esistenti. JSON, CLI, MCP e i casi preparati di importazione e riproduzione in Studio condividono queste definizioni. Affinamento ODE indipendente del moto di pressione della pompa, registri di volume spazzato e di energia, carica reale dei sei rami, conferma reale del percorso e ogni limite portabile hanno controlli separati. Esegui `dotnet run --file tools/Build.cs -- verify`; ambito numerico e risultati registrati appartengono a [VALIDATION.md](VALIDATION.it.md).
+
+## Accettazione restante
+
+Le programmazioni restano prescritte. Sequenza AT confermata dai sensori, controllo di pressione ad anello chiuso, coordinamento di coppia della ECU, dinamica di valvole e solenoidi e guasti completi sono incompiuti. Questo instradamento generico non stabilisce l'identità del corpo valvole PSA AT8/AL4 né una calibrazione OEM. Anche l'evidenza reale di Unity Editor, Play, Player e IL2CPP è separata dai test gestiti e Standard. L'obiettivo completo del gruppo motopropulsore e i confini delle evidenze dei campioni restano intatti.

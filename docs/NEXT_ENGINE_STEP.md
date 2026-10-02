@@ -1,5 +1,7 @@
 # Engine development resume notes
 
+**English** · [简体中文](NEXT_ENGINE_STEP.zh-CN.md) · [Français](NEXT_ENGINE_STEP.fr.md) · [Русский](NEXT_ENGINE_STEP.ru.md) · [日本語](NEXT_ENGINE_STEP.ja.md) · [한국어](NEXT_ENGINE_STEP.ko.md) · [Deutsch](NEXT_ENGINE_STEP.de.md) · [Español](NEXT_ENGINE_STEP.es.md) · [Italiano](NEXT_ENGINE_STEP.it.md) · [Português](NEXT_ENGINE_STEP.pt-BR.md)
+
 Development resumed at the owner's request on 2026-09-14. Standalone gas primitives and
 the compiled Core network are now implemented. The 2026-09-22 integration checkpoint below updates the remaining scope.
 The preceding sealed-cylinder baseline passed managed verification on Windows, macOS and

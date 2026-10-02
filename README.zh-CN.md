@@ -63,7 +63,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 > [!IMPORTANT]
 > 源码审计拒绝 C/C++ 实现文件与头文件,以及 Lua 源码、字节码和包。请保持仓库不含这些内容。
 
-串行验证在 Windows 上通过;更早的运行也有 Linux 与 macOS 证据。每次运行的范围见 [docs/VALIDATION.md](docs/VALIDATION.md)。Unity 编辑器、Play Mode、渲染与 IL2CPP 验证仍未完成——参见 [Unity 验证](#unity-验证)。
+串行验证在 Windows 上通过;更早的运行也有 Linux 与 macOS 证据。每次运行的范围见 [docs/VALIDATION.zh-CN.md](docs/VALIDATION.zh-CN.md)。Unity 编辑器、Play Mode、渲染与 IL2CPP 验证仍未完成——参见 [Unity 验证](#unity-验证)。
 
 直接运行一个实验:
 
@@ -84,7 +84,7 @@ CLI 退出码:`0` 表示实验通过,`2` 表示 KPI 或回放检查失败,`1` �
 
 场景根据导入的模型构建转子、热节点、连接与输入控件。它支持暂停、重置和保存的实验,事件在精确的仿真节拍上生效。默认的电—热实验运行十秒制动与恢复序列;`ThermalNetwork.powerasset` 是无外部输入的热交换实验。在模型资产 Inspector 中使用 **Open in Studio** 选择它。
 
-`SealedCylinder.powerasset` 增加了带示意运动活塞的压缩/膨胀实验;其气体状态、曲轴扭矩与能量通道使用与 CLI 和 MCP 相同的模型语义。参见[气缸文档](docs/SEALED_CYLINDER.md)。
+`SealedCylinder.powerasset` 增加了带示意运动活塞的压缩/膨胀实验;其气体状态、曲轴扭矩与能量通道使用与 CLI 和 MCP 相同的模型语义。参见[气缸文档](docs/SEALED_CYLINDER.zh-CN.md)。
 
 构建完成后导出其他模型:
 
@@ -92,7 +92,7 @@ CLI 退出码:`0` 表示实验通过,`2` 表示 KPI 或回放检查失败,`1` �
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll export assets/labs/electrothermal.power.json --name "My laboratory" --output Unity/Assets/Models/MyLaboratory.powerasset
 ```
 
-导入器检查完整性、重新编译模型并校验指纹——参见[资产格式](docs/ASSET_FORMAT.md)。拖动旋转,滚轮缩放。每个 `FixedUpdate` 最多推进 2,000 个完整节拍:默认模型 20 ms,7 ms 热模型 14 ms。物理不读取渲染 `deltaTime`,因此极小步长的模型不保证保持挂钟实时。
+导入器检查完整性、重新编译模型并校验指纹——参见[资产格式](docs/ASSET_FORMAT.zh-CN.md)。拖动旋转,滚轮缩放。每个 `FixedUpdate` 最多推进 2,000 个完整节拍:默认模型 20 ms,7 ms 热模型 14 ms。物理不读取渲染 `deltaTime`,因此极小步长的模型不保证保持挂钟实时。
 
 ## Unity 验证
 
@@ -132,17 +132,17 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 协议输出走 stdout;日志走 stderr。智能体操作无头核心,不驱动 Unity UI,也不在物理回路内调用模型提供商。
 
-[智能体 API](docs/AGENT_API.md) 文档说明客户端配置与操作序列。核心提供 `TryCompile`、可发现通道、`Fork`、取消与原子回滚;MCP 工作区补充修订检查与紧凑报告。
+[智能体 API](docs/AGENT_API.zh-CN.md) 文档说明客户端配置与操作序列。核心提供 `TryCompile`、可发现通道、`Fork`、取消与原子回滚;MCP 工作区补充修订检查与紧凑报告。
 
 ## 模型与实验室
 
-当前可执行的 C# 模型覆盖:转动惯量、带正负速比的弹性轴、RL 直流电机、扭矩源、热容、热传导网络、绝热封闭气缸,以及带滑块—曲柄压力功耦合、曲轴定时 360/720 度气门曲线和预设预混燃烧(燃油/空气/产物输运)的开放气室。经过验证的[换气物理](docs/GAS_EXCHANGE.md)——理想气体、以独立质量和内能追踪的有限体积、含临界与亚临界流动的可压缩孔口——为定容与变容气体网络供能。带静态/滑摩容量的离合器、理想齿轮与行星约束、映射式液力变矩器,以及含显式阀门、柔性与曲轴驱动泵源的液压网络,加入同一个耦合求解。显式压力泄漏与黏性阻力建模泵损耗;直流电机可以通过同一套电气与热系统为泵供能。采样压力调节器根据实测液压调整电机电压或电池供电电机的占空比。有限电量、电池内阻与极化、开关式附件负载汇入同一能量账本。这些模型共享耦合积分与能量账本。
+当前可执行的 C# 模型覆盖:转动惯量、带正负速比的弹性轴、RL 直流电机、扭矩源、热容、热传导网络、绝热封闭气缸,以及带滑块—曲柄压力功耦合、曲轴定时 360/720 度气门曲线和预设预混燃烧(燃油/空气/产物输运)的开放气室。经过验证的[换气物理](docs/GAS_EXCHANGE.zh-CN.md)——理想气体、以独立质量和内能追踪的有限体积、含临界与亚临界流动的可压缩孔口——为定容与变容气体网络供能。带静态/滑摩容量的离合器、理想齿轮与行星约束、映射式液力变矩器,以及含显式阀门、柔性与曲轴驱动泵源的液压网络,加入同一个耦合求解。显式压力泄漏与黏性阻力建模泵损耗;直流电机可以通过同一套电气与热系统为泵供能。采样压力调节器根据实测液压调整电机电压或电池供电电机的占空比。有限电量、电池内阻与极化、开关式附件负载汇入同一能量账本。这些模型共享耦合积分与能量账本。
 
-有限柔性液轨现在把按循环计量的燃油供给油膜。有限的壁面支付蒸发热量,只有蒸气可参与预设燃烧。位置相关的电磁铁与采样剂量驱动器可以驱动真实的针阀,包括关闭延迟与阀座回弹。有界的对象回放可以为剂量跟踪规划更早的断电时刻。参见[针阀驱动](docs/NEEDLE_ACTUATION.md)、[低压喷射](docs/LIQUID_FUEL_INJECTION.md)与[油膜契约](docs/FUEL_FILM.md)。
+有限柔性液轨现在把按循环计量的燃油供给油膜。有限的壁面支付蒸发热量,只有蒸气可参与预设燃烧。位置相关的电磁铁与采样剂量驱动器可以驱动真实的针阀,包括关闭延迟与阀座回弹。有界的对象回放可以为剂量跟踪规划更早的断电时刻。参见[针阀驱动](docs/NEEDLE_ACTUATION.zh-CN.md)、[低压喷射](docs/LIQUID_FUEL_INJECTION.zh-CN.md)与[油膜契约](docs/FUEL_FILM.zh-CN.md)。
 
-七速双离合研究图增加奇/偶输入轴、倒挡、三个输出分支与显式的同步/换挡热量。它使用相同的齿轮/离合器原语;采样状态机可以接管选挡与分阶段动力交接,确认真实锁止并暴露故障。参见[变速器](docs/DUAL_CLUTCH_TRANSMISSION.md)与[控制](docs/DCT_CONTROL.md)契约。
+七速双离合研究图增加奇/偶输入轴、倒挡、三个输出分支与显式的同步/换挡热量。它使用相同的齿轮/离合器原语;采样状态机可以接管选挡与分阶段动力交接,确认真实锁止并暴露故障。参见[变速器](docs/DUAL_CLUTCH_TRANSMISSION.zh-CN.md)与[控制](docs/DCT_CONTROL.zh-CN.md)契约。
 
-四挡域 Ravigneaux 研究图增加复合行星路径与变矩器/锁止实验。分解版选项包含行星自转与轨道惯量。液压活塞驱动为五个挡域元件与锁止离合器供能。参见[物理契约](docs/RAVIGNEAUX_TRANSMISSION.md)。
+四挡域 Ravigneaux 研究图增加复合行星路径与变矩器/锁止实验。分解版选项包含行星自转与轨道惯量。液压活塞驱动为五个挡域元件与锁止离合器供能。参见[物理契约](docs/RAVIGNEAUX_TRANSMISSION.zh-CN.md)。
 
 > [!NOTE]
 > 所有示例参数均为 `unverified`——研究取值,不是标定测量值。
@@ -197,7 +197,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.json --output artifacts/reports/<name>.json
 ```
 
-构建为每个实验室导出对应的 `.powerasset`。回放证据——匹配的报告边界、功与热总量、能量残差——记录在 [docs/VALIDATION.md](docs/VALIDATION.md) 与[文档索引](#文档)中列出的各特性契约文档里。
+构建为每个实验室导出对应的 `.powerasset`。回放证据——匹配的报告边界、功与热总量、能量残差——记录在 [docs/VALIDATION.zh-CN.md](docs/VALIDATION.zh-CN.md) 与[文档索引](#文档)中列出的各特性契约文档里。
 
 ## 范围与边界
 
@@ -208,7 +208,7 @@ dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.
 - 实测的泵损耗与控制图谱、实测电池化学与 BMS、实测阀门/蓄能器动力学。
 - 标定动力总成。
 
-更早的原型与测试已移植到 [legacy/native](legacy/native/README.md) 的 Zig 独立研究库;其功能并未全部迁移到 C#。原始 C 源码由 Zig 移植替代,原始哈希与 Git 溯源保存在 [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json)。[原生 Zig 边界](docs/NATIVE_ZIG.md)保留带版本的二进制 ABI,不给 C#/Unity 应用添加原生依赖。
+更早的原型与测试已移植到 [legacy/native](legacy/native/README.md) 的 Zig 独立研究库;其功能并未全部迁移到 C#。原始 C 源码由 Zig 移植替代,原始哈希与 Git 溯源保存在 [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json)。[原生 Zig 边界](docs/NATIVE_ZIG.zh-CN.md)保留带版本的二进制 ABI,不给 C#/Unity 应用添加原生依赖。
 
 EA211 DJS + DQ200 与 PSA EC5 + AT8 的 OEM 研究保留在 [assets/samples](assets/samples),证据与标定边界完整。缺失的 OEM 测量仍然缺失。
 
@@ -216,14 +216,14 @@ EA211 DJS + DQ200 与 PSA EC5 + AT8 的 OEM 研究保留在 [assets/samples](ass
 
 | 领域 | 文档 |
 |---|---|
-| 项目 | [架构](docs/ARCHITECTURE.md) · [路线图](docs/ROADMAP.md) · [开发状态](docs/DEVELOPMENT_STATUS.md) · [验证记录](docs/VALIDATION.md) · [发动机恢复笔记](docs/NEXT_ENGINE_STEP.md) |
-| 接口 | [智能体 API](docs/AGENT_API.md) · [资产格式](docs/ASSET_FORMAT.md) · [原生 Zig 边界](docs/NATIVE_ZIG.md) |
-| 发动机与气体 | [封闭气缸](docs/SEALED_CYLINDER.md) · [气体网络](docs/GAS_NETWORK.md) · [换气](docs/GAS_EXCHANGE.md) · [运动气缸](docs/MOVING_CYLINDER.md) · [气门定时](docs/VALVE_TIMING.md) · [预混燃烧](docs/PREMIXED_COMBUSTION.md) |
-| 燃油与喷射 | [燃油计量](docs/FUEL_METERING.md) · [油膜](docs/FUEL_FILM.md) · [低压喷射](docs/LIQUID_FUEL_INJECTION.md) · [针阀驱动](docs/NEEDLE_ACTUATION.md) · [闭合预测](docs/CLOSURE_PREDICTION.md) |
-| 变速器 | [离合器网络](docs/CLUTCH_NETWORK.md) · [离合器物理](docs/CLUTCH_PHYSICS.md) · [齿轮网络](docs/GEAR_NETWORK.md) · [理想齿轮](docs/IDEAL_GEARS.md) · [变矩器](docs/CONVERTER_NETWORK.md) · [双离合变速器](docs/DUAL_CLUTCH_TRANSMISSION.md) · [DCT 控制](docs/DCT_CONTROL.md) · [Ravigneaux 变速器](docs/RAVIGNEAUX_TRANSMISSION.md) · [分解行星](docs/RESOLVED_PLANETS.md) |
-| 液压 | [液压网络](docs/HYDRAULIC_NETWORK.md) · [泵](docs/HYDRAULIC_PUMP.md) · [活塞](docs/HYDRAULIC_PISTON.md) · [滑阀](docs/HYDRAULIC_SPOOL.md) · [气体蓄能器](docs/GAS_PISTON.md) · [AT 驱动](docs/AT_HYDRAULIC_ACTUATION.md) |
+| 项目 | [架构](docs/ARCHITECTURE.zh-CN.md) · [路线图](docs/ROADMAP.zh-CN.md) · [开发状态](docs/DEVELOPMENT_STATUS.zh-CN.md) · [验证记录](docs/VALIDATION.zh-CN.md) · [发动机恢复笔记](docs/NEXT_ENGINE_STEP.zh-CN.md) |
+| 接口 | [智能体 API](docs/AGENT_API.zh-CN.md) · [资产格式](docs/ASSET_FORMAT.zh-CN.md) · [原生 Zig 边界](docs/NATIVE_ZIG.zh-CN.md) |
+| 发动机与气体 | [封闭气缸](docs/SEALED_CYLINDER.zh-CN.md) · [气体网络](docs/GAS_NETWORK.zh-CN.md) · [换气](docs/GAS_EXCHANGE.zh-CN.md) · [运动气缸](docs/MOVING_CYLINDER.zh-CN.md) · [气门定时](docs/VALVE_TIMING.zh-CN.md) · [预混燃烧](docs/PREMIXED_COMBUSTION.zh-CN.md) |
+| 燃油与喷射 | [燃油计量](docs/FUEL_METERING.zh-CN.md) · [油膜](docs/FUEL_FILM.zh-CN.md) · [低压喷射](docs/LIQUID_FUEL_INJECTION.zh-CN.md) · [针阀驱动](docs/NEEDLE_ACTUATION.zh-CN.md) · [闭合预测](docs/CLOSURE_PREDICTION.zh-CN.md) |
+| 变速器 | [离合器网络](docs/CLUTCH_NETWORK.zh-CN.md) · [离合器物理](docs/CLUTCH_PHYSICS.zh-CN.md) · [齿轮网络](docs/GEAR_NETWORK.zh-CN.md) · [理想齿轮](docs/IDEAL_GEARS.zh-CN.md) · [变矩器](docs/CONVERTER_NETWORK.zh-CN.md) · [双离合变速器](docs/DUAL_CLUTCH_TRANSMISSION.zh-CN.md) · [DCT 控制](docs/DCT_CONTROL.zh-CN.md) · [Ravigneaux 变速器](docs/RAVIGNEAUX_TRANSMISSION.zh-CN.md) · [分解行星](docs/RESOLVED_PLANETS.zh-CN.md) |
+| 液压 | [液压网络](docs/HYDRAULIC_NETWORK.zh-CN.md) · [泵](docs/HYDRAULIC_PUMP.zh-CN.md) · [活塞](docs/HYDRAULIC_PISTON.zh-CN.md) · [滑阀](docs/HYDRAULIC_SPOOL.zh-CN.md) · [气体蓄能器](docs/GAS_PISTON.zh-CN.md) · [AT 驱动](docs/AT_HYDRAULIC_ACTUATION.zh-CN.md) |
 
-本页的翻译版本位于同目录的 `README.<locale>.md`。其余文档仅提供英文。
+本页的翻译版本位于同目录的 `README.<locale>.md`。[文档索引](docs/README.zh-CN.md)里的每篇文档都有同样的九种翻译。
 
 ## 许可
 

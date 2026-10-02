@@ -1,5 +1,7 @@
 # Sealed-cylinder foundation
 
+**English** · [简体中文](SEALED_CYLINDER.zh-CN.md) · [Français](SEALED_CYLINDER.fr.md) · [Русский](SEALED_CYLINDER.ru.md) · [日本語](SEALED_CYLINDER.ja.md) · [한국어](SEALED_CYLINDER.ko.md) · [Deutsch](SEALED_CYLINDER.de.md) · [Español](SEALED_CYLINDER.es.md) · [Italiano](SEALED_CYLINDER.it.md) · [Português](SEALED_CYLINDER.pt-BR.md)
+
 `sealed_cylinder` couples a rigid slider-crank to a rotational node. The cylinder contains a fixed mass of ideal gas with constant specific-heat ratio and no wall heat transfer. This is a compression/expansion benchmark, not a complete firing engine. Intake, exhaust, fuel, combustion, leakage, wall heat transfer, reciprocating inertia and control events remain separate implementation work. All current parameters are synthetic and `unverified`.
 
 The initial pressure and temperature apply at the connected rotor's initial angle plus the cylinder phase. Changing that initial angle changes the trapped mass unless the pressure/temperature are adjusted consistently. Gas state is derived from crank position and the immutable initial entropy; it adds observable channels but no independent state variable. This reduction is valid only for the sealed adiabatic component.

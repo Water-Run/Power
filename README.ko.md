@@ -63,7 +63,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 > [!IMPORTANT]
 > 소스 감사는 C/C++ 구현 파일과 헤더, 그리고 Lua 소스·바이트코드·패키지를 거부합니다. 저장소에 이들을 포함하지 마세요.
 
-직렬 검증은 Windows에서 통과했습니다. 이전 실행에는 Linux와 macOS 증거도 있습니다. 각 실행 범위는 [docs/VALIDATION.md](docs/VALIDATION.md)를 참고하세요. Unity 편집기, Play Mode, 렌더링, IL2CPP 검증은 아직 남아 있습니다 — [Unity 검증](#unity-검증)을 참고하세요.
+직렬 검증은 Windows에서 통과했습니다. 이전 실행에는 Linux와 macOS 증거도 있습니다. 각 실행 범위는 [docs/VALIDATION.ko.md](docs/VALIDATION.ko.md)를 참고하세요. Unity 편집기, Play Mode, 렌더링, IL2CPP 검증은 아직 남아 있습니다 — [Unity 검증](#unity-검증)을 참고하세요.
 
 실험을 직접 실행하려면:
 
@@ -84,7 +84,7 @@ CLI 종료 코드는 실험 통과가 `0`, KPI 또는 리플레이 검사 실패
 
 씬은 가져온 모델에서 로터, 열 노드, 연결, 입력 컨트롤을 구성합니다. 일시정지, 재설정, 저장된 실험을 지원하며 이벤트는 정확한 시뮬레이션 틱에 적용됩니다. 기본 전기—열 실험은 10초 제동과 회복 시퀀스를 실행합니다. `ThermalNetwork.powerasset`은 외부 입력 없는 열교환 실험입니다. 모델 자산 Inspector의 **Open in Studio**로 선택할 수 있습니다.
 
-`SealedCylinder.powerasset`은 개략적으로 움직이는 피스톤이 있는 압축/팽창 실험을 추가합니다. 가스 상태, 크랭크 토크, 에너지 채널은 CLI 및 MCP와 동일한 모델 의미론을 사용합니다. [실린더 문서](docs/SEALED_CYLINDER.md)를 참고하세요.
+`SealedCylinder.powerasset`은 개략적으로 움직이는 피스톤이 있는 압축/팽창 실험을 추가합니다. 가스 상태, 크랭크 토크, 에너지 채널은 CLI 및 MCP와 동일한 모델 의미론을 사용합니다. [실린더 문서](docs/SEALED_CYLINDER.ko.md)를 참고하세요.
 
 빌드 후 다른 모델을 내보내려면:
 
@@ -92,7 +92,7 @@ CLI 종료 코드는 실험 통과가 `0`, KPI 또는 리플레이 검사 실패
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll export assets/labs/electrothermal.power.json --name "My laboratory" --output Unity/Assets/Models/MyLaboratory.powerasset
 ```
 
-가져오기 도구는 무결성을 검사하고 모델을 재컴파일하며 지문을 검증합니다 — [자산 형식](docs/ASSET_FORMAT.md)을 참고하세요. 드래그로 회전, 스크롤로 확대합니다. 각 `FixedUpdate`는 최대 2,000개의 완전한 틱을 진행합니다: 기본 모델은 20 ms, 7 ms 열 모델은 14 ms입니다. 물리는 렌더링 `deltaTime`을 읽지 않으므로, 매우 작은 틱의 모델이 실시간을 유지한다는 보장은 없습니다.
+가져오기 도구는 무결성을 검사하고 모델을 재컴파일하며 지문을 검증합니다 — [자산 형식](docs/ASSET_FORMAT.ko.md)을 참고하세요. 드래그로 회전, 스크롤로 확대합니다. 각 `FixedUpdate`는 최대 2,000개의 완전한 틱을 진행합니다: 기본 모델은 20 ms, 7 ms 열 모델은 14 ms입니다. 물리는 렌더링 `deltaTime`을 읽지 않으므로, 매우 작은 틱의 모델이 실시간을 유지한다는 보장은 없습니다.
 
 ## Unity 검증
 
@@ -132,17 +132,17 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 프로토콜 출력은 stdout, 로그는 stderr를 사용합니다. 에이전트는 Unity UI를 조작하지 않고, 물리 루프 안에서 모델 공급자를 호출하지 않으면서 헤드리스 코어를 다룹니다.
 
-[에이전트 API](docs/AGENT_API.md) 문서가 클라이언트 설정과 작업 순서를 설명합니다. 코어는 `TryCompile`, 탐색 가능 채널, `Fork`, 취소, 원자적 롤백을 제공하고, MCP 작업 공간은 개정 검사와 간결한 보고서를 더합니다.
+[에이전트 API](docs/AGENT_API.ko.md) 문서가 클라이언트 설정과 작업 순서를 설명합니다. 코어는 `TryCompile`, 탐색 가능 채널, `Fork`, 취소, 원자적 롤백을 제공하고, MCP 작업 공간은 개정 검사와 간결한 보고서를 더합니다.
 
 ## 모델과 실험실
 
-현재 실행 가능한 C# 모델은 회전 관성, 양수/음수 변속비를 가진 탄성 축, RL 직류 모터, 토크원, 열용량, 열전도 네트워크, 단열 밀폐 실린더, 그리고 슬라이더-크랭크 압력 일 결합, 크랭크 기준 360/720도 밸브 프로파일, 연료/공기/생성물 수송이 있는 규정 예혼합 연소를 갖춘 개방 가스 챔버를 다룹니다. 검증된 [가스 교환 물리](docs/GAS_EXCHANGE.md) — 이상 기체, 독립적인 질량과 내부 에너지로 추적되는 유한 체적, 초킹 및 아임계 흐름을 다루는 압축성 오리피스 — 가 고정 및 가변 체적 가스 네트워크에 공급합니다. 정지/슬립 용량의 클러치, 이상 기어와 유성 제약, 맵 기반 토크 컨버터, 명시적 밸브와 컴플라이언스, 크랭크 구동 펌프를 갖춘 유압 네트워크가 같은 결합 해석에 참여합니다. 명시적 압력 누출과 점성 항력이 펌프 손실을 모델링하고, 직류 모터가 같은 전기·열 시스템을 통해 펌프에 공급할 수 있습니다. 샘플링 압력 조절기는 측정된 유압으로 모터 전압 또는 배터리 구동 모터 듀티를 조정합니다. 유한 충전량, 배터리 저항과 분극, 스위칭 부하가 같은 에너지 장부에 들어갑니다.
+현재 실행 가능한 C# 모델은 회전 관성, 양수/음수 변속비를 가진 탄성 축, RL 직류 모터, 토크원, 열용량, 열전도 네트워크, 단열 밀폐 실린더, 그리고 슬라이더-크랭크 압력 일 결합, 크랭크 기준 360/720도 밸브 프로파일, 연료/공기/생성물 수송이 있는 규정 예혼합 연소를 갖춘 개방 가스 챔버를 다룹니다. 검증된 [가스 교환 물리](docs/GAS_EXCHANGE.ko.md) — 이상 기체, 독립적인 질량과 내부 에너지로 추적되는 유한 체적, 초킹 및 아임계 흐름을 다루는 압축성 오리피스 — 가 고정 및 가변 체적 가스 네트워크에 공급합니다. 정지/슬립 용량의 클러치, 이상 기어와 유성 제약, 맵 기반 토크 컨버터, 명시적 밸브와 컴플라이언스, 크랭크 구동 펌프를 갖춘 유압 네트워크가 같은 결합 해석에 참여합니다. 명시적 압력 누출과 점성 항력이 펌프 손실을 모델링하고, 직류 모터가 같은 전기·열 시스템을 통해 펌프에 공급할 수 있습니다. 샘플링 압력 조절기는 측정된 유압으로 모터 전압 또는 배터리 구동 모터 듀티를 조정합니다. 유한 충전량, 배터리 저항과 분극, 스위칭 부하가 같은 에너지 장부에 들어갑니다.
 
-이제 유한하고 유순한 액체 레일이 사이클 계량 연료를 필름에 공급합니다. 유한한 벽이 증발열을 부담하고, 규정 연소에 쓸 수 있는 것은 증기뿐입니다. 위치 의존 솔레노이드와 샘플링 도즈 드라이버는 닫힘 지연과 시트 반발을 포함해 실제 니들을 움직일 수 있습니다. 유계 플랜트 리플레이는 도즈 추적을 위해 더 이른 전압 제거를 계획할 수 있습니다. [니들 구동](docs/NEEDLE_ACTUATION.md), [액체 분사](docs/LIQUID_FUEL_INJECTION.md), [필름 계약](docs/FUEL_FILM.md)을 참고하세요.
+이제 유한하고 유순한 액체 레일이 사이클 계량 연료를 필름에 공급합니다. 유한한 벽이 증발열을 부담하고, 규정 연소에 쓸 수 있는 것은 증기뿐입니다. 위치 의존 솔레노이드와 샘플링 도즈 드라이버는 닫힘 지연과 시트 반발을 포함해 실제 니들을 움직일 수 있습니다. 유계 플랜트 리플레이는 도즈 추적을 위해 더 이른 전압 제거를 계획할 수 있습니다. [니들 구동](docs/NEEDLE_ACTUATION.ko.md), [액체 분사](docs/LIQUID_FUEL_INJECTION.ko.md), [필름 계약](docs/FUEL_FILM.ko.md)을 참고하세요.
 
-7단 듀얼 클러치 연구 그래프는 홀수/짝수 입력 축, 후진, 세 개의 출력 분기, 명시적 동기/변속 열을 추가합니다. 같은 기어/클러치 원시 요소를 사용하며, 샘플링 상태 기계가 셀렉터와 단계적 구동 인계를 소유하여 실제 잠금을 확인하고 결함을 노출할 수 있습니다. [변속기](docs/DUAL_CLUTCH_TRANSMISSION.md)와 [제어](docs/DCT_CONTROL.md) 계약을 참고하세요.
+7단 듀얼 클러치 연구 그래프는 홀수/짝수 입력 축, 후진, 세 개의 출력 분기, 명시적 동기/변속 열을 추가합니다. 같은 기어/클러치 원시 요소를 사용하며, 샘플링 상태 기계가 셀렉터와 단계적 구동 인계를 소유하여 실제 잠금을 확인하고 결함을 노출할 수 있습니다. [변속기](docs/DUAL_CLUTCH_TRANSMISSION.ko.md)와 [제어](docs/DCT_CONTROL.ko.md) 계약을 참고하세요.
 
-4레인지 Ravigneaux 연구 그래프는 복합 유성 경로와 컨버터/록업 실험을 추가합니다. 분해 옵션은 유성 자전과 궤도 관성을 포함합니다. 유압 피스톤 구동이 다섯 레인지 요소와 컨버터 록업에 공급합니다. [물리 계약](docs/RAVIGNEAUX_TRANSMISSION.md)을 참고하세요.
+4레인지 Ravigneaux 연구 그래프는 복합 유성 경로와 컨버터/록업 실험을 추가합니다. 분해 옵션은 유성 자전과 궤도 관성을 포함합니다. 유압 피스톤 구동이 다섯 레인지 요소와 컨버터 록업에 공급합니다. [물리 계약](docs/RAVIGNEAUX_TRANSMISSION.ko.md)을 참고하세요.
 
 > [!NOTE]
 > 모든 샘플 매개변수는 `unverified`입니다. 연구 값이지 교정 측정값이 아닙니다.
@@ -197,7 +197,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.json --output artifacts/reports/<name>.json
 ```
 
-빌드는 각 실험실에 대응하는 `.powerasset`을 내보냅니다. 리플레이 증거 — 일치하는 보고서 경계, 일과 열 총량, 에너지 잔차 — 는 [docs/VALIDATION.md](docs/VALIDATION.md)과 [문서 색인](#문서)의 기능별 계약 문서에 기록되어 있습니다.
+빌드는 각 실험실에 대응하는 `.powerasset`을 내보냅니다. 리플레이 증거 — 일치하는 보고서 경계, 일과 열 총량, 에너지 잔차 — 는 [docs/VALIDATION.ko.md](docs/VALIDATION.ko.md)과 [문서 색인](#문서)의 기능별 계약 문서에 기록되어 있습니다.
 
 ## 범위와 한계
 
@@ -208,7 +208,7 @@ dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.
 - 실측 펌프 손실/제어 맵, 실측 배터리 화학과 BMS, 실측 밸브/어큐뮬레이터 동역학.
 - 교정된 파워트레인.
 
-이전 네이티브 프로토타입과 테스트는 [legacy/native](legacy/native/README.md)의 Zig로 이식되어 별도 연구 라이브러리입니다. 그 기능이 모두 C#으로 옮겨진 것은 아닙니다. 원래 C 소스는 Zig 포트로 대체되었고, 원래 해시와 Git 출처는 [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json)에 있습니다. [네이티브 Zig 경계](docs/NATIVE_ZIG.md)는 버전이 있는 바이너리 ABI를 유지하면서 C#/Unity 응용 프로그램에 네이티브 의존성을 추가하지 않습니다.
+이전 네이티브 프로토타입과 테스트는 [legacy/native](legacy/native/README.md)의 Zig로 이식되어 별도 연구 라이브러리입니다. 그 기능이 모두 C#으로 옮겨진 것은 아닙니다. 원래 C 소스는 Zig 포트로 대체되었고, 원래 해시와 Git 출처는 [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json)에 있습니다. [네이티브 Zig 경계](docs/NATIVE_ZIG.ko.md)는 버전이 있는 바이너리 ABI를 유지하면서 C#/Unity 응용 프로그램에 네이티브 의존성을 추가하지 않습니다.
 
 EA211 DJS + DQ200과 PSA EC5 + AT8에 대한 OEM 연구는 [assets/samples](assets/samples)에 있으며, 증거와 교정 경계는 그대로입니다. 누락된 OEM 측정은 계속 누락 상태로 둡니다.
 
@@ -216,14 +216,14 @@ EA211 DJS + DQ200과 PSA EC5 + AT8에 대한 OEM 연구는 [assets/samples](asse
 
 | 분야 | 문서 |
 |---|---|
-| 프로젝트 | [아키텍처](docs/ARCHITECTURE.md) · [로드맵](docs/ROADMAP.md) · [개발 상태](docs/DEVELOPMENT_STATUS.md) · [검증 기록](docs/VALIDATION.md) · [엔진 재개 노트](docs/NEXT_ENGINE_STEP.md) |
-| 인터페이스 | [에이전트 API](docs/AGENT_API.md) · [자산 형식](docs/ASSET_FORMAT.md) · [네이티브 Zig 경계](docs/NATIVE_ZIG.md) |
-| 엔진과 가스 | [밀폐 실린더](docs/SEALED_CYLINDER.md) · [가스 네트워크](docs/GAS_NETWORK.md) · [가스 교환](docs/GAS_EXCHANGE.md) · [가동 실린더](docs/MOVING_CYLINDER.md) · [밸브 타이밍](docs/VALVE_TIMING.md) · [예혼합 연소](docs/PREMIXED_COMBUSTION.md) |
-| 연료와 분사 | [연료 계량](docs/FUEL_METERING.md) · [연료 필름](docs/FUEL_FILM.md) · [액체 분사](docs/LIQUID_FUEL_INJECTION.md) · [니들 구동](docs/NEEDLE_ACTUATION.md) · [폐쇄 예측](docs/CLOSURE_PREDICTION.md) |
-| 변속기 | [클러치 네트워크](docs/CLUTCH_NETWORK.md) · [클러치 물리](docs/CLUTCH_PHYSICS.md) · [기어 네트워크](docs/GEAR_NETWORK.md) · [이상 기어](docs/IDEAL_GEARS.md) · [컨버터](docs/CONVERTER_NETWORK.md) · [듀얼 클러치 변속기](docs/DUAL_CLUTCH_TRANSMISSION.md) · [DCT 제어](docs/DCT_CONTROL.md) · [Ravigneaux 변속기](docs/RAVIGNEAUX_TRANSMISSION.md) · [분해 유성](docs/RESOLVED_PLANETS.md) |
-| 유압 | [유압 네트워크](docs/HYDRAULIC_NETWORK.md) · [펌프](docs/HYDRAULIC_PUMP.md) · [피스톤](docs/HYDRAULIC_PISTON.md) · [스풀](docs/HYDRAULIC_SPOOL.md) · [가스 어큐뮬레이터](docs/GAS_PISTON.md) · [AT 구동](docs/AT_HYDRAULIC_ACTUATION.md) |
+| 프로젝트 | [아키텍처](docs/ARCHITECTURE.ko.md) · [로드맵](docs/ROADMAP.ko.md) · [개발 상태](docs/DEVELOPMENT_STATUS.ko.md) · [검증 기록](docs/VALIDATION.ko.md) · [엔진 재개 노트](docs/NEXT_ENGINE_STEP.ko.md) |
+| 인터페이스 | [에이전트 API](docs/AGENT_API.ko.md) · [자산 형식](docs/ASSET_FORMAT.ko.md) · [네이티브 Zig 경계](docs/NATIVE_ZIG.ko.md) |
+| 엔진과 가스 | [밀폐 실린더](docs/SEALED_CYLINDER.ko.md) · [가스 네트워크](docs/GAS_NETWORK.ko.md) · [가스 교환](docs/GAS_EXCHANGE.ko.md) · [가동 실린더](docs/MOVING_CYLINDER.ko.md) · [밸브 타이밍](docs/VALVE_TIMING.ko.md) · [예혼합 연소](docs/PREMIXED_COMBUSTION.ko.md) |
+| 연료와 분사 | [연료 계량](docs/FUEL_METERING.ko.md) · [연료 필름](docs/FUEL_FILM.ko.md) · [액체 분사](docs/LIQUID_FUEL_INJECTION.ko.md) · [니들 구동](docs/NEEDLE_ACTUATION.ko.md) · [폐쇄 예측](docs/CLOSURE_PREDICTION.ko.md) |
+| 변속기 | [클러치 네트워크](docs/CLUTCH_NETWORK.ko.md) · [클러치 물리](docs/CLUTCH_PHYSICS.ko.md) · [기어 네트워크](docs/GEAR_NETWORK.ko.md) · [이상 기어](docs/IDEAL_GEARS.ko.md) · [컨버터](docs/CONVERTER_NETWORK.ko.md) · [듀얼 클러치 변속기](docs/DUAL_CLUTCH_TRANSMISSION.ko.md) · [DCT 제어](docs/DCT_CONTROL.ko.md) · [Ravigneaux 변속기](docs/RAVIGNEAUX_TRANSMISSION.ko.md) · [분해 유성](docs/RESOLVED_PLANETS.ko.md) |
+| 유압 | [유압 네트워크](docs/HYDRAULIC_NETWORK.ko.md) · [펌프](docs/HYDRAULIC_PUMP.ko.md) · [피스톤](docs/HYDRAULIC_PISTON.ko.md) · [스풀](docs/HYDRAULIC_SPOOL.ko.md) · [가스 어큐뮬레이터](docs/GAS_PISTON.ko.md) · [AT 구동](docs/AT_HYDRAULIC_ACTUATION.ko.md) |
 
-이 페이지의 번역은 같은 위치의 `README.<locale>.md`에 있습니다. 나머지 문서는 영어 전용입니다.
+이 페이지의 번역은 같은 위치의 `README.<locale>.md`에 있습니다. [색인](docs/README.ko.md)의 각 문서도 같은 아홉 개 번역을 갖습니다.
 
 ## 라이선스
 

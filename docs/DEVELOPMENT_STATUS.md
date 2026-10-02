@@ -1,5 +1,7 @@
 # Development status
 
+**English** · [简体中文](DEVELOPMENT_STATUS.zh-CN.md) · [Français](DEVELOPMENT_STATUS.fr.md) · [Русский](DEVELOPMENT_STATUS.ru.md) · [日本語](DEVELOPMENT_STATUS.ja.md) · [한국어](DEVELOPMENT_STATUS.ko.md) · [Deutsch](DEVELOPMENT_STATUS.de.md) · [Español](DEVELOPMENT_STATUS.es.md) · [Italiano](DEVELOPMENT_STATUS.it.md) · [Português](DEVELOPMENT_STATUS.pt-BR.md)
+
 Power! has a managed simulation core, shared model documents and portable assets,
 a headless CLI, an MCP agent service, and a prepared Unity studio. Synthetic
 laboratories exercise engine, transmission, hydraulic and electrical behavior.

@@ -1,5 +1,7 @@
 # Compiled gas network
 
+**English** · [简体中文](GAS_NETWORK.zh-CN.md) · [Français](GAS_NETWORK.fr.md) · [Русский](GAS_NETWORK.ru.md) · [日本語](GAS_NETWORK.ja.md) · [한국어](GAS_NETWORK.ko.md) · [Deutsch](GAS_NETWORK.de.md) · [Español](GAS_NETWORK.es.md) · [Italiano](GAS_NETWORK.it.md) · [Português](GAS_NETWORK.pt-BR.md)
+
 Finite gas networks now run through `CompiledModel` and `Simulation`. The checkpoint
 covers fixed-volume chambers, fixed pressure/temperature reservoirs, controlled
 orifices and thermal wall links. The [moving-cylinder extension](MOVING_CYLINDER.md) now connects gas exchange to crank-dependent volume and pressure work; the fixed-volume solver described below retains its original behavior.

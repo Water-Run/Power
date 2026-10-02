@@ -1,6 +1,8 @@
-# Agent 开发接口
+# Agent interface
 
-`Power.Core`、`Power.Agent` 与 MCP 是同一套物理核心的不同入口。API 不绑定特定 GPT 版本或供应商。先用工具获取版本、能力和 Schema，再生成模型；不要根据名称猜组件已经实现。
+**English** · [简体中文](AGENT_API.zh-CN.md) · [Français](AGENT_API.fr.md) · [Русский](AGENT_API.ru.md) · [日本語](AGENT_API.ja.md) · [한국어](AGENT_API.ko.md) · [Deutsch](AGENT_API.de.md) · [Español](AGENT_API.es.md) · [Italiano](AGENT_API.it.md) · [Português](AGENT_API.pt-BR.md)
+
+`Power.Core`, `Power.Agent` and MCP are different entrances to one physics core. The API is not bound to a GPT version or a model vendor. Read the version, capabilities and schema, then generate a model. A familiar name does not mean that component is implemented.
 
 The [finite gas network](GAS_NETWORK.md) is available through JSON, CLI and MCP, with gas composition, controlled restrictions, fixed reservoirs, wall heat links and conservation channels retained in portable assets. Existing linear and sealed-cylinder model semantics remain unchanged.
 
@@ -50,14 +52,14 @@ declare timing, dose and scope boundaries. Request `metered-fired-cylinder`; see
 [the metering contract](FUEL_METERING.md). This is gaseous admission, while liquid
 spray, evaporation and calibrated fuel/ECU hardware remain open.
 
-## 启动与客户端配置
+## Startup and client configuration
 
 ```sh
 dotnet run --file tools/Build.cs -- build
 dotnet /absolute/path/to/Power!/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 ```
 
-通用 MCP 客户端配置示例，按客户端格式放入 server 配置；路径需要替换：
+A generic MCP client entry. Put it in the client's server configuration and replace the path:
 
 ```json
 {
@@ -70,28 +72,28 @@ dotnet /absolute/path/to/Power!/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 }
 ```
 
-Windows 同样使用 `dotnet` 和 DLL 的绝对路径。生产连接应直接运行构建好的 DLL，避免构建输出混入 stdio 协议。服务无需 Unity、凭据或网络；首次 NuGet 还原需要网络。协议传输与版本兼容由固定的官方 [MCP C# SDK](https://csharp.sdk.modelcontextprotocol.io/v2/concepts/getting-started.html)处理。
+Windows uses the same `dotnet` command and an absolute path to the DLL. A production connection should run the built DLL directly, so build output does not mix into the stdio protocol. The server does not need Unity, credentials or a network connection. The first NuGet restore does need a network. Transport and version compatibility come from the pinned official [MCP C# SDK](https://csharp.sdk.modelcontextprotocol.io/v2/concepts/getting-started.html).
 
-## 工具与结果
+## Tools and results
 
 In agent API version 0.29.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` or `fired-hydraulic-ravigneaux`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v24`; v1–v23 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
 
-| 工具 | 用途 |
+| Tool | Purpose |
 |---|---|
-| `get_capabilities` | 版本、模型能力、规模限制、时间语义与工作流 |
-| `get_model_schema` | 完整 `power.model.v1` JSON Schema |
-| `get_example_model` | 带事件和 KPI 的可编辑示例 |
-| `validate_model` | 校验模型和实验，返回指纹、通道及诊断，不运行时序 |
-| `run_experiment` | 完整实验、两个批大小的回放、KPI 与来源；默认紧凑结果 |
-| `export_model_asset` | 校验并导出 `.powerasset`，返回 Base64 内容、文件摘要、来源和模型指纹 |
-| `create_session` | 创建独立交互仿真，返回初始快照和通道信息 |
-| `read_snapshot` | 当前时间、版本、哈希、可选择的输出通道 |
-| `set_inputs` | 在当前时刻原子提交输入帧，增加会话版本 |
-| `step_session` | 原子推进指定纳秒数，支持取消，增加会话版本 |
-| `fork_session` | 复制当前物理状态，创建版本为 0 的新分支 |
-| `close_session` | 释放指定会话 |
+| `get_capabilities` | Version, model capabilities, size limits, time semantics and the workflow |
+| `get_model_schema` | The complete `power.model.v1` JSON Schema |
+| `get_example_model` | An editable example with events and KPIs |
+| `validate_model` | Check the model and experiment. Returns the fingerprint, channels and diagnostics, and does not step time |
+| `run_experiment` | Full experiment, two replays with different batch sizes, KPIs and provenance. The result is compact by default |
+| `export_model_asset` | Validate and export a `.powerasset`. Returns Base64 content, the file digest, provenance and the model fingerprint |
+| `create_session` | Create an independent interactive simulation. Returns the initial snapshot and channel metadata |
+| `read_snapshot` | Current time, revision, hash and selected output channels |
+| `set_inputs` | Atomically submit an input frame at the current time and advance the session revision |
+| `step_session` | Atomically advance a requested number of nanoseconds. Cancellation is supported. The revision advances |
+| `fork_session` | Copy the current physical state into a new branch at revision 0 |
+| `close_session` | Release one session |
 
-所有工具都有输入和输出 Schema；成功或领域错误均提供 `structuredContent` 与兼容文本结果。MCP `isError` 对应 `ok=false`。[SDK 结构化工具结果](https://csharp.sdk.modelcontextprotocol.io/v2/concepts/tools/tools.html)。
+Every tool has an input schema and an output schema. Success and domain errors both return `structuredContent` and a compatible text result. MCP `isError` corresponds to `ok=false`. See [structured tool results in the SDK](https://csharp.sdk.modelcontextprotocol.io/v2/concepts/tools/tools.html).
 
 ```json
 {"schema":"power.agent.v1","ok":true,"data":{"revision":"2","time_ns":"1000000000","state_hash":"...","values":[]}}
@@ -101,47 +103,58 @@ In agent API version 0.29.0, `get_example_model` accepts an optional `name`: `el
 {"schema":"power.agent.v1","ok":false,"error":{"code":"revision_conflict","message":"Read the snapshot, then use its current revision.","retryable":true,"current_revision":"2"}}
 ```
 
-参考 [模型 Schema](../schemas/power.model.v1.schema.json)、[响应 Schema](../schemas/power.agent.v1.schema.json)。模型 Schema 检查结构，编译器继续检查量纲、拓扑、正值、有限值和数值系统；实验校验继续检查 tick 对齐、事件顺序、通道和 KPI 上下界。
+See the [model schema](../schemas/power.model.v1.schema.json) and the [response schema](../schemas/power.agent.v1.schema.json). The model schema checks structure. The compiler then checks dimensions, topology, positive values, finite values and the numerical system. Experiment validation checks tick alignment, event order, channels and KPI bounds.
 
-## 完整操作序列
+## Operation sequence
 
-1. 调用 `get_capabilities`，确认所需物理组件已支持。
-2. 获取示例和 Schema，构造 `document` 对象；参数必须注明单位。
-3. `validate_model({"document": ...})`，按 `error.object_id`、`error.field`、`error.code` 修复模型。
-4. `run_experiment({"document": ...})`，检查 `data.passed`、`checks`、`replay`、`model.calibration`。`ok=true` 只说明实验完成，KPI 可能失败。
-5. 用同一文档 `create_session`，保存 `session_id`、初始 `revision` 和通道映射。
-6. 例如 `set_inputs({"session_id":"...","expected_revision":"0","values":[{"channel":"100","value":24}]})`，读取返回的新版本。
-7. `step_session({"session_id":"...","expected_revision":"1","delta_ns":"1000000000"})`，取得 1 秒后的快照。
-8. `fork_session({"session_id":"...","expected_revision":"2"})`，在子会话用 4 V 制动，保留父会话作为对照。
-9. 完成比较后用各自最新版本 `close_session`。
+```mermaid
+flowchart TD
+    CAP[get_capabilities] --> EX[get_example_model and get_model_schema]
+    EX --> VAL[validate_model]
+    VAL --> RUN[run_experiment]
+    RUN --> SES[create_session]
+    SES --> STEP[set_inputs and step_session]
+    STEP --> FORK[fork_session]
+    RUN --> OUT[export_model_asset]
+```
 
-需要在 Unity 中检查模型时，调用 `export_model_asset({"document": ..., "name": "My laboratory"})`。将 `data.content` 按 Base64 解码，核对完整文件的 `data.asset_sha256`，保存为 Unity `Assets` 下的 `.powerasset`，再通过资产 Inspector 的 **Open in Studio** 打开。此工具只返回内容，不写本地文件；导出成功只表示数据合法，KPI 与标定仍需单独检查。格式及限制见 [模型资产](ASSET_FORMAT.md)。
+1. Call `get_capabilities` and confirm the physical components you need are supported.
+2. Get an example and the schema, then build a `document` object. Parameters must carry units.
+3. `validate_model({"document": ...})`. Repair the model from `error.object_id`, `error.field` and `error.code`.
+4. `run_experiment({"document": ...})`. Check `data.passed`, `checks`, `replay` and `model.calibration`. `ok=true` only means the experiment finished. KPIs can still fail.
+5. `create_session` with the same document. Keep `session_id`, the initial `revision` and the channel map.
+6. For example, `set_inputs({"session_id":"...","expected_revision":"0","values":[{"channel":"100","value":24}]})`, then read the revision that comes back.
+7. `step_session({"session_id":"...","expected_revision":"1","delta_ns":"1000000000"})` returns the snapshot one second later.
+8. `fork_session({"session_id":"...","expected_revision":"2"})`. Brake the child at 4 V and keep the parent as the control.
+9. After the comparison, `close_session` each one with its own latest revision.
 
-版本从 0 开始，每次成功输入提交和步进增加 1。过期、无效和取消的操作不增加版本。分支父会话版本保持不变。任何传输中断后先读快照确认版本，再决定后续操作；不要直接重发带旧版本的写命令。
+To inspect the model in Unity, call `export_model_asset({"document": ..., "name": "My laboratory"})`. Base64-decode `data.content`, check `data.asset_sha256` against the whole file, save it as a `.powerasset` under Unity `Assets`, and open it with **Open in Studio** in the asset Inspector. The tool returns content only. It does not write a local file. A successful export means the data is valid. KPIs and calibration are separate checks. Format and limits are in [model assets](ASSET_FORMAT.md).
 
-会话快照的 `time_ns`、`revision`、通道 ID 都是字符串，避免超过 JavaScript 精确整数范围。模型文档中的实验时间限制在一小时以内；模型输入通道目前使用整数，建议选择不超过 `2^53-1` 的 ID 以保证经过其他 JSON 客户端时精确。输出的高位命名空间 ID 应原样保留为字符串。
+Revisions start at 0. Each successful input commit and each successful step adds 1. A stale, invalid or cancelled operation does not add a revision. A fork leaves the parent revision unchanged. After any transport interruption, read the snapshot and use that revision. Do not resend a write that still carries the old revision.
 
-`read_snapshot` 的 `channels` 是输出 ID 字符串数组，省略则返回所有输出；不接受输入通道和重复字段。`include_samples=true` 才会让实验返回所有采样边界。
+`time_ns`, `revision` and channel IDs in a session snapshot are strings, so they stay exact past the JavaScript integer limit. Experiment time in a model document is at most one hour. Model input channels are integers today. Choose IDs no larger than `2^53-1` if another JSON client must keep them exact. High namespace IDs in outputs stay strings, unchanged.
 
-## 错误与修复
+`channels` on `read_snapshot` is an array of output-ID strings. Omit it to return every output. Input channels and duplicate fields are rejected. `include_samples=true` is what makes an experiment return every sample boundary.
 
-| 错误 | 下一步 |
+## Errors and repair
+
+| Error | Next step |
 |---|---|
-| `model_unit` / `model_connection` / `model_range` | 根据对象和字段修复单位、引用或参数 |
-| `invalid_argument` / `invalid_json` | 修正字段、事件顺序、时间或文档结构 |
-| `unknown_channel` / `invalid_input` | 从通道表选择输入，消除重复与非有限值 |
-| `invalid_time_step` | 使用正的整数 tick，遵守单次一百万 tick 限制 |
-| `numerical_failure` | 检查参数尺度、输入和步长；当前状态没有被修改 |
-| `revision_conflict` | 先读最新快照，再基于真实状态决定操作 |
-| `cancelled` | 整批回滚，可缩小计算批次后重试 |
-| `session_capacity` | 关闭不再需要的会话 |
-| `unknown_session` | 进程重启或会话已关闭，重新创建并回放 |
+| `model_unit` / `model_connection` / `model_range` | Repair the unit, reference or parameter on that object and field |
+| `invalid_argument` / `invalid_json` | Fix the field, event order, time or document structure |
+| `unknown_channel` / `invalid_input` | Pick an input from the channel table and remove duplicates and non-finite values |
+| `invalid_time_step` | Use a positive integer tick count, at most one million ticks per call |
+| `numerical_failure` | Check parameter scale, inputs and the step. The current state was not modified |
+| `revision_conflict` | Read the latest snapshot, then decide from that state |
+| `cancelled` | The whole batch rolled back. Retry with a smaller batch |
+| `session_capacity` | Close sessions you no longer need |
+| `unknown_session` | The process restarted or the session was closed. Create it again and replay |
 
-会话是进程内对象，尚不支持持久化恢复或连接正在运行的 Unity 场景。MCP 接口当前用于相同核心的无界面实验；以后连接 Unity 时仍需保留版本、时间和原子性契约。
+A session is an in-process object. It is not persisted, and it does not attach to a running Unity scene. The MCP interface currently runs headless experiments on the same core. A later Unity connection still has to keep the revision, time and atomicity contracts.
 
-## 作为开发 Agent
+## Adding a component
 
-组件新增流程是：写清方程与适用范围 → 定义带单位端口/参数 → 在核心中实现 → 用解析解、守恒、步长收敛与故障测试取得证据 → 增加 Schema 和能力发现 → 提供可回放实验 → 接入 Unity 显示。实测来源及不确定度独立登记，不能由测试通过推导“已校准”。
+Write the equations and the scope, define ports and parameters with units, implement them in the core, and take evidence from an analytic solution, conservation, step convergence and failure tests. Then add the schema and capability discovery, ship a replayable experiment, and connect a Unity view. Measured provenance and uncertainty are recorded on their own. A passing test does not mean the model is calibrated.
 
 ## Gas-network workflow
 

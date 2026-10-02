@@ -21,12 +21,19 @@ written for people, not for agents. Keep them that way when editing.
 - `README.md` is the English source of truth. Translations live beside it as
   `README.<locale>.md` (`zh-CN`, `fr`, `ru`, `ja`, `ko`, `de`, `es`, `it`,
   `pt-BR`) and mirror it section for section; when the English README changes,
-  update the translations in the same change. `docs/`, license files,
-  `THIRD_PARTY_NOTICES.md` and the historical material under `legacy/` and
-  `assets/samples` stay in their existing languages.
+  update the translations in the same change.
+- Technical documents under `docs/` use the same locales. `NAME.md` is the
+  English source. `NAME.<locale>.md` mirrors it section for section. When an
+  English document changes, update its translations in the same change. Keep
+  identifiers, numbers, units, dates, paths and evidence values identical
+  across locales. `docs/VALIDATION.md` keeps every checkpoint count, hash and
+  evidence path; translations copy those values and translate only the prose.
+- License files, `THIRD_PARTY_NOTICES.md` and the historical material under
+  `legacy/` and `assets/samples` stay in their existing languages.
 - Every README carries exactly one language-switcher line directly under the
   logo — the current language in bold, the other nine as links. No badges and
-  no other nav rows under the title.
+  no other nav rows under the title. Every document under `docs/` carries the
+  same single switcher directly under its title.
 - Write for the current version only. No changelogs, release attestations, or
   "since vX.Y" history. Git history is the log. Checkpoint counts and per-lab
   evidence stay in `docs/VALIDATION.md`.

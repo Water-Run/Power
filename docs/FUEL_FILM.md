@@ -1,5 +1,7 @@
 # Finite liquid fuel film and evaporation
 
+**English** · [简体中文](FUEL_FILM.zh-CN.md) · [Français](FUEL_FILM.fr.md) · [Русский](FUEL_FILM.ru.md) · [日本語](FUEL_FILM.ja.md) · [한국어](FUEL_FILM.ko.md) · [Deutsch](FUEL_FILM.de.md) · [Español](FUEL_FILM.es.md) · [Italiano](FUEL_FILM.it.md) · [Português](FUEL_FILM.pt-BR.md)
+
 `fuel_film` stores an explicit initial liquid inventory beside a tracked gas
 receiver. A finite thermal node supplies sensible and phase-change heat. Evaporated
 fuel joins the receiver's mass, internal energy and fuel constituent; the existing

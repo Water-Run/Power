@@ -1,5 +1,7 @@
 # Quasi-steady torque-converter network
 
+**English** · [简体中文](CONVERTER_NETWORK.zh-CN.md) · [Français](CONVERTER_NETWORK.fr.md) · [Русский](CONVERTER_NETWORK.ru.md) · [日本語](CONVERTER_NETWORK.ja.md) · [한국어](CONVERTER_NETWORK.ko.md) · [Deutsch](CONVERTER_NETWORK.de.md) · [Español](CONVERTER_NETWORK.es.md) · [Italiano](CONVERTER_NETWORK.it.md) · [Português](CONVERTER_NETWORK.pt-BR.md)
+
 `torque_converter` participates in the same shaft, motor, cylinder, clutch and ideal-gear
 solve. Pump and turbine are distinct rotational nodes with explicit inertia. The stator
 is stationary ground; its reaction is observable but it performs no work. Fluid loss

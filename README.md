@@ -223,7 +223,7 @@ OEM research for EA211 DJS + DQ200 and PSA EC5 + AT8 stays in [assets/samples](a
 | Transmission | [Clutch network](docs/CLUTCH_NETWORK.md) · [Clutch physics](docs/CLUTCH_PHYSICS.md) · [Gear network](docs/GEAR_NETWORK.md) · [Ideal gears](docs/IDEAL_GEARS.md) · [Converter](docs/CONVERTER_NETWORK.md) · [Dual-clutch transmission](docs/DUAL_CLUTCH_TRANSMISSION.md) · [DCT control](docs/DCT_CONTROL.md) · [Ravigneaux transmission](docs/RAVIGNEAUX_TRANSMISSION.md) · [Resolved planets](docs/RESOLVED_PLANETS.md) |
 | Hydraulics | [Hydraulic network](docs/HYDRAULIC_NETWORK.md) · [Pump](docs/HYDRAULIC_PUMP.md) · [Piston](docs/HYDRAULIC_PISTON.md) · [Spool](docs/HYDRAULIC_SPOOL.md) · [Gas accumulator](docs/GAS_PISTON.md) · [AT actuation](docs/AT_HYDRAULIC_ACTUATION.md) |
 
-Translations of this page live beside it as `README.<locale>.md`. The rest of the documentation is English only.
+Translations of this page live beside it as `README.<locale>.md`. Each document in the [documentation index](docs/README.md) has the same nine translations.
 
 ## License
 

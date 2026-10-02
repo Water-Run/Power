@@ -1,5 +1,7 @@
 # Gas exchange primitives
 
+**English** · [简体中文](GAS_EXCHANGE.zh-CN.md) · [Français](GAS_EXCHANGE.fr.md) · [Русский](GAS_EXCHANGE.ru.md) · [日本語](GAS_EXCHANGE.ja.md) · [한국어](GAS_EXCHANGE.ko.md) · [Deutsch](GAS_EXCHANGE.de.md) · [Español](GAS_EXCHANGE.es.md) · [Italiano](GAS_EXCHANGE.it.md) · [Português](GAS_EXCHANGE.pt-BR.md)
+
 This document records the first slice of the gas-exchange increment described in
 [the engine resume notes](NEXT_ENGINE_STEP.md): the flow and control-volume physics, validated on
 their own, before any of it is wired into the compiled model graph.

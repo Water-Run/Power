@@ -63,7 +63,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 > [!IMPORTANT]
 > L'audit dei sorgenti rifiuta file di implementazione e header C/C++, oltre a codice sorgente, bytecode e pacchetti Lua. Mantieni il repository libero da questi contenuti.
 
-La verifica in serie passa su Windows; esecuzioni precedenti hanno lasciato evidenze anche su Linux e macOS. L'ambito di ogni esecuzione è in [docs/VALIDATION.md](docs/VALIDATION.md). La validazione di Unity Editor, Play Mode, rendering e IL2CPP resta in sospeso — vedi [Verifica Unity](#verifica-unity).
+La verifica in serie passa su Windows; esecuzioni precedenti hanno lasciato evidenze anche su Linux e macOS. L'ambito di ogni esecuzione è in [docs/VALIDATION.it.md](docs/VALIDATION.it.md). La validazione di Unity Editor, Play Mode, rendering e IL2CPP resta in sospeso — vedi [Verifica Unity](#verifica-unity).
 
 Eseguire direttamente un esperimento:
 
@@ -84,7 +84,7 @@ I documenti modello specificano unità, tick fissi in nanosecondi, eventi di inp
 
 La scena costruisce rotori, nodi termici, connessioni e controlli di input dal modello importato. Supporta pausa, reset ed esperimenti salvati con eventi applicati a tick di simulazione esatti. L'esperimento elettrotermico predefinito esegue una sequenza di dieci secondi di frenata e recupero; `ThermalNetwork.powerasset` è un esperimento di scambio termico senza input esterni. Usa **Open in Studio** nell'Inspector di un asset modello per selezionarlo.
 
-`SealedCylinder.powerasset` aggiunge un esperimento di compressione/espansione con un pistone mobile schematico; i suoi canali di stato del gas, coppia all'albero a gomiti ed energia usano la stessa semantica del modello di CLI e MCP. Vedi la [documentazione del cilindro](docs/SEALED_CYLINDER.md).
+`SealedCylinder.powerasset` aggiunge un esperimento di compressione/espansione con un pistone mobile schematico; i suoi canali di stato del gas, coppia all'albero a gomiti ed energia usano la stessa semantica del modello di CLI e MCP. Vedi la [documentazione del cilindro](docs/SEALED_CYLINDER.it.md).
 
 Esportare un altro modello dopo la compilazione:
 
@@ -92,7 +92,7 @@ Esportare un altro modello dopo la compilazione:
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll export assets/labs/electrothermal.power.json --name "My laboratory" --output Unity/Assets/Models/MyLaboratory.powerasset
 ```
 
-L'importatore verifica l'integrità, ricompila il modello e controlla l'impronta — vedi il [formato degli asset](docs/ASSET_FORMAT.md). Trascina per orbitare, scorri per zoomare. Ogni `FixedUpdate` avanza al massimo 2.000 tick completi: 20 ms per il modello predefinito, 14 ms per il modello termico da 7 ms. La fisica non legge il `deltaTime` del rendering, quindi i modelli con tick molto fini non garantiscono il tempo reale.
+L'importatore verifica l'integrità, ricompila il modello e controlla l'impronta — vedi il [formato degli asset](docs/ASSET_FORMAT.it.md). Trascina per orbitare, scorri per zoomare. Ogni `FixedUpdate` avanza al massimo 2.000 tick completi: 20 ms per il modello predefinito, 14 ms per il modello termico da 7 ms. La fisica non legge il `deltaTime` del rendering, quindi i modelli con tick molto fini non garantiscono il tempo reale.
 
 ## Verifica Unity
 
@@ -132,17 +132,17 @@ Il servizio espone dodici strumenti con schemi di input e output:
 
 L'output del protocollo usa stdout; i log usano stderr. Gli agenti operano il nucleo senza interfaccia, senza guidare la UI di Unity né chiamare un provider di modelli dentro il ciclo fisico.
 
-L'[API agente](docs/AGENT_API.md) documenta la configurazione del client e le sequenze di operazioni. Il nucleo fornisce `TryCompile`, canali individuabili, `Fork`, annullamento e rollback atomico; lo spazio di lavoro MCP aggiunge controlli di revisione e report compatti.
+L'[API agente](docs/AGENT_API.it.md) documenta la configurazione del client e le sequenze di operazioni. Il nucleo fornisce `TryCompile`, canali individuabili, `Fork`, annullamento e rollback atomico; lo spazio di lavoro MCP aggiunge controlli di revisione e report compatti.
 
 ## Modelli e laboratori
 
-I modelli C# eseguibili coprono oggi inerzia rotazionale, alberi elastici con rapporti positivi o negativi, motori CC RL, sorgenti di coppia, capacità termiche, reti di conduzione del calore, cilindri adiabatici chiusi e camere a gas aperte con accoppiamento pressione-lavoro a biella-manovella, profili delle valvole a 360/720 gradi comandati dall'albero a gomiti e combustione premiscelata prescritta con trasporto carburante/aria/prodotti. La [fisica dello scambio gas](docs/GAS_EXCHANGE.md) validata — gas ideale, volume finito tracciato da massa ed energia interna indipendenti e un orifizio comprimibile con flusso bloccato e subcritico — alimenta reti a gas a volume fisso e variabile. Frizioni con capacità statica/strisciante, vincoli ideali di ingranaggi e planetari, convertitori di coppia mappati e una rete idraulica con valvole esplicite, cedevolezza e pompa comandata dall'albero a gomiti entrano nella stessa soluzione accoppiata. Perdite di pressione esplicite e trascinamento viscoso modellano le perdite di pompa; un motore CC può alimentare la pompa attraverso lo stesso sistema elettrico e termico. Un regolatore di pressione campionato aggiusta la tensione del motore o il duty cycle dalla pressione idraulica misurata. Carica finita, resistenza e polarizzazione della batteria e carichi accessori commutati alimentano lo stesso bilancio energetico.
+I modelli C# eseguibili coprono oggi inerzia rotazionale, alberi elastici con rapporti positivi o negativi, motori CC RL, sorgenti di coppia, capacità termiche, reti di conduzione del calore, cilindri adiabatici chiusi e camere a gas aperte con accoppiamento pressione-lavoro a biella-manovella, profili delle valvole a 360/720 gradi comandati dall'albero a gomiti e combustione premiscelata prescritta con trasporto carburante/aria/prodotti. La [fisica dello scambio gas](docs/GAS_EXCHANGE.it.md) validata — gas ideale, volume finito tracciato da massa ed energia interna indipendenti e un orifizio comprimibile con flusso bloccato e subcritico — alimenta reti a gas a volume fisso e variabile. Frizioni con capacità statica/strisciante, vincoli ideali di ingranaggi e planetari, convertitori di coppia mappati e una rete idraulica con valvole esplicite, cedevolezza e pompa comandata dall'albero a gomiti entrano nella stessa soluzione accoppiata. Perdite di pressione esplicite e trascinamento viscoso modellano le perdite di pompa; un motore CC può alimentare la pompa attraverso lo stesso sistema elettrico e termico. Un regolatore di pressione campionato aggiusta la tensione del motore o il duty cycle dalla pressione idraulica misurata. Carica finita, resistenza e polarizzazione della batteria e carichi accessori commutati alimentano lo stesso bilancio energetico.
 
-Binari del carburante liquido finiti e cedevoli ora forniscono carburante dosato per ciclo ai film. Una parete finita paga il calore di evaporazione e solo il vapore diventa disponibile alla combustione prescritta. Un solenoide dipendente dalla posizione e un driver di dose campionato possono muovere un vero ago, compresi ritardo di chiusura e rimbalzo sulla sede. Un replay limitato dell'impianto può pianificare l'interruzione anticipata della tensione per inseguire la dose. Vedi l'[azionamento dell'ago](docs/NEEDLE_ACTUATION.md), l'[iniezione liquida](docs/LIQUID_FUEL_INJECTION.md) e il [contratto del film](docs/FUEL_FILM.md).
+Binari del carburante liquido finiti e cedevoli ora forniscono carburante dosato per ciclo ai film. Una parete finita paga il calore di evaporazione e solo il vapore diventa disponibile alla combustione prescritta. Un solenoide dipendente dalla posizione e un driver di dose campionato possono muovere un vero ago, compresi ritardo di chiusura e rimbalzo sulla sede. Un replay limitato dell'impianto può pianificare l'interruzione anticipata della tensione per inseguire la dose. Vedi l'[azionamento dell'ago](docs/NEEDLE_ACTUATION.it.md), l'[iniezione liquida](docs/LIQUID_FUEL_INJECTION.it.md) e il [contratto del film](docs/FUEL_FILM.it.md).
 
-Un grafo di ricerca a doppia frizione a sette marce aggiunge alberi di ingresso dispari/pari, retromarcia, tre rami di uscita e calore esplicito di sincronizzazione/cambio. Usa gli stessi primitivi ingranaggio/frizione; una macchina a stati campionata può possedere i selettori e il passaggio di trazione graduale, confermando il blocco reale ed esponendo i guasti. Vedi la [trasmissione](docs/DUAL_CLUTCH_TRANSMISSION.md) e i contratti di [controllo](docs/DCT_CONTROL.md).
+Un grafo di ricerca a doppia frizione a sette marce aggiunge alberi di ingresso dispari/pari, retromarcia, tre rami di uscita e calore esplicito di sincronizzazione/cambio. Usa gli stessi primitivi ingranaggio/frizione; una macchina a stati campionata può possedere i selettori e il passaggio di trazione graduale, confermando il blocco reale ed esponendo i guasti. Vedi la [trasmissione](docs/DUAL_CLUTCH_TRANSMISSION.it.md) e i contratti di [controllo](docs/DCT_CONTROL.it.md).
 
-Un grafo di ricerca Ravigneaux a quattro gamme aggiunge percorsi planetari composti e un esperimento convertitore/blocco. Un'opzione risolta include rotazione interna dei satelliti e inerzia orbitale. L'azionamento a stantuffo idraulico alimenta i cinque elementi di gamma e il blocco del convertitore. Vedi il [contratto fisico](docs/RAVIGNEAUX_TRANSMISSION.md).
+Un grafo di ricerca Ravigneaux a quattro gamme aggiunge percorsi planetari composti e un esperimento convertitore/blocco. Un'opzione risolta include rotazione interna dei satelliti e inerzia orbitale. L'azionamento a stantuffo idraulico alimenta i cinque elementi di gamma e il blocco del convertitore. Vedi il [contratto fisico](docs/RAVIGNEAUX_TRANSMISSION.it.md).
 
 > [!NOTE]
 > Tutti i parametri di esempio sono `unverified`: valori di ricerca, non misure calibrate.
@@ -197,7 +197,7 @@ Richiedi `get_example_model` con un `name`, oppure eseguine uno direttamente:
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.json --output artifacts/reports/<name>.json
 ```
 
-La compilazione esporta un `.powerasset` corrispondente per ogni laboratorio. Le evidenze di replay — limiti di report abbinati, totali di lavoro e calore, residui energetici — sono registrate in [docs/VALIDATION.md](docs/VALIDATION.md) e nei documenti di contratto per funzione dell'[indice della documentazione](#documentazione).
+La compilazione esporta un `.powerasset` corrispondente per ogni laboratorio. Le evidenze di replay — limiti di report abbinati, totali di lavoro e calore, residui energetici — sono registrate in [docs/VALIDATION.it.md](docs/VALIDATION.it.md) e nei documenti di contratto per funzione dell'[indice della documentazione](#documentazione).
 
 ## Ambito e limiti
 
@@ -208,7 +208,7 @@ I gruppi motopropulsori completi sono l'obiettivo, non lo stato attuale. Ancora 
 - Mappe misurate di perdite e controllo della pompa, chimica della batteria e BMS misurati, dinamica misurata di valvole/accumulatori.
 - Gruppi motopropulsori calibrati.
 
-I prototipi nativi precedenti e i loro test sono portati in Zig in [legacy/native](legacy/native/README.md) come libreria di ricerca separata; le loro funzionalità non sono tutte migrate in C#. I sorgenti C originali sono stati sostituiti da port Zig, con hash originali e provenienza Git in [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). Il [confine Zig nativo](docs/NATIVE_ZIG.md) mantiene l'ABI binaria versionata senza aggiungere una dipendenza nativa all'applicazione C#/Unity.
+I prototipi nativi precedenti e i loro test sono portati in Zig in [legacy/native](legacy/native/README.md) come libreria di ricerca separata; le loro funzionalità non sono tutte migrate in C#. I sorgenti C originali sono stati sostituiti da port Zig, con hash originali e provenienza Git in [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). Il [confine Zig nativo](docs/NATIVE_ZIG.it.md) mantiene l'ABI binaria versionata senza aggiungere una dipendenza nativa all'applicazione C#/Unity.
 
 La ricerca OEM per EA211 DJS + DQ200 e PSA EC5 + AT8 resta in [assets/samples](assets/samples), con le sue evidenze e i limiti di calibrazione intatti. Le misure OEM mancanti restano mancanti.
 
@@ -216,14 +216,14 @@ La ricerca OEM per EA211 DJS + DQ200 e PSA EC5 + AT8 resta in [assets/samples](a
 
 | Area | Documenti |
 |---|---|
-| Progetto | [Architettura](docs/ARCHITECTURE.md) · [Tabella di marcia](docs/ROADMAP.md) · [Stato di sviluppo](docs/DEVELOPMENT_STATUS.md) · [Registro di validazione](docs/VALIDATION.md) · [Note sulla ripresa del motore](docs/NEXT_ENGINE_STEP.md) |
-| Interfacce | [API agente](docs/AGENT_API.md) · [Formato degli asset](docs/ASSET_FORMAT.md) · [Confine Zig nativo](docs/NATIVE_ZIG.md) |
-| Motore e gas | [Cilindro chiuso](docs/SEALED_CYLINDER.md) · [Rete gas](docs/GAS_NETWORK.md) · [Scambio gas](docs/GAS_EXCHANGE.md) · [Cilindro mobile](docs/MOVING_CYLINDER.md) · [Fasatura valvole](docs/VALVE_TIMING.md) · [Combustione premiscelata](docs/PREMIXED_COMBUSTION.md) |
-| Carburante e iniezione | [Dosatura carburante](docs/FUEL_METERING.md) · [Film carburante](docs/FUEL_FILM.md) · [Iniezione liquida](docs/LIQUID_FUEL_INJECTION.md) · [Azionamento ago](docs/NEEDLE_ACTUATION.md) · [Predizione di chiusura](docs/CLOSURE_PREDICTION.md) |
-| Trasmissione | [Rete frizioni](docs/CLUTCH_NETWORK.md) · [Fisica della frizione](docs/CLUTCH_PHYSICS.md) · [Rete ingranaggi](docs/GEAR_NETWORK.md) · [Ingranaggi ideali](docs/IDEAL_GEARS.md) · [Convertitore](docs/CONVERTER_NETWORK.md) · [Trasmissione a doppia frizione](docs/DUAL_CLUTCH_TRANSMISSION.md) · [Controllo DCT](docs/DCT_CONTROL.md) · [Trasmissione Ravigneaux](docs/RAVIGNEAUX_TRANSMISSION.md) · [Planetari risolti](docs/RESOLVED_PLANETS.md) |
-| Idraulica | [Rete idraulica](docs/HYDRAULIC_NETWORK.md) · [Pompa](docs/HYDRAULIC_PUMP.md) · [Stantuffo](docs/HYDRAULIC_PISTON.md) · [Cursore](docs/HYDRAULIC_SPOOL.md) · [Accumulatore a gas](docs/GAS_PISTON.md) · [Azionamento AT](docs/AT_HYDRAULIC_ACTUATION.md) |
+| Progetto | [Architettura](docs/ARCHITECTURE.it.md) · [Tabella di marcia](docs/ROADMAP.it.md) · [Stato di sviluppo](docs/DEVELOPMENT_STATUS.it.md) · [Registro di validazione](docs/VALIDATION.it.md) · [Note sulla ripresa del motore](docs/NEXT_ENGINE_STEP.it.md) |
+| Interfacce | [API agente](docs/AGENT_API.it.md) · [Formato degli asset](docs/ASSET_FORMAT.it.md) · [Confine Zig nativo](docs/NATIVE_ZIG.it.md) |
+| Motore e gas | [Cilindro chiuso](docs/SEALED_CYLINDER.it.md) · [Rete gas](docs/GAS_NETWORK.it.md) · [Scambio gas](docs/GAS_EXCHANGE.it.md) · [Cilindro mobile](docs/MOVING_CYLINDER.it.md) · [Fasatura valvole](docs/VALVE_TIMING.it.md) · [Combustione premiscelata](docs/PREMIXED_COMBUSTION.it.md) |
+| Carburante e iniezione | [Dosatura carburante](docs/FUEL_METERING.it.md) · [Film carburante](docs/FUEL_FILM.it.md) · [Iniezione liquida](docs/LIQUID_FUEL_INJECTION.it.md) · [Azionamento ago](docs/NEEDLE_ACTUATION.it.md) · [Predizione di chiusura](docs/CLOSURE_PREDICTION.it.md) |
+| Trasmissione | [Rete frizioni](docs/CLUTCH_NETWORK.it.md) · [Fisica della frizione](docs/CLUTCH_PHYSICS.it.md) · [Rete ingranaggi](docs/GEAR_NETWORK.it.md) · [Ingranaggi ideali](docs/IDEAL_GEARS.it.md) · [Convertitore](docs/CONVERTER_NETWORK.it.md) · [Trasmissione a doppia frizione](docs/DUAL_CLUTCH_TRANSMISSION.it.md) · [Controllo DCT](docs/DCT_CONTROL.it.md) · [Trasmissione Ravigneaux](docs/RAVIGNEAUX_TRANSMISSION.it.md) · [Planetari risolti](docs/RESOLVED_PLANETS.it.md) |
+| Idraulica | [Rete idraulica](docs/HYDRAULIC_NETWORK.it.md) · [Pompa](docs/HYDRAULIC_PUMP.it.md) · [Stantuffo](docs/HYDRAULIC_PISTON.it.md) · [Cursore](docs/HYDRAULIC_SPOOL.it.md) · [Accumulatore a gas](docs/GAS_PISTON.it.md) · [Azionamento AT](docs/AT_HYDRAULIC_ACTUATION.it.md) |
 
-Le traduzioni di questa pagina stanno accanto come `README.<locale>.md`. Il resto della documentazione esiste solo in inglese.
+Le traduzioni di questa pagina stanno accanto come `README.<locale>.md`. Ogni documento nell'[indice](docs/README.it.md) ha le stesse nove traduzioni.
 
 ## Licenza
 

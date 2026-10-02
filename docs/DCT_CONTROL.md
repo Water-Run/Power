@@ -1,5 +1,7 @@
 # Sampled dual-clutch synchronization and staged handoff
 
+**English** · [简体中文](DCT_CONTROL.zh-CN.md) · [Français](DCT_CONTROL.fr.md) · [Русский](DCT_CONTROL.ru.md) · [日本語](DCT_CONTROL.ja.md) · [한국어](DCT_CONTROL.ko.md) · [Deutsch](DCT_CONTROL.de.md) · [Español](DCT_CONTROL.es.md) · [Italiano](DCT_CONTROL.it.md) · [Português](DCT_CONTROL.pt-BR.md)
+
 `dct_controller` owns the two drive-clutch and eight selector channels of a
 [seven-forward/reverse research graph](DUAL_CLUTCH_TRANSMISSION.md). Its integer
 requested-gear command is separate from confirmed actual gear, selected paths,

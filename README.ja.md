@@ -63,7 +63,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 > [!IMPORTANT]
 > ソース監査は C/C++ の実装ファイルとヘッダー、Lua のソース・バイトコード・パッケージを拒否します。リポジトリにこれらを含めないでください。
 
-逐次検証は Windows で合格しています。以前の実行には Linux と macOS のエビデンスもあります。各実行の範囲は [docs/VALIDATION.md](docs/VALIDATION.md) を参照してください。Unity エディター・Play Mode・レンダリング・IL2CPP の検証は未着手です — [Unity 検証](#unity-検証)を参照してください。
+逐次検証は Windows で合格しています。以前の実行には Linux と macOS のエビデンスもあります。各実行の範囲は [docs/VALIDATION.ja.md](docs/VALIDATION.ja.md) を参照してください。Unity エディター・Play Mode・レンダリング・IL2CPP の検証は未着手です — [Unity 検証](#unity-検証)を参照してください。
 
 実験を直接実行するには:
 
@@ -84,7 +84,7 @@ CLI の終了コードは、実験合格が `0`、KPI またはリプレイ検�
 
 シーンはインポートしたモデルからローター・熱ノード・接続・入力コントロールを構築します。一時停止、リセット、保存済み実験に対応し、イベントは正確なシミュレーションティックで適用されます。デフォルトの電気—熱実験は 10 秒の制動と回復シーケンスを実行します。`ThermalNetwork.powerasset` は外部入力のない熱交換実験です。モデルアセットの Inspector で **Open in Studio** を使って選択できます。
 
-`SealedCylinder.powerasset` は模式的に動くピストン付きの圧縮/膨張実験を追加します。ガス状態・クランクトルク・エネルギーの各チャンネルは CLI と MCP と同じモデル意味論を使います。[気筒ドキュメント](docs/SEALED_CYLINDER.md)を参照してください。
+`SealedCylinder.powerasset` は模式的に動くピストン付きの圧縮/膨張実験を追加します。ガス状態・クランクトルク・エネルギーの各チャンネルは CLI と MCP と同じモデル意味論を使います。[気筒ドキュメント](docs/SEALED_CYLINDER.ja.md)を参照してください。
 
 ビルド後に別のモデルをエクスポートするには:
 
@@ -92,7 +92,7 @@ CLI の終了コードは、実験合格が `0`、KPI またはリプレイ検�
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll export assets/labs/electrothermal.power.json --name "My laboratory" --output Unity/Assets/Models/MyLaboratory.powerasset
 ```
 
-インポーターは整合性を検査し、モデルを再コンパイルし、フィンガープリントを検証します — [アセット形式](docs/ASSET_FORMAT.md)を参照してください。ドラッグで周回、スクロールでズームします。各 `FixedUpdate` は最大 2,000 完全ティック進めます:デフォルトモデルで 20 ms、7 ms 熱モデルで 14 ms です。物理はレンダリングの `deltaTime` を読まないため、極めて細かいティックのモデルが実時間を保つ保証はありません。
+インポーターは整合性を検査し、モデルを再コンパイルし、フィンガープリントを検証します — [アセット形式](docs/ASSET_FORMAT.ja.md)を参照してください。ドラッグで周回、スクロールでズームします。各 `FixedUpdate` は最大 2,000 完全ティック進めます:デフォルトモデルで 20 ms、7 ms 熱モデルで 14 ms です。物理はレンダリングの `deltaTime` を読まないため、極めて細かいティックのモデルが実時間を保つ保証はありません。
 
 ## Unity 検証
 
@@ -132,17 +132,17 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 プロトコル出力は stdout、ログは stderr を使います。エージェントは Unity UI を操作せず、物理ループ内でモデルプロバイダーを呼ばずに、ヘッドレスコアを操作します。
 
-[エージェント API](docs/AGENT_API.md) にクライアント設定と操作シーケンスが記載されています。コアは `TryCompile`・検出可能チャンネル・`Fork`・キャンセル・アトミックロールバックを提供し、MCP ワークスペースがリビジョン検査とコンパクトなレポートを追加します。
+[エージェント API](docs/AGENT_API.ja.md) にクライアント設定と操作シーケンスが記載されています。コアは `TryCompile`・検出可能チャンネル・`Fork`・キャンセル・アトミックロールバックを提供し、MCP ワークスペースがリビジョン検査とコンパクトなレポートを追加します。
 
 ## モデルとラボラトリー
 
-現在の実行可能な C# モデルは、回転慣性、正負の変速比を持つ弾性シャフト、RL 直流モーター、トルク源、熱容量、熱伝導ネットワーク、断熱密閉気筒、そしてスライダークランクによる圧力仕事結合・クランク角度 360/720 度のバルブプロファイル・燃料/空気/生成物の輸送を伴う規定予混合燃焼を持つ開放ガス室をカバーします。検証済みの[ガス交換物理](docs/GAS_EXCHANGE.md) — 理想気体、独立した質量と内部エネルギーで追跡される有限体積、チョーク流と亜臨界流を持つ圧縮性オリフィス — が固定容積および可変容積のガスネットワークに供給します。静止/滑り容量を持つクラッチ、理想歯車と遊星の拘束、マップ化されたトルクコンバーター、明示的なバルブ・コンプライアンス・クランク駆動ポンプを持つ油圧ネットワークが同じ連成求解に加わります。明示的な圧力漏れと粘性抵抗がポンプ損失をモデル化し、直流モーターが同じ電気・熱システムを通じてポンプに供給できます。サンプリング圧力レギュレーターは測定された油圧からモーター電圧または電池駆動モーターのデューティーを調整します。有限充電量、電池の抵抗と分極、切替式アクセサリー負荷が同じエネルギー台帳に入ります。
+現在の実行可能な C# モデルは、回転慣性、正負の変速比を持つ弾性シャフト、RL 直流モーター、トルク源、熱容量、熱伝導ネットワーク、断熱密閉気筒、そしてスライダークランクによる圧力仕事結合・クランク角度 360/720 度のバルブプロファイル・燃料/空気/生成物の輸送を伴う規定予混合燃焼を持つ開放ガス室をカバーします。検証済みの[ガス交換物理](docs/GAS_EXCHANGE.ja.md) — 理想気体、独立した質量と内部エネルギーで追跡される有限体積、チョーク流と亜臨界流を持つ圧縮性オリフィス — が固定容積および可変容積のガスネットワークに供給します。静止/滑り容量を持つクラッチ、理想歯車と遊星の拘束、マップ化されたトルクコンバーター、明示的なバルブ・コンプライアンス・クランク駆動ポンプを持つ油圧ネットワークが同じ連成求解に加わります。明示的な圧力漏れと粘性抵抗がポンプ損失をモデル化し、直流モーターが同じ電気・熱システムを通じてポンプに供給できます。サンプリング圧力レギュレーターは測定された油圧からモーター電圧または電池駆動モーターのデューティーを調整します。有限充電量、電池の抵抗と分極、切替式アクセサリー負荷が同じエネルギー台帳に入ります。
 
-有限で柔軟な液体レールが、サイクル計量された燃料をフィルムに供給するようになりました。有限な壁が蒸発熱を支払い、規定燃焼に使えるのは蒸気だけです。位置依存のソレノイドとサンプリングドーズドライバーは、閉じ遅れとシート反発を含めて実際のニードルを動かせます。有界なプラントリプレイは、ドーズ追従のために電圧除去を早める計画を立てられます。[ニードル駆動](docs/NEEDLE_ACTUATION.md)、[液体噴射](docs/LIQUID_FUEL_INJECTION.md)、[フィルム契約](docs/FUEL_FILM.md)を参照してください。
+有限で柔軟な液体レールが、サイクル計量された燃料をフィルムに供給するようになりました。有限な壁が蒸発熱を支払い、規定燃焼に使えるのは蒸気だけです。位置依存のソレノイドとサンプリングドーズドライバーは、閉じ遅れとシート反発を含めて実際のニードルを動かせます。有界なプラントリプレイは、ドーズ追従のために電圧除去を早める計画を立てられます。[ニードル駆動](docs/NEEDLE_ACTUATION.ja.md)、[液体噴射](docs/LIQUID_FUEL_INJECTION.ja.md)、[フィルム契約](docs/FUEL_FILM.ja.md)を参照してください。
 
-7 速デュアルクラッチ研究グラフは、奇数/偶数入力軸、リバース、3 つの出力分岐、明示的な同期/変速熱を追加します。同じ歯車/クラッチ原始素を使い、サンプリング状態機械がセレクターと段階的駆動引き継ぎを所有して、実際のロックを確認し故障を曝せます。[トランスミッション](docs/DUAL_CLUTCH_TRANSMISSION.md)と[制御](docs/DCT_CONTROL.md)の契約を参照してください。
+7 速デュアルクラッチ研究グラフは、奇数/偶数入力軸、リバース、3 つの出力分岐、明示的な同期/変速熱を追加します。同じ歯車/クラッチ原始素を使い、サンプリング状態機械がセレクターと段階的駆動引き継ぎを所有して、実際のロックを確認し故障を曝せます。[トランスミッション](docs/DUAL_CLUTCH_TRANSMISSION.ja.md)と[制御](docs/DCT_CONTROL.ja.md)の契約を参照してください。
 
-4 レンジの Ravigneaux 研究グラフは複合遊星経路とコンバーター/ロックアップ実験を追加します。分解版オプションは遊星の自転と軌道慣性を含みます。油圧ピストン駆動が 5 つのレンジ要素とコンバーターロックアップに供給します。[物理契約](docs/RAVIGNEAUX_TRANSMISSION.md)を参照してください。
+4 レンジの Ravigneaux 研究グラフは複合遊星経路とコンバーター/ロックアップ実験を追加します。分解版オプションは遊星の自転と軌道慣性を含みます。油圧ピストン駆動が 5 つのレンジ要素とコンバーターロックアップに供給します。[物理契約](docs/RAVIGNEAUX_TRANSMISSION.ja.md)を参照してください。
 
 > [!NOTE]
 > すべてのサンプルパラメーターは `unverified` です。研究値であり、キャリブレーション測定ではありません。
@@ -197,7 +197,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.json --output artifacts/reports/<name>.json
 ```
 
-ビルドは各ラボラトリーに対応する `.powerasset` をエクスポートします。リプレイエビデンス — 一致するレポート境界、仕事と熱の総量、エネルギー残差 — は [docs/VALIDATION.md](docs/VALIDATION.md) と[ドキュメント索引](#ドキュメント)の各機能の契約ドキュメントに記録されています。
+ビルドは各ラボラトリーに対応する `.powerasset` をエクスポートします。リプレイエビデンス — 一致するレポート境界、仕事と熱の総量、エネルギー残差 — は [docs/VALIDATION.ja.md](docs/VALIDATION.ja.md) と[ドキュメント索引](#ドキュメント)の各機能の契約ドキュメントに記録されています。
 
 ## 範囲と限界
 
@@ -208,7 +208,7 @@ dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.
 - 実測のポンプ損失/制御マップ、実測の電池化学と BMS、実測のバルブ/アキュムレーター動特性。
 - キャリブレーション済みパワートレイン。
 
-以前のネイティブプロトタイプとテストは [legacy/native](legacy/native/README.md) の Zig に移植され、独立した研究ライブラリです。その機能はすべて C# へ移行されたわけではありません。元の C ソースは Zig ポートに置き換えられ、元のハッシュと Git 来歴は [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json) にあります。[ネイティブ Zig 境界](docs/NATIVE_ZIG.md)はバージョン付きバイナリ ABI を保持しつつ、C#/Unity アプリケーションにネイティブ依存を追加しません。
+以前のネイティブプロトタイプとテストは [legacy/native](legacy/native/README.md) の Zig に移植され、独立した研究ライブラリです。その機能はすべて C# へ移行されたわけではありません。元の C ソースは Zig ポートに置き換えられ、元のハッシュと Git 来歴は [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json) にあります。[ネイティブ Zig 境界](docs/NATIVE_ZIG.ja.md)はバージョン付きバイナリ ABI を保持しつつ、C#/Unity アプリケーションにネイティブ依存を追加しません。
 
 EA211 DJS + DQ200 と PSA EC5 + AT8 の OEM リサーチは [assets/samples](assets/samples) にあり、エビデンスとキャリブレーション境界はそのままです。欠けている OEM 計測は欠けたままです。
 
@@ -216,14 +216,14 @@ EA211 DJS + DQ200 と PSA EC5 + AT8 の OEM リサーチは [assets/samples](ass
 
 | 分野 | ドキュメント |
 |---|---|
-| プロジェクト | [アーキテクチャ](docs/ARCHITECTURE.md) · [ロードマップ](docs/ROADMAP.md) · [開発ステータス](docs/DEVELOPMENT_STATUS.md) · [検証記録](docs/VALIDATION.md) · [エンジン再開ノート](docs/NEXT_ENGINE_STEP.md) |
-| インターフェース | [エージェント API](docs/AGENT_API.md) · [アセット形式](docs/ASSET_FORMAT.md) · [ネイティブ Zig 境界](docs/NATIVE_ZIG.md) |
-| エンジンとガス | [密閉気筒](docs/SEALED_CYLINDER.md) · [ガスネットワーク](docs/GAS_NETWORK.md) · [ガス交換](docs/GAS_EXCHANGE.md) · [可動気筒](docs/MOVING_CYLINDER.md) · [バルブタイミング](docs/VALVE_TIMING.md) · [予混合燃焼](docs/PREMIXED_COMBUSTION.md) |
-| 燃料と噴射 | [燃料計量](docs/FUEL_METERING.md) · [燃料フィルム](docs/FUEL_FILM.md) · [液体噴射](docs/LIQUID_FUEL_INJECTION.md) · [ニードル駆動](docs/NEEDLE_ACTUATION.md) · [クロージャ予測](docs/CLOSURE_PREDICTION.md) |
-| トランスミッション | [クラッチネットワーク](docs/CLUTCH_NETWORK.md) · [クラッチ物理](docs/CLUTCH_PHYSICS.md) · [歯車ネットワーク](docs/GEAR_NETWORK.md) · [理想歯車](docs/IDEAL_GEARS.md) · [コンバーター](docs/CONVERTER_NETWORK.md) · [デュアルクラッチトランスミッション](docs/DUAL_CLUTCH_TRANSMISSION.md) · [DCT 制御](docs/DCT_CONTROL.md) · [Ravigneaux トランスミッション](docs/RAVIGNEAUX_TRANSMISSION.md) · [分解遊星](docs/RESOLVED_PLANETS.md) |
-| 油圧 | [油圧ネットワーク](docs/HYDRAULIC_NETWORK.md) · [ポンプ](docs/HYDRAULIC_PUMP.md) · [ピストン](docs/HYDRAULIC_PISTON.md) · [スプール](docs/HYDRAULIC_SPOOL.md) · [ガスアキュムレーター](docs/GAS_PISTON.md) · [AT 駆動](docs/AT_HYDRAULIC_ACTUATION.md) |
+| プロジェクト | [アーキテクチャ](docs/ARCHITECTURE.ja.md) · [ロードマップ](docs/ROADMAP.ja.md) · [開発ステータス](docs/DEVELOPMENT_STATUS.ja.md) · [検証記録](docs/VALIDATION.ja.md) · [エンジン再開ノート](docs/NEXT_ENGINE_STEP.ja.md) |
+| インターフェース | [エージェント API](docs/AGENT_API.ja.md) · [アセット形式](docs/ASSET_FORMAT.ja.md) · [ネイティブ Zig 境界](docs/NATIVE_ZIG.ja.md) |
+| エンジンとガス | [密閉気筒](docs/SEALED_CYLINDER.ja.md) · [ガスネットワーク](docs/GAS_NETWORK.ja.md) · [ガス交換](docs/GAS_EXCHANGE.ja.md) · [可動気筒](docs/MOVING_CYLINDER.ja.md) · [バルブタイミング](docs/VALVE_TIMING.ja.md) · [予混合燃焼](docs/PREMIXED_COMBUSTION.ja.md) |
+| 燃料と噴射 | [燃料計量](docs/FUEL_METERING.ja.md) · [燃料フィルム](docs/FUEL_FILM.ja.md) · [液体噴射](docs/LIQUID_FUEL_INJECTION.ja.md) · [ニードル駆動](docs/NEEDLE_ACTUATION.ja.md) · [クロージャ予測](docs/CLOSURE_PREDICTION.ja.md) |
+| トランスミッション | [クラッチネットワーク](docs/CLUTCH_NETWORK.ja.md) · [クラッチ物理](docs/CLUTCH_PHYSICS.ja.md) · [歯車ネットワーク](docs/GEAR_NETWORK.ja.md) · [理想歯車](docs/IDEAL_GEARS.ja.md) · [コンバーター](docs/CONVERTER_NETWORK.ja.md) · [デュアルクラッチトランスミッション](docs/DUAL_CLUTCH_TRANSMISSION.ja.md) · [DCT 制御](docs/DCT_CONTROL.ja.md) · [Ravigneaux トランスミッション](docs/RAVIGNEAUX_TRANSMISSION.ja.md) · [分解遊星](docs/RESOLVED_PLANETS.ja.md) |
+| 油圧 | [油圧ネットワーク](docs/HYDRAULIC_NETWORK.ja.md) · [ポンプ](docs/HYDRAULIC_PUMP.ja.md) · [ピストン](docs/HYDRAULIC_PISTON.ja.md) · [スプール](docs/HYDRAULIC_SPOOL.ja.md) · [ガスアキュムレーター](docs/GAS_PISTON.ja.md) · [AT 駆動](docs/AT_HYDRAULIC_ACTUATION.ja.md) |
 
-このページの翻訳は同階層の `README.<locale>.md` にあります。それ以外のドキュメントは英語のみです。
+このページの翻訳は同階層の `README.<locale>.md` にあります。[索引](docs/README.ja.md)の各文書にも、同じ九つの翻訳があります。
 
 ## ライセンス
 

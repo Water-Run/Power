@@ -1,5 +1,7 @@
 # Seven-speed dual-clutch research power path
 
+**English** · [简体中文](DUAL_CLUTCH_TRANSMISSION.zh-CN.md) · [Français](DUAL_CLUTCH_TRANSMISSION.fr.md) · [Русский](DUAL_CLUTCH_TRANSMISSION.ru.md) · [日本語](DUAL_CLUTCH_TRANSMISSION.ja.md) · [한국어](DUAL_CLUTCH_TRANSMISSION.ko.md) · [Deutsch](DUAL_CLUTCH_TRANSMISSION.de.md) · [Español](DUAL_CLUTCH_TRANSMISSION.es.md) · [Italiano](DUAL_CLUTCH_TRANSMISSION.it.md) · [Português](DUAL_CLUTCH_TRANSMISSION.pt-BR.md)
+
 `DualClutchTransmissionAssembly` lowers seven forward paths and reverse into
 ordinary rotors, permanent ideal gears and controlled clutches. Two input shafts
 carry odd and even gears; reverse uses the even path and an explicit idler.

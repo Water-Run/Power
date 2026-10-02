@@ -63,7 +63,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 > [!IMPORTANT]
 > Die Quellenprüfung lehnt C/C++-Implementierungsdateien und Header sowie Lua-Quelltext, Bytecode und Pakete ab. Halte das Repository frei davon.
 
-Die serielle Prüfung besteht unter Windows; frühere Läufe liefern auch Linux- und macOS-Nachweise. Den Umfang jedes Laufs beschreibt [docs/VALIDATION.md](docs/VALIDATION.md). Unity-Editor-, Play-Mode-, Rendering- und IL2CPP-Validierung stehen noch aus — siehe [Unity-Validierung](#unity-validierung).
+Die serielle Prüfung besteht unter Windows; frühere Läufe liefern auch Linux- und macOS-Nachweise. Den Umfang jedes Laufs beschreibt [docs/VALIDATION.de.md](docs/VALIDATION.de.md). Unity-Editor-, Play-Mode-, Rendering- und IL2CPP-Validierung stehen noch aus — siehe [Unity-Validierung](#unity-validierung).
 
 Ein Experiment direkt ausführen:
 
@@ -84,7 +84,7 @@ Modelldokumente geben Einheiten, feste Nanosekunden-Ticks, Eingabeereignisse und
 
 Die Szene baut Rotoren, thermische Knoten, Verbindungen und Eingabesteuerungen aus dem importierten Modell. Sie unterstützt Pause, Zurücksetzen und gespeicherte Experimente, deren Ereignisse bei exakten Simulationsticks angewendet werden. Das Standard-Elektrothermie-Experiment durchläuft eine zehnsekündige Brems- und Erholungssequenz; `ThermalNetwork.powerasset` ist ein Wärmetausch-Experiment ohne externe Eingänge. Über **Open in Studio** im Inspector eines Modell-Assets lässt es sich auswählen.
 
-`SealedCylinder.powerasset` ergänzt ein Kompressions-/Expansions-Experiment mit schematisch bewegtem Kolben; seine Gaszustands-, Kurbelmoment- und Energiekanäle folgen derselben Modellsemantik wie CLI und MCP. Siehe die [Zylinder-Dokumentation](docs/SEALED_CYLINDER.md).
+`SealedCylinder.powerasset` ergänzt ein Kompressions-/Expansions-Experiment mit schematisch bewegtem Kolben; seine Gaszustands-, Kurbelmoment- und Energiekanäle folgen derselben Modellsemantik wie CLI und MCP. Siehe die [Zylinder-Dokumentation](docs/SEALED_CYLINDER.de.md).
 
 Ein weiteres Modell nach dem Build exportieren:
 
@@ -92,7 +92,7 @@ Ein weiteres Modell nach dem Build exportieren:
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll export assets/labs/electrothermal.power.json --name "My laboratory" --output Unity/Assets/Models/MyLaboratory.powerasset
 ```
 
-Der Importer prüft Integrität, kompiliert das Modell neu und verifiziert seinen Fingerabdruck — siehe das [Asset-Format](docs/ASSET_FORMAT.md). Ziehen zum Orbitieren, Scrollen zum Zoomen. Jedes `FixedUpdate` schreitet um höchstens 2.000 vollständige Ticks voran: 20 ms für das Standardmodell, 14 ms für das 7-ms-Thermodell. Die Physik liest nicht das `deltaTime` des Renderings, daher halten sehr fein getaktete Modelle die Echtzeit nicht garantiert ein.
+Der Importer prüft Integrität, kompiliert das Modell neu und verifiziert seinen Fingerabdruck — siehe das [Asset-Format](docs/ASSET_FORMAT.de.md). Ziehen zum Orbitieren, Scrollen zum Zoomen. Jedes `FixedUpdate` schreitet um höchstens 2.000 vollständige Ticks voran: 20 ms für das Standardmodell, 14 ms für das 7-ms-Thermodell. Die Physik liest nicht das `deltaTime` des Renderings, daher halten sehr fein getaktete Modelle die Echtzeit nicht garantiert ein.
 
 ## Unity-Validierung
 
@@ -132,17 +132,17 @@ Der Dienst stellt zwölf Werkzeuge mit Eingabe- und Ausgabeschemas bereit:
 
 Die Protokollausgabe geht an stdout, Protokolle an stderr. Agenten bedienen den kopflosen Kern, ohne die Unity-UI zu steuern oder im Physikschleifenlauf einen Modellanbieter aufzurufen.
 
-Die [Agent-API](docs/AGENT_API.md) beschreibt Client-Konfiguration und Operationsfolgen. Der Kern bietet `TryCompile`, entdeckbare Kanäle, `Fork`, Abbruch und atomares Rollback; der MCP-Arbeitsbereich ergänzt Revisionsprüfungen und kompakte Berichte.
+Die [Agent-API](docs/AGENT_API.de.md) beschreibt Client-Konfiguration und Operationsfolgen. Der Kern bietet `TryCompile`, entdeckbare Kanäle, `Fork`, Abbruch und atomares Rollback; der MCP-Arbeitsbereich ergänzt Revisionsprüfungen und kompakte Berichte.
 
 ## Modelle und Laboratorien
 
-Die ausführbaren C#-Modelle decken heute Rotationsträgheit, elastische Wellen mit positiven oder negativen Übersetzungen, RL-Gleichstrommotoren, Momentenquellen, Wärmekapazitäten, Wärmeleitungsnetze, abgeschlossene adiabatische Zylinder sowie offene Gaskammern mit Druck-Arbeits-Kopplung über Schieber-Kurbel-Antrieb, kurbelwinkelfreigegebenen 360/720-Grad-Ventilprofilen und vorgeschriebener Vormischverbrennung mit Kraftstoff/Luft/Produkt-Transport ab. Die validierte [Gaswechselphysik](docs/GAS_EXCHANGE.md) — ideales Gas, endliches Volumen mit getrennt verfolgter Masse und innerer Energie, eine kompressible Drossel mit kritischer und unterkritischer Strömung — speist Gasnetze mit festem und variablem Volumen. Kupplungen mit Haft-/Gleitkapazität, ideelle Zahn- und Planetenradbindungen, tabellierte Drehmomentwandler und ein Hydrauliknetz mit expliziten Ventilen, Nachgiebigkeit und kurbelgetriebener Pumpenversorgung treten in dieselbe gekoppelte Lösung ein. Explizite Druckleckagen und viskose Schleppverluste modellieren Pumpenverluste; ein Gleichstrommotor kann die Pumpe über dasselbe elektrische und thermische System versorgen. Ein abgetasteter Druckregler stellt Motorspannung oder Batterie-Pulsbreite anhand des gemessenen Hydraulikdrucks ein. Endliche Ladung, Batteriewiderstand und -polarisation sowie schaltende Zusatzverbraucher speisen dieselbe Energiebilanz.
+Die ausführbaren C#-Modelle decken heute Rotationsträgheit, elastische Wellen mit positiven oder negativen Übersetzungen, RL-Gleichstrommotoren, Momentenquellen, Wärmekapazitäten, Wärmeleitungsnetze, abgeschlossene adiabatische Zylinder sowie offene Gaskammern mit Druck-Arbeits-Kopplung über Schieber-Kurbel-Antrieb, kurbelwinkelfreigegebenen 360/720-Grad-Ventilprofilen und vorgeschriebener Vormischverbrennung mit Kraftstoff/Luft/Produkt-Transport ab. Die validierte [Gaswechselphysik](docs/GAS_EXCHANGE.de.md) — ideales Gas, endliches Volumen mit getrennt verfolgter Masse und innerer Energie, eine kompressible Drossel mit kritischer und unterkritischer Strömung — speist Gasnetze mit festem und variablem Volumen. Kupplungen mit Haft-/Gleitkapazität, ideelle Zahn- und Planetenradbindungen, tabellierte Drehmomentwandler und ein Hydrauliknetz mit expliziten Ventilen, Nachgiebigkeit und kurbelgetriebener Pumpenversorgung treten in dieselbe gekoppelte Lösung ein. Explizite Druckleckagen und viskose Schleppverluste modellieren Pumpenverluste; ein Gleichstrommotor kann die Pumpe über dasselbe elektrische und thermische System versorgen. Ein abgetasteter Druckregler stellt Motorspannung oder Batterie-Pulsbreite anhand des gemessenen Hydraulikdrucks ein. Endliche Ladung, Batteriewiderstand und -polarisation sowie schaltende Zusatzverbraucher speisen dieselbe Energiebilanz.
 
-Endliche nachgiebige Flüssigkeitsleitungen versorgen nun zyklusdosierten Kraftstoff in Filme. Eine endliche Wand zahlt die Verdampfungswärme, und nur Dampf steht der vorgeschriebenen Verbrennung zur Verfügung. Ein positionsabhängiges Solenoid und ein abgetasteter Dosentreiber können eine echte Nadel bewegen, einschließlich Schließverzögerung und Sitzabprall. Ein begrenztes Pflanzen-Replay kann eine frühere Spannungsabschaltung zur Dosisverfolgung planen. Siehe [Nadelansteuerung](docs/NEEDLE_ACTUATION.md), [Flüssigeinspritzung](docs/LIQUID_FUEL_INJECTION.md) und den [Filmvertrag](docs/FUEL_FILM.md).
+Endliche nachgiebige Flüssigkeitsleitungen versorgen nun zyklusdosierten Kraftstoff in Filme. Eine endliche Wand zahlt die Verdampfungswärme, und nur Dampf steht der vorgeschriebenen Verbrennung zur Verfügung. Ein positionsabhängiges Solenoid und ein abgetasteter Dosentreiber können eine echte Nadel bewegen, einschließlich Schließverzögerung und Sitzabprall. Ein begrenztes Pflanzen-Replay kann eine frühere Spannungsabschaltung zur Dosisverfolgung planen. Siehe [Nadelansteuerung](docs/NEEDLE_ACTUATION.de.md), [Flüssigeinspritzung](docs/LIQUID_FUEL_INJECTION.de.md) und den [Filmvertrag](docs/FUEL_FILM.de.md).
 
-Ein Siebengang-Doppelkupplungs-Forschungsgraph ergänzt ungerade/gerade Eingangswellen, Rückwärtsgang, drei Abgangszweige und explizite Synchronisations-/Schaltwärme. Er nutzt dieselben Zahnrad-/Kupplungsprimitive; ein abgetasteter Zustandsautomat kann Wählhebel und gestaffelte Kraftübergabe besitzen, echte Verriegelung bestätigen und Fehler aufdecken. Siehe [das Getriebe](docs/DUAL_CLUTCH_TRANSMISSION.md) und die [Regelung](docs/DCT_CONTROL.md).
+Ein Siebengang-Doppelkupplungs-Forschungsgraph ergänzt ungerade/gerade Eingangswellen, Rückwärtsgang, drei Abgangszweige und explizite Synchronisations-/Schaltwärme. Er nutzt dieselben Zahnrad-/Kupplungsprimitive; ein abgetasteter Zustandsautomat kann Wählhebel und gestaffelte Kraftübergabe besitzen, echte Verriegelung bestätigen und Fehler aufdecken. Siehe [das Getriebe](docs/DUAL_CLUTCH_TRANSMISSION.de.md) und die [Regelung](docs/DCT_CONTROL.de.md).
 
-Ein Ravigneaux-Forschungsgraph mit vier Bereichen ergänzt zusammengesetzte Planetenpfade und ein Wandler-/Überbrückungsexperiment. Eine aufgelöste Variante enthält innere Planetendrehung und Bahnträgheit. Hydraulische Kolbenansteuerung versorgt die fünf Bereichselemente und die Wandlerüberbrückung. Siehe den [physikalischen Vertrag](docs/RAVIGNEAUX_TRANSMISSION.md).
+Ein Ravigneaux-Forschungsgraph mit vier Bereichen ergänzt zusammengesetzte Planetenpfade und ein Wandler-/Überbrückungsexperiment. Eine aufgelöste Variante enthält innere Planetendrehung und Bahnträgheit. Hydraulische Kolbenansteuerung versorgt die fünf Bereichselemente und die Wandlerüberbrückung. Siehe den [physikalischen Vertrag](docs/RAVIGNEAUX_TRANSMISSION.de.md).
 
 > [!NOTE]
 > Alle Beispielparameter sind `unverified` — Forschungswerte, keine kalibrierten Messungen.
@@ -197,7 +197,7 @@ Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studi
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.json --output artifacts/reports/<name>.json
 ```
 
-Der Build exportiert zu jedem Laboratorium ein passendes `.powerasset`. Replay-Nachweise — übereinstimmende Berichtsgrenzen, Arbeits- und Wärmesummen, Energiereziduen — sind in [docs/VALIDATION.md](docs/VALIDATION.md) und den Funktionsverträgen im [Dokumentationsindex](#dokumentation) festgehalten.
+Der Build exportiert zu jedem Laboratorium ein passendes `.powerasset`. Replay-Nachweise — übereinstimmende Berichtsgrenzen, Arbeits- und Wärmesummen, Energiereziduen — sind in [docs/VALIDATION.de.md](docs/VALIDATION.de.md) und den Funktionsverträgen im [Dokumentationsindex](#dokumentation) festgehalten.
 
 ## Umfang und Grenzen
 
@@ -208,7 +208,7 @@ Vollständige Antriebsstränge sind das Ziel, nicht der aktuelle Stand. Noch off
 - Gemessene Pumpenverlust- und Regelungskennlinien, gemessene Batteriechemie und BMS, gemessene Ventil-/Akkumulatordynamik.
 - Kalibrierte Antriebsstränge.
 
-Frühere native Prototypen und Tests sind als Zig in [legacy/native](legacy/native/README.md) portiert — eine separate Forschungsbibliothek; deren Funktionalität wurde nicht vollständig nach C# überführt. Die ursprünglichen C-Quellen wurden durch Zig-Portierungen ersetzt, ursprüngliche Hashes und Git-Herkunft liegen in [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). Die [native Zig-Grenze](docs/NATIVE_ZIG.md) hält das versionierte binäre ABI, ohne der C#/Unity-Anwendung eine native Abhängigkeit hinzuzufügen.
+Frühere native Prototypen und Tests sind als Zig in [legacy/native](legacy/native/README.md) portiert — eine separate Forschungsbibliothek; deren Funktionalität wurde nicht vollständig nach C# überführt. Die ursprünglichen C-Quellen wurden durch Zig-Portierungen ersetzt, ursprüngliche Hashes und Git-Herkunft liegen in [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). Die [native Zig-Grenze](docs/NATIVE_ZIG.de.md) hält das versionierte binäre ABI, ohne der C#/Unity-Anwendung eine native Abhängigkeit hinzuzufügen.
 
 Die OEM-Recherche zu EA211 DJS + DQ200 und PSA EC5 + AT8 bleibt in [assets/samples](assets/samples), mit intakten Nachweisen und Kalibrierungsgrenzen. Fehlende OEM-Messungen bleiben fehlend.
 
@@ -216,14 +216,14 @@ Die OEM-Recherche zu EA211 DJS + DQ200 und PSA EC5 + AT8 bleibt in [assets/sampl
 
 | Bereich | Dokumente |
 |---|---|
-| Projekt | [Architektur](docs/ARCHITECTURE.md) · [Fahrplan](docs/ROADMAP.md) · [Entwicklungsstand](docs/DEVELOPMENT_STATUS.md) · [Validierungsakte](docs/VALIDATION.md) · [Notizen zur Motorfortsetzung](docs/NEXT_ENGINE_STEP.md) |
-| Schnittstellen | [Agent-API](docs/AGENT_API.md) · [Asset-Format](docs/ASSET_FORMAT.md) · [Native Zig-Grenze](docs/NATIVE_ZIG.md) |
-| Motor und Gas | [Abgeschlossener Zylinder](docs/SEALED_CYLINDER.md) · [Gasnetz](docs/GAS_NETWORK.md) · [Gaswechsel](docs/GAS_EXCHANGE.md) · [Bewegter Zylinder](docs/MOVING_CYLINDER.md) · [Ventilsteuerzeiten](docs/VALVE_TIMING.md) · [Vormischverbrennung](docs/PREMIXED_COMBUSTION.md) |
-| Kraftstoff und Einspritzung | [Kraftstoffdosierung](docs/FUEL_METERING.md) · [Kraftstofffilm](docs/FUEL_FILM.md) · [Flüssigeinspritzung](docs/LIQUID_FUEL_INJECTION.md) · [Nadelansteuerung](docs/NEEDLE_ACTUATION.md) · [Schließvorhersage](docs/CLOSURE_PREDICTION.md) |
-| Getriebe | [Kupplungsnetz](docs/CLUTCH_NETWORK.md) · [Kupplungsphysik](docs/CLUTCH_PHYSICS.md) · [Zahnradnetz](docs/GEAR_NETWORK.md) · [Ideale Zahnräder](docs/IDEAL_GEARS.md) · [Wandler](docs/CONVERTER_NETWORK.md) · [Doppelkupplungsgetriebe](docs/DUAL_CLUTCH_TRANSMISSION.md) · [DCT-Regelung](docs/DCT_CONTROL.md) · [Ravigneaux-Getriebe](docs/RAVIGNEAUX_TRANSMISSION.md) · [Aufgelöste Planeten](docs/RESOLVED_PLANETS.md) |
-| Hydraulik | [Hydrauliknetz](docs/HYDRAULIC_NETWORK.md) · [Pumpe](docs/HYDRAULIC_PUMP.md) · [Kolben](docs/HYDRAULIC_PISTON.md) · [Schieber](docs/HYDRAULIC_SPOOL.md) · [Gasakkumulator](docs/GAS_PISTON.md) · [AT-Ansteuerung](docs/AT_HYDRAULIC_ACTUATION.md) |
+| Projekt | [Architektur](docs/ARCHITECTURE.de.md) · [Fahrplan](docs/ROADMAP.de.md) · [Entwicklungsstand](docs/DEVELOPMENT_STATUS.de.md) · [Validierungsakte](docs/VALIDATION.de.md) · [Notizen zur Motorfortsetzung](docs/NEXT_ENGINE_STEP.de.md) |
+| Schnittstellen | [Agent-API](docs/AGENT_API.de.md) · [Asset-Format](docs/ASSET_FORMAT.de.md) · [Native Zig-Grenze](docs/NATIVE_ZIG.de.md) |
+| Motor und Gas | [Abgeschlossener Zylinder](docs/SEALED_CYLINDER.de.md) · [Gasnetz](docs/GAS_NETWORK.de.md) · [Gaswechsel](docs/GAS_EXCHANGE.de.md) · [Bewegter Zylinder](docs/MOVING_CYLINDER.de.md) · [Ventilsteuerzeiten](docs/VALVE_TIMING.de.md) · [Vormischverbrennung](docs/PREMIXED_COMBUSTION.de.md) |
+| Kraftstoff und Einspritzung | [Kraftstoffdosierung](docs/FUEL_METERING.de.md) · [Kraftstofffilm](docs/FUEL_FILM.de.md) · [Flüssigeinspritzung](docs/LIQUID_FUEL_INJECTION.de.md) · [Nadelansteuerung](docs/NEEDLE_ACTUATION.de.md) · [Schließvorhersage](docs/CLOSURE_PREDICTION.de.md) |
+| Getriebe | [Kupplungsnetz](docs/CLUTCH_NETWORK.de.md) · [Kupplungsphysik](docs/CLUTCH_PHYSICS.de.md) · [Zahnradnetz](docs/GEAR_NETWORK.de.md) · [Ideale Zahnräder](docs/IDEAL_GEARS.de.md) · [Wandler](docs/CONVERTER_NETWORK.de.md) · [Doppelkupplungsgetriebe](docs/DUAL_CLUTCH_TRANSMISSION.de.md) · [DCT-Regelung](docs/DCT_CONTROL.de.md) · [Ravigneaux-Getriebe](docs/RAVIGNEAUX_TRANSMISSION.de.md) · [Aufgelöste Planeten](docs/RESOLVED_PLANETS.de.md) |
+| Hydraulik | [Hydrauliknetz](docs/HYDRAULIC_NETWORK.de.md) · [Pumpe](docs/HYDRAULIC_PUMP.de.md) · [Kolben](docs/HYDRAULIC_PISTON.de.md) · [Schieber](docs/HYDRAULIC_SPOOL.de.md) · [Gasakkumulator](docs/GAS_PISTON.de.md) · [AT-Ansteuerung](docs/AT_HYDRAULIC_ACTUATION.de.md) |
 
-Übersetzungen dieser Seite liegen daneben als `README.<locale>.md`. Die übrige Dokumentation gibt es nur auf Englisch.
+Übersetzungen dieser Seite liegen daneben als `README.<locale>.md`. Jedes Dokument im [Index](docs/README.de.md) hat dieselben neun Übersetzungen.
 
 ## Lizenz
 

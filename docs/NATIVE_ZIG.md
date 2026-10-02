@@ -1,5 +1,7 @@
 # Native Zig boundary
 
+**English** · [简体中文](NATIVE_ZIG.zh-CN.md) · [Français](NATIVE_ZIG.fr.md) · [Русский](NATIVE_ZIG.ru.md) · [日本語](NATIVE_ZIG.ja.md) · [한국어](NATIVE_ZIG.ko.md) · [Deutsch](NATIVE_ZIG.de.md) · [Español](NATIVE_ZIG.es.md) · [Italiano](NATIVE_ZIG.it.md) · [Português](NATIVE_ZIG.pt-BR.md)
+
 The owner resumed the native language migration on 2026-09-10. The native
 prototypes under `legacy/native` have been migrated to Zig, including their
 tests and hosts. They remain a separate research runtime: `Power.Core` and

@@ -63,7 +63,7 @@ dotnet run --file tools/Build.cs -p:UseSharedCompilation=false -- verify
 > [!IMPORTANT]
 > La auditoría de fuentes rechaza archivos de implementación y cabeceras C/C++, además de código fuente, bytecode y paquetes Lua. Mantén el repositorio libre de ellos.
 
-La verificación en serie pasa en Windows; ejecuciones anteriores también dejaron evidencia en Linux y macOS. El alcance de cada ejecución está en [docs/VALIDATION.md](docs/VALIDATION.md). La validación de Unity Editor, Play Mode, renderizado e IL2CPP sigue pendiente — ver [Verificación de Unity](#verificación-de-unity).
+La verificación en serie pasa en Windows; ejecuciones anteriores también dejaron evidencia en Linux y macOS. El alcance de cada ejecución está en [docs/VALIDATION.es.md](docs/VALIDATION.es.md). La validación de Unity Editor, Play Mode, renderizado e IL2CPP sigue pendiente — ver [Verificación de Unity](#verificación-de-unity).
 
 Ejecutar un experimento directamente:
 
@@ -84,7 +84,7 @@ Los documentos de modelo especifican unidades, ticks fijos de nanosegundos, even
 
 La escena construye rotores, nodos térmicos, conexiones y controles de entrada a partir del modelo importado. Admite pausa, reinicio y experimentos guardados cuyos eventos se aplican en ticks de simulación exactos. El experimento electrotérmico por defecto ejecuta una secuencia de diez segundos de frenado y recuperación; `ThermalNetwork.powerasset` es un experimento de intercambio térmico sin entradas externas. Usa **Open in Studio** en el Inspector de un asset de modelo para seleccionarlo.
 
-`SealedCylinder.powerasset` añade un experimento de compresión/expansión con un pistón móvil esquemático; sus canales de estado de gas, par de cigüeñal y energía usan la misma semántica de modelo que la CLI y el MCP. Consulta la [documentación del cilindro](docs/SEALED_CYLINDER.md).
+`SealedCylinder.powerasset` añade un experimento de compresión/expansión con un pistón móvil esquemático; sus canales de estado de gas, par de cigüeñal y energía usan la misma semántica de modelo que la CLI y el MCP. Consulta la [documentación del cilindro](docs/SEALED_CYLINDER.es.md).
 
 Exportar otro modelo tras compilar:
 
@@ -92,7 +92,7 @@ Exportar otro modelo tras compilar:
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll export assets/labs/electrothermal.power.json --name "My laboratory" --output Unity/Assets/Models/MyLaboratory.powerasset
 ```
 
-El importador comprueba la integridad, recompila el modelo y verifica su huella — consulta el [formato de asset](docs/ASSET_FORMAT.md). Arrastra para orbitar y desplázate para hacer zoom. Cada `FixedUpdate` avanza como máximo 2 000 ticks completos: 20 ms para el modelo por defecto, 14 ms para el modelo térmico de 7 ms. La física no lee el `deltaTime` del render, así que los modelos con ticks muy finos no garantizan mantener el tiempo real.
+El importador comprueba la integridad, recompila el modelo y verifica su huella — consulta el [formato de asset](docs/ASSET_FORMAT.es.md). Arrastra para orbitar y desplázate para hacer zoom. Cada `FixedUpdate` avanza como máximo 2 000 ticks completos: 20 ms para el modelo por defecto, 14 ms para el modelo térmico de 7 ms. La física no lee el `deltaTime` del render, así que los modelos con ticks muy finos no garantizan mantener el tiempo real.
 
 ## Verificación de Unity
 
@@ -132,17 +132,17 @@ El servicio expone doce herramientas con esquemas de entrada y salida:
 
 La salida del protocolo usa stdout; los registros usan stderr. Los agentes operan el núcleo sin interfaz, sin conducir la UI de Unity ni llamar a un proveedor de modelos dentro del bucle físico.
 
-La [API de agente](docs/AGENT_API.md) documenta la configuración del cliente y las secuencias de operación. El núcleo ofrece `TryCompile`, canales descubribles, `Fork`, cancelación y reversión atómica; el espacio de trabajo MCP añade comprobaciones de revisión e informes compactos.
+La [API de agente](docs/AGENT_API.es.md) documenta la configuración del cliente y las secuencias de operación. El núcleo ofrece `TryCompile`, canales descubribles, `Fork`, cancelación y reversión atómica; el espacio de trabajo MCP añade comprobaciones de revisión e informes compactos.
 
 ## Modelos y laboratorios
 
-Los modelos C# ejecutables cubren hoy inercia rotacional, ejes elásticos con relaciones positivas o negativas, motores CC RL, fuentes de par, capacidades térmicas, redes de conducción de calor, cilindros adiabáticos cerrados y cámaras de gas abiertas con acoplamiento presión-trabajo por biela-manivela, perfiles de válvula a 360/720 grados temporizados por cigüeñal y combustión premmezclada prescrita con transporte de combustible/aire/productos. La [física de intercambio de gas](docs/GAS_EXCHANGE.md) validada — gas ideal, volumen finito rastreado por masa y energía interna independientes, y una tobera compresible con flujo bloqueado y subcrítico — alimenta redes de gas de volumen fijo y variable. Embragues con capacidades estática/deslizante, restricciones ideales de engranajes y planetarios, convertidores de par mapeados y una red hidráulica con válvulas explícitas, flexibilidad y bomba accionada por cigüeñal se unen a la misma resolución acoplada. Fugas de presión explícitas y arrastre viscoso modelan las pérdidas de bomba; un motor CC puede alimentar la bomba a través del mismo sistema eléctrico y térmico. Un regulador de presión muestreado ajusta el voltaje del motor o el ciclo de trabajo desde la presión hidráulica medida. Carga finita, resistencia y polarización de batería y cargas de accesorios conmutadas alimentan el mismo balance de energía.
+Los modelos C# ejecutables cubren hoy inercia rotacional, ejes elásticos con relaciones positivas o negativas, motores CC RL, fuentes de par, capacidades térmicas, redes de conducción de calor, cilindros adiabáticos cerrados y cámaras de gas abiertas con acoplamiento presión-trabajo por biela-manivela, perfiles de válvula a 360/720 grados temporizados por cigüeñal y combustión premmezclada prescrita con transporte de combustible/aire/productos. La [física de intercambio de gas](docs/GAS_EXCHANGE.es.md) validada — gas ideal, volumen finito rastreado por masa y energía interna independientes, y una tobera compresible con flujo bloqueado y subcrítico — alimenta redes de gas de volumen fijo y variable. Embragues con capacidades estática/deslizante, restricciones ideales de engranajes y planetarios, convertidores de par mapeados y una red hidráulica con válvulas explícitas, flexibilidad y bomba accionada por cigüeñal se unen a la misma resolución acoplada. Fugas de presión explícitas y arrastre viscoso modelan las pérdidas de bomba; un motor CC puede alimentar la bomba a través del mismo sistema eléctrico y térmico. Un regulador de presión muestreado ajusta el voltaje del motor o el ciclo de trabajo desde la presión hidráulica medida. Carga finita, resistencia y polarización de batería y cargas de accesorios conmutadas alimentan el mismo balance de energía.
 
-Raíles de combustible líquido finitos y flexibles suministran ahora combustible dosificado por ciclo a películas. Una pared finita paga el calor de evaporación, y solo el vapor queda disponible para la combustión prescrita. Un solenoide dependiente de la posición y un controlador de dosis muestreado pueden mover una aguja real, incluidos el retardo de cierre y el rebote en el asiento. Una repetición acotada de la planta puede planificar la retirada de voltaje anticipada para seguir la dosis. Consulta el [accionamiento de aguja](docs/NEEDLE_ACTUATION.md), la [inyección líquida](docs/LIQUID_FUEL_INJECTION.md) y el [contrato de película](docs/FUEL_FILM.md).
+Raíles de combustible líquido finitos y flexibles suministran ahora combustible dosificado por ciclo a películas. Una pared finita paga el calor de evaporación, y solo el vapor queda disponible para la combustión prescrita. Un solenoide dependiente de la posición y un controlador de dosis muestreado pueden mover una aguja real, incluidos el retardo de cierre y el rebote en el asiento. Una repetición acotada de la planta puede planificar la retirada de voltaje anticipada para seguir la dosis. Consulta el [accionamiento de aguja](docs/NEEDLE_ACTUATION.es.md), la [inyección líquida](docs/LIQUID_FUEL_INJECTION.es.md) y el [contrato de película](docs/FUEL_FILM.es.md).
 
-Un grafo de investigación de doble embrague de siete marchas añade ejes de entrada impares/pares, marcha atrás, tres ramas de salida y calor explícito de sincronización y cambio. Usa los mismos primitivos de engranaje/embrague; una máquina de estados muestreada puede poseer selectores y la entrega escalonada de tracción, confirmando el bloqueo real y exponiendo fallos. Consulta la [transmisión](docs/DUAL_CLUTCH_TRANSMISSION.md) y los contratos de [control](docs/DCT_CONTROL.md).
+Un grafo de investigación de doble embrague de siete marchas añade ejes de entrada impares/pares, marcha atrás, tres ramas de salida y calor explícito de sincronización y cambio. Usa los mismos primitivos de engranaje/embrague; una máquina de estados muestreada puede poseer selectores y la entrega escalonada de tracción, confirmando el bloqueo real y exponiendo fallos. Consulta la [transmisión](docs/DUAL_CLUTCH_TRANSMISSION.es.md) y los contratos de [control](docs/DCT_CONTROL.es.md).
 
-Un grafo de investigación Ravigneaux de cuatro rangos añade caminos planetarios compuestos y un experimento de convertidor/bloqueo. Una opción resuelta incluye giro interno de los satélites e inercia orbital. La actuación por pistón hidráulico alimenta los cinco elementos de rango y el bloqueo del convertidor. Consulta el [contrato físico](docs/RAVIGNEAUX_TRANSMISSION.md).
+Un grafo de investigación Ravigneaux de cuatro rangos añade caminos planetarios compuestos y un experimento de convertidor/bloqueo. Una opción resuelta incluye giro interno de los satélites e inercia orbital. La actuación por pistón hidráulico alimenta los cinco elementos de rango y el bloqueo del convertidor. Consulta el [contrato físico](docs/RAVIGNEAUX_TRANSMISSION.es.md).
 
 > [!NOTE]
 > Todos los parámetros de ejemplo son `unverified`: valores de investigación, no mediciones calibradas.
@@ -197,7 +197,7 @@ Pide `get_example_model` con un `name`, o ejecuta uno directamente:
 dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.json --output artifacts/reports/<name>.json
 ```
 
-La compilación exporta un `.powerasset` correspondiente para cada laboratorio. La evidencia de repetición — límites de informe emparejados, totales de trabajo y calor, residuos de energía — está registrada en [docs/VALIDATION.md](docs/VALIDATION.md) y en los documentos de contrato por función del [índice de documentación](#documentación).
+La compilación exporta un `.powerasset` correspondiente para cada laboratorio. La evidencia de repetición — límites de informe emparejados, totales de trabajo y calor, residuos de energía — está registrada en [docs/VALIDATION.es.md](docs/VALIDATION.es.md) y en los documentos de contrato por función del [índice de documentación](#documentación).
 
 ## Alcance y límites
 
@@ -208,7 +208,7 @@ Los grupos motopropulsores completos son el objetivo, no el estado actual. Pendi
 - Mapas medidos de pérdidas y control de bomba, química de batería y BMS medidos, y dinámica medida de válvulas/acumuladores.
 - Grupos motopropulsores calibrados.
 
-Los prototipos nativos y pruebas anteriores están portados a Zig en [legacy/native](legacy/native/README.md) como biblioteca de investigación separada; su funcionalidad no se ha migrado toda a C#. Las fuentes C originales fueron sustituidas por puertos Zig, con hashes originales y procedencia Git en [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). La [frontera Zig nativa](docs/NATIVE_ZIG.md) conserva el ABI binario versionado sin añadir una dependencia nativa a la aplicación C#/Unity.
+Los prototipos nativos y pruebas anteriores están portados a Zig en [legacy/native](legacy/native/README.md) como biblioteca de investigación separada; su funcionalidad no se ha migrado toda a C#. Las fuentes C originales fueron sustituidas por puertos Zig, con hashes originales y procedencia Git en [legacy/native/migration-manifest.json](legacy/native/migration-manifest.json). La [frontera Zig nativa](docs/NATIVE_ZIG.es.md) conserva el ABI binario versionado sin añadir una dependencia nativa a la aplicación C#/Unity.
 
 La investigación OEM para EA211 DJS + DQ200 y PSA EC5 + AT8 permanece en [assets/samples](assets/samples), con su evidencia y límites de calibración intactos. Las mediciones OEM que faltan siguen faltando.
 
@@ -216,14 +216,14 @@ La investigación OEM para EA211 DJS + DQ200 y PSA EC5 + AT8 permanece en [asset
 
 | Área | Documentos |
 |---|---|
-| Proyecto | [Arquitectura](docs/ARCHITECTURE.md) · [Hoja de ruta](docs/ROADMAP.md) · [Estado de desarrollo](docs/DEVELOPMENT_STATUS.md) · [Registro de validación](docs/VALIDATION.md) · [Notas de reanudación del motor](docs/NEXT_ENGINE_STEP.md) |
-| Interfaces | [API de agente](docs/AGENT_API.md) · [Formato de asset](docs/ASSET_FORMAT.md) · [Frontera Zig nativa](docs/NATIVE_ZIG.md) |
-| Motor y gas | [Cilindro cerrado](docs/SEALED_CYLINDER.md) · [Red de gas](docs/GAS_NETWORK.md) · [Intercambio de gas](docs/GAS_EXCHANGE.md) · [Cilindro móvil](docs/MOVING_CYLINDER.md) · [Distribución](docs/VALVE_TIMING.md) · [Combustión premmezclada](docs/PREMIXED_COMBUSTION.md) |
-| Combustible e inyección | [Dosificación de combustible](docs/FUEL_METERING.md) · [Película de combustible](docs/FUEL_FILM.md) · [Inyección líquida](docs/LIQUID_FUEL_INJECTION.md) · [Accionamiento de aguja](docs/NEEDLE_ACTUATION.md) · [Predicción de cierre](docs/CLOSURE_PREDICTION.md) |
-| Transmisión | [Red de embragues](docs/CLUTCH_NETWORK.md) · [Física de embrague](docs/CLUTCH_PHYSICS.md) · [Red de engranajes](docs/GEAR_NETWORK.md) · [Engranajes ideales](docs/IDEAL_GEARS.md) · [Convertidor](docs/CONVERTER_NETWORK.md) · [Transmisión de doble embrague](docs/DUAL_CLUTCH_TRANSMISSION.md) · [Control DCT](docs/DCT_CONTROL.md) · [Transmisión Ravigneaux](docs/RAVIGNEAUX_TRANSMISSION.md) · [Planetarios resueltos](docs/RESOLVED_PLANETS.md) |
-| Hidráulica | [Red hidráulica](docs/HYDRAULIC_NETWORK.md) · [Bomba](docs/HYDRAULIC_PUMP.md) · [Pistón](docs/HYDRAULIC_PISTON.md) · [Corredera](docs/HYDRAULIC_SPOOL.md) · [Acumulador de gas](docs/GAS_PISTON.md) · [Actuación AT](docs/AT_HYDRAULIC_ACTUATION.md) |
+| Proyecto | [Arquitectura](docs/ARCHITECTURE.es.md) · [Hoja de ruta](docs/ROADMAP.es.md) · [Estado de desarrollo](docs/DEVELOPMENT_STATUS.es.md) · [Registro de validación](docs/VALIDATION.es.md) · [Notas de reanudación del motor](docs/NEXT_ENGINE_STEP.es.md) |
+| Interfaces | [API de agente](docs/AGENT_API.es.md) · [Formato de asset](docs/ASSET_FORMAT.es.md) · [Frontera Zig nativa](docs/NATIVE_ZIG.es.md) |
+| Motor y gas | [Cilindro cerrado](docs/SEALED_CYLINDER.es.md) · [Red de gas](docs/GAS_NETWORK.es.md) · [Intercambio de gas](docs/GAS_EXCHANGE.es.md) · [Cilindro móvil](docs/MOVING_CYLINDER.es.md) · [Distribución](docs/VALVE_TIMING.es.md) · [Combustión premmezclada](docs/PREMIXED_COMBUSTION.es.md) |
+| Combustible e inyección | [Dosificación de combustible](docs/FUEL_METERING.es.md) · [Película de combustible](docs/FUEL_FILM.es.md) · [Inyección líquida](docs/LIQUID_FUEL_INJECTION.es.md) · [Accionamiento de aguja](docs/NEEDLE_ACTUATION.es.md) · [Predicción de cierre](docs/CLOSURE_PREDICTION.es.md) |
+| Transmisión | [Red de embragues](docs/CLUTCH_NETWORK.es.md) · [Física de embrague](docs/CLUTCH_PHYSICS.es.md) · [Red de engranajes](docs/GEAR_NETWORK.es.md) · [Engranajes ideales](docs/IDEAL_GEARS.es.md) · [Convertidor](docs/CONVERTER_NETWORK.es.md) · [Transmisión de doble embrague](docs/DUAL_CLUTCH_TRANSMISSION.es.md) · [Control DCT](docs/DCT_CONTROL.es.md) · [Transmisión Ravigneaux](docs/RAVIGNEAUX_TRANSMISSION.es.md) · [Planetarios resueltos](docs/RESOLVED_PLANETS.es.md) |
+| Hidráulica | [Red hidráulica](docs/HYDRAULIC_NETWORK.es.md) · [Bomba](docs/HYDRAULIC_PUMP.es.md) · [Pistón](docs/HYDRAULIC_PISTON.es.md) · [Corredera](docs/HYDRAULIC_SPOOL.es.md) · [Acumulador de gas](docs/GAS_PISTON.es.md) · [Actuación AT](docs/AT_HYDRAULIC_ACTUATION.es.md) |
 
-Las traducciones de esta página están al lado como `README.<locale>.md`. El resto de la documentación solo existe en inglés.
+Las traducciones de esta página están al lado como `README.<locale>.md`. Cada documento del [índice](docs/README.es.md) tiene las mismas nueve traducciones.
 
 ## Licencia
 

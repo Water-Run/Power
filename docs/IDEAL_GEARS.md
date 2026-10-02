@@ -1,5 +1,7 @@
 # Ideal gear and planetary references
 
+**English** · [简体中文](IDEAL_GEARS.zh-CN.md) · [Français](IDEAL_GEARS.fr.md) · [Русский](IDEAL_GEARS.ru.md) · [日本語](IDEAL_GEARS.ja.md) · [한국어](IDEAL_GEARS.ko.md) · [Deutsch](IDEAL_GEARS.de.md) · [Español](IDEAL_GEARS.es.md) · [Italiano](IDEAL_GEARS.it.md) · [Português](IDEAL_GEARS.pt-BR.md)
+
 `Power.Core` provides two immutable, allocation-free constant-load references:
 `IdealGearPair` and `SimplePlanetaryGear`. They return member speeds, angle advances,
 reaction torques, external work, kinetic-energy change and an energy residual. They

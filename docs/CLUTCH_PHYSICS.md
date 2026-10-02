@@ -1,5 +1,7 @@
 # Managed dry-clutch physics
 
+**English** · [简体中文](CLUTCH_PHYSICS.zh-CN.md) · [Français](CLUTCH_PHYSICS.fr.md) · [Русский](CLUTCH_PHYSICS.ru.md) · [日本語](CLUTCH_PHYSICS.ja.md) · [한국어](CLUTCH_PHYSICS.ko.md) · [Deutsch](CLUTCH_PHYSICS.de.md) · [Español](CLUTCH_PHYSICS.es.md) · [Italiano](CLUTCH_PHYSICS.it.md) · [Português](CLUTCH_PHYSICS.pt-BR.md)
+
 `Power.Core` provides an immutable `DryClutch` friction law and a `ClutchPair` reference
 integrator for two inertias under constant external torques and engagement. Both compile
 for `net10.0` and `netstandard2.1` without third-party dependencies.

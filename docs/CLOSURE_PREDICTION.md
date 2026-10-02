@@ -1,5 +1,7 @@
 # Bounded needle closure prediction and tick-grid cutoff
 
+**English** · [简体中文](CLOSURE_PREDICTION.zh-CN.md) · [Français](CLOSURE_PREDICTION.fr.md) · [Русский](CLOSURE_PREDICTION.ru.md) · [日本語](CLOSURE_PREDICTION.ja.md) · [한국어](CLOSURE_PREDICTION.ko.md) · [Deutsch](CLOSURE_PREDICTION.de.md) · [Español](CLOSURE_PREDICTION.es.md) · [Italiano](CLOSURE_PREDICTION.it.md) · [Português](CLOSURE_PREDICTION.pt-BR.md)
+
 The [physical needle driver](NEEDLE_ACTUATION.md) can compensate for fuel delivered
 after its voltage command ends. Optional `closure_prediction_ns` enables a separate
 preallocated full-plant replay. Real needle lift, current decay, pressure work,

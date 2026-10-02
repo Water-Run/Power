@@ -1,5 +1,7 @@
 # Finite gaseous fuel rail and cycle-dose metering
 
+**English** · [简体中文](FUEL_METERING.zh-CN.md) · [Français](FUEL_METERING.fr.md) · [Русский](FUEL_METERING.ru.md) · [日本語](FUEL_METERING.ja.md) · [한국어](FUEL_METERING.ko.md) · [Deutsch](FUEL_METERING.de.md) · [Español](FUEL_METERING.es.md) · [Italiano](FUEL_METERING.it.md) · [Português](FUEL_METERING.pt-BR.md)
+
 `gas_fuel_injector` transfers fuel from a finite tracked gas rail into a compatible
 gas chamber. A forward-crank window latches one requested fuel mass per cycle;
 pressure, temperature, nozzle area and available rail inventory determine actual

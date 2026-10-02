@@ -1,5 +1,7 @@
 # Ravigneaux research transmission
 
+**English** · [简体中文](RAVIGNEAUX_TRANSMISSION.zh-CN.md) · [Français](RAVIGNEAUX_TRANSMISSION.fr.md) · [Русский](RAVIGNEAUX_TRANSMISSION.ru.md) · [日本語](RAVIGNEAUX_TRANSMISSION.ja.md) · [한국어](RAVIGNEAUX_TRANSMISSION.ko.md) · [Deutsch](RAVIGNEAUX_TRANSMISSION.de.md) · [Español](RAVIGNEAUX_TRANSMISSION.es.md) · [Italiano](RAVIGNEAUX_TRANSMISSION.it.md) · [Português](RAVIGNEAUX_TRANSMISSION.pt-BR.md)
+
 Power! assembles four forward ranges, neutral and reverse from ordinary gear,
 rotor and clutch definitions. A large sun, small sun, ring and carrier form two
 permanent mesh constraints. Three input clutches and two brakes select a path;
@@ -14,6 +16,22 @@ provides a separate reference for the range reductions below. Power!'s equations
 assembly and checks are implemented independently; no vendor code, model files
 or packages are included. This generic research arrangement doesn't establish
 the PSA AT8/AL4 topology or calibrated properties.
+
+```mermaid
+flowchart LR
+    IN[Input] --> CL[Three input clutches]
+    CL --> SS[Small sun]
+    CL --> LS[Large sun]
+    CL --> CA[Carrier]
+    SS --- MESH[Two permanent meshes]
+    LS --- MESH
+    CA --- MESH
+    MESH --- RG[Ring]
+    CA --- CB[Carrier brake]
+    LS --- LB[Large-sun brake]
+    RG --> FD[Final drive]
+    FD --> VH[Vehicle rotor]
+```
 
 ## Physical contract
 

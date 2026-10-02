@@ -1,7 +1,6 @@
-# 验证记录
+# Validation record
 
-
-
+**English** · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
 ## 2026-10-02: shared AT hydraulic supply and dynamic piston actuation
 
@@ -1938,22 +1937,23 @@ Mono/IL2CPP, Player packaging and this increment's Windows/macOS execution remai
 unverified. Full engine-cycle physics, transmissions, controls and vehicle calibration
 remain open; sample parameters stay `unverified`.
 
-## 2026-09-19: Python 工具链退役，原生验证移植为 C#
+## 2026-09-19: Python toolchain retired, native verification moved to C#
 
-仓库不再包含 Python。`tools/InstallZig.py`、`tools/VerifyNative.py`、
-`legacy/native/tools/model_lab.py` 与其测试已移植为 C#，全部并入
-`tools/Build.cs` 单文件构建工具（.NET 10 file-based app 限单源文件）。
-ctypes 宿主改为 P/Invoke，外部 ABI 消费者属性不变；Zig 安装器在 Windows 用
-内置 ZIP 解压，`tar.xz` 平台委托系统 `tar`。CI 与文档同步更新。
+The repository no longer contains Python. `tools/Install Zig.py`, `tools/VerifyNative.py`,
+`legacy/native/tools/model_lab.py` and their tests were ported to C# and folded into
+the single-file `tools/Build.cs` build tool (.NET 10 file-based apps allow one source file).
+The ctypes host became P/Invoke. The external ABI consumer attributes are unchanged. The Zig
+installer uses the built-in ZIP extractor on Windows and delegates `tar.xz` platforms to the
+system `tar`. CI and the docs were updated in the same change.
 
-Windows x64 本机串行验证（`install-zig` + `native-verify`）：
+Local serial verification on Windows x64 (`install-zig` + `native-verify`):
 
-- 源审计：0 个 C/C++ 文件、0 个 Lua 文件、35 个 Zig 源文件、38 项迁移清单条目。
-- 完整 `verify`（Windows x64 本机串行）：53/53 托管检查、41/41 .NET Standard 程序集检查、
-  6/6 MCP 集成组、16/16 原生 Zig 测试；`power_host` 与 `power_model_host` 运行正常。
-- 6/6 移植后 C# ABI 测试通过（含 70 次编译失败槽位清理、15 个文档突变拒绝、
-  失败 KPI 退出码 2）。
-- 基线比对：**176/176** 个原始 C 基线值完全一致（最大绝对误差 0.0）。
+- Source audit: 0 C/C++ files, 0 Lua files, 35 Zig sources, 38 migration-manifest entries.
+- Full `verify` (Windows x64, local, serial): 53/53 managed checks, 41/41 .NET Standard assembly checks,
+  6/6 MCP integration groups, 16/16 native Zig tests. `power_host` and `power_model_host` run.
+- 6/6 ported C# ABI tests pass, including cleanup of 70 failed compile slots, rejection of 15 document mutations,
+  and failing-KPI exit code 2.
+- Baseline comparison: **176/176** original C baseline values match exactly (maximum absolute error 0.0).
 
 ## 2026-09-14: compiled gas-network Core checkpoint
 
@@ -2119,53 +2119,53 @@ The owner requested wrap-up and a development pause after the cylinder increment
 ## Historical baseline: 2026-09-07
 
 
-环境：2026-09-07，Linux x64，.NET SDK 10.0.400，运行时 .NET 10.0.11。实际执行结果以 `tools/Build.cs verify` 输出和生成报告为准。
+Environment: 2026-09-07, Linux x64, .NET SDK 10.0.400, runtime .NET 10.0.11. The executed result is the `tools/Build.cs verify` output and the generated reports.
 
-当前托管基线：30/30 核心、资产与 Agent 检查，19/19 标准库程序集检查，5/5 MCP 进程联调组通过；Release 构建为 0 警告、0 错误。实际 MCP 进程完成 12 个工具发现和输入/输出 Schema 检查，成功与错误响应均检查必填输出字段和文本兼容结果。原始执行日志保存于 `artifacts/reports/managed-verification.log`。
+Managed baseline at that date: 30/30 core, asset and agent checks, 19/19 standard-library assembly checks, and 5/5 MCP process integration groups passed. The Release build reported 0 warnings and 0 errors. The live MCP process discovered 12 tools and checked input and output schemas. Success and error responses were checked for required output fields and a compatible text result. The raw log is `artifacts/reports/managed-verification.log`.
 
-## 已取得的证据
+## Evidence recorded then
 
-- 核心和资产层已同时编译为 `net10.0` 和 `netstandard2.1`。
-- 解析解检查覆盖恒定扭矩、RL 响应、热平衡；步长减半检查机械二阶与热一阶收敛。
-- 正负传动比检查广义动量、阻尼发热和守恒；回馈制动检查负电流与源功减少。
-- 输入拒绝、后续 tick 溢出、预取消、缓冲区容量检查都验证状态/调用者数据不被部分修改。
-- 模型描述所有权、并行独立实例、完整状态分支和逐 tick/批量推进一致性有执行检查。
-- 使用 .NET 线程分配计数器测得核心热路径的输入、步进和快照合计 0 托管分配；这不包含编译、报告或 Unity UI。
-- 资产编码往返保留来源、模型与事件；损坏摘要、伪造计数、格式版本、模型指纹和额外字节均被拒绝。
-- 调度输入覆盖零时刻、批次终点和呈现批次内部的事件，后续数值失败整批回滚。资产回放在每个 tick 均有输入变更时测得 0 托管分配；取消保留事件游标。
-- JSON 报告与导入资产在所有报告边界比较状态哈希和输出值，包括不落在 20 ms 呈现边界的事件。
-- 同一组物理检查直接加载实际复制给 Unity 的 .NET Standard 2.1 DLL，并核实其目标框架。执行宿主仍为 .NET 10，不能据此声称 Mono/IL2CPP 已通过。
-- Agent 检查覆盖结构化字段诊断、过滤快照、会话限制、并发版本冲突、取消、父子分支隔离、生命周期与紧凑报告。
-- 官方 MCP 客户端启动实际服务子进程，完成 12 工具发现、输入/输出 Schema、错误恢复、会话操作、完整实验和资产导出。Base64 解码后校验文件摘要，并比较导入回放与 MCP 实验终态。
+- Core and Assets were compiled for both `net10.0` and `netstandard2.1`.
+- Analytic checks covered constant torque, the RL response and thermal equilibrium. Halving the step checked second-order mechanical convergence and first-order thermal convergence.
+- Positive and negative ratios were checked for generalized momentum, damping heat and conservation. Regenerative braking was checked for negative current and a decrease in source work.
+- Input rejection, a later-tick overflow, pre-cancellation and buffer-capacity checks all confirmed that state and caller data are not partially modified.
+- Model-description ownership, parallel independent instances, full-state forks and per-tick versus batch stepping were checked for agreement.
+- A .NET thread allocation counter measured 0 managed allocations for the core hot path of input, step and snapshot combined. That count excludes compilation, reports and the Unity UI.
+- Asset encode and decode kept source, model and events. A damaged digest, forged counts, a bad format version, a bad model fingerprint and extra bytes were all rejected.
+- Scheduled inputs covered time zero, the end of a batch and events inside a presentation batch. A later numerical failure rolled the whole batch back. Asset playback measured 0 managed allocations when every tick carried an input change. Cancellation kept the event cursor.
+- JSON reports and imported assets compared state hashes and output values at every report boundary, including events that do not fall on a 20 ms presentation boundary.
+- The same physics checks loaded the actual .NET Standard 2.1 DLLs copied for Unity and checked their target framework. The host was still .NET 10, so this does not show that Mono or IL2CPP passed.
+- Agent checks covered structured field diagnostics, filtered snapshots, the session limit, concurrent revision conflicts, cancellation, parent and child fork isolation, lifecycle and compact reports.
+- The official MCP client started a real server child process and completed 12-tool discovery, input and output schemas, error recovery, session operations, a full experiment and asset export. The file digest was checked after Base64 decode, and imported playback was compared with the MCP experiment's final state.
 
-默认电热实验推进 10 秒，在 5 秒降至 4 V，6 秒恢复 24 V。两个批大小在 11 个边界逐位一致。典型终值约为：电机 `29.74182442 rad/s`、负载 `9.91394147 rad/s`、电机温度 `302.4760663 K`。能量残差门槛为 `1e-5 J`。回放哈希只在相同二进制、运行时与架构范围内比较；跨运行时数值使用容差。
+The default electrothermal experiment runs for 10 seconds, drops to 4 V at 5 seconds and returns to 24 V at 6 seconds. Two batch sizes agree bitwise at 11 boundaries. Typical final values are about motor `29.74182442 rad/s`, load `9.91394147 rad/s` and motor temperature `302.4760663 K`. The energy-residual threshold is `1e-5 J`. Replay hashes are compared only for the same binary, runtime and architecture. Cross-runtime numbers use a tolerance.
 
-热交换实验使用节点 42/77、无外部输入和 7 ms 步长，推进 7 秒；两个批大小在 11 个边界一致。终温与后向 Euler 离散解相差小于 `1e-9 K`，与连续解析解相差小于 `0.004 K`，总能量误差小于 `1e-7 J`。两份报告分别为 `artifacts/reports/electrothermal.json` 和 `thermal-network.json`。
+The heat-exchange experiment uses nodes 42/77, no external input and a 7 ms step, and runs for 7 seconds. Two batch sizes agree at 11 boundaries. The final temperature differs from the backward-Euler discrete solution by less than `1e-9 K`, from the continuous analytic solution by less than `0.004 K`, and the total energy error is less than `1e-7 J`. The two reports are `artifacts/reports/electrothermal.json` and `thermal-network.json`.
 
-## 重现
+## Reproduction
 
 ```sh
 dotnet run --file tools/Build.cs -- verify
 ```
 
-这里的检查是会在 Release 执行断言的控制台验收程序，并非依赖 `Debug.Assert` 的空测试。它们不需要 Unity、Python 或原 C 库；原生验证宿主与 Zig 安装器已于 2026-09-19 移植进同一 .NET 构建工具（C# P/Invoke）。MCP 项目使用官方 NuGet 包，`packages.lock.json` 固定解析结果。
+These checks are console acceptance programs that execute assertions in Release. They do not depend on empty `Debug.Assert` tests. They do not need Unity, Python or the original C library. The native verification host and the Zig installer were moved into the same .NET build tool on 2026-09-19 (C# P/Invoke). The MCP project uses the official NuGet package, and `packages.lock.json` pins the resolution.
 
-GitHub Actions 已在 Windows、macOS、Linux 上完成同一组托管验收：各平台均为 30/30、19/19、5/5。证据对应代码提交 [`aea6136`](https://github.com/Water-Run/Power/commit/aea6136bbdcbeaea91d63836d947637e7eac730e) 和 [运行 34087686661](https://github.com/Water-Run/Power/actions/runs/34087686661)。本地保存了 `artifacts/reports/github-actions-34087686661.log` 与 `.json`，包含实际作业输出和终态；另外从不含缓存及生成程序集的干净源码副本完成了一轮本地验收，日志为 `github-clean-checkout.log`。
+GitHub Actions completed the same managed acceptance on Windows, macOS and Linux: 30/30, 19/19 and 5/5 on each platform. The evidence is code commit [`aea6136`](https://github.com/Water-Run/Power/commit/aea6136bbdcbeaea91d63836d947637e7eac730e) and [run 34087686661](https://github.com/Water-Run/Power/actions/runs/34087686661). `artifacts/reports/github-actions-34087686661.log` and `.json` are stored locally and contain the job output and final status. A further local acceptance was run from a clean source copy with no cache and no generated assemblies. Its log is `github-clean-checkout.log`.
 
 The repository and CI evidence links are public. Development resumed on 2026-09-08; the earlier records below identify their own verified baselines.
 
 The GPL publication update added license notices without changing executable source content; a comparison against the preceding commit confirmed all 90 source/build edits were notice-only. A fresh serial verification passed 30/30 managed checks, 19/19 Unity-facing assembly checks, and 5/5 MCP integration groups, with zero build warnings or errors. Its log is `artifacts/reports/license-verification.log`. This does not add Unity Editor or Player validation evidence.
 
-## 尚未取得的证据
+## Evidence not yet obtained
 
-当前环境没有安装 Unity Editor。本次没有运行编辑器导入、EditMode/PlayMode 测试、场景画面检查或 IL2CPP 构建。对应项目、场景、测试与自动化入口已提供：
+This environment has no Unity Editor installed. Editor import, Edit Mode and Play Mode tests, scene rendering checks and an IL2CPP build were not run. The project, scenes, tests and automation entry are in place:
 
 ```sh
 dotnet run --file tools/Build.cs -- unity-test
 ```
 
-先设置 `POWER_UNITY_EDITOR`。Unity 日志与 XML 结果输出至 `artifacts/unity`。Play 测试需要能够运行图形编辑器的环境和有效 Unity 许可。已写但未运行的测试涵盖：URP/程序集及两种模型资产导入、回放一致性、连续启停无残留、10 秒参考实验、运行中切换纯热拓扑、动态节点和输入列表、7 ms tick 调度。还需人工检查控件、主题、不同窗口大小、桌面平台显示，并完成三平台 Player 构建。
+Set `POWER_UNITY_EDITOR` first. Unity logs and XML results go to `artifacts/unity`. Play tests need a machine that can run the graphical editor and a valid Unity license. Tests that are written and not yet run cover URP and assembly import for both model assets, playback agreement, repeated start and stop without leftovers, the 10-second reference experiment, switching to a thermal-only topology while running, dynamic node and input lists, and 7 ms tick scheduling. Controls, theme, window sizes and desktop presentation still need a person to look at them, and Player builds for the three desktop platforms are still open.
 
-发布入口为 `Power.Studio.Editor.ProjectSetup.BuildPlayer`，使用所选桌面目标和 IL2CPP。需要相应 Unity 平台构建模块；目前没有已构建或已测试的 Player 包。
+The publish entry is `Power.Studio.Editor.ProjectSetup.BuildPlayer`, using the selected desktop target and IL2CPP. It needs the matching Unity platform build module. There is no built or tested Player package yet.
 
-所有当前参数均为合成实验参数。完整发动机/变速器功能、实车标定、排放/声学、实时预算与长时运行仍需后续实现及验证，不能由这些检查推导完成。
+Every current parameter is a synthetic experiment parameter. A complete engine and transmission, vehicle calibration, emissions, acoustics, a real-time budget and long runs still need their own implementation and evidence. These checks do not establish that work.

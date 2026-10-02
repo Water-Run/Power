@@ -1,5 +1,7 @@
 # Crank-angle valve timing
 
+**English** · [简体中文](VALVE_TIMING.zh-CN.md) · [Français](VALVE_TIMING.fr.md) · [Русский](VALVE_TIMING.ru.md) · [日本語](VALVE_TIMING.ja.md) · [한국어](VALVE_TIMING.ko.md) · [Deutsch](VALVE_TIMING.de.md) · [Español](VALVE_TIMING.es.md) · [Italiano](VALVE_TIMING.it.md) · [Português](VALVE_TIMING.pt-BR.md)
+
 An optional `valve_timing` on a `gas_orifice` multiplies its opening by a periodic
 crank-angle envelope. It supports fixed gas vessels and moving cylinders through the
 same Core, JSON, CLI, MCP and portable-asset definitions. The envelope follows actual

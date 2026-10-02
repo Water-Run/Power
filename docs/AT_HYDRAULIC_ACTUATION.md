@@ -1,5 +1,7 @@
 # Hydraulic transmission actuation
 
+**English** · [简体中文](AT_HYDRAULIC_ACTUATION.zh-CN.md) · [Français](AT_HYDRAULIC_ACTUATION.fr.md) · [Русский](AT_HYDRAULIC_ACTUATION.ru.md) · [日本語](AT_HYDRAULIC_ACTUATION.ja.md) · [한국어](AT_HYDRAULIC_ACTUATION.ko.md) · [Deutsch](AT_HYDRAULIC_ACTUATION.de.md) · [Español](AT_HYDRAULIC_ACTUATION.es.md) · [Italiano](AT_HYDRAULIC_ACTUATION.it.md) · [Português](AT_HYDRAULIC_ACTUATION.pt-BR.md)
+
 The Ravigneaux research graph can now use actual hydraulic pistons for all five
 range clutches/brakes and, in the fired converter experiment, lockup. A shared
 shaft-driven pump supplies compliant line pressure. Explicit fill/drain valves

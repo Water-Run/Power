@@ -1,5 +1,7 @@
 # Shaft-driven hydraulic supply
 
+**English** · [简体中文](HYDRAULIC_PUMP.zh-CN.md) · [Français](HYDRAULIC_PUMP.fr.md) · [Русский](HYDRAULIC_PUMP.ru.md) · [日本語](HYDRAULIC_PUMP.ja.md) · [한국어](HYDRAULIC_PUMP.ko.md) · [Deutsch](HYDRAULIC_PUMP.de.md) · [Español](HYDRAULIC_PUMP.es.md) · [Italiano](HYDRAULIC_PUMP.it.md) · [Português](HYDRAULIC_PUMP.pt-BR.md)
+
 The managed graph supports an ideal reversible displacement pump and a quasi-steady
 one-way pressure relief. The [fired-pump laboratory](../assets/labs/fired-pump.power.json)
 connects the crank to a compliant supply line, shift valves and pressure-operated

@@ -1,5 +1,7 @@
 # Premixed combustion and fuel-energy accounting
 
+**English** · [简体中文](PREMIXED_COMBUSTION.zh-CN.md) · [Français](PREMIXED_COMBUSTION.fr.md) · [Русский](PREMIXED_COMBUSTION.ru.md) · [日本語](PREMIXED_COMBUSTION.ja.md) · [한국어](PREMIXED_COMBUSTION.ko.md) · [Deutsch](PREMIXED_COMBUSTION.de.md) · [Español](PREMIXED_COMBUSTION.es.md) · [Italiano](PREMIXED_COMBUSTION.it.md) · [Português](PREMIXED_COMBUSTION.pt-BR.md)
+
 `premixed_combustion` couples a prescribed Wiebe burn profile to a crank and a finite
 gas chamber. Fuel, fresh air and inert products are transported through the gas network;
 reaction consumes the available limiting reactant and converts stored chemical energy

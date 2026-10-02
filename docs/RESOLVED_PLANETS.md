@@ -1,5 +1,7 @@
 # Resolved Ravigneaux planet motion
 
+**English** · [简体中文](RESOLVED_PLANETS.zh-CN.md) · [Français](RESOLVED_PLANETS.fr.md) · [Русский](RESOLVED_PLANETS.ru.md) · [日本語](RESOLVED_PLANETS.ja.md) · [한국어](RESOLVED_PLANETS.ko.md) · [Deutsch](RESOLVED_PLANETS.de.md) · [Español](RESOLVED_PLANETS.es.md) · [Italiano](RESOLVED_PLANETS.it.md) · [Português](RESOLVED_PLANETS.pt-BR.md)
+
 The resolved assembly includes absolute spin of both internal planet sets and
 their orbital mass inertia about the carrier. Four physical mesh constraints
 connect six rotors. The five range clutches/brakes and external converter remain

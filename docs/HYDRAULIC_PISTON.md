@@ -1,5 +1,7 @@
 # Hydraulic piston and contact-actuated clutch
 
+**English** · [简体中文](HYDRAULIC_PISTON.zh-CN.md) · [Français](HYDRAULIC_PISTON.fr.md) · [Русский](HYDRAULIC_PISTON.ru.md) · [日本語](HYDRAULIC_PISTON.ja.md) · [한국어](HYDRAULIC_PISTON.ko.md) · [Deutsch](HYDRAULIC_PISTON.de.md) · [Español](HYDRAULIC_PISTON.es.md) · [Italiano](HYDRAULIC_PISTON.it.md) · [Português](HYDRAULIC_PISTON.pt-BR.md)
+
 `hydraulic_piston` connects one translational mass to a front hydraulic chamber and
 either a back chamber or an explicit back-pressure reservoir. `piston_clutch` reads
 the piston's pad force. Positive pressure can move a piston through free clearance

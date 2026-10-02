@@ -1,10 +1,19 @@
 # Hydraulic flow and pressure-operated clutches
 
+**English** · [简体中文](HYDRAULIC_NETWORK.zh-CN.md) · [Français](HYDRAULIC_NETWORK.fr.md) · [Русский](HYDRAULIC_NETWORK.ru.md) · [日本語](HYDRAULIC_NETWORK.ja.md) · [한국어](HYDRAULIC_NETWORK.ko.md) · [Deutsch](HYDRAULIC_NETWORK.de.md) · [Español](HYDRAULIC_NETWORK.es.md) · [Italiano](HYDRAULIC_NETWORK.it.md) · [Português](HYDRAULIC_NETWORK.pt-BR.md)
+
 The managed hydraulic domain supplies pressure from a solved flow network to shift
 clutches and lockup. It supports compliant chambers, linear restrictions, regularized
 turbulent restrictions, explicit pressure reservoirs and pressure-operated friction
 clutches. Hydraulic state and ledgers participate in the same internal clutch intervals,
 complete batch rollback, forks and observable contract as the fired powertrain.
+
+```mermaid
+flowchart LR
+    A[Compliant chamber] --> R[Restriction, opening 0 to 1]
+    B[Second chamber or reservoir] --> R
+    A --> CL[Pressure-operated clutch]
+```
 
 ## Pressure storage and scope
 

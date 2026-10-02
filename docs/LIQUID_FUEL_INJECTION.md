@@ -1,5 +1,7 @@
 # Finite liquid rail, cycle injection and film replenishment
 
+**English** · [简体中文](LIQUID_FUEL_INJECTION.zh-CN.md) · [Français](LIQUID_FUEL_INJECTION.fr.md) · [Русский](LIQUID_FUEL_INJECTION.ru.md) · [日本語](LIQUID_FUEL_INJECTION.ja.md) · [한국어](LIQUID_FUEL_INJECTION.ko.md) · [Deutsch](LIQUID_FUEL_INJECTION.de.md) · [Español](LIQUID_FUEL_INJECTION.es.md) · [Italiano](LIQUID_FUEL_INJECTION.it.md) · [Português](LIQUID_FUEL_INJECTION.pt-BR.md)
+
 `liquid_fuel_injector` delivers liquid from a finite compliant rail into a
 separate [fuel film](FUEL_FILM.md). A forward crank window latches a requested
 mass per cycle. Actual receiver pressure, nozzle geometry, remaining rail
@@ -11,6 +13,15 @@ and energy transfer observable. It is a constant-density/compliance research
 model. Rail pump/refill, measured properties, refined magnetic/electronic actuation,
 spray/entrainment, cavitation, ignition/ECU and calibrated gasoline hardware
 remain required work toward the full powertrain objective.
+
+```mermaid
+flowchart LR
+    RAIL[Finite compliant liquid rail] --> INJ[liquid_fuel_injector]
+    INJ --> FILM[fuel_film]
+    WALL[Finite wall heat] --> FILM
+    FILM --> VAP[Vapor in the gas volume]
+    VAP --> BURN[Prescribed reaction]
+```
 
 ## Rail and nozzle equations
 

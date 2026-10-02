@@ -1,5 +1,7 @@
 # Electromagnetic needle actuation and sampled dose feedback
 
+**English** · [简体中文](NEEDLE_ACTUATION.zh-CN.md) · [Français](NEEDLE_ACTUATION.fr.md) · [Русский](NEEDLE_ACTUATION.ru.md) · [日本語](NEEDLE_ACTUATION.ja.md) · [한국어](NEEDLE_ACTUATION.ko.md) · [Deutsch](NEEDLE_ACTUATION.de.md) · [Español](NEEDLE_ACTUATION.es.md) · [Italiano](NEEDLE_ACTUATION.it.md) · [Português](NEEDLE_ACTUATION.pt-BR.md)
+
 An actuated liquid injector reads the lift of a translational needle rather than
 closing an ideal mass gate at the requested dose. A position-dependent solenoid,
 explicit needle mass, return spring/damping and elastic travel stops supply the

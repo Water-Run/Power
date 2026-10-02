@@ -1,5 +1,7 @@
 # Mechanical spool metering and pressure regulation
 
+**English** · [简体中文](HYDRAULIC_SPOOL.zh-CN.md) · [Français](HYDRAULIC_SPOOL.fr.md) · [Русский](HYDRAULIC_SPOOL.ru.md) · [日本語](HYDRAULIC_SPOOL.ja.md) · [한국어](HYDRAULIC_SPOOL.ko.md) · [Deutsch](HYDRAULIC_SPOOL.de.md) · [Español](HYDRAULIC_SPOOL.es.md) · [Italiano](HYDRAULIC_SPOOL.it.md) · [Português](HYDRAULIC_SPOOL.pt-BR.md)
+
 `hydraulic_spool_valve` meters a hydraulic port from the actual displacement of an
 explicit `hydraulic_piston`. The piston supplies mass, swept fluid volume, pressure
 force and compliant stroke ends; a separate `linear_spring` supplies return force,

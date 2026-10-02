@@ -1,5 +1,7 @@
 # Coupled ideal gears and planetary constraints
 
+**English** · [简体中文](GEAR_NETWORK.zh-CN.md) · [Français](GEAR_NETWORK.fr.md) · [Русский](GEAR_NETWORK.ru.md) · [日本語](GEAR_NETWORK.ja.md) · [한국어](GEAR_NETWORK.ko.md) · [Deutsch](GEAR_NETWORK.de.md) · [Español](GEAR_NETWORK.es.md) · [Italiano](GEAR_NETWORK.it.md) · [Português](GEAR_NETWORK.pt-BR.md)
+
 `ideal_gear` and `planetary_gear` are permanent lossless constraints in the same Core
 solve as shafts, RL motors, cylinders and controlled clutches. JSON, CLI/MCP and portable
 asset v10 carry the same definitions. The independent [constant-load references](IDEAL_GEARS.md)

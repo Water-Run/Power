@@ -1,5 +1,7 @@
 # Coupled clutch simulation
 
+**English** · [简体中文](CLUTCH_NETWORK.zh-CN.md) · [Français](CLUTCH_NETWORK.fr.md) · [Русский](CLUTCH_NETWORK.ru.md) · [日本語](CLUTCH_NETWORK.ja.md) · [한국어](CLUTCH_NETWORK.ko.md) · [Deutsch](CLUTCH_NETWORK.de.md) · [Español](CLUTCH_NETWORK.es.md) · [Italiano](CLUTCH_NETWORK.it.md) · [Português](CLUTCH_NETWORK.pt-BR.md)
+
 The managed `clutch` component connects two rotational nodes or one rotor to ground.
 It participates in the existing electromechanical/cylinder solve and routes generated
 friction heat to a thermal node or the external heat ledger. JSON, CLI, MCP, asset v10
