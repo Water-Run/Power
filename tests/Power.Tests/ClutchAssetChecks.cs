@@ -54,7 +54,7 @@ internal static class ClutchAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset);
-        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), extension = counts + 148 + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
+        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), extension = counts + 152 + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
         void Reject(byte[] bad)
         {
             SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32);
@@ -69,7 +69,7 @@ internal static class ClutchAssetChecks
         BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 48), 0); Reject(missing);
         var duplicate = bytes.Take(extension + 28).Concat(bytes.Skip(extension).Take(28)).Concat(bytes.Skip(extension + 28)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 48), 2); Reject(duplicate);
-        var oldVersion = bytes.Take(counts + 48).Concat(bytes.Skip(counts + 148).Take(extension - counts - 148)).Concat(bytes.Skip(extension + 28)).ToArray();
+        var oldVersion = bytes.Take(counts + 48).Concat(bytes.Skip(counts + 152).Take(extension - counts - 152)).Concat(bytes.Skip(extension + 28)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(oldVersion.AsSpan(8), 6); Reject(oldVersion);
         var wrongCapacity = (byte[])bytes.Clone(); BitConverter.GetBytes(25.0).CopyTo(wrongCapacity, extension + 16); Reject(wrongCapacity);
     }

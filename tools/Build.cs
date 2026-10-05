@@ -90,6 +90,8 @@ try
         (File: "closure-compensated-cylinder", Asset: "ClosureCompensatedCylinder", Name: "Predictive needle closing laboratory"),
         (File: "dual-clutch-transmission", Asset: "DualClutchTransmission", Name: "Seven-speed dual-clutch laboratory"),
         (File: "fired-dual-clutch", Asset: "FiredDualClutch", Name: "Fired dual-clutch powertrain laboratory"),
+        (File: "pump-fed-liquid-cylinder", Asset: "PumpFedLiquidCylinder", Name: "Pump-fed liquid rail engine laboratory"),
+        (File: "pump-fed-needle-cylinder", Asset: "PumpFedNeedleCylinder", Name: "Pump-fed needle engine laboratory"),
         (File: "controlled-hydraulic-ravigneaux", Asset: "ControlledHydraulicRavigneaux", Name: "Feedback controlled hydraulic AT laboratory"),
         (File: "controlled-fired-hydraulic-ravigneaux", Asset: "ControlledFiredHydraulicRavigneaux", Name: "Feedback controlled fired hydraulic AT laboratory"),
         (File: "hydraulic-ravigneaux-transmission", Asset: "HydraulicRavigneauxTransmission", Name: "Hydraulic Ravigneaux actuation laboratory"),
@@ -109,7 +111,7 @@ try
     {
         foreach (string project in new[] { "Power.Tests", "Power.UnityCompatibility", "Power.Mcp.Tests" })
             await Run(dotnet, Path.Combine(root, "tests", project, "bin", "Release", "net10.0", project + ".dll"));
-        foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump", "gas-accumulator-pump", "metered-fired-cylinder", "film-fired-cylinder", "liquid-injected-cylinder", "needle-actuated-cylinder", "closure-compensated-cylinder", "dual-clutch-transmission", "fired-dual-clutch", "controlled-dual-clutch", "controlled-fired-dual-clutch", "ravigneaux-transmission", "fired-ravigneaux-converter", "resolved-ravigneaux-transmission", "fired-resolved-ravigneaux-converter", "hydraulic-ravigneaux-transmission", "fired-hydraulic-ravigneaux", "controlled-hydraulic-ravigneaux", "controlled-fired-hydraulic-ravigneaux" })
+        foreach (string lab in new[] { "electrothermal", "thermal-network", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump", "gas-accumulator-pump", "metered-fired-cylinder", "film-fired-cylinder", "liquid-injected-cylinder", "needle-actuated-cylinder", "closure-compensated-cylinder", "dual-clutch-transmission", "fired-dual-clutch", "controlled-dual-clutch", "controlled-fired-dual-clutch", "ravigneaux-transmission", "fired-ravigneaux-converter", "resolved-ravigneaux-transmission", "fired-resolved-ravigneaux-converter", "hydraulic-ravigneaux-transmission", "fired-hydraulic-ravigneaux", "controlled-hydraulic-ravigneaux", "controlled-fired-hydraulic-ravigneaux", "pump-fed-liquid-cylinder", "pump-fed-needle-cylinder" })
             await Run(dotnet, cli, $"assets/labs/{lab}.power.json", "--output", $"artifacts/reports/{lab}.json");
         Console.WriteLine("Managed verification passed. Unity Editor/Play/IL2CPP require separate Unity validation.");
         return NativeVerify.Run(root);

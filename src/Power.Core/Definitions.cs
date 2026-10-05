@@ -14,7 +14,7 @@ public enum Unit
 }
 
 public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
@@ -171,6 +171,7 @@ public sealed record ComponentDefinition
     public NeedleDriverDefinition? NeedleDriver { get; init; }
     public DualClutchControllerDefinition? DualClutchController { get; init; }
     public HydraulicAtControllerDefinition? HydraulicAtController { get; init; }
+    public LiquidRailFeedDefinition? LiquidRailFeed { get; init; }
     /// <summary>Optional gas-orifice timing. InitialInput and its channel then specify peak opening.</summary>
     public ValveTimingDefinition? ValveTiming { get; init; }
     public WiebeCombustionDefinition? Combustion { get; init; }
@@ -235,6 +236,8 @@ public sealed record ComponentDefinition
     { Id = id, Kind = ComponentKind.HydraulicAtController, NodeA = input, InputChannel = requestChannel, InitialInput = new(requestedRange, Unit.StateCode), HydraulicAtController = controller };
     public static ComponentDefinition DctControl(uint id, uint engine, ulong requestedGearChannel, int requestedGear, DualClutchControllerDefinition controller) => new()
     { Id = id, Kind = ComponentKind.DualClutchController, NodeA = engine, InputChannel = requestedGearChannel, InitialInput = new(requestedGear, Unit.StateCode), DualClutchController = controller };
+    public static ComponentDefinition RailFeed(uint id, uint receiver, LiquidRailFeedDefinition feed) => new()
+    { Id=id,Kind=ComponentKind.LiquidRailFeed,NodeA=receiver,LiquidRailFeed=feed };
     public static ComponentDefinition LiquidFuelMeter(uint id, uint receiver, double area, double coefficient,
         ulong doseChannel, double doseKilograms, LiquidFuelInjectorDefinition injector) => new()
     {

@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version courante 25
+## Version courante 26
+
+L'encodeur écrit `power.asset.v26` et lit v1-v26. Il y a 38 comptes int32 (152 bytes) ; l'en-tête mesure 230 + longueur du nom UTF-8 bytes. Le type 39 est `liquid_rail_feed`, étiquette d'empreinte 30. Un enregistrement de 24 bytes contient index, IDs injecteur/pompe et température source. Types et propriété exclusive sont vérifiés ; un déclassement v25 resigné rejette le type nouveau.
+
+## Version 25 conservée
 
 L'encodeur écrit `power.asset.v25` et lit v1-v25. La table contient 37 valeurs int32 (148 bytes) ; l'en-tête mesure 226 + longueur du nom UTF-8 bytes. Le type 38 est `at_controller`, avec l'étiquette d'empreinte 29. Chaque enregistrement contient 208 bytes fixes plus 12 bytes par route. Le nombre de routes est 5 ou 6 ; le total borné est déclaré séparément. Types, horloges, unités, propriété et topologie sont vérifiés. Un déclassement v24 avec un nouveau digest rejette ce type.
 

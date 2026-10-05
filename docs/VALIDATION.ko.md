@@ -2,6 +2,54 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-05: 펌프 공급 액체 연료 레일
+
+필수 직렬 검증은 로컬 Windows x64/.NET 10.0.12에서 통과합니다. Standard 어셈블리 검사는 .NET 10에서 실행하며 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 378/378 |
+| standard_checks_on_dotnet | 291/291 |
+| actual_mcp_groups | 41/41 |
+| laboratories | 38 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v26 |
+| v25_fixture_sha256 | df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc |
+| verification_log_sha256 | 2a2c3aa19317c8251c970a4b98a169b402d1855838e7fb79831d273593bfdf29 |
+
+| Identifier | pump-fed-liquid-cylinder | pump-fed-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 39 | 48 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 22cbbe4a983098f4 | 782b15c21ad211c2 |
+| final_state_hash | 4004b74f7f1d8c22 | e322d7a4bd72088c |
+| source_sha256 | 1bc97e3f985567f93fd4ace4006307ab571d2e10850e1bd75a1537ed6f0954bb | 3a801026e05e9e6cb67d298145ac20aea9948ab28e2c4552f8dee0d4f1eb4cce |
+| report_sha256 | 9869c20db74d4bb1dd22f5b3a924402001ca29451acee7fcc72b9188f25bf437 | 16ac066d9f9e268b98d874aba37f75efeb6b1fa1034b6b06562899f20f67fbbb |
+| max_sampled_energy_j | 4.160256139584817e-09 | 2.0303104975027964e-08 |
+| max_sampled_mass_kg | 9.215718466126788e-19 | 2.439454888092385e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 2.825701912040346e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.523666688322677e-21 | 3.763671787116276e-21 |
+
+- `artifacts/reports/rail-feed-integrated-2026-10-05.log`
+- `artifacts/reports/rail-feed-evidence-2026-10-05.json`
+- `artifacts/reports/rail-feed-schema-audit-2026-10-05.json`
+
+물리/트랜잭션 여섯 그룹, 자산 두 그룹, 통합 세 그룹과 실제 MCP 시나리오 두 그룹이 공급 경로를 검사합니다. 유입 연료 열/화학 에너지는 가스 경계 에너지와 누적되고 압력 저장은 한 번만 계산합니다. 압력 KPI는 초기 압력 대신 펌프 전용 해석 상한 920541.8 Pa를 사용합니다.
+
+원천은 명시적 외부 경계이며 모델링된 유한 연료 탱크가 아닙니다. 탱크 고갈, 펌프 효율/조압, 라인 손실, 캐비테이션, 압력 의존 물성과 유한 체적 분무는 미완성입니다. 매개변수는 `unverified`이며 OEM 보정이나 실제 Unity Editor/Play/Player/IL2CPP 검증을 입증하지 않습니다.
+
+이전 AT 체크포인트도 기록된 리비전에서 Windows, Linux, macOS CI를 통과합니다. 해당 실행은 이번 연료 공급 변경을 검증하지 않습니다.
+
+`0d5a98583723b39e5a0b7723d06e988ebea1a425` · [CI 37259428892](https://github.com/Water-Run/Power/actions/runs/37259428892)
+
+[PUMP_FED_FUEL.ko.md](PUMP_FED_FUEL.ko.md)
 
 ## 2026-10-05: 유압 AT 피드백과 압력 제어
 

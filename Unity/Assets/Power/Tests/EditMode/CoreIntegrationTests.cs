@@ -64,6 +64,8 @@ namespace Power.Studio.Tests
         [TestCase("FiredDualClutch")]
         [TestCase("ControlledDualClutch")]
         [TestCase("ControlledFiredDualClutch")]
+        [TestCase("PumpFedLiquidCylinder")]
+        [TestCase("PumpFedNeedleCylinder")]
         [TestCase("ControlledHydraulicRavigneaux")]
         [TestCase("ControlledFiredHydraulicRavigneaux")]
         [TestCase("HydraulicRavigneauxTransmission")]

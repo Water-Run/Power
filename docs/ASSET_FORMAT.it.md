@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione corrente 25
+## Versione corrente 26
+
+Il codificatore scrive `power.asset.v26` e legge v1-v26. Ci sono 38 conteggi int32 (152 bytes); l'intestazione occupa 230 + lunghezza del nome UTF-8 bytes. Il tipo 39 è `liquid_rail_feed`, tag di impronta 30. Un record di 24 bytes salva indice, ID iniettore/pompa e temperatura sorgente. Tipi e proprietà esclusiva sono verificati; un downgrade v25 rifirmato rifiuta il nuovo tipo.
+
+## Versione 25 conservata
 
 Il codificatore scrive `power.asset.v25` e legge v1-v25. La tabella contiene 37 valori int32 (148 bytes); l'intestazione occupa 226 + lunghezza del nome UTF-8 bytes. Il tipo 38 è `at_controller`, con tag di impronta 29. Ogni record ha 208 bytes fissi più 12 bytes per percorso. I percorsi sono 5 o 6; il totale limitato è dichiarato separatamente. Si verificano tipi, clock, unità, proprietà e topologia. Un downgrade v24 con digest rifirmato rifiuta il nuovo tipo.
 

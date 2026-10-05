@@ -177,7 +177,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 "torque_converter" => ComponentKind.TorqueConverter, "shaft" => ComponentKind.Shaft, "dc_motor" => ComponentKind.DcMotor,
                 "torque_source" => ComponentKind.TorqueSource, "thermal_link" => ComponentKind.ThermalLink,
                 "sealed_cylinder" => ComponentKind.SealedCylinder,
-                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink, "fuel_film" => ComponentKind.FuelFilm, "liquid_fuel_injector" => ComponentKind.LiquidFuelInjector, "solenoid" => ComponentKind.Solenoid, "travel_stop" => ComponentKind.TravelStop, "needle_driver" => ComponentKind.NeedleDriver, "dct_controller" => ComponentKind.DualClutchController, "at_controller" => ComponentKind.HydraulicAtController,
+                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink, "fuel_film" => ComponentKind.FuelFilm, "liquid_fuel_injector" => ComponentKind.LiquidFuelInjector, "liquid_rail_feed" => ComponentKind.LiquidRailFeed, "solenoid" => ComponentKind.Solenoid, "travel_stop" => ComponentKind.TravelStop, "needle_driver" => ComponentKind.NeedleDriver, "dct_controller" => ComponentKind.DualClutchController, "at_controller" => ComponentKind.HydraulicAtController,
                 "gas_cylinder" => ComponentKind.GasCylinder, "gas_piston" => ComponentKind.GasPiston, "premixed_combustion" => ComponentKind.PremixedCombustion,
                 "clutch" => ComponentKind.Clutch,
                 "ideal_gear" => ComponentKind.IdealGear, "planetary_gear" => ComponentKind.PlanetaryGear, "double_pinion_planetary_gear" => ComponentKind.DoublePinionPlanetaryGear, "carrier_gear" => ComponentKind.CarrierGear,
@@ -192,6 +192,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             else if (kind is ComponentKind.DualClutchController or ComponentKind.HydraulicAtController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if (kind == ComponentKind.Solenoid) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"], "heat_node");
             else if (kind is ComponentKind.TravelStop or ComponentKind.NeedleDriver) Object(c, ["id", "kind", "node_a", "parameters"]);
+            else if (kind == ComponentKind.LiquidRailFeed) Object(c,["id","kind","node_a","parameters"]);
             else if (kind == ComponentKind.LiquidFuelInjector) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if(kind==ComponentKind.FuelFilm)Object(c,["id","kind","node_a","node_b","parameters"]);
             else if (kind == ComponentKind.GasFuelInjector) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"]);
@@ -223,6 +224,11 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 return result;
             }
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
+            if(kind==ComponentKind.LiquidRailFeed)
+            {
+                Object(parameters,["injector_component","pump_component","supply_temperature"]);
+                return result with{LiquidRailFeed=new(){InjectorComponent=Id(parameters,"injector_component"),PumpComponent=Id(parameters,"pump_component"),SupplyTemperature=Quantity(parameters.GetProperty("supply_temperature"))}};
+            }
             if (kind == ComponentKind.HydraulicAtController)
             {
                 Object(parameters,["vehicle_node","ring_node","supply_pressure_node","routes","sample_period_ns","release_timeout_ns","apply_timeout_ns","low_supply_timeout_ns","lockup_dwell_ns",

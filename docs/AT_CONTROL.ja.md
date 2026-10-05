@@ -14,6 +14,6 @@
 
 ## 証拠と制限
 
-例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v25 は経路、ゲイン、時計を保存し、v1-v24 を読みます。
+例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v26 は経路、ゲイン、時計を保存し、v1-v25 を読みます。
 
 研究用の制御であり、パラメーターは `unverified` のままです。ECU トルク協調、詳細なセンサー/弁、包括的な車両故障、OEM 校正は未完成です。managed と Standard の検査は実際の Unity Editor/Play/Player/IL2CPP の受入を証明しません。

@@ -42,7 +42,7 @@ Windows использует ту же команду `dotnet` и абсолют
 
 ## Инструменты и результаты
 
-В версии API агента 0.30.0 `get_example_model` принимает необязательный `name`: `electrothermal` (по умолчанию), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` или `fired-hydraulic-ravigneaux`. `get_capabilities` объявляет поддерживаемые уровни fidelity, читаемые версии активов, пределы решателя и границы входов. Экспорт использует `power.asset.v25`; активы v1–v23 остаются читаемыми. Каналы выходов и их единицы возвращают проверка модели и создание сессии. Пройденные KPI лаборатории не устанавливают полный или калиброванный силовой агрегат.
+В версии API агента 0.31.0 `get_example_model` принимает необязательный `name`: `electrothermal` (по умолчанию), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` или `fired-hydraulic-ravigneaux`. `get_capabilities` объявляет поддерживаемые уровни fidelity, читаемые версии активов, пределы решателя и границы входов. Экспорт использует `power.asset.v26`; активы v1–v23 остаются читаемыми. Каналы выходов и их единицы возвращают проверка модели и создание сессии. Пройденные KPI лаборатории не устанавливают полный или калиброванный силовой агрегат.
 
 | Инструмент | Назначение |
 |---|---|
@@ -292,8 +292,18 @@ flowchart TD
 
 `at_controller` принимает целочисленную передачу в [-1,4]; ноль означает нейтраль. Он управляет пятью парами клапанов наполнения/слива и необязательной блокировкой гидротрансформатора. Порядок: вход водила, малого солнца, большого солнца, тормоз водила, тормоз большого солнца, затем блокировка.
 
-Примеры `controlled-hydraulic-ravigneaux` и `controlled-fired-hydraulic-ravigneaux` используют канал 900 и ID 1400. Они сохраняют 99 и 122 отслеживаемых состояния при неизменном пределе 128. Формат v25 хранит маршруты, усиления и часы и читает v1-v24.
+Примеры `controlled-hydraulic-ravigneaux` и `controlled-fired-hydraulic-ravigneaux` используют канал 900 и ID 1400. Они сохраняют 99 и 122 отслеживаемых состояния при неизменном пределе 128. Формат v26 хранит маршруты, усиления и часы и читает v1-v25.
 
 Это исследовательское управление, параметры остаются `unverified`. Координация момента ECU, подробные датчики/клапаны, полный набор неисправностей автомобиля и калибровка OEM ещё не завершены. Проверки managed и Standard не подтверждают реальные Unity Editor/Play/Player/IL2CPP.
 
 [AT_CONTROL.ru.md](AT_CONTROL.ru.md)
+
+## Жидкая топливная рампа с насосной подачей
+
+`liquid_rail_feed` связывает жидкий инжектор с существующим объёмным насосом и явной материальной/тепловой границей. Выходной гидравлический узел должен совпадать с податливостью и начальным абсолютным давлением рампы. Насос и инжектор владеют этим узлом; другие неучтённые жидкостные пути отклоняются.
+
+Формат v26 хранит связи подачи и температуру источника и читает v1-v25. Аналитический обмен вал/давление, независимое совместное уточнение ODE, смешение тепла, балансы массы/топлива/энергии/объёма, обратный поток и полный rollback проверяются отдельно.
+
+Источник — явная внешняя граница, а не моделируемый конечный бак. Опустошение бака, эффективность/регулирование насоса, потери линий, кавитация, зависимости свойств от давления и конечный объём распыла ещё открыты. Параметры `unverified`; это не подтверждает OEM-калибровку или реальные Unity Editor/Play/Player/IL2CPP.
+
+[PUMP_FED_FUEL.ru.md](PUMP_FED_FUEL.ru.md)

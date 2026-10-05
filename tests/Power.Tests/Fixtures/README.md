@@ -228,3 +228,13 @@ SHA-256: `6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc`.
 Fingerprint: `4e83efb34de63922`. Tests retain the original digest and exact
 old/upgraded physical replay. Do not regenerate this fixture with the current
 encoder. The Power! GPL license and Unity Linking Exception apply.
+
+## Closure-compensated injector version 25
+
+`closure-compensated-cylinder-v25.powerasset` retains the verified v25 writer output
+before adding liquid feed records. Source: `assets/labs/closure-compensated-cylinder.power.json`.
+Retained locally on 2026-10-05 from checkpoint `0d5a985`; no later writer output
+is substituted. SHA-256: `df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc`.
+Fingerprint: `ddefea6d870e7e75`. `LiquidRailFeedAssetChecks` retains its digest
+and exact every-boundary old/upgraded replay. Do not regenerate this fixture
+with the current writer. The Power! GPL license and Unity Linking Exception apply.

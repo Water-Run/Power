@@ -74,7 +74,7 @@ Windows verwendet denselben Befehl `dotnet` und einen absoluten Pfad zur DLL. Ei
 
 ## Werkzeuge und Ergebnisse
 
-In Agent-API-Version 0.30.0 nimmt `get_example_model` einen optionalen `name` an: `electrothermal` (Vorgabe), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` oder `fired-hydraulic-ravigneaux`. `get_capabilities` nennt unterstützte Modelltreue-Stufen, lesbare Asset-Versionen, Lösergrenzen und Eingabegrenzen. Exporte verwenden `power.asset.v25`; Assets v1–v23 bleiben lesbar. Ausgabekanäle und ihre Einheiten liefern die Modellprüfung und die Sitzungserzeugung. Bestandene Labor-KPIs begründen keinen vollständigen oder kalibrierten Antriebsstrang.
+In Agent-API-Version 0.31.0 nimmt `get_example_model` einen optionalen `name` an: `electrothermal` (Vorgabe), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` oder `fired-hydraulic-ravigneaux`. `get_capabilities` nennt unterstützte Modelltreue-Stufen, lesbare Asset-Versionen, Lösergrenzen und Eingabegrenzen. Exporte verwenden `power.asset.v26`; Assets v1–v23 bleiben lesbar. Ausgabekanäle und ihre Einheiten liefern die Modellprüfung und die Sitzungserzeugung. Bestandene Labor-KPIs begründen keinen vollständigen oder kalibrierten Antriebsstrang.
 
 | Werkzeug | Aufgabe |
 |---|---|
@@ -586,8 +586,18 @@ Verträge. Der Graph verwendet bestehende Datensätze von Asset v24, kein neues 
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v25 speichert Routen, Verstärkungen und Uhren und liest v1-v24.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v26 speichert Routen, Verstärkungen und Uhren und liest v1-v25.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
 [AT_CONTROL.de.md](AT_CONTROL.de.md)
+
+## Pumpengespeiste Flüssigkraftstoffschiene
+
+`liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
+
+v26 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v25. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+
+Die Quelle ist eine explizite Außengrenze, kein modellierter endlicher Tank. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
+
+[PUMP_FED_FUEL.de.md](PUMP_FED_FUEL.de.md)

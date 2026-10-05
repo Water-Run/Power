@@ -9,10 +9,7 @@ und Druckenergie bestimmen die Förderung. Der Film heizt und
 verdampft die Flüssigkeit anschließend; die bestehende vorgeschriebene Reaktion verbraucht nur Dampf.
 
 Das verbindet Förderung, Phasenwechsel und Reaktion und hält jedes Inventar
-und jeden Energietransfer beobachtbar. Es ist ein Forschungsmodell mit konstanter Dichte und Nachgiebigkeit.
-Pumpe und Nachfüllung der Leitung, gemessene Eigenschaften, verfeinerte magnetische und elektronische Ansteuerung,
-Spray und Mitreißen, Kavitation, Zündung und ECU sowie kalibrierte Benzinhardware
-bleiben erforderliche Arbeit auf dem Weg zum vollständigen Antriebsstrangziel.
+und jeden Energietransfer beobachtbar. Es ist ein Forschungsmodell mit konstanter Dichte und Nachgiebigkeit. Die optionale Pumpenspeisung nutzt eine explizite äußere Stoff-/Wärmegrenze. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
 
 ```mermaid
 flowchart LR
@@ -28,6 +25,8 @@ flowchart LR
 Die Leitung hat eine konstante Flüssigkeitsdichte `rho`, eine positive Nachgiebigkeit `C` in m3/Pa,
 eine Anfangsmasse `m0` und einen absoluten Anfangsdruck `P0`. Ihr Referenzvolumen beim Druck null
 muss nichtnegativ sein:
+
+Ohne Pumpenspeisung folgt die Schiene diesen Gleichungen und behält ihre vorgegebene Temperatur.
 
 ```text
 V_reference = m0 / rho - C P0
@@ -180,13 +179,7 @@ vorgeschriebene Reaktion treiben dasselbe Kurbel- und Lastmodell wie andere Labo
 CLI, portable Assets und der tatsächliche MCP-Server teilen seine Definitionen und Replay-
 Grenzen. Alle Parameter bleiben `unverified`.
 
-Analytischer Druckabbau und Arbeit, Dosis, Umkehr und Erschöpfung, unabhängige gekoppelte
-Verfeinerung, vollständige Bilanzen von Quelle, Film, Konstituenten und Energie, aktive Allokationsgrenzen
-und Rollback spekulativer Kupplungen werden geprüft. [VALIDATION.de.md](VALIDATION.de.md)
-hält die beobachteten Ergebnisse fest. Vorbereitete Unity-Ansichten von Leitung und Düse sowie Lebenszyklusprüfungen
-verlangen weiterhin tatsächlichen Nachweis für Editor, Play und Player. Nachfüllung und Pumpen der Leitung, Nadeldynamik,
-aufgelöstes Spray und Verdrängung, Zündung und ECU, vollständiges Getriebe und Regelung sowie gemessene
-Antriebsstränge bleiben unfertig.
+Wellenarbeit, Schienendruck und gemischte Wärmespeicherung haben Erhaltungs- und unabhängige ODE-Prüfungen; tatsächliche Unity-Abnahme steht aus. [VALIDATION.de.md](VALIDATION.de.md) Die Quelle ist eine explizite Außengrenze, kein modellierter endlicher Tank. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
 
 ## Erweiterung um die physische Nadel
 
@@ -196,3 +189,13 @@ Bewegung nun. In diesem Modus ist die angeforderte Dosis ein Reglerziel; sie beg
 Strom während Schließverzug, Abprall oder Umkehr nicht. Der ideale kontingentbegrenzte Pfad bleibt
 getrennt und unverändert. Verfeinertes magnetisches, Treiber- und Sprayverhalten sowie die Kalibrierung
 bleiben offen.
+
+## Pumpengespeiste Flüssigkraftstoffschiene
+
+`liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
+
+v26 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v25. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+
+Die Quelle ist eine explizite Außengrenze, kein modellierter endlicher Tank. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
+
+[PUMP_FED_FUEL.de.md](PUMP_FED_FUEL.de.md)

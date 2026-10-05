@@ -42,7 +42,7 @@ Windows도 같은 `dotnet` 명령과 DLL의 절대 경로를 사용합니다. �
 
 ## 도구와 결과
 
-에이전트 API 버전 0.30.0에서 `get_example_model`은 선택적 `name`을 받습니다. `electrothermal`(기본값), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission`, `fired-hydraulic-ravigneaux`입니다. `get_capabilities`는 지원되는 충실도 수준, 읽을 수 있는 자산 버전, 솔버 한계, 입력 한계를 알립니다. 내보내기는 `power.asset.v25`를 사용합니다. v1–v23 자산은 계속 읽을 수 있습니다. 출력 채널과 그 단위는 모델 검증과 세션 생성이 반환합니다. 실험실 KPI를 통과해도 완전하거나 교정된 파워트레인이 확립되지는 않습니다.
+에이전트 API 버전 0.31.0에서 `get_example_model`은 선택적 `name`을 받습니다. `electrothermal`(기본값), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission`, `fired-hydraulic-ravigneaux`입니다. `get_capabilities`는 지원되는 충실도 수준, 읽을 수 있는 자산 버전, 솔버 한계, 입력 한계를 알립니다. 내보내기는 `power.asset.v26`를 사용합니다. v1–v23 자산은 계속 읽을 수 있습니다. 출력 채널과 그 단위는 모델 검증과 세션 생성이 반환합니다. 실험실 KPI를 통과해도 완전하거나 교정된 파워트레인이 확립되지는 않습니다.
 
 | 도구 | 목적 |
 |---|---|
@@ -292,8 +292,18 @@ KPI와 리플레이 증거를 평가하려면 `run_experiment`를, 개정 검사
 
 `at_controller`는 [-1,4] 범위의 정수 목표 단을 받으며 0은 중립입니다. 다섯 쌍의 충전/배출 밸브와 선택적인 토크 컨버터 록업을 관리합니다. 경로 순서는 캐리어 입력, 작은 선기어 입력, 큰 선기어 입력, 캐리어 브레이크, 큰 선기어 브레이크, 마지막으로 록업입니다.
 
-예제 `controlled-hydraulic-ravigneaux`와 `controlled-fired-hydraulic-ravigneaux`는 요청 채널 900과 컨트롤러 ID 1400을 사용합니다. 변경되지 않은 128 상태 한도 안에서 99와 122개의 보고 상태를 보존합니다. v25는 경로, 게인과 클록을 저장하고 v1-v24를 읽습니다.
+예제 `controlled-hydraulic-ravigneaux`와 `controlled-fired-hydraulic-ravigneaux`는 요청 채널 900과 컨트롤러 ID 1400을 사용합니다. 변경되지 않은 128 상태 한도 안에서 99와 122개의 보고 상태를 보존합니다. v26는 경로, 게인과 클록을 저장하고 v1-v25를 읽습니다.
 
 연구용 제어이며 매개변수는 `unverified`입니다. ECU 토크 협조, 상세 센서/밸브, 전체 차량 고장과 OEM 보정은 아직 미완성입니다. managed 및 Standard 검사는 실제 Unity Editor/Play/Player/IL2CPP 검증을 입증하지 않습니다.
 
 [AT_CONTROL.ko.md](AT_CONTROL.ko.md)
+
+## 펌프 공급 액체 연료 레일
+
+`liquid_rail_feed`는 액체 인젝터를 기존 용적 펌프와 명시적인 물질/열 경계에 연결합니다. 유압 출구 노드는 레일 컴플라이언스와 초기 절대압에 일치해야 합니다. 펌프와 인젝터가 이 압력 노드를 소유하고 다른 미추적 유체 경로는 거부됩니다.
+
+v26은 공급 연결과 원천 온도를 저장하고 v1-v25를 읽습니다. 축/압력 해석 교환, 독립 동시 ODE 세분화, 열 혼합, 질량/연료/에너지/체적 원장, 역류와 완전 rollback을 각각 확인합니다.
+
+원천은 명시적 외부 경계이며 모델링된 유한 연료 탱크가 아닙니다. 탱크 고갈, 펌프 효율/조압, 라인 손실, 캐비테이션, 압력 의존 물성과 유한 체적 분무는 미완성입니다. 매개변수는 `unverified`이며 OEM 보정이나 실제 Unity Editor/Play/Player/IL2CPP 검증을 입증하지 않습니다.
+
+[PUMP_FED_FUEL.ko.md](PUMP_FED_FUEL.ko.md)

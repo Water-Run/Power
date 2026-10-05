@@ -19,9 +19,9 @@ public sealed partial class CompiledModel
     public ulong Fingerprint { get; }
     public int NodeCount => Nodes.Length;
     public int ComponentCount => Components.Length;
-    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length;
+    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length;
     public int OutputCount => Outputs.Length;
-    public string Fidelity => AtControllers.Length != 0 ? "sampled_hydraulic_at_control" : DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
+    public string Fidelity => HasLiquidFeeds ? "pump_fed_liquid_fuel_powertrain" : AtControllers.Length != 0 ? "sampled_hydraulic_at_control" : DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
         : HasPremixedGas ? "premixed_gas_transport"
         : HasValveTiming ? "crank_timed_gas_exchange"
         : GasCylinders.Any(c => c is not null) ? "moving_cylinder_gas_exchange"
@@ -234,6 +234,9 @@ public sealed partial class CompiledModel
         DctControllers = new CompiledDctController[dctControllers.Length]; DctControllerByComponent = new int[cs.Length]; Array.Fill(DctControllerByComponent, -1);
         AtControllers = new CompiledAtController[cs.Count(c => c.Kind == ComponentKind.HydraulicAtController)];
         AtControllerByComponent = new int[cs.Length]; Array.Fill(AtControllerByComponent, -1);
+        LiquidFeeds = new CompiledLiquidFeed[cs.Count(c=>c.Kind==ComponentKind.LiquidRailFeed)];
+        FeedByInjector = new int[cs.Count(c=>c.Kind==ComponentKind.LiquidFuelInjector)]; Array.Fill(FeedByInjector,-1);
+        FeedByComponent = new int[cs.Length]; Array.Fill(FeedByComponent,-1);
         IntegerInputs = new bool[cs.Length];
         SpoolValves = new SpoolMetering?[cs.Length]; HasSpoolValves = cs.Any(c => c.Kind == ComponentKind.HydraulicSpoolValve);
         Pistons = new HydraulicPiston?[cs.Length]; PistonFriction = new PistonFriction?[cs.Length];
@@ -348,10 +351,12 @@ public sealed partial class CompiledModel
         {
             var c = cs[i];
             Require(c.Id != 0 && ids.Add(c.Id), DiagnosticCode.Id, c.Id, "id", "IDs must be nonzero and globally unique.");
-            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.HydraulicAtController,
+            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.LiquidRailFeed,
                 DiagnosticCode.Schema, c.Id, "kind", "Unknown component kind.");
             Require((c.Kind == ComponentKind.SealedCylinder) == (c.Cylinder is not null),
                 DiagnosticCode.Schema, c.Id, "cylinder", "Cylinder parameters are required only for sealed cylinders.");
+            bool feed = c.Kind == ComponentKind.LiquidRailFeed;
+            Require(feed==(c.LiquidRailFeed is not null),DiagnosticCode.Schema,c.Id,"liquid_rail_feed","Feed data applies only to liquid rail feed components.");
             bool film = c.Kind == ComponentKind.FuelFilm;
             bool liquidInjector = c.Kind == ComponentKind.LiquidFuelInjector;
             bool solenoid = c.Kind == ComponentKind.Solenoid, stop = c.Kind == ComponentKind.TravelStop, needleDriver = c.Kind == ComponentKind.NeedleDriver;
@@ -420,7 +425,7 @@ public sealed partial class CompiledModel
             bool pair = c.Kind is ComponentKind.Shaft or ComponentKind.LinearSpring or ComponentKind.ThermalLink || orifice || clutch || gear || converter || liquid;
             bool input = at || dct || solenoid || c.Kind is ComponentKind.DcMotor or ComponentKind.TorqueSource or ComponentKind.PressureController or ComponentKind.PressureDutyController or ComponentKind.BatteryMotor or ComponentKind.ForceSource;
             Domain domain = solenoid || stop || linearGasPiston || piston || linearSpring || c.Kind == ComponentKind.ForceSource ? Domain.Translational : c.Kind == ComponentKind.ThermalLink ? Domain.Thermal
-                : orifice || wall || liquidInjector ? Domain.Gas : liquid || controller ? Domain.Hydraulic : load ? Domain.Battery : Domain.Rotational;
+                : orifice || wall || liquidInjector || feed ? Domain.Gas : liquid || controller ? Domain.Hydraulic : load ? Domain.Battery : Domain.Rotational;
             int a = FindNode(c.NodeA), b = FindNode(c.NodeB), heat = FindNode(c.HeatNode);
             Require(a >= 0 && Nodes[a].Domain == domain, DiagnosticCode.Connection, c.Id, "node_a", "Missing node or wrong domain.");
             Require(piston ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : batteryMotor ? b >= 0 && Nodes[b].Domain == Domain.Battery : pump ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : moving || linearGasPiston || combustion ? b >= 0 && Nodes[b].Domain == Domain.Gas
@@ -448,6 +453,11 @@ public sealed partial class CompiledModel
             int state = -1;
             switch (c.Kind)
             {
+                case ComponentKind.LiquidRailFeed:
+                    Require(Nodes[a].Domain==Domain.Gas&&c.NodeB==0&&c.InputChannel==0&&c.HeatNode==0&&c.InitialInput==default&&c.Ratio==1&&
+                        c.Stiffness==default&&c.Damping==default&&c.RestAngle==default&&c.Resistance==default&&c.Inductance==default&&c.Coupling==default&&c.InitialCurrent==default&&c.Conductance==default&&c.AmbientTemperature==default,
+                        DiagnosticCode.Schema,c.Id,"liquid_rail_feed","A feed accepts only its gas receiver and explicit boundary/pump links.");
+                    break;
                 case ComponentKind.HydraulicAtController:
                     Require(initial >= -1 && initial <= 4 && initial == Math.Truncate(initial), DiagnosticCode.Range, c.Id, "initial_input", "Requested range is an integer in [-1,4]; zero is neutral.");
                     IntegerInputs[i] = true; InputMinimum[i] = -1; InputMaximum[i] = 4;
@@ -848,7 +858,8 @@ public sealed partial class CompiledModel
                 d.EngageNanoseconds, d.SynchronizeTimeoutNanoseconds, tolerance, direction); DctControllerByComponent[index] = k;
         }
         CompileAtControllers(cs);
-        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
+        CompileLiquidFeeds(cs);
+        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
         HasValveTiming = Valves.Any(v => v is not null);
         DynamicCount = dynamics; ThermalCount = thermal;
         CoordinateStates = new bool[dynamics];
@@ -946,6 +957,13 @@ public sealed partial class CompiledModel
                 Output(c.Id, c.Kind == ComponentKind.Shaft ? Field.Twist : Field.Displacement, i, c.Kind == ComponentKind.Shaft ? Unit.Radian : Unit.Meter, c.Kind == ComponentKind.Shaft ? "twist" : "relative_deflection", true);
                 Output(c.Id, c.Kind == ComponentKind.Shaft ? Field.Torque : Field.Force, i, c.Kind == ComponentKind.Shaft ? Unit.NewtonMeter : Unit.Newton, c.Kind == ComponentKind.Shaft ? "reaction_torque_at_a" : "reaction_force_at_a", true);
                 if (c.Kind == ComponentKind.LinearSpring) Output(c.Id, Field.FrictionHeat, i, Unit.Joule, "cumulative_damping_heat", true);
+            }
+            else if(c.Kind==ComponentKind.LiquidRailFeed)
+            {
+                Output(c.Id,Field.TotalFuelDelivered,i,Unit.Kilogram,"net_boundary_liquid_mass_supplied",true);
+                Output(c.Id,Field.ReservoirEnthalpy,i,Unit.Joule,"net_boundary_caloric_energy",true);
+                Output(c.Id,Field.FuelEnergyIn,i,Unit.Joule,"net_boundary_chemical_energy",true);
+                Output(c.Id,Field.MassFlow,i,Unit.KilogramPerSecond,"last_tick_mean_liquid_supply_flow",true);
             }
             else if (c.Kind == ComponentKind.HydraulicAtController)
             {
@@ -1240,6 +1258,7 @@ public sealed partial class CompiledModel
         if (HasNeedleInjectors) h = Numeric.Hash(h, 23UL);
         if (NeedleDrivers.Length != 0) h = Numeric.Hash(h, 24UL);
         if (HasClosurePrediction) h = Numeric.Hash(h, 25UL);
+        if (HasLiquidFeeds) h = Numeric.Hash(h,30UL);
         if (AtControllers.Length != 0) h = Numeric.Hash(h, 29UL);
         if (DctControllers.Length != 0) h = Numeric.Hash(h, 26UL);
         if (Components.Any(c => c.Kind == ComponentKind.CarrierGear)) h = Numeric.Hash(h, 28UL);
@@ -1298,6 +1317,7 @@ public sealed partial class CompiledModel
             h = Numeric.Hash(h, controller.Period); h = Numeric.Hash(h, controller.Release); h = Numeric.Hash(h, controller.Engage); h = Numeric.Hash(h, controller.Timeout);
             h = Numeric.Hash(h, controller.Tolerance); h = Numeric.Hash(h, controller.DirectionLimit);
         }
+        foreach(var feed in LiquidFeeds) { h=Numeric.Hash(h,(ulong)Components[LiquidFuelInjectors[feed.Injector].Component].Id);h=Numeric.Hash(h,(ulong)Components[feed.Pump].Id);h=Numeric.Hash(h,feed.SourceTemperature); }
         foreach (var at in AtControllers)
         {
             h = Numeric.Hash(h,(ulong)Nodes.First(n=>n.Index==at.Vehicle&&n.Domain==Domain.Rotational).Id);

@@ -2,6 +2,54 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-05: 泵送液体燃油轨
+
+必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。.NET Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 378/378 |
+| standard_checks_on_dotnet | 291/291 |
+| actual_mcp_groups | 41/41 |
+| laboratories | 38 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v26 |
+| v25_fixture_sha256 | df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc |
+| verification_log_sha256 | 2a2c3aa19317c8251c970a4b98a169b402d1855838e7fb79831d273593bfdf29 |
+
+| Identifier | pump-fed-liquid-cylinder | pump-fed-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 39 | 48 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 22cbbe4a983098f4 | 782b15c21ad211c2 |
+| final_state_hash | 4004b74f7f1d8c22 | e322d7a4bd72088c |
+| source_sha256 | 1bc97e3f985567f93fd4ace4006307ab571d2e10850e1bd75a1537ed6f0954bb | 3a801026e05e9e6cb67d298145ac20aea9948ab28e2c4552f8dee0d4f1eb4cce |
+| report_sha256 | 9869c20db74d4bb1dd22f5b3a924402001ca29451acee7fcc72b9188f25bf437 | 16ac066d9f9e268b98d874aba37f75efeb6b1fa1034b6b06562899f20f67fbbb |
+| max_sampled_energy_j | 4.160256139584817e-09 | 2.0303104975027964e-08 |
+| max_sampled_mass_kg | 9.215718466126788e-19 | 2.439454888092385e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 2.825701912040346e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.523666688322677e-21 | 3.763671787116276e-21 |
+
+- `artifacts/reports/rail-feed-integrated-2026-10-05.log`
+- `artifacts/reports/rail-feed-evidence-2026-10-05.json`
+- `artifacts/reports/rail-feed-schema-audit-2026-10-05.json`
+
+六组物理/事务检查、两组资产检查、三组集成检查和两组真实 MCP 场景覆盖补给路径。流入燃料的热能/化学能与气体边界能量共同累加；压力储能仅计算一次。压力 KPI 使用纯泵解析上界 920541.8 Pa，而非初始压力。
+
+源是显式外部边界，不是已建模的有限燃料箱。油箱耗尽、泵效率/调压、管路损失、气蚀、压力相关物性和有限体积喷雾仍待完成。参数为 `unverified`；这不构成 OEM 标定或实际 Unity Editor/Play/Player/IL2CPP 验收。
+
+较早的 AT 检查点也在记录的修订上通过 Windows、Linux 和 macOS CI。该运行不验证本次燃料补给变更。
+
+`0d5a98583723b39e5a0b7723d06e988ebea1a425` · [CI 37259428892](https://github.com/Water-Run/Power/actions/runs/37259428892)
+
+[PUMP_FED_FUEL.zh-CN.md](PUMP_FED_FUEL.zh-CN.md)
 
 ## 2026-10-05: 液压 AT 反馈与压力控制
 
@@ -1110,6 +1158,3 @@ dotnet run --file tools/Build.cs -- unity-test
 发布入口是 `Power.Studio.Editor.ProjectSetup.BuildPlayer`,使用所选桌面目标与 IL2CPP。它需要匹配的 Unity 平台构建模块。还没有已构建或已测试的 Player 包。
 
 当前每一个参数都是合成实验参数。完整的发动机与变速器、车辆标定、排放、声学、实时预算与长时间运行仍需要各自的实现与证据。这些检查不能确立那项工作。
-
-
-

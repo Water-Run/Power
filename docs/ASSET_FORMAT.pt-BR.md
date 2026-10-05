@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, conferir a impressão digital]
 ```
 
-## Versão atual 25
+## Versão atual 26
+
+O codificador escreve `power.asset.v26` e lê v1-v26. Há 38 contagens int32 (152 bytes); o cabeçalho ocupa 230 + comprimento do nome UTF-8 bytes. O tipo 39 é `liquid_rail_feed`, etiqueta de impressão 30. Um registro de 24 bytes guarda índice, IDs injetor/bomba e temperatura fonte. Tipos e propriedade exclusiva são verificados; um downgrade v25 reassinado rejeita o novo tipo.
+
+## Versão 25 preservada
 
 O codificador escreve `power.asset.v25` e lê v1-v25. A tabela contém 37 valores int32 (148 bytes); o cabeçalho ocupa 226 + comprimento do nome UTF-8 bytes. O tipo 38 é `at_controller`, com etiqueta de impressão 29. Cada registro tem 208 bytes fixos mais 12 bytes por rota. As rotas são 5 ou 6; o total limitado é declarado separadamente. Tipos, relógios, unidades, propriedade e topologia são verificados. Um downgrade v24 com digest reassinado rejeita o novo tipo.
 

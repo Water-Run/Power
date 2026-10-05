@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 25
+## Current version 26
+
+The encoder writes `power.asset.v26` and reads v1-v26. There are 38 int32 counts (152 bytes); header size is 230 + UTF-8 name length bytes. Kind 39 is `liquid_rail_feed`, fingerprint tag 30. A 24-byte record stores component index, injector/pump IDs and supply-temperature quantity. Typed coverage and exclusive rail/pump ownership are validated; a re-signed v25 downgrade rejects the new kind.
+
+## Retained version 25
 
 The encoder writes `power.asset.v25` and reads v1-v25. The count table contains 37 int32 values (148 bytes); the header is 226 + UTF-8 name length bytes. Kind 38 is `at_controller`, with fingerprint tag 29. Each record has 208 fixed bytes plus 12 bytes per route. Route count is 5 or 6; the bounded total is declared separately. Typed coverage, clocks, units, ownership and topology are checked. A re-signed v24 downgrade rejects the new kind.
 

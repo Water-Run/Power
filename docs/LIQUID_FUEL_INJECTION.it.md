@@ -9,10 +9,7 @@ restante del binario ed energia di pressione determinano l'erogazione. Il film p
 evapora il liquido; la reazione prescritta esistente consuma solo il vapore.
 
 Questo collega erogazione, cambiamento di fase e reazione mantenendo osservabili ogni inventario
-e ogni trasferimento di energia. È un modello di ricerca a densità/cedevolezza costanti.
-Pompa/rabbocco del binario, proprietà misurate, azionamento magnetico/elettronico raffinato,
-spruzzo/trascinamento, cavitazione, accensione/ECU e hardware a benzina calibrato
-restano lavoro richiesto verso l'obiettivo del gruppo motopropulsore completo.
+e ogni trasferimento di energia. È un modello di ricerca a densità/cedevolezza costanti. L'alimentazione opzionale da pompa usa un confine esterno esplicito di materia/calore. Svuotamento, efficienza/regolazione pompa, perdite tubazioni, cavitazione, proprietà dipendenti dalla pressione e spray a volume finito restano aperti. Parametri `unverified`; non si stabilisce calibrazione OEM o accettazione reale Unity Editor/Play/Player/IL2CPP.
 
 ```mermaid
 flowchart LR
@@ -28,6 +25,8 @@ flowchart LR
 Il binario ha densità liquida costante `rho`, cedevolezza positiva `C` in m3/Pa,
 massa iniziale `m0` e pressione assoluta iniziale `P0`. Il suo volume di riferimento a pressione
 nulla deve essere non negativo:
+
+Senza alimentazione da pompa, il rail segue queste equazioni e mantiene la temperatura fornita.
 
 ```text
 V_reference = m0 / rho - C P0
@@ -181,13 +180,7 @@ reazione prescritta azionano lo stesso modello albero/carico degli altri laborat
 CLI, asset portatili e il server MCP reale condividono le sue definizioni e i confini
 di replay. Tutti i parametri restano `unverified`.
 
-Sono controllati il decadimento analitico di pressione e lavoro, dose/inversione/esaurimento, il raffinamento
-accoppiato indipendente, i registri completi di sorgente/film/costituenti/energia, i limiti di allocazione
-attiva e il rollback della frizione speculativa. [VALIDATION.it.md](VALIDATION.it.md)
-registra i risultati osservati. Le viste Unity di binario/ugello preparate e i test del ciclo di vita
-richiedono ancora evidenza reale di Editor/Play/Player. Rabbocco/pompe del binario, dinamica dell'ago,
-spruzzo/spostamento risolti, accensione/ECU, trasmissione/controllo completi e gruppi
-motopropulsori misurati restano incompiuti.
+Lavoro d'albero, pressione e stoccaggio termico miscelato hanno controlli di conservazione e ODE indipendenti; l'accettazione Unity reale resta aperta. [VALIDATION.it.md](VALIDATION.it.md) La sorgente è un confine esterno esplicito, non un serbatoio finito modellato. Svuotamento, efficienza/regolazione pompa, perdite tubazioni, cavitazione, proprietà dipendenti dalla pressione e spray a volume finito restano aperti. Parametri `unverified`; non si stabilisce calibrazione OEM o accettazione reale Unity Editor/Play/Player/IL2CPP.
 
 ## Estensione dell'ago fisico
 
@@ -197,3 +190,13 @@ moto. In questa modalità la dose richiesta è un obiettivo del controllore; non
 durante il ritardo di chiusura, il rimbalzo o l'inversione. Il percorso ideale limitato dalla quota resta
 separato e invariato. Comportamento magnetico/driver/spruzzo raffinato e calibrazione
 restano aperti.
+
+## Rail di combustibile liquido alimentato da pompa
+
+`liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
+
+v26 conserva collegamenti e temperatura sorgente e legge v1-v25. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+
+La sorgente è un confine esterno esplicito, non un serbatoio finito modellato. Svuotamento, efficienza/regolazione pompa, perdite tubazioni, cavitazione, proprietà dipendenti dalla pressione e spray a volume finito restano aperti. Parametri `unverified`; non si stabilisce calibrazione OEM o accettazione reale Unity Editor/Play/Player/IL2CPP.
+
+[PUMP_FED_FUEL.it.md](PUMP_FED_FUEL.it.md)

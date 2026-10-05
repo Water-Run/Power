@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, comprobar la huella]
 ```
 
-## Versión actual 25
+## Versión actual 26
+
+El codificador escribe `power.asset.v26` y lee v1-v26. Hay 38 cuentas int32 (152 bytes); la cabecera ocupa 230 + longitud del nombre UTF-8 bytes. El tipo 39 es `liquid_rail_feed`, etiqueta de huella 30. Un registro de 24 bytes guarda índice, IDs inyector/bomba y temperatura fuente. Se comprueban tipos y propiedad exclusiva; una reducción v25 firmada de nuevo rechaza el tipo nuevo.
+
+## Versión 25 conservada
 
 El codificador escribe `power.asset.v25` y lee v1-v25. La tabla contiene 37 valores int32 (148 bytes); la cabecera ocupa 226 + longitud del nombre UTF-8 bytes. El tipo 38 es `at_controller`, con etiqueta de huella 29. Cada registro tiene 208 bytes fijos más 12 bytes por ruta. Las rutas son 5 o 6; el total limitado se declara por separado. Se comprueban tipos, relojes, unidades, propiedad y topología. Una reducción a v24 con digest firmado de nuevo rechaza el tipo nuevo.
 

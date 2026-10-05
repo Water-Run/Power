@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 25
+## Aktuelle Version 26
+
+Der Encoder schreibt `power.asset.v26` und liest v1-v26. Es gibt 38 int32-Zähler (152 bytes); der Header umfasst 230 + UTF-8-Namenslänge bytes. Typ 39 ist `liquid_rail_feed`, Fingerprint-Tag 30. Ein 24-bytes-Datensatz speichert Index, Injektor-/Pumpen-IDs und Quellentemperatur. Typen und exklusiver Besitz werden geprüft; ein neu signiertes v25-Downgrade weist den neuen Typ zurück.
+
+## Beibehaltene Version 25
 
 Der Encoder schreibt `power.asset.v25` und liest v1-v25. Die Tabelle enthält 37 int32-Werte (148 bytes); der Header umfasst 226 + UTF-8-Namenslänge bytes. Typ 38 ist `at_controller`, mit Fingerprint-Tag 29. Jeder Datensatz hat 208 feste bytes plus 12 bytes je Route. Die Routenzahl ist 5 oder 6; die begrenzte Summe wird getrennt angegeben. Typen, Uhren, Einheiten, Eigentümer und Topologie werden geprüft. Ein neu signiertes v24-Downgrade weist den neuen Typ zurück.
 

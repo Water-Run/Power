@@ -32,7 +32,7 @@ internal static class RavigneauxAssetChecks
     private static void Replay()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 25 && decoded.Components.SequenceEqual(asset.Components));
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 26 && decoded.Components.SequenceEqual(asset.Components));
         Require(bytes.SequenceEqual(AssetCodec.Encode(decoded))); Compare(asset, decoded);
         byte[] fixture = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "controlled-dual-clutch-v22.powerasset"));
         Require(BinaryPrimitives.ReadInt32LittleEndian(fixture.AsSpan(8)) == 22 && Convert.ToHexStringLower(SHA256.HashData(fixture)) == "db90df5fa9ca90067341abdcaf8c3a4a38316794a4b3c8ecc7c89a852375c24e");
@@ -41,7 +41,7 @@ internal static class RavigneauxAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset); int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int record = counts + 148 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 28 * 5;
+        int record = counts + 152 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 28 * 5;
         void Reject(byte[] bad) { SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(bad)); }
         foreach (var change in new[] { (counts + 52, -1), (counts + 52, 0), (counts + 52, 65), (record + 8, 0), (record + 12, 0), (record + 12, 101) })
         { var bad = bytes.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(change.Item1), change.Item2); Reject(bad); }

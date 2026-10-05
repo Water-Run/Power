@@ -167,6 +167,9 @@
           },
           {
             "$ref": "#/$defs/atController"
+          },
+          {
+            "$ref": "#/$defs/liquidRailFeed"
           }
         ]
       },
@@ -6213,6 +6216,69 @@
               "enum": [
                 "state_code"
               ]
+            }
+          }
+        }
+      }
+    },
+    "liquidRailFeed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "liquid_rail_feed"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "injector_component",
+            "pump_component",
+            "supply_temperature"
+          ],
+          "properties": {
+            "injector_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "pump_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "supply_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "const": "k"
+                }
+              }
             }
           }
         }

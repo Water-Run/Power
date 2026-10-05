@@ -32,7 +32,7 @@ internal static class AtControllerAssetChecks
     private static void Replay()
     {
         var asset=Asset();byte[] bytes=AssetCodec.Encode(asset);var decoded=AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8))==25&&decoded.Model.StateCount==99&&decoded.Model.Fidelity=="sampled_hydraulic_at_control");
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8))==26&&decoded.Model.StateCount==99&&decoded.Model.Fidelity=="sampled_hydraulic_at_control");
         Require(bytes.SequenceEqual(AssetCodec.Encode(decoded)));Compare(asset,decoded);
         byte[] fixture=File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory,"Fixtures","fired-hydraulic-ravigneaux-v24.powerasset"));
         Require(BinaryPrimitives.ReadInt32LittleEndian(fixture.AsSpan(8))==24&&Convert.ToHexStringLower(SHA256.HashData(fixture))=="6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc");
@@ -41,11 +41,11 @@ internal static class AtControllerAssetChecks
     private static void Corruption()
     {
         var asset=Asset();byte[] source=AssetCodec.Encode(asset);int counts=78+Encoding.UTF8.GetByteCount(asset.Name);
-        int record=counts+148+44*asset.Nodes.Count+156*asset.Components.Count+8*5+40*12+32+16+104*5+40*5;
+        int record=counts+152+44*asset.Nodes.Count+156*asset.Components.Count+8*5+40*12+32+16+104*5+40*5;
         void Reject(byte[] bad){SHA256.HashData(bad.AsSpan(0,bad.Length-32)).CopyTo(bad,bad.Length-32);Throws<ArgumentException>(()=>AssetCodec.Decode(bad));}
         foreach(var change in new[]{(counts+140,-1),(counts+140,65),(counts+144,0),(counts+144,7),(record,-1),(record+16,4),(record+16,7),(record+208,999),(record+212,1234),(record+216,1230),(record+68,(int)Unit.Newton)})
         {var bad=source.ToArray();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(change.Item1),change.Item2);Reject(bad);}
-        var down=source.Take(counts+140).Concat(source.Skip(counts+148).Take(record-counts-148)).Concat(source.Skip(record+208+12*5)).ToArray();
+        var down=source.Take(counts+140).Concat(source.Skip(counts+152).Take(record-counts-152)).Concat(source.Skip(record+208+12*5)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(down.AsSpan(8),24);Reject(down);
     }
 }

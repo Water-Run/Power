@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 헤드리스 실험"]
     mcp["Power.Mcp — stdio MCP 도구 12개"]
-    assets["Power.Assets — .powerasset v25"]
+    assets["Power.Assets — .powerasset v26"]
     unity["Unity 6.6 스튜디오 — 3D 실험실"]
 
     model --> core
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 모든 샘플 매개변수는 `unverified`입니다. 연구 값이지 교정 측정값이 아닙니다.
 
-아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v25`를 사용하며 이전 자산의 판독기는 유지됩니다.
+아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v26`를 사용하며 이전 자산의 판독기는 유지됩니다.
 
 <details>
 <summary>사용 가능한 실험실 (34)</summary>
