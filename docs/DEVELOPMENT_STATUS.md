@@ -14,12 +14,12 @@ accepted Unity desktop application remain unfinished.
 |---|---|---|
 | Core | Explicit units and stable IDs; immutable compilation; bounded integer time; observable ledgers; replay, cancellation, independent forks and whole-batch rollback | Long-run and complete powertrain evidence |
 | Engine | Sealed/open cylinders, slider-crank pressure work, bidirectional gas flow, crank-timed valves, wall heat and prescribed premixed combustion | Detailed intake/exhaust, ignition, mechanical losses, richer thermochemistry and measured engine behavior |
-| Fuel | Tracked fuel/air/products, finite gaseous rails with cycle-dose metering, finite compliant liquid rails feeding films, wall-paid evaporation and vapor-only reaction; [Pump-fed liquid fuel rail](PUMP_FED_FUEL.md) | finite fuel tank and measured pump regulation, nonlinear magnetic/electronic/spray behavior, pressure-dependent phase equilibrium and measured fuel properties |
+| Fuel | Tracked fuel/air/products, finite gaseous rails with cycle-dose metering, finite compliant liquid rails feeding films, wall-paid evaporation and vapor-only reaction; [Pump-fed liquid fuel rail](PUMP_FED_FUEL.md) | tank geometry/venting and measured pump filling/regulation, nonlinear magnetic/electronic/spray behavior, pressure-dependent phase equilibrium and measured fuel properties |
 | Transmission | Static/sliding clutches, contact actuation, signed gears/planetaries, mapped converter/lockup and seven-forward/reverse DCT and four-forward/reverse Ravigneaux paths with resolved planet spin/orbital inertia | Mesh compliance/losses and load sharing, DCT actuation, complete AT pressure/shift control and measured routing, coordinated shifts, measured losses and richer converter behavior |
 | Hydraulics | Compliant volumes, restrictions, pumps with explicit leakage/drag, relief, dynamic pistons, metered spools and finite-energy gas accumulators | Measured valve/accumulator/pump maps, seal friction, cavitation and complete transmission hydraulics |
 | Electrical | RL motors, reciprocal variable-inductance solenoids, finite-charge battery, resistance/RC polarization, averaged duty conversion and accessories | Measured chemistry/thermal behavior, BMS, current control and complete supply integration |
 | Controls | Sampled pressure PI, needle feedback/closure prediction and sensor-confirmed staged DCT control with actuator ownership, integer clocks and transactional memory | ECU/TCU torque coordination, sensors, actuators and fault handling |
-| Documents and assets | 38 JSON/CLI laboratories, 37 MCP examples, asset v26 with v1-v25 readers | Workbench editing/saving and calibrated model collections |
+| Documents and assets | 40 JSON/CLI laboratories, 39 MCP examples, asset v27 with v1-v26 readers | Workbench editing/saving and calibrated model collections |
 | Agents | Twelve schema-defined MCP tools; compact evidence, revision checks and actionable diagnostics | Complete workflows for the remaining physical/control scope |
 | Unity | Model import, exact-tick playback, schematic 3D components, controls, reset and prepared lifecycle tests | Actual Editor/Play acceptance, selectable plots, graph editing/saving and Player/IL2CPP |
 | Native archive | Zig 0.15.2 research prototypes, preserved ABI and original source provenance | Historical reference; managed migration remains separate from full functionality |
@@ -105,7 +105,7 @@ The [liquid injection increment](LIQUID_FUEL_INJECTION.md) now starts from a dry
 film and draws from a finite compliant source. Analytic rail pressure/work,
 independent simultaneous refinement, complete source/film/chemical/thermal ledgers,
 actual MCP replay and speculative clutch rollback pass. Rail pressure energy is
-stored; nozzle heat and exported receiver pressure work remain distinct. The source is an explicit external boundary, not a modeled finite fuel tank. Tank depletion, pump efficiency/regulation, line losses, cavitation, pressure-dependent properties and finite-volume spray remain open. Parameters are `unverified`; this does not establish OEM calibration or actual Unity Editor/Play/Player/IL2CPP acceptance.
+stored; nozzle heat and exported receiver pressure work remain distinct. Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
 
 The `film-fired-cylinder` initially contains a declared liquid inventory. It heats
 and evaporates that inventory before prescribed reaction; it doesn't implement a
@@ -120,7 +120,7 @@ Licenses and historical source provenance are preserved.
 
 ## Next development sequence
 
-1. Continue the pump-fed rail with a finite fuel tank, measured pump regulation and refined magnetic/electronic actuation. Replace the declared
+1. Extend the finite tank with geometric capacity, vent/headspace dynamics, measured pump filling/regulation and refined magnetic/electronic actuation. Replace the declared
    exported displacement-work boundary when finite liquid volume and spray
    momentum are resolved. Keep delivered liquid, evaporated fuel and reaction
    separately observable and retain independent references.
@@ -139,7 +139,7 @@ Licenses and historical source provenance are preserved.
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v26 retains routes, gains and clocks and reads v1-v25.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v27 retains routes, gains and clocks and reads v1-v26.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -149,8 +149,18 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v26 retains feed links and source temperature and reads v1-v25. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v27 retains feed links and source temperature and reads v1-v26. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
-The source is an explicit external boundary, not a modeled finite fuel tank. Tank depletion, pump efficiency/regulation, line losses, cavitation, pressure-dependent properties and finite-volume spray remain open. Parameters are `unverified`; this does not establish OEM calibration or actual Unity Editor/Play/Player/IL2CPP acceptance.
+Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
 
 [PUMP_FED_FUEL.md](PUMP_FED_FUEL.md)
+
+## Finite liquid fuel tank
+
+`liquid_fuel_tank` stores finite liquid mass and caloric energy using the paired injector's density, film thermal reference and heating value. A feed selects it with `tank_component` and omits `supply_temperature`. Each tank belongs to one feed with matching fuel properties.
+
+Tank caloric and chemical energy enter the complete stored-energy ledger. Tank-to-rail transfer adds no external mass or chemical supply. The explicit prescribed pump inlet pressure retains its pressure-work boundary. Gas inlet/exhaust can still carry chemical boundary energy.
+
+Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
+
+[LIQUID_FUEL_TANK.md](LIQUID_FUEL_TANK.md)

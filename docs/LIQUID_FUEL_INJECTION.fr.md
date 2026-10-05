@@ -10,7 +10,7 @@ restant et l'énergie de pression déterminent la livraison. Le film chauffe ens
 
 Cela relie la livraison, le changement de phase et la réaction, tout en gardant chaque inventaire
 et transfert d'énergie observable. C'est un modèle de recherche à masse volumique et compliance
-constantes. L'alimentation facultative par pompe utilise une frontière externe explicite de matière/chaleur. Épuisement du réservoir, efficacité/régulation, pertes de lignes, cavitation, propriétés dépendant de pression et spray à volume fini restent ouverts. Paramètres `unverified` ; aucune calibration OEM ni acceptation réelle Unity Editor/Play/Player/IL2CPP n'est établie.
+constantes. L'alimentation facultative par pompe utilise une frontière externe explicite de matière/chaleur. Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
 
 ```mermaid
 flowchart LR
@@ -181,7 +181,7 @@ la réaction prescrite entraînent le même modèle vilebrequin/charge que les a
 la CLI, les assets portables et le serveur MCP réel partagent ses définitions et ses bornes
 de rejeu. Tous les paramètres restent `unverified`.
 
-Travail d'arbre, pression et stockage calorique mélangé ont des contrôles de conservation et ODE indépendants ; l'acceptation Unity réelle reste en attente. [VALIDATION.fr.md](VALIDATION.fr.md) La source est une frontière externe explicite, pas un réservoir fini modélisé. Épuisement du réservoir, efficacité/régulation, pertes de lignes, cavitation, propriétés dépendant de pression et spray à volume fini restent ouverts. Paramètres `unverified` ; aucune calibration OEM ni acceptation réelle Unity Editor/Play/Player/IL2CPP n'est établie.
+Travail d'arbre, pression et stockage calorique mélangé ont des contrôles de conservation et ODE indépendants ; l'acceptation Unity réelle reste en attente. [VALIDATION.fr.md](VALIDATION.fr.md) Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
 
 ## Extension d'aiguille physique
 
@@ -196,8 +196,8 @@ restent ouverts.
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v26 conserve les liens et la température source et lit v1-v25. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v27 conserve les liens et la température source et lit v1-v26. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
-La source est une frontière externe explicite, pas un réservoir fini modélisé. Épuisement du réservoir, efficacité/régulation, pertes de lignes, cavitation, propriétés dépendant de pression et spray à volume fini restent ouverts. Paramètres `unverified` ; aucune calibration OEM ni acceptation réelle Unity Editor/Play/Player/IL2CPP n'est établie.
+Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
 
 [PUMP_FED_FUEL.fr.md](PUMP_FED_FUEL.fr.md)

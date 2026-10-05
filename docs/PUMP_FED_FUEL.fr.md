@@ -12,6 +12,16 @@ L'énergie de pression est stockée une seule fois dans le nœud hydraulique. D�
 
 ## Preuves et limites
 
-Le format v26 conserve les liens et la température source et lit v1-v25. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v27 conserve les liens et la température source et lit v1-v26. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
-La source est une frontière externe explicite, pas un réservoir fini modélisé. Épuisement du réservoir, efficacité/régulation, pertes de lignes, cavitation, propriétés dépendant de pression et spray à volume fini restent ouverts. Paramètres `unverified` ; aucune calibration OEM ni acceptation réelle Unity Editor/Play/Player/IL2CPP n'est établie.
+Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
+
+## Réservoir fini de carburant liquide
+
+`liquid_fuel_tank` stocke masse liquide finie et énergie calorique avec la densité, référence thermique du film et pouvoir calorifique de l'injecteur associé. L'alimentation le choisit via `tank_component` et omet `supply_temperature`. Chaque réservoir appartient à une alimentation compatible.
+
+Énergies calorique et chimique du réservoir entrent dans le stockage complet. Le transfert interne n'ajoute aucune matière ni énergie chimique externe. La pression d'entrée prescrite garde sa frontière de travail de pression. Admission/échappement gazeux peuvent encore transporter de l'énergie chimique.
+
+Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
+
+[LIQUID_FUEL_TANK.fr.md](LIQUID_FUEL_TANK.fr.md)

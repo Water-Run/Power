@@ -10,9 +10,10 @@ public sealed record LiquidRailFeedDefinition
     public uint InjectorComponent { get; init; }
     public uint PumpComponent { get; init; }
     public Quantity SupplyTemperature { get; init; }
+    public uint TankComponent { get; init; }
 }
 internal sealed record CompiledLiquidFeed(int Component, int Injector, int Pump, int Pressure, int Shaft,
-    double Displacement, double Density, double SourceTemperature, double SourceThermalEnergy, double HeatingValue);
+    double Displacement, double Density, double SourceTemperature, double SourceThermalEnergy, double HeatingValue, int Tank = -1);
 internal sealed class LiquidFeedState
 {
     internal readonly double[] Mass, MassCorrection, Thermal, ThermalCorrection, Chemical, ChemicalCorrection;
@@ -52,7 +53,7 @@ public sealed partial class CompiledModel
     public bool HasLiquidFeeds => LiquidFeeds.Length!=0;
     private void CompileLiquidFeeds(ComponentDefinition[] definitions)
     {
-        int slot=0;var pumps=new HashSet<int>();var pressures=new HashSet<int>();
+        int slot=0;var pumps=new HashSet<int>();var pressures=new HashSet<int>();var tanks=new HashSet<int>();
         for(int i=0;i<Components.Length;++i)
         {
             if(Components[i].Kind!=ComponentKind.LiquidRailFeed)continue;
@@ -69,11 +70,16 @@ public sealed partial class CompiledModel
                 !Components.Any(x=>x.Kind==ComponentKind.HydraulicPump&&x.Id!=p.Id&&(x.B==p.B||x.C==p.B))&&
                 !Components.Any(x=>x.Kind==ComponentKind.HydraulicPiston&&(x.B==p.B||x.C==p.B)),
                 DiagnosticCode.Connection,c.Id,"liquid_rail_feed.pressure_node","The rail pressure node has only its paired pump and injector; untracked hydraulic fluid paths are unsupported.");
-            double temperature=Convert(d.SupplyTemperature,Unit.Kelvin,c.Id,"liquid_rail_feed.supply_temperature");var film=FuelFilms[rail.Film];
+            int tank=d.TankComponent==0?-1:Array.FindIndex(LiquidTanks,x=>Components[x.Component].Id==d.TankComponent);
+            Require(d.TankComponent==0 || tank>=0&&LiquidTanks[tank].Injector==injector&&tanks.Add(tank),
+                DiagnosticCode.Connection,c.Id,"liquid_rail_feed.tank_component","Use one exclusively owned finite tank with matching injector properties.");
+            Require(tank<0||d.SupplyTemperature==default,DiagnosticCode.Schema,c.Id,"liquid_rail_feed.supply_temperature","A finite tank owns source temperature; omit the external boundary temperature.");
+            double temperature=tank<0?Convert(d.SupplyTemperature,Unit.Kelvin,c.Id,"liquid_rail_feed.supply_temperature"):LiquidTanks[tank].InitialTemperature;var film=FuelFilms[rail.Film];
             Require(temperature>0&&temperature<=film.Law.SaturationTemperatureKelvin,DiagnosticCode.Range,c.Id,"liquid_rail_feed.supply_temperature","Use liquid supply temperature in (0,saturation_temperature].");
-            LiquidFeeds[slot]=new(i,injector,pump,node.Index,Nodes[p.A].Index,p.P0,rail.Rail.DensityKilogramsPerCubicMeter,temperature,film.Law.CreateState(1,temperature).ThermalEnergyJoules,rail.HeatingValue);
+            LiquidFeeds[slot]=new(i,injector,pump,node.Index,Nodes[p.A].Index,p.P0,rail.Rail.DensityKilogramsPerCubicMeter,temperature,film.Law.CreateState(1,temperature).ThermalEnergyJoules,rail.HeatingValue,tank);
             FeedByInjector[injector]=slot;FeedByComponent[i]=slot;LiquidFuelInjectors[injector]=rail with{PressureNode=node.Index};++slot;
         }
+        Require(tanks.Count==LiquidTanks.Length,DiagnosticCode.Connection,0,"liquid_fuel_tank","Every tank must belong to exactly one liquid rail feed.");
     }
     internal LiquidRailSample RailSample(int injector, LiquidInjectorState state, HydraulicState? hydraulics)
     {

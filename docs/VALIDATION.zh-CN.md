@@ -2,6 +2,61 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-05: 有限液体燃油箱
+
+必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。.NET Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 388/388 |
+| standard_checks_on_dotnet | 298/298 |
+| actual_mcp_groups | 43/43 |
+| laboratories | 40 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| asset_version | power.asset.v27 |
+| v26_fixture_sha256 | b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d |
+| verification_log_sha256 | 6c7b9ad52c6e4977b2817c6f6bdd9de4eaf6aeeb943efba255a2ad4956a27d70 |
+
+| Identifier | finite-tank-liquid-cylinder | finite-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 43 | 52 |
+| step_ns | 50000 | 10000 |
+| fingerprint | f7ee4872a034c885 | 8be53a56f175aeeb |
+| final_state_hash | 9fbab09b0d8fea77 | e77e6d4adaf785eb |
+| source_sha256 | 0a67c3eaaac79992b21b647efd6535d0c5c81159808006e5dde40552c3fd5934 | 508a8d163f965b2fc62c965d1984d9abd0e88011685a4099be110470c92baac6 |
+| report_sha256 | 038cbafab19f3e587b7e4a156c017e06531fd04cbaca8619240b81b8e14d6936 | ab18f538eae81bcead2a1a929ab97a0b6ef856a9b6058f1a375e2195d0747edc |
+| max_sampled_energy_j | 5.5981672630878165e-09 | 1.93150526683894e-08 |
+| max_sampled_mass_kg | 1.1926223897340549e-18 | 3.63207727782644e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 1.3137481011914198e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.2977429835191313e-21 | 1.826414792517085e-21 |
+
+- `artifacts/reports/finite-tank-integrated-2026-10-05.log`
+- `artifacts/reports/finite-tank-evidence-2026-10-05.json`
+- `artifacts/reports/finite-tank-schema-audit-2026-10-05.json`
+
+油箱质量和热能精确降至零；此后正向泵流量/反力为零，轴仍按真实动力学运行。反向回流按燃轨混合温度恢复液体库存。独立湿态解析交换、耗尽轴/压力能、完整回滚与分配检查均通过。
+
+化学边界能量包含排气带走的未燃燃料。油箱在模型内部传递燃料；集成检查比较化学库存总变化加已释放热量与净化学边界能量。
+
+几何容量、通气/顶部气体/晃动、气蚀、实测泵充液/效率/调压和分解喷雾仍待完成。参数为 `unverified`；实际 Unity Editor/Play/Player/IL2CPP 与 OEM 标定仍未验证。
+
+前一泵供给修订通过了 Windows、Linux 和 macOS CI。该运行不验证本次有限油箱变更。
+
+`144ac3d5d0f15d0eafefe713996f2b08d8ae3ea4` · [CI 37269218379](https://github.com/Water-Run/Power/actions/runs/37269218379)
+
+[LIQUID_FUEL_TANK.zh-CN.md](LIQUID_FUEL_TANK.zh-CN.md)
+
 ## 2026-10-05: 泵送液体燃油轨
 
 必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。.NET Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。

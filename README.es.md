@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — experimentos sin interfaz"]
     mcp["Power.Mcp — 12 herramientas MCP por stdio"]
-    assets["Power.Assets — .powerasset v26"]
+    assets["Power.Assets — .powerasset v27"]
     unity["Estudio Unity 6.6 — laboratorios 3D"]
 
     model --> core
@@ -147,7 +147,7 @@ Un grafo de investigación Ravigneaux de cuatro rangos añade caminos planetario
 > [!NOTE]
 > Todos los parámetros de ejemplo son `unverified`: valores de investigación, no mediciones calibradas.
 
-Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v26`, con lectores para assets anteriores conservados.
+Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v27`, con lectores para assets anteriores conservados.
 
 <details>
 <summary>Laboratorios disponibles (34)</summary>

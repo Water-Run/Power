@@ -11,8 +11,8 @@ L'obiettivo è la piattaforma completa di gruppi motopropulsori Power!: fisica C
 | Nucleo gestito | Fisica a doppio target priva di dipendenze, topologia, unità, tempo intero, replay e transazioni atomiche | Validazione integrata di lungo periodo del gruppo motopropulsore |
 | Interfaccia agente | Strumenti MCP definiti da schema, diagnostica strutturata, revisioni, rami, annullamento e report compatti | Flussi di modellazione/controllo per l'ambito restante del gruppo motopropulsore completo |
 | Studio Unity | Importazione condivisa dei modelli, riproduzione dei laboratori, componenti schematici 3D e test preparati | Evidenza reale di Editor/Play/Player/IL2CPP e pacchettizzazione desktop |
-| Banco di modellazione | Asset portabile v26, lettori v1-v25 e definizioni JSON/CLI/MCP condivise | Modifica del grafo, salvataggio e grafici dei canali selezionabili |
-| Fisica del motore | Massa/energia del gas indipendenti, lavoro biella-manovella, valvole fasate, combustione prescritta, dosatura di carburante gassoso e liquido, binari finiti cedevoli, evaporazione del film e azionamento fisico dell'ago; [Rail di combustibile liquido alimentato da pompa](PUMP_FED_FUEL.it.md) | serbatoio finito e regolazione misurata della pompa, comportamento magnetico/elettronico/a spruzzo raffinato, accoppiamento del volume liquido finito, controllo dell'accensione, aspirazione/scarico dettagliati, perdite meccaniche, termochimica e calibrazione misurata |
+| Banco di modellazione | Asset portabile v27, lettori v1-v26 e definizioni JSON/CLI/MCP condivise | Modifica del grafo, salvataggio e grafici dei canali selezionabili |
+| Fisica del motore | Massa/energia del gas indipendenti, lavoro biella-manovella, valvole fasate, combustione prescritta, dosatura di carburante gassoso e liquido, binari finiti cedevoli, evaporazione del film e azionamento fisico dell'ago; [Rail di combustibile liquido alimentato da pompa](PUMP_FED_FUEL.it.md) | geometria/ventilazione del serbatoio e riempimento/regolazione misurati, comportamento magnetico/elettronico/a spruzzo raffinato, accoppiamento del volume liquido finito, controllo dell'accensione, aspirazione/scarico dettagliati, perdite meccaniche, termochimica e calibrazione misurata |
 | Trasmissione | Frizioni accoppiate, ingranaggi/planetari, convertitore/blocco mappato, idraulica e percorsi DCT a sette avanti/retromarcia e Ravigneaux a quattro avanti/retromarcia con rotazione dei satelliti e inerzia orbitale risolte | Cedevolezza/perdite di ingranamento e ripartizione del carico, azionamento DCT, controllo completo di pressione/cambio AT e instradamento misurato, mappe misurate, comportamento di valvole/tenute/cavitazione e dinamica più ricca del convertitore |
 | Controlli e integrazione elettrica | PI di pressione campionato, controllo di chiusura dell'ago e passaggio DCT graduale confermato dai sensori, tensione/duty cycle limitati, proprietà degli attuatori, circuito equivalente della batteria e accessori | Cicli ECU/TCU coordinati, sensori/attuatori, richieste di coppia, guasti, BMS e comportamento termico/elettrico misurato |
 | Evidenza del veicolo e rilascio | Campioni di ricerca con confini completi e provenienza | Due gruppi motopropulsori misurati completi, budget di incertezza, stabilità, accettazione desktop e distribuzione |
@@ -21,7 +21,7 @@ I punti di controllo numerici attuali, le fixture di asset autentiche e i regist
 
 ## Prossimo lavoro gestito
 
-Estendere il rail alimentato da pompa con serbatoio finito, regolazione misurata e azionamento magnetico/elettronico raffinato. Massa della sorgente finita e cedevole ed energia di pressione, moto reale dell'ago, retroazione di dose campionata, reintegro del film ed evaporazione sono implementati. Vedi [il contratto dell'ago](NEEDLE_ACTUATION.it.md) e [la predizione di chiusura limitata](CLOSURE_PREDICTION.it.md). Il ricevitore esporta ancora il lavoro di pressione di spostamento sotto il confine dichiarato di volume liquido trascurabile; lo spray e lo spostamento risolti devono sostituirlo con geometria verificata e accoppiamento di quantità di moto e di lavoro. Tieni separati erogazione, disponibilità del vapore e reazione prescritta, e conserva l'evidenza analitica, di conservazione e di convergenza. [Rail di combustibile liquido alimentato da pompa](PUMP_FED_FUEL.it.md)
+Estendere il serbatoio finito con capacità geometrica, dinamica ventilazione/spazio gas, riempimento/regolazione misurati e azionamento magnetico/elettronico raffinato. Massa della sorgente finita e cedevole ed energia di pressione, moto reale dell'ago, retroazione di dose campionata, reintegro del film ed evaporazione sono implementati. Vedi [il contratto dell'ago](NEEDLE_ACTUATION.it.md) e [la predizione di chiusura limitata](CLOSURE_PREDICTION.it.md). Il ricevitore esporta ancora il lavoro di pressione di spostamento sotto il confine dichiarato di volume liquido trascurabile; lo spray e lo spostamento risolti devono sostituirlo con geometria verificata e accoppiamento di quantità di moto e di lavoro. Tieni separati erogazione, disponibilità del vapore e reazione prescritta, e conserva l'evidenza analitica, di conservazione e di convergenza. [Rail di combustibile liquido alimentato da pompa](PUMP_FED_FUEL.it.md)
 
 Poi estendi accensione/controllo, dinamica di aspirazione/scarico e perdite meccaniche del motore. La combustione di Wiebe attuale è prescritta e non stabilisce combustione predittiva, detonazione, emissioni o calibrazione OEM. Il [contratto di dosatura gassosa](FUEL_METERING.it.md) resta un percorso supportato indipendente.
 
@@ -39,7 +39,7 @@ L'[archivio Zig](NATIVE_ZIG.it.md) conserva gli hash originali e la provenienza 
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v26 conserva percorsi, guadagni e clock e legge v1-v25.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v27 conserva percorsi, guadagni e clock e legge v1-v26.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -49,8 +49,18 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v26 conserva collegamenti e temperatura sorgente e legge v1-v25. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v27 conserva collegamenti e temperatura sorgente e legge v1-v26. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
-La sorgente è un confine esterno esplicito, non un serbatoio finito modellato. Svuotamento, efficienza/regolazione pompa, perdite tubazioni, cavitazione, proprietà dipendenti dalla pressione e spray a volume finito restano aperti. Parametri `unverified`; non si stabilisce calibrazione OEM o accettazione reale Unity Editor/Play/Player/IL2CPP.
+Capacità geometrica, ventilazione/spazio gas/oscillazione, cavitazione, riempimento/efficienza/regolazione misurati e spray risolto restano aperti. Parametri `unverified`; Unity Editor/Play/Player/IL2CPP reale e calibrazione OEM non sono verificati.
 
 [PUMP_FED_FUEL.it.md](PUMP_FED_FUEL.it.md)
+
+## Serbatoio finito di combustibile liquido
+
+`liquid_fuel_tank` conserva massa liquida finita ed energia termica con densità, riferimento termico del film e potere calorifico dell'iniettore associato. L'alimentazione lo seleziona con `tank_component` e omette `supply_temperature`. Ogni serbatoio appartiene a un'alimentazione compatibile.
+
+Energia termica e chimica del serbatoio entrano nello stoccaggio totale. Il trasferimento interno non aggiunge massa o energia chimica esterna. La pressione prescritta all'ingresso mantiene il confine di lavoro di pressione. Aspirazione/scarico gas possono ancora trasportare energia chimica.
+
+Capacità geometrica, ventilazione/spazio gas/oscillazione, cavitazione, riempimento/efficienza/regolazione misurati e spray risolto restano aperti. Parametri `unverified`; Unity Editor/Play/Player/IL2CPP reale e calibrazione OEM non sono verificati.
+
+[LIQUID_FUEL_TANK.it.md](LIQUID_FUEL_TANK.it.md)

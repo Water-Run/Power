@@ -4,7 +4,7 @@
 
 `liquid_fuel_injector` 把液体从有限柔性液轨送入单独的[油膜](FUEL_FILM.zh-CN.md)。正向曲轴窗口每个循环锁存一份请求质量。实际接收侧压力、喷嘴几何、剩余轨内存量与压力能决定供给。油膜随后加热并蒸发液体;既有的预设反应只消耗蒸气。
 
-这把供给、相变与反应连接起来,同时使每项存量与能量转移都可观测。它是定密度/柔度的研究模型。 可选的泵补给使用显式外部质量/热边界。 油箱耗尽、泵效率/调压、管路损失、气蚀、压力相关物性和有限体积喷雾仍待完成。参数为 `unverified`；这不构成 OEM 标定或实际 Unity Editor/Play/Player/IL2CPP 验收。
+这把供给、相变与反应连接起来,同时使每项存量与能量转移都可观测。它是定密度/柔度的研究模型。 可选的泵补给使用显式外部质量/热边界。 几何容量、通气/顶部气体/晃动、气蚀、实测泵充液/效率/调压和分解喷雾仍待完成。参数为 `unverified`；实际 Unity Editor/Play/Player/IL2CPP 与 OEM 标定仍未验证。
 
 ```mermaid
 flowchart LR
@@ -108,7 +108,7 @@ Q_nozzle = W_rail - W_receiver
 
 `liquid-injected-cylinder` 从干燥油膜与有限带压源开始。单独进气、循环剂量请求、受壁面限制的蒸气可用量与预设反应,驱动与其他实验室相同的曲轴/负载模型。JSON、CLI、可移植资产与真实的 MCP 服务器共享其定义与回放边界。全部参数仍为 `unverified`。
 
-泵轴功、燃轨压力和混合热储能已有守恒与独立 ODE 检查；实际 Unity 验收仍待完成。 [VALIDATION.zh-CN.md](VALIDATION.zh-CN.md) 源是显式外部边界，不是已建模的有限燃料箱。油箱耗尽、泵效率/调压、管路损失、气蚀、压力相关物性和有限体积喷雾仍待完成。参数为 `unverified`；这不构成 OEM 标定或实际 Unity Editor/Play/Player/IL2CPP 验收。
+泵轴功、燃轨压力和混合热储能已有守恒与独立 ODE 检查；实际 Unity 验收仍待完成。 [VALIDATION.zh-CN.md](VALIDATION.zh-CN.md) 几何容量、通气/顶部气体/晃动、气蚀、实测泵充液/效率/调压和分解喷雾仍待完成。参数为 `unverified`；实际 Unity Editor/Play/Player/IL2CPP 与 OEM 标定仍未验证。
 
 ## 物理针阀扩展
 
@@ -118,8 +118,8 @@ Q_nozzle = W_rail - W_receiver
 
 `liquid_rail_feed` 将液体喷射器与现有排量泵及显式质量/热边界配对。液压出口节点必须与燃轨的顺应性和初始绝对压力一致。配对泵和喷射器管理该压力节点；其他未计入的流体路径会被拒绝。
 
-资产 v26 保留补给连接和源温度，并读取 v1-v25。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
+资产 v27 保留补给连接和源温度，并读取 v1-v26。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
 
-源是显式外部边界，不是已建模的有限燃料箱。油箱耗尽、泵效率/调压、管路损失、气蚀、压力相关物性和有限体积喷雾仍待完成。参数为 `unverified`；这不构成 OEM 标定或实际 Unity Editor/Play/Player/IL2CPP 验收。
+几何容量、通气/顶部气体/晃动、气蚀、实测泵充液/效率/调压和分解喷雾仍待完成。参数为 `unverified`；实际 Unity Editor/Play/Player/IL2CPP 与 OEM 标定仍未验证。
 
 [PUMP_FED_FUEL.zh-CN.md](PUMP_FED_FUEL.zh-CN.md)

@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, comprobar la huella]
 ```
 
-## Versión actual 26
+## Versión actual 27
+
+v27 conserva tanque y selección y lee v1-v26. Cada tanque añade 4 estados dentro de las mismas cotas. Se verifican intercambio húmedo independiente, presión/energía de eje agotadas analíticas, mezcla de retorno, balances completos, rollback, ramas y pasos sin asignación.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.es.md](LIQUID_FUEL_TANK.es.md)
+
+## Versión 26 conservada
 
 El codificador escribe `power.asset.v26` y lee v1-v26. Hay 38 cuentas int32 (152 bytes); la cabecera ocupa 230 + longitud del nombre UTF-8 bytes. El tipo 39 es `liquid_rail_feed`, etiqueta de huella 30. Un registro de 24 bytes guarda índice, IDs inyector/bomba y temperatura fuente. Se comprueban tipos y propiedad exclusiva; una reducción v25 firmada de nuevo rechaza el tipo nuevo.
 

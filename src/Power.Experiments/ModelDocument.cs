@@ -44,7 +44,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
         ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault, ["lockup_state"] = Field.LockupState,
-        ["actuator_integral_a"] = Field.ActuatorIntegralA, ["actuator_integral_b"] = Field.ActuatorIntegralB, ["actuator_integral_c"] = Field.ActuatorIntegralC, ["actuator_integral_d"] = Field.ActuatorIntegralD, ["actuator_integral_e"] = Field.ActuatorIntegralE, ["actuator_integral_f"] = Field.ActuatorIntegralF,
+        ["actuator_integral_a"] = Field.ActuatorIntegralA, ["actuator_integral_b"] = Field.ActuatorIntegralB, ["actuator_integral_c"] = Field.ActuatorIntegralC, ["actuator_integral_d"] = Field.ActuatorIntegralD, ["actuator_integral_e"] = Field.ActuatorIntegralE, ["actuator_integral_f"] = Field.ActuatorIntegralF, ["tank_state"] = Field.TankState,
         ["copper_heat"] = Field.CopperHeat, ["predicted_fuel_mass"] = Field.PredictedFuelMass, ["prediction_ticks"] = Field.PredictionTicks, ["driver_state"] = Field.DriverState, ["closing_delay_ticks"] = Field.ClosingDelayTicks,
         ["sampled_pressure"] = Field.SampledPressure, ["pressure_error"] = Field.PressureError,
         ["integral_voltage"] = Field.IntegralVoltage, ["command_voltage"] = Field.CommandVoltage,
@@ -177,7 +177,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 "torque_converter" => ComponentKind.TorqueConverter, "shaft" => ComponentKind.Shaft, "dc_motor" => ComponentKind.DcMotor,
                 "torque_source" => ComponentKind.TorqueSource, "thermal_link" => ComponentKind.ThermalLink,
                 "sealed_cylinder" => ComponentKind.SealedCylinder,
-                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink, "fuel_film" => ComponentKind.FuelFilm, "liquid_fuel_injector" => ComponentKind.LiquidFuelInjector, "liquid_rail_feed" => ComponentKind.LiquidRailFeed, "solenoid" => ComponentKind.Solenoid, "travel_stop" => ComponentKind.TravelStop, "needle_driver" => ComponentKind.NeedleDriver, "dct_controller" => ComponentKind.DualClutchController, "at_controller" => ComponentKind.HydraulicAtController,
+                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink, "fuel_film" => ComponentKind.FuelFilm, "liquid_fuel_injector" => ComponentKind.LiquidFuelInjector, "liquid_rail_feed" => ComponentKind.LiquidRailFeed, "liquid_fuel_tank" => ComponentKind.LiquidFuelTank, "solenoid" => ComponentKind.Solenoid, "travel_stop" => ComponentKind.TravelStop, "needle_driver" => ComponentKind.NeedleDriver, "dct_controller" => ComponentKind.DualClutchController, "at_controller" => ComponentKind.HydraulicAtController,
                 "gas_cylinder" => ComponentKind.GasCylinder, "gas_piston" => ComponentKind.GasPiston, "premixed_combustion" => ComponentKind.PremixedCombustion,
                 "clutch" => ComponentKind.Clutch,
                 "ideal_gear" => ComponentKind.IdealGear, "planetary_gear" => ComponentKind.PlanetaryGear, "double_pinion_planetary_gear" => ComponentKind.DoublePinionPlanetaryGear, "carrier_gear" => ComponentKind.CarrierGear,
@@ -192,7 +192,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             else if (kind is ComponentKind.DualClutchController or ComponentKind.HydraulicAtController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if (kind == ComponentKind.Solenoid) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"], "heat_node");
             else if (kind is ComponentKind.TravelStop or ComponentKind.NeedleDriver) Object(c, ["id", "kind", "node_a", "parameters"]);
-            else if (kind == ComponentKind.LiquidRailFeed) Object(c,["id","kind","node_a","parameters"]);
+            else if (kind is ComponentKind.LiquidRailFeed or ComponentKind.LiquidFuelTank) Object(c,["id","kind","node_a","parameters"]);
             else if (kind == ComponentKind.LiquidFuelInjector) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if(kind==ComponentKind.FuelFilm)Object(c,["id","kind","node_a","node_b","parameters"]);
             else if (kind == ComponentKind.GasFuelInjector) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"]);
@@ -226,8 +226,13 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
             if(kind==ComponentKind.LiquidRailFeed)
             {
-                Object(parameters,["injector_component","pump_component","supply_temperature"]);
-                return result with{LiquidRailFeed=new(){InjectorComponent=Id(parameters,"injector_component"),PumpComponent=Id(parameters,"pump_component"),SupplyTemperature=Quantity(parameters.GetProperty("supply_temperature"))}};
+                Object(parameters,["injector_component","pump_component"],"supply_temperature","tank_component");
+                return result with{LiquidRailFeed=new(){InjectorComponent=Id(parameters,"injector_component"),PumpComponent=Id(parameters,"pump_component"),TankComponent=parameters.TryGetProperty("tank_component",out var tank)?Id(parameters,"tank_component"):0,SupplyTemperature=parameters.TryGetProperty("supply_temperature",out var temperature)?Quantity(temperature):default}};
+            }
+            if (kind == ComponentKind.LiquidFuelTank)
+            {
+                Object(parameters,["injector_component","initial_mass","initial_temperature"]);
+                return result with{LiquidFuelTank=new(){InjectorComponent=Id(parameters,"injector_component"),InitialMass=Quantity(parameters.GetProperty("initial_mass")),InitialTemperature=Quantity(parameters.GetProperty("initial_temperature"))}};
             }
             if (kind == ComponentKind.HydraulicAtController)
             {

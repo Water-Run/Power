@@ -10,12 +10,12 @@ O Power! tem um núcleo de simulação gerenciado, documentos de modelo comparti
 |---|---|---|
 | Núcleo | Unidades explícitas e IDs estáveis; compilação imutável; tempo inteiro limitado; balanços observáveis; replay, cancelamento, ramificações independentes e rollback do lote inteiro | Evidência de longa duração e de powertrain completo |
 | Motor | Cilindros fechados/abertos, trabalho de pressão da biela-manivela, escoamento de gás bidirecional, válvulas cronometradas pelo virabrequim, calor de parede e combustão premisturada prescrita | Admissão/escape detalhados, ignição, perdas mecânicas, termoquímica mais rica e comportamento medido do motor |
-| Combustível | Combustível/ar/produtos rastreados, trilhos gasosos finitos com medição de dose por ciclo, trilhos líquidos finitos e flexíveis que alimentam filmes, evaporação paga pela parede e reação apenas do vapor; [Rail de combustível líquido alimentado por bomba](PUMP_FED_FUEL.pt-BR.md) | tanque finito e regulação medida da bomba, comportamento magnético/eletrônico/de pulverização não linear, equilíbrio de fases dependente da pressão e propriedades de combustível medidas |
+| Combustível | Combustível/ar/produtos rastreados, trilhos gasosos finitos com medição de dose por ciclo, trilhos líquidos finitos e flexíveis que alimentam filmes, evaporação paga pela parede e reação apenas do vapor; [Rail de combustível líquido alimentado por bomba](PUMP_FED_FUEL.pt-BR.md) | geometria/ventilação do tanque e enchimento/regulação medidos, comportamento magnético/eletrônico/de pulverização não linear, equilíbrio de fases dependente da pressão e propriedades de combustível medidas |
 | Transmissão | Embreagens estática/deslizante, acionamento por contato, engrenagens/planetárias com sinal, conversor/trava mapeados e caminhos DCT de sete marchas à frente/ré e Ravigneaux de quatro faixas à frente/ré com giro/inércia orbital dos planetas resolvidos | Flexibilidade/perdas de engrenamento e divisão de carga, acionamento DCT, controle completo de pressão/troca da AT e roteamento medido, trocas coordenadas, perdas medidas e comportamento mais rico do conversor |
 | Hidráulica | Volumes flexíveis, restrições, bombas com vazamento/arrasto explícitos, alívio, pistões dinâmicos, carretéis dosados e acumuladores de gás de energia finita | Mapas medidos de válvula/acumulador/bomba, atrito de vedação, cavitação e hidráulica completa da transmissão |
 | Elétrica | Motores RL, solenoides recíprocos de indutância variável, bateria de carga finita, polarização por resistência/RC, conversão de duty médio e acessórios | Comportamento químico/térmico medido, BMS, controle de corrente e integração completa da alimentação |
 | Controles | PI de pressão amostrado, realimentação da agulha/predição de fechamento e controle DCT escalonado confirmado por sensor, com posse do atuador, relógios inteiros e memória transacional | Coordenação de torque ECU/TCU, sensores, atuadores e tratamento de falhas |
-| Documentos e assets | 38 laboratórios JSON/CLI, 37 exemplos MCP, asset v26 e leitores v1-v25 | Edição/salvamento e coleções de modelos calibrados |
+| Documentos e assets | 40 laboratórios JSON/CLI, 39 exemplos MCP, asset v27 e leitores v1-v26 | Edição/salvamento e coleções de modelos calibrados |
 | Agentes | Doze ferramentas MCP definidas por esquema; evidência compacta, verificações de revisão e diagnósticos acionáveis | Fluxos de trabalho completos para o escopo físico/de controle restante |
 | Unity | Importação de modelo, reprodução em ticks exatos, componentes 3D esquemáticos, controles, reinício e testes de ciclo de vida preparados | Aceitação real de Editor/Play, gráficos selecionáveis, edição/gravação de grafo e Player/IL2CPP |
 | Acervo nativo | Protótipos de pesquisa Zig 0.15.2, ABI preservado e procedência original das fontes | Referência histórica; a migração gerenciada continua separada da funcionalidade completa |
@@ -40,7 +40,7 @@ O [incremento de compensação de fechamento](CLOSURE_PREDICTION.pt-BR.md) repro
 
 O [incremento da agulha](NEEDLE_ACTUATION.pt-BR.md) acopla a energia do fluxo magnético e a força recíproca à massa real da agulha, mola/amortecimento e batentes elásticos. A amostragem inteira é dona da tensão da bobina a partir da realimentação da dose entregue. O fluido continua governado pelo levantamento físico através do atraso de fechamento e do ricochete; não é cortado no valor alvo. Referências independentes de magnético/RL/movimento, balanços de fonte/fase/elétrico/térmico, replay portátil/MCP e transações completas do controlador passam. A entrega em excesso e o líquido restante na fronteira do experimento continuam observáveis; esses resultados não estabelecem rastreamento calibrado de dose nem eletrônica/magnética completas do injetor.
 
-O [incremento de injeção líquida](LIQUID_FUEL_INJECTION.pt-BR.md) agora parte de um filme seco e retira de uma fonte flexível finita. Pressão/trabalho analíticos do trilho, refinamento simultâneo independente, balanços completos de fonte/filme/químico/térmico, replay MCP real e rollback especulativo de embreagem passam. A energia de pressão do trilho é armazenada; o calor do bico e o trabalho de pressão exportado do receptor continuam distintos. A fonte é uma fronteira externa explícita, não um tanque finito modelado. Esgotamento, eficiência/regulação da bomba, perdas de linhas, cavitação, propriedades dependentes da pressão e spray de volume finito seguem abertos. Parâmetros `unverified`; isso não comprova calibração OEM ou aceitação real Unity Editor/Play/Player/IL2CPP.
+O [incremento de injeção líquida](LIQUID_FUEL_INJECTION.pt-BR.md) agora parte de um filme seco e retira de uma fonte flexível finita. Pressão/trabalho analíticos do trilho, refinamento simultâneo independente, balanços completos de fonte/filme/químico/térmico, replay MCP real e rollback especulativo de embreagem passam. A energia de pressão do trilho é armazenada; o calor do bico e o trabalho de pressão exportado do receptor continuam distintos. Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
 
 O `film-fired-cylinder` contém inicialmente um inventário líquido declarado. Ele aquece e evapora esse inventário antes da reação prescrita; não implementa um injetor líquido. Marcadores e testes preparados do Studio consomem as mesmas definições. `POWER_UNITY_EDITOR` não está definido, então Editor/Play reais, renderização e Player/IL2CPP continuam não verificados.
 
@@ -48,7 +48,7 @@ Todos os parâmetros de pesquisa continuam `unverified`. EA211 DJS + DQ200 e PSA
 
 ## Próxima sequência de desenvolvimento
 
-1. Estender o rail alimentado por bomba com tanque finito, regulação medida e acionamento magnético/eletrônico refinado. Substitua a fronteira declarada de trabalho de deslocamento exportado quando o volume líquido finito e o momento da pulverização estiverem resolvidos. Mantenha o líquido entregue, o combustível evaporado e a reação observáveis em separado e conserve referências independentes.
+1. Estender o tanque finito com capacidade geométrica, dinâmica de ventilação/espaço gasoso, enchimento/regulação medidos e acionamento magnético/eletrônico refinado. Substitua a fronteira declarada de trabalho de deslocamento exportado quando o volume líquido finito e o momento da pulverização estiverem resolvidos. Mantenha o líquido entregue, o combustível evaporado e a reação observáveis em separado e conserve referências independentes.
 2. Estenda o motor com controle de ignição, dinâmica de admissão/escape, perdas mecânicas e termoquímica mais rica. Conserve o objetivo completo do motor.
 3. Estenda os caminhos de pesquisa DCT verificados com acionamento detalhado, propriedades/perdas medidas dos planetas e hidráulica/controle completos da AT, e então construa a coordenação de troca/torque de ECU/TCU a partir dos primitivos verificados de engrenagem, embreagem, conversor e hidráulica. Acrescente estado limitado de controlador, comportamento de sensor/atuador e recuperação de falha.
 4. Execute `unity-test` com o Editor fixado e depois obtenha evidência de Player/IL2CPP. Complete a seleção de canais, a edição de grafo e a gravação como recursos distintos.
@@ -58,7 +58,7 @@ Todos os parâmetros de pesquisa continuam `unverified`. EA211 DJS + DQ200 e PSA
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v26 preserva rotas, ganhos e relógios e lê v1-v25.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v27 preserva rotas, ganhos e relógios e lê v1-v26.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -68,8 +68,18 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v26 preserva conexões e temperatura da fonte e lê v1-v25. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v27 preserva conexões e temperatura da fonte e lê v1-v26. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
-A fonte é uma fronteira externa explícita, não um tanque finito modelado. Esgotamento, eficiência/regulação da bomba, perdas de linhas, cavitação, propriedades dependentes da pressão e spray de volume finito seguem abertos. Parâmetros `unverified`; isso não comprova calibração OEM ou aceitação real Unity Editor/Play/Player/IL2CPP.
+Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
 
 [PUMP_FED_FUEL.pt-BR.md](PUMP_FED_FUEL.pt-BR.md)
+
+## Tanque finito de combustível líquido
+
+`liquid_fuel_tank` guarda massa líquida finita e energia térmica com densidade, referência térmica do filme e poder calorífico do injetor associado. A alimentação o escolhe por `tank_component` e omite `supply_temperature`. Cada tanque pertence a uma alimentação compatível.
+
+Energias térmica e química do tanque entram no armazenamento completo. Transferência interna não adiciona massa ou energia química externa. A pressão de entrada prescrita mantém sua fronteira de trabalho de pressão. Admissão/escape gasoso ainda podem transportar energia química.
+
+Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
+
+[LIQUID_FUEL_TANK.pt-BR.md](LIQUID_FUEL_TANK.pt-BR.md)

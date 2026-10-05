@@ -1,0 +1,21 @@
+# Réservoir fini de carburant liquide
+
+[English](LIQUID_FUEL_TANK.md) · [简体中文](LIQUID_FUEL_TANK.zh-CN.md) · **Français** · [Русский](LIQUID_FUEL_TANK.ru.md) · [日本語](LIQUID_FUEL_TANK.ja.md) · [한국어](LIQUID_FUEL_TANK.ko.md) · [Deutsch](LIQUID_FUEL_TANK.de.md) · [Español](LIQUID_FUEL_TANK.es.md) · [Italiano](LIQUID_FUEL_TANK.it.md) · [Português](LIQUID_FUEL_TANK.pt-BR.md)
+
+## Contrat
+
+`liquid_fuel_tank` stocke masse liquide finie et énergie calorique avec la densité, référence thermique du film et pouvoir calorifique de l'injecteur associé. L'alimentation le choisit via `tank_component` et omet `supply_temperature`. Chaque réservoir appartient à une alimentation compatible.
+
+Le débit positif est borné par l'inventaire restant sur l'intervalle accepté. Le même déplacement rempli effectif fixe réaction d'arbre et transfert de pression, conservant le travail arbre/fluide. Une rotation avant à vide ne livre ni liquide ni travail fluide ; le retour signé mélange l'énergie calorique actuelle de la rampe dans le réservoir.
+
+Énergies calorique et chimique du réservoir entrent dans le stockage complet. Le transfert interne n'ajoute aucune matière ni énergie chimique externe. La pression d'entrée prescrite garde sa frontière de travail de pression. Admission/échappement gazeux peuvent encore transporter de l'énergie chimique.
+
+`finite-tank-liquid-cylinder` et `finite-tank-needle-cylinder` utilisent réservoir ID 1513 et alimentation ID 1511. Lire `mass`, `temperature`, `internal_energy`, `chemical_energy` et `tank_state` ; 0 signifie liquide présent et 1 vide. La température sèche rapporte la référence initiale déclarée.
+
+## Preuves et limites
+
+v27 conserve les données et la sélection et lit v1-v26. Chaque réservoir ajoute 4 états dans les bornes inchangées. Échange humide indépendant, pression/énergie d'arbre après épuisement analytiques, mélange retour, bilans complets, rollback, branches et pas sans allocation sont vérifiés.
+
+Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
+
+[VALIDATION.fr.md](VALIDATION.fr.md)

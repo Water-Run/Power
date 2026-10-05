@@ -238,3 +238,13 @@ is substituted. SHA-256: `df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedc
 Fingerprint: `ddefea6d870e7e75`. `LiquidRailFeedAssetChecks` retains its digest
 and exact every-boundary old/upgraded replay. Do not regenerate this fixture
 with the current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Pump-fed liquid rail version 26
+
+`pump-fed-liquid-cylinder-v26.powerasset` retains the verified v26 writer output
+before finite tank records. Source: `assets/labs/pump-fed-liquid-cylinder.power.json`.
+Retained on 2026-10-05 from checkpoint `144ac3d`. SHA-256:
+`b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d`. Fingerprint:
+`22cbbe4a983098f4`. `LiquidFuelTankAssetChecks` retains the original digest
+and exact every-boundary old/upgraded replay. Do not regenerate this fixture
+with the current writer. The Power! GPL license and Unity Linking Exception apply.

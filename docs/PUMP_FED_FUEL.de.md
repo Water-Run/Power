@@ -12,6 +12,16 @@ Druckenergie wird nur einmal im Hydraulikknoten gespeichert. Volumenstrom und We
 
 ## Nachweise und Grenzen
 
-v26 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v25. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v27 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v26. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
-Die Quelle ist eine explizite Außengrenze, kein modellierter endlicher Tank. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
+Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
+
+## Endlicher Flüssigkraftstofftank
+
+`liquid_fuel_tank` speichert endliche Flüssigkeitsmasse und kalorische Energie mit Dichte, Filmwärmereferenz und Heizwert des zugehörigen Injektors. Die Speisung wählt ihn mit `tank_component` und lässt `supply_temperature` weg. Jeder Tank gehört einer stofflich passenden Speisung.
+
+Kalorische und chemische Tankenergie gehören zur gesamten Speicherung. Interner Transfer fügt keine äußere Masse oder chemische Versorgung hinzu. Der erklärte Einlassdruck behält seine Druckarbeitsgrenze. Gaseinlass/-auslass kann weiterhin chemische Grenzenergie tragen.
+
+Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
+
+[LIQUID_FUEL_TANK.de.md](LIQUID_FUEL_TANK.de.md)

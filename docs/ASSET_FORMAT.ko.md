@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 26
+## 현재 버전 27
+
+v27은 탱크와 공급 선택을 저장하고 v1-v26을 읽습니다. 각 탱크는 기존 상한 안에서 4개 상태를 추가합니다. 독립 습윤 교환, 고갈 압력/축 에너지 해석, 반환 혼합, 전체 원장, rollback, 분기와 무할당 스텝을 검사합니다.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.ko.md](LIQUID_FUEL_TANK.ko.md)
+
+## 유지된 버전 26
 
 인코더는 `power.asset.v26`를 쓰고 v1-v26을 읽습니다. 38개의 int32 계수(152 bytes)가 있고 헤더는 230 + UTF-8 이름 길이 bytes입니다. 종류 39는 `liquid_rail_feed`, 지문 태그는 30입니다. 24 bytes 레코드는 색인, 인젝터/펌프 ID와 원천 온도량을 저장합니다. 형식과 레일/펌프 독점 소유권을 확인하며 재서명 v25 다운그레이드는 새 종류를 거부합니다.
 

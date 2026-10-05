@@ -42,7 +42,7 @@ Windows も同じ `dotnet` コマンドと、DLL への絶対パスを使いま�
 
 ## ツールと結果
 
-エージェント API バージョン 0.31.0 では、`get_example_model` は任意の `name` を受け付けます。`electrothermal`（既定）、`sealed-cylinder`、`gas-network`、`moving-cylinder`、`crank-timed-cylinder`、`fired-cylinder`、`fired-clutch`、`fired-planetary`、`fired-converter`、`fired-hydraulic`、`fired-pump`、`fired-pump-losses`、`electric-pump`、`pressure-regulated-pump`、`battery-regulated-pump`、`piston-actuated-clutch`、`spool-regulated-pump`、`gas-accumulator-pump`、`metered-fired-cylinder`、`film-fired-cylinder`、`liquid-injected-cylinder`、`needle-actuated-cylinder`、`closure-compensated-cylinder`、`dual-clutch-transmission`、`fired-dual-clutch`、`controlled-dual-clutch`、`controlled-fired-dual-clutch`、`ravigneaux-transmission`、`fired-ravigneaux-converter`、`resolved-ravigneaux-transmission`、`fired-resolved-ravigneaux-converter`、`hydraulic-ravigneaux-transmission`、`fired-hydraulic-ravigneaux` です。`get_capabilities` は、サポートされる忠実度、読み取れるアセットバージョン、ソルバー制限、入力境界を知らせます。エクスポートは `power.asset.v26` を使います。v1–v23 のアセットは読み取れるままです。出力チャンネルとその単位は、モデル検証とセッション作成が返します。ラボラトリーの KPI に合格しても、完全な、またはキャリブレーション済みのパワートレインであることにはなりません。
+エージェント API バージョン 0.32.0 では、`get_example_model` は任意の `name` を受け付けます。`electrothermal`（既定）、`sealed-cylinder`、`gas-network`、`moving-cylinder`、`crank-timed-cylinder`、`fired-cylinder`、`fired-clutch`、`fired-planetary`、`fired-converter`、`fired-hydraulic`、`fired-pump`、`fired-pump-losses`、`electric-pump`、`pressure-regulated-pump`、`battery-regulated-pump`、`piston-actuated-clutch`、`spool-regulated-pump`、`gas-accumulator-pump`、`metered-fired-cylinder`、`film-fired-cylinder`、`liquid-injected-cylinder`、`needle-actuated-cylinder`、`closure-compensated-cylinder`、`dual-clutch-transmission`、`fired-dual-clutch`、`controlled-dual-clutch`、`controlled-fired-dual-clutch`、`ravigneaux-transmission`、`fired-ravigneaux-converter`、`resolved-ravigneaux-transmission`、`fired-resolved-ravigneaux-converter`、`hydraulic-ravigneaux-transmission`、`fired-hydraulic-ravigneaux` です。`get_capabilities` は、サポートされる忠実度、読み取れるアセットバージョン、ソルバー制限、入力境界を知らせます。エクスポートは `power.asset.v27` を使います。v1–v23 のアセットは読み取れるままです。出力チャンネルとその単位は、モデル検証とセッション作成が返します。ラボラトリーの KPI に合格しても、完全な、またはキャリブレーション済みのパワートレインであることにはなりません。
 
 | ツール | 役割 |
 |---|---|
@@ -292,7 +292,7 @@ KPI とリプレイのエビデンスを評価するには `run_experiment` を�
 
 `at_controller` は [-1,4] の整数目標段を受け取り、ゼロはニュートラルです。五組の充填/排油弁と任意のトルクコンバーターのロックアップを管理します。経路の順序はキャリア入力、小サン入力、大サン入力、キャリアブレーキ、大サンブレーキ、最後にロックアップです。
 
-例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v26 は経路、ゲイン、時計を保存し、v1-v25 を読みます。
+例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v27 は経路、ゲイン、時計を保存し、v1-v26 を読みます。
 
 研究用の制御であり、パラメーターは `unverified` のままです。ECU トルク協調、詳細なセンサー/弁、包括的な車両故障、OEM 校正は未完成です。managed と Standard の検査は実際の Unity Editor/Play/Player/IL2CPP の受入を証明しません。
 
@@ -302,8 +302,18 @@ KPI とリプレイのエビデンスを評価するには `run_experiment` を�
 
 `liquid_rail_feed` は液体噴射器を既存の容積ポンプと明示的な物質/熱境界に結びます。油圧出口ノードはレールのコンプライアンスと初期絶対圧に一致する必要があります。ポンプと噴射器がこの圧力ノードを所有し、未追跡の他の流体経路は拒否されます。
 
-v26 は補給接続と源温度を保存し v1-v25 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
+v27 は補給接続と源温度を保存し v1-v26 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
 
-源は明示的な外部境界であり、有限燃料タンクのモデルではありません。タンク枯渇、ポンプ効率/調圧、配管損失、キャビテーション、圧力依存物性、有限体積噴霧は未完成です。パラメーターは `unverified` であり、OEM 校正や実際の Unity Editor/Play/Player/IL2CPP 受入を証明しません。
+形状容量、通気/気相空間/揺動、キャビテーション、実測充液/効率/調圧、解像噴霧は未完了です。パラメーターは `unverified` で、実際の Unity Editor/Play/Player/IL2CPP と OEM 校正は未検証です。
 
 [PUMP_FED_FUEL.ja.md](PUMP_FED_FUEL.ja.md)
+
+## 有限液体燃料タンク
+
+`liquid_fuel_tank` は対応する噴射器の密度、フィルム熱基準、発熱量を使い、有限液体質量と熱エネルギーを保存します。補給は `tank_component` で選び、`supply_temperature` を省略します。各タンクは燃料物性が一致する一つの補給に属します。
+
+タンクの熱/化学エネルギーは全貯蔵台帳に入ります。内部移送は外部質量や化学供給を追加しません。明示したポンプ入口規定圧は圧力仕事境界を保持します。ガス吸排気は化学境界エネルギーを運ぶ場合があります。
+
+形状容量、通気/気相空間/揺動、キャビテーション、実測充液/効率/調圧、解像噴霧は未完了です。パラメーターは `unverified` で、実際の Unity Editor/Play/Player/IL2CPP と OEM 校正は未検証です。
+
+[LIQUID_FUEL_TANK.ja.md](LIQUID_FUEL_TANK.ja.md)

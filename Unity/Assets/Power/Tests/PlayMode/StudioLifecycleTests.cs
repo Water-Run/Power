@@ -246,6 +246,12 @@ namespace Power.Studio.Tests
         [UnityTest]
         public IEnumerator PumpFedNeedleImportsAndReplays() => PumpAssemblyReplay("PumpFedNeedleCylinder", "Liquid rail feed 1511");
 
+        [UnityTest]
+        public IEnumerator FiniteTankFuelImportsAndReplays() => PumpAssemblyReplay("FiniteTankLiquidCylinder", "Liquid fuel tank 1513");
+
+        [UnityTest]
+        public IEnumerator FiniteTankNeedleImportsAndReplays() => PumpAssemblyReplay("FiniteTankNeedleCylinder", "Liquid fuel tank 1513");
+
         private IEnumerator PumpAssemblyReplay(string resource, string pumpName)
         {
             _host = new GameObject(resource + " test");

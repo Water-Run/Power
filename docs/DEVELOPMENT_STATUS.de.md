@@ -14,12 +14,12 @@ abgenommene Unity-Desktop-Anwendung bleiben unfertig.
 |---|---|---|
 | Kern | Explizite Einheiten und stabile IDs; unveränderliche Kompilierung; begrenzte Ganzzahlzeit; beobachtbare Bilanzen; Replay, Abbruch, unabhängige Abzweigungen und Rollback des gesamten Batches | Nachweise für Langzeit und vollständigen Antriebsstrang |
 | Motor | Abgeschlossene und offene Zylinder, Schubkurbel-Druckarbeit, bidirektionaler Gasstrom, kurbelzeitgesteuerte Ventile, Wandwärme und vorgeschriebene Vormischverbrennung | Detaillierte Saug- und Auslassseite, Zündung, mechanische Verluste, reichere Thermochemie und gemessenes Motorverhalten |
-| Kraftstoff | Verfolgter Kraftstoff, Luft und Produkte, endliche gasförmige Leitungen mit Zyklusdosierung, endliche nachgiebige Flüssigkeitsleitungen, die Filme speisen, von der Wand bezahlte Verdampfung und reine Dampfreaktion; [Pumpengespeiste Flüssigkraftstoffschiene](PUMP_FED_FUEL.de.md) | endlicher Kraftstofftank und gemessene Pumpenregelung, nichtlineares magnetisches, elektronisches und Spray-Verhalten, druckabhängiges Phasengleichgewicht und gemessene Kraftstoffeigenschaften |
+| Kraftstoff | Verfolgter Kraftstoff, Luft und Produkte, endliche gasförmige Leitungen mit Zyklusdosierung, endliche nachgiebige Flüssigkeitsleitungen, die Filme speisen, von der Wand bezahlte Verdampfung und reine Dampfreaktion; [Pumpengespeiste Flüssigkraftstoffschiene](PUMP_FED_FUEL.de.md) | Tankgeometrie/Belüftung und gemessene Pumpenfüllung/Regelung, nichtlineares magnetisches, elektronisches und Spray-Verhalten, druckabhängiges Phasengleichgewicht und gemessene Kraftstoffeigenschaften |
 | Getriebe | Haft- und Gleitkupplungen, Kontaktbetätigung, vorzeichenbehaftete Zahnräder und Planetensätze, tabellierter Wandler und Überbrückung sowie DCT-Pfade mit sieben Vorwärtsgängen und Rückwärtsgang und Ravigneaux-Pfade mit vier Vorwärtsgängen und Rückwärtsgang bei aufgelöster Planetendrehung und Bahnträgheit | Nachgiebigkeit, Verluste und Lastverteilung der Verzahnung, DCT-Ansteuerung, vollständige AT-Druck- und Schaltregelung und gemessene Führung, abgestimmte Schaltungen, gemessene Verluste und reicheres Wandlerverhalten |
 | Hydraulik | Nachgiebige Volumina, Drosseln, Pumpen mit expliziter Leckage und Schlepp, Druckbegrenzung, dynamische Kolben, dosierte Schieber und Gasakkumulatoren endlicher Energie | Gemessene Ventil-, Akkumulator- und Pumpenkennfelder, Dichtungsreibung, Kavitation und vollständige Getriebehydraulik |
 | Elektrik | RL-Motoren, reziproke Solenoide variabler Induktivität, Batterie endlicher Ladung, Widerstands- und RC-Polarisation, gemittelte Wandlung des Tastverhältnisses und Zusatzverbraucher | Gemessenes chemisches und thermisches Verhalten, BMS, Stromregelung und vollständige Versorgungsintegration |
 | Regelungen | Abgetasteter Druck-PI, Nadelrückführung und Schließvorhersage sowie sensorbestätigte gestaffelte DCT-Regelung mit Stellgliedbesitz, ganzzahligen Uhren und transaktionalem Gedächtnis | ECU-/TCU-Momentenabstimmung, Sensoren, Stellglieder und Fehlerbehandlung |
-| Dokumente und Assets | 38 JSON/CLI-Labore, 37 MCP-Beispiele, Asset v26 und Leser für v1-v25 | Workbench-Bearbeitung/Speicherung und kalibrierte Modellsammlungen |
+| Dokumente und Assets | 40 JSON/CLI-Labore, 39 MCP-Beispiele, Asset v27 und Leser für v1-v26 | Workbench-Bearbeitung/Speicherung und kalibrierte Modellsammlungen |
 | Agenten | Zwölf schema-definierte MCP-Werkzeuge; kompakte Nachweise, Revisionsprüfungen und handlungsfähige Diagnosen | Vollständige Abläufe für den verbleibenden physikalischen und Regelumfang |
 | Unity | Modellimport, Wiedergabe auf exakten Ticks, schematische 3D-Komponenten, Steuerungen, Zurücksetzen und vorbereitete Lebenszyklustests | Tatsächliche Editor-/Play-Abnahme, wählbare Diagramme, Graphbearbeitung und -Speichern sowie Player/IL2CPP |
 | Natives Archiv | Forschungsprototypen in Zig 0.15.2, erhaltenes ABI und ursprüngliche Quellenherkunft | Historische Referenz; die verwaltete Migration bleibt von der vollen Funktionalität getrennt |
@@ -97,7 +97,7 @@ Der [Schritt der Flüssigeinspritzung](LIQUID_FUEL_INJECTION.de.md) startet jetz
 Film und entnimmt aus einer endlichen nachgiebigen Quelle. Analytischer Leitungsdruck und Leitungsarbeit,
 unabhängige gleichzeitige Verfeinerung, vollständige Bilanzen von Quelle, Film, Chemie und Wärme,
 tatsächliches MCP-Replay und spekulatives Kupplungs-Rollback bestehen. Die Druckenergie der Leitung ist
-gespeichert; Düsenwärme und exportierte Empfängerdruckarbeit bleiben verschieden. Die Quelle ist eine explizite Außengrenze, kein modellierter endlicher Tank. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
+gespeichert; Düsenwärme und exportierte Empfängerdruckarbeit bleiben verschieden. Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
 
 `film-fired-cylinder` enthält anfangs einen erklärten Flüssigkeitsvorrat. Es heizt
 diesen Vorrat und verdampft ihn vor der vorgeschriebenen Reaktion; es setzt keinen
@@ -112,7 +112,7 @@ Lizenzen und historische Quellenherkunft bleiben erhalten.
 
 ## Nächste Entwicklungsfolge
 
-1. Die pumpengespeiste Schiene mit endlichem Tank, gemessener Pumpenregelung und verfeinerter magnetischer/elektronischer Ansteuerung erweitern. Die erklärte
+1. Den endlichen Tank mit geometrischer Kapazität, Belüftungs-/Gasraumdynamik, gemessener Pumpenfüllung/Regelung und verfeinerter magnetischer/elektronischer Ansteuerung erweitern. Die erklärte
    exportierte Verdrängungsarbeitsgrenze ersetzen, wenn endliches Flüssigkeitsvolumen und Sprayimpuls aufgelöst sind. Gelieferte Flüssigkeit, verdampften Kraftstoff und Reaktion
    getrennt beobachtbar halten und unabhängige Referenzen behalten.
 2. Den Motor um Zündungsregelung, Saug- und Auslassdynamik, mechanische
@@ -128,7 +128,7 @@ Lizenzen und historische Quellenherkunft bleiben erhalten.
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v26 speichert Routen, Verstärkungen und Uhren und liest v1-v25.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v27 speichert Routen, Verstärkungen und Uhren und liest v1-v26.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -138,8 +138,18 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v26 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v25. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v27 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v26. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
-Die Quelle ist eine explizite Außengrenze, kein modellierter endlicher Tank. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
+Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
 
 [PUMP_FED_FUEL.de.md](PUMP_FED_FUEL.de.md)
+
+## Endlicher Flüssigkraftstofftank
+
+`liquid_fuel_tank` speichert endliche Flüssigkeitsmasse und kalorische Energie mit Dichte, Filmwärmereferenz und Heizwert des zugehörigen Injektors. Die Speisung wählt ihn mit `tank_component` und lässt `supply_temperature` weg. Jeder Tank gehört einer stofflich passenden Speisung.
+
+Kalorische und chemische Tankenergie gehören zur gesamten Speicherung. Interner Transfer fügt keine äußere Masse oder chemische Versorgung hinzu. Der erklärte Einlassdruck behält seine Druckarbeitsgrenze. Gaseinlass/-auslass kann weiterhin chemische Grenzenergie tragen.
+
+Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
+
+[LIQUID_FUEL_TANK.de.md](LIQUID_FUEL_TANK.de.md)

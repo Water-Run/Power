@@ -9,7 +9,7 @@ und Druckenergie bestimmen die Förderung. Der Film heizt und
 verdampft die Flüssigkeit anschließend; die bestehende vorgeschriebene Reaktion verbraucht nur Dampf.
 
 Das verbindet Förderung, Phasenwechsel und Reaktion und hält jedes Inventar
-und jeden Energietransfer beobachtbar. Es ist ein Forschungsmodell mit konstanter Dichte und Nachgiebigkeit. Die optionale Pumpenspeisung nutzt eine explizite äußere Stoff-/Wärmegrenze. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
+und jeden Energietransfer beobachtbar. Es ist ein Forschungsmodell mit konstanter Dichte und Nachgiebigkeit. Die optionale Pumpenspeisung nutzt eine explizite äußere Stoff-/Wärmegrenze. Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
 
 ```mermaid
 flowchart LR
@@ -179,7 +179,7 @@ vorgeschriebene Reaktion treiben dasselbe Kurbel- und Lastmodell wie andere Labo
 CLI, portable Assets und der tatsächliche MCP-Server teilen seine Definitionen und Replay-
 Grenzen. Alle Parameter bleiben `unverified`.
 
-Wellenarbeit, Schienendruck und gemischte Wärmespeicherung haben Erhaltungs- und unabhängige ODE-Prüfungen; tatsächliche Unity-Abnahme steht aus. [VALIDATION.de.md](VALIDATION.de.md) Die Quelle ist eine explizite Außengrenze, kein modellierter endlicher Tank. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
+Wellenarbeit, Schienendruck und gemischte Wärmespeicherung haben Erhaltungs- und unabhängige ODE-Prüfungen; tatsächliche Unity-Abnahme steht aus. [VALIDATION.de.md](VALIDATION.de.md) Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
 
 ## Erweiterung um die physische Nadel
 
@@ -194,8 +194,8 @@ bleiben offen.
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v26 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v25. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v27 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v26. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
-Die Quelle ist eine explizite Außengrenze, kein modellierter endlicher Tank. Tankentleerung, Pumpenwirkungsgrad/Regelung, Leitungsverluste, Kavitation, druckabhängige Stoffwerte und endliches Sprühvolumen bleiben offen. Parameter sind `unverified`; keine OEM-Kalibrierung oder tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme wird belegt.
+Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
 
 [PUMP_FED_FUEL.de.md](PUMP_FED_FUEL.de.md)

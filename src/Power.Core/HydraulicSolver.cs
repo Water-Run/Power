@@ -58,9 +58,38 @@ internal sealed class HydraulicSolver
     private readonly Factorization _factor;
     internal readonly double[] MidPressure, WallHeat;
     internal double BoundaryWork, RejectedHeat;
+    private readonly double[] _liquidSupplyVolume;
+    private double _liquidSupplyDuration;
+    internal void PrepareLiquidSupply(LiquidTankState state, double duration)
+    {
+        _liquidSupplyDuration = duration;
+        Array.Fill(_liquidSupplyVolume, double.PositiveInfinity);
+        foreach (var feed in _model.LiquidFeeds)
+            if (feed.Tank >= 0) _liquidSupplyVolume[_model.Components[feed.Pump].Index] = state.Mass[feed.Tank] / feed.Density;
+    }
+    internal double PumpVolume(int pump, double speed, double duration)
+    {
+        double ordinary = duration * _model.Components[_model.PumpComponents[pump]].P0 * speed;
+        return Math.Min(ordinary, _liquidSupplyVolume[pump]);
+    }
+    internal double PumpFlowLaw(int pump, double speed, out double effectiveDisplacement, out double displacementSlope, out double flowSlope)
+    {
+        double displacement = _model.Components[_model.PumpComponents[pump]].P0;
+        double limit = _liquidSupplyVolume[pump];
+        if (speed >= 0 && !double.IsPositiveInfinity(limit) && (speed == 0 && limit == 0 || displacement * speed > limit / _liquidSupplyDuration))
+        {
+            double flow = limit / _liquidSupplyDuration;
+            effectiveDisplacement = speed == 0 ? 0 : flow / speed;
+            displacementSlope = speed == 0 ? 0 : -effectiveDisplacement / speed;
+            flowSlope = 0; return flow;
+        }
+        effectiveDisplacement = flowSlope = displacement; displacementSlope = 0;
+        return displacement * speed;
+    }
     internal HydraulicSolver(CompiledModel model)
     {
         _model = model; int count = model.HydraulicCount;
+        _liquidSupplyVolume = new double[model.PumpComponents.Length]; Array.Fill(_liquidSupplyVolume, double.PositiveInfinity);
         _compliance = new double[count];
         foreach (var node in model.Nodes) if (node.Domain == Domain.Hydraulic) _compliance[node.Index] = node.Storage;
         _mid = new double[count]; _trial = new double[count]; _next = new double[count]; _residual = new double[count];
@@ -155,14 +184,14 @@ internal sealed class HydraulicSolver
         {
             var c = _model.Components[_model.PumpComponents[k]];
             int outlet = _model.Nodes[c.B].Index, inlet = c.C < 0 ? -1 : _model.Nodes[c.C].Index;
-            double flow = c.P0 * values[pumpOffset + k];
+            double flow = PumpFlowLaw(k, values[pumpOffset + k], out _, out _, out double flowSlope);
             double delivery = .5 * duration / _compliance[outlet], intake = inlet < 0 ? 0 : .5 * duration / _compliance[inlet];
             residual[offset + outlet] -= delivery * flow;
             if (inlet >= 0) residual[offset + inlet] += intake * flow;
             if (jacobian is not null)
             {
-                jacobian[offset + outlet, pumpOffset + k] -= delivery * c.P0;
-                if (inlet >= 0) jacobian[offset + inlet, pumpOffset + k] += intake * c.P0;
+                jacobian[offset + outlet, pumpOffset + k] -= delivery * flowSlope;
+                if (inlet >= 0) jacobian[offset + inlet, pumpOffset + k] += intake * flowSlope;
             }
         }
         for (int k = 0; k < _model.PistonComponents.Length; ++k)
@@ -200,7 +229,7 @@ internal sealed class HydraulicSolver
         {
             var c = _model.Components[_model.PumpComponents[k]];
             int outlet = _model.Nodes[c.B].Index, inlet = c.C < 0 ? -1 : _model.Nodes[c.C].Index;
-            double transfer = duration * c.P0 * shaftMidpoint![_model.Nodes[c.A].Index + 1];
+            double transfer = PumpVolume(k, shaftMidpoint![_model.Nodes[c.A].Index + 1], duration);
             _next[outlet] += transfer / _compliance[outlet]; if (inlet >= 0) _next[inlet] -= transfer / _compliance[inlet];
         }
         foreach (int index in _model.PistonComponents)
@@ -233,11 +262,12 @@ internal sealed class HydraulicSolver
         {
             var c = _model.Components[_model.PumpComponents[k]];
             int outlet = _model.Nodes[c.B].Index, inlet = c.C < 0 ? -1 : _model.Nodes[c.C].Index;
-            double flow = c.P0 * shaftMidpoint![_model.Nodes[c.A].Index + 1];
+            double speed = shaftMidpoint![_model.Nodes[c.A].Index + 1];
+            double flow = PumpFlowLaw(k, speed, out double displacement, out _, out _);
             double pin = inlet < 0 ? c.P2 : MidPressure[inlet], difference = MidPressure[outlet] - pin;
             double work = duration * flow * difference;
             if (inlet < 0) { volumeIn += duration * flow; BoundaryWork += duration * flow * pin; }
-            state.PumpFlow[k] += duration * flow; state.PumpTorque[k] -= duration * c.P0 * difference; state.PumpPower[k] += work;
+            state.PumpFlow[k] += duration * flow; state.PumpTorque[k] -= duration * displacement * difference; state.PumpPower[k] += work;
             Numeric.Accumulate(work, ref state.PumpWork[k], ref state.PumpCorrection[k]);
         }
         foreach (int index in _model.PistonComponents)

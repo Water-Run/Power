@@ -10,7 +10,7 @@ evapora o líquido; a reação prescrita existente consome só vapor.
 
 Isto liga entrega, mudança de fase e reação e mantém cada inventário
 e cada transferência de energia observáveis. É um modelo de pesquisa de densidade e flexibilidade
-constantes. A alimentação opcional por bomba usa uma fronteira externa explícita de matéria/calor. Esgotamento, eficiência/regulação da bomba, perdas de linhas, cavitação, propriedades dependentes da pressão e spray de volume finito seguem abertos. Parâmetros `unverified`; isso não comprova calibração OEM ou aceitação real Unity Editor/Play/Player/IL2CPP.
+constantes. A alimentação opcional por bomba usa uma fronteira externa explícita de matéria/calor. Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
 
 ```mermaid
 flowchart LR
@@ -181,7 +181,7 @@ reação prescrita acionam o mesmo modelo de virabrequim e carga dos outros labo
 CLI, assets portáteis e o servidor MCP real compartilham as definições e os limites
 de replay. Todos os parâmetros permanecem `unverified`.
 
-Trabalho do eixo, pressão e armazenamento térmico misturado têm verificações de conservação e ODE independentes; aceitação Unity real segue pendente. [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md) A fonte é uma fronteira externa explícita, não um tanque finito modelado. Esgotamento, eficiência/regulação da bomba, perdas de linhas, cavitação, propriedades dependentes da pressão e spray de volume finito seguem abertos. Parâmetros `unverified`; isso não comprova calibração OEM ou aceitação real Unity Editor/Play/Player/IL2CPP.
+Trabalho do eixo, pressão e armazenamento térmico misturado têm verificações de conservação e ODE independentes; aceitação Unity real segue pendente. [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md) Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
 
 ## Extensão da agulha física
 
@@ -196,8 +196,8 @@ continuam em aberto.
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v26 preserva conexões e temperatura da fonte e lê v1-v25. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v27 preserva conexões e temperatura da fonte e lê v1-v26. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
-A fonte é uma fronteira externa explícita, não um tanque finito modelado. Esgotamento, eficiência/regulação da bomba, perdas de linhas, cavitação, propriedades dependentes da pressão e spray de volume finito seguem abertos. Parâmetros `unverified`; isso não comprova calibração OEM ou aceitação real Unity Editor/Play/Player/IL2CPP.
+Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
 
 [PUMP_FED_FUEL.pt-BR.md](PUMP_FED_FUEL.pt-BR.md)

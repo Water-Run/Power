@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, conferir a impressão digital]
 ```
 
-## Versão atual 26
+## Versão atual 27
+
+v27 preserva tanque e seleção e lê v1-v26. Cada tanque acrescenta 4 estados dentro dos limites mantidos. Troca úmida independente, pressão/energia do eixo esgotadas analíticas, mistura de retorno, balanços completos, rollback, ramos e passos sem alocação são verificados.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.pt-BR.md](LIQUID_FUEL_TANK.pt-BR.md)
+
+## Versão 26 preservada
 
 O codificador escreve `power.asset.v26` e lê v1-v26. Há 38 contagens int32 (152 bytes); o cabeçalho ocupa 230 + comprimento do nome UTF-8 bytes. O tipo 39 é `liquid_rail_feed`, etiqueta de impressão 30. Um registro de 24 bytes guarda índice, IDs injetor/bomba e temperatura fonte. Tipos e propriedade exclusiva são verificados; um downgrade v25 reassinado rejeita o novo tipo.
 

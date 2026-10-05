@@ -10,7 +10,7 @@ evaporates liquid; the existing prescribed reaction consumes vapor only.
 
 This connects delivery, phase change and reaction while keeping each inventory
 and energy transfer observable. It is a constant-density/compliance research
-model. The optional pump feed uses an explicit external material/thermal boundary. Tank depletion, pump efficiency/regulation, line losses, cavitation, pressure-dependent properties and finite-volume spray remain open. Parameters are `unverified`; this does not establish OEM calibration or actual Unity Editor/Play/Player/IL2CPP acceptance.
+model. The optional pump feed uses an explicit external material/thermal boundary. Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
 
 ```mermaid
 flowchart LR
@@ -181,7 +181,7 @@ prescribed reaction drive the same crank/load model as other laboratories. JSON,
 CLI, portable assets and the actual MCP server share its definitions and replay
 boundaries. All parameters remain `unverified`.
 
-Pump shaft work, rail pressure and mixed caloric storage have conservation and independent ODE checks; actual Unity acceptance remains pending. [VALIDATION.md](VALIDATION.md) The source is an explicit external boundary, not a modeled finite fuel tank. Tank depletion, pump efficiency/regulation, line losses, cavitation, pressure-dependent properties and finite-volume spray remain open. Parameters are `unverified`; this does not establish OEM calibration or actual Unity Editor/Play/Player/IL2CPP acceptance.
+Pump shaft work, rail pressure and mixed caloric storage have conservation and independent ODE checks; actual Unity acceptance remains pending. [VALIDATION.md](VALIDATION.md) Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
 
 ## Physical needle extension
 
@@ -196,8 +196,8 @@ remain open.
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v26 retains feed links and source temperature and reads v1-v25. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v27 retains feed links and source temperature and reads v1-v26. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
-The source is an explicit external boundary, not a modeled finite fuel tank. Tank depletion, pump efficiency/regulation, line losses, cavitation, pressure-dependent properties and finite-volume spray remain open. Parameters are `unverified`; this does not establish OEM calibration or actual Unity Editor/Play/Player/IL2CPP acceptance.
+Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
 
 [PUMP_FED_FUEL.md](PUMP_FED_FUEL.md)

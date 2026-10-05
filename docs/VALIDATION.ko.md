@@ -2,6 +2,61 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-05: 유한 액체 연료 탱크
+
+필수 직렬 검증은 로컬 Windows x64/.NET 10.0.12에서 통과합니다. Standard 어셈블리 검사는 .NET 10에서 실행하며 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 388/388 |
+| standard_checks_on_dotnet | 298/298 |
+| actual_mcp_groups | 43/43 |
+| laboratories | 40 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| asset_version | power.asset.v27 |
+| v26_fixture_sha256 | b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d |
+| verification_log_sha256 | 6c7b9ad52c6e4977b2817c6f6bdd9de4eaf6aeeb943efba255a2ad4956a27d70 |
+
+| Identifier | finite-tank-liquid-cylinder | finite-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 43 | 52 |
+| step_ns | 50000 | 10000 |
+| fingerprint | f7ee4872a034c885 | 8be53a56f175aeeb |
+| final_state_hash | 9fbab09b0d8fea77 | e77e6d4adaf785eb |
+| source_sha256 | 0a67c3eaaac79992b21b647efd6535d0c5c81159808006e5dde40552c3fd5934 | 508a8d163f965b2fc62c965d1984d9abd0e88011685a4099be110470c92baac6 |
+| report_sha256 | 038cbafab19f3e587b7e4a156c017e06531fd04cbaca8619240b81b8e14d6936 | ab18f538eae81bcead2a1a929ab97a0b6ef856a9b6058f1a375e2195d0747edc |
+| max_sampled_energy_j | 5.5981672630878165e-09 | 1.93150526683894e-08 |
+| max_sampled_mass_kg | 1.1926223897340549e-18 | 3.63207727782644e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 1.3137481011914198e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.2977429835191313e-21 | 1.826414792517085e-21 |
+
+- `artifacts/reports/finite-tank-integrated-2026-10-05.log`
+- `artifacts/reports/finite-tank-evidence-2026-10-05.json`
+- `artifacts/reports/finite-tank-schema-audit-2026-10-05.json`
+
+탱크 질량과 열 에너지는 정확히 영이 되며 전진 펌프 유량/반력은 사라지고 축은 실제 동역학을 유지합니다. 반환 흐름은 레일 혼합 온도로 액체 재고를 회복합니다. 독립 습윤 해석 교환, 고갈 축/압력 에너지, 완전 rollback과 할당 검사가 통과합니다.
+
+화학 경계 에너지는 배기로 나가는 미연 연료를 포함합니다. 탱크 전달은 내부이며 통합 검사는 전체 화학 재고 변화와 방출 열의 합을 순 화학 경계 에너지와 비교합니다.
+
+기하학적 용량, 통기/기체 공간/슬로싱, 캐비테이션, 실측 충액/효율/조압과 분해 분무는 미완성입니다. 매개변수는 `unverified`이며 실제 Unity Editor/Play/Player/IL2CPP와 OEM 보정은 미검증입니다.
+
+이전 펌프 공급 리비전은 Windows, Linux, macOS CI를 통과합니다. 해당 실행은 이번 유한 탱크 변경을 검증하지 않습니다.
+
+`144ac3d5d0f15d0eafefe713996f2b08d8ae3ea4` · [CI 37269218379](https://github.com/Water-Run/Power/actions/runs/37269218379)
+
+[LIQUID_FUEL_TANK.ko.md](LIQUID_FUEL_TANK.ko.md)
+
 ## 2026-10-05: 펌프 공급 액체 연료 레일
 
 필수 직렬 검증은 로컬 Windows x64/.NET 10.0.12에서 통과합니다. Standard 어셈블리 검사는 .NET 10에서 실행하며 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.

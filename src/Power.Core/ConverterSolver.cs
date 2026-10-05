@@ -215,8 +215,15 @@ internal sealed class ConverterSolver : MechanicalSolver
             var c = _model.Components[_model.PumpComponents[k]];
             int row = _coupling.PumpOffset + k, outlet = mechanical + _model.Nodes[c.B].Index;
             int inlet = c.C < 0 ? -1 : mechanical + _model.Nodes[c.C].Index;
-            _force[row] = -c.P0 * (values[outlet] - (inlet < 0 ? c.P2 : values[inlet]));
-            if (derivatives) { _derivative[row, outlet] = -c.P0; if (inlet >= 0) _derivative[row, inlet] = c.P0; }
+            _hydraulics!.PumpFlowLaw(k, values[row], out double displacement, out double slope, out _);
+            double difference = values[outlet] - (inlet < 0 ? c.P2 : values[inlet]);
+            _force[row] = -displacement * difference;
+            if (derivatives)
+            {
+                _derivative[row, outlet] = -displacement;
+                if (inlet >= 0) _derivative[row, inlet] = displacement;
+                _derivative[row, row] = -slope * difference;
+            }
         }
         double norm = _hydraulics?.CoupledResidual(_hydraulicState!.Pressure, values, mechanical, _coupling.PumpOffset, _coupling.Cranks,
             _inputs!, _duration, residual, derivatives ? _jacobian : null, old) ?? 0;

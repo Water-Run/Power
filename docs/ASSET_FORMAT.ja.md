@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現行バージョン 26
+## 現行バージョン 27
+
+v27 はタンクと補給選択を保存し v1-v26 を読みます。各タンクは既存上限内で 4 状態を追加します。独立湿潤交換、枯渇後の圧力/軸エネルギー解析解、逆流混合、全台帳、rollback、分岐、割り当てなしステップを検査します。
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.ja.md](LIQUID_FUEL_TANK.ja.md)
+
+## 保持するバージョン 26
 
 エンコーダーは `power.asset.v26` を書き、v1-v26 を読みます。計数は 38 個の int32（152 bytes）、ヘッダーは 230 + UTF-8 名称長 bytes です。種類 39 は `liquid_rail_feed`、指紋タグは 30 です。24 bytes のレコードは索引、噴射器/ポンプ ID、源温度量を保存します。型とレール/ポンプの独占所有権を確認し、再署名した v25 降格は新種類を拒否します。
 

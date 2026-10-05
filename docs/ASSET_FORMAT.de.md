@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 26
+## Aktuelle Version 27
+
+v27 speichert Tank und Speisewahl und liest v1-v26. Jeder Tank fügt 4 Zustände innerhalb gleicher Grenzen hinzu. Unabhängiger Nass-Austausch, analytischer Leerdruck/Wellenenergie, Rückmischung, vollständige Bilanzen, rollback, Zweige und allokationsfreie Schritte sind geprüft.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.de.md](LIQUID_FUEL_TANK.de.md)
+
+## Beibehaltene Version 26
 
 Der Encoder schreibt `power.asset.v26` und liest v1-v26. Es gibt 38 int32-Zähler (152 bytes); der Header umfasst 230 + UTF-8-Namenslänge bytes. Typ 39 ist `liquid_rail_feed`, Fingerprint-Tag 30. Ein 24-bytes-Datensatz speichert Index, Injektor-/Pumpen-IDs und Quellentemperatur. Typen und exklusiver Besitz werden geprüft; ein neu signiertes v25-Downgrade weist den neuen Typ zurück.
 

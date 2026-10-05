@@ -41,13 +41,13 @@ internal static class PumpAssetChecks
     private static void Corruption()
     {
         var asset=Asset();var bytes=AssetCodec.Encode(asset);int counts=78+Encoding.UTF8.GetByteCount(asset.Name);
-        int pump=counts+152+44*asset.Nodes.Count+156*asset.Components.Count+40+64,relief=pump+32;
+        int pump=counts+156+44*asset.Nodes.Count+156*asset.Components.Count+40+64,relief=pump+32;
         void Reject(byte[] bad){SHA256.HashData(bad.AsSpan(0,bad.Length-32)).CopyTo(bad,bad.Length-32);Throws<ArgumentException>(()=>AssetCodec.Decode(bad));}
         void Change(int offset,int value){var bad=(byte[])bytes.Clone();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(offset),value);Reject(bad);}
         Change(counts+72,-1);Change(counts+72,65);Change(counts+72,0);Change(counts+76,0);Change(counts+76,65);
         Change(pump,-1);Change(pump,1);Change(pump+4,3);Change(pump+4,1);Change(pump+16,(int)Unit.CubicMeter);Change(pump+28,(int)Unit.NewtonMeter);
         Change(relief,0);Change(relief,4);Change(relief+12,(int)Unit.NewtonMeter);
         var duplicate=bytes.Take(pump+32).Concat(bytes.Skip(pump).Take(32)).Concat(bytes.Skip(pump+32)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts+72),2);Reject(duplicate);
-        var down=bytes.Take(counts+72).Concat(bytes.Skip(counts+152).Take(pump-counts-152)).Concat(bytes.Skip(relief+16)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(down.AsSpan(8),10);Reject(down);
+        var down=bytes.Take(counts+72).Concat(bytes.Skip(counts+156).Take(pump-counts-156)).Concat(bytes.Skip(relief+16)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(down.AsSpan(8),10);Reject(down);
     }
 }

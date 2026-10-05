@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 26
+## Current version 27
+
+Asset v27 retains tank data and feed selection and reads v1-v26. Each tank adds 4 reported states within the unchanged bounds. Independent wet exchange, analytic exhausted pressure/shaft energy, reverse mixing, complete ledgers, rollback, forks and allocation-free stepping are checked.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.md](LIQUID_FUEL_TANK.md)
+
+## Retained version 26
 
 The encoder writes `power.asset.v26` and reads v1-v26. There are 38 int32 counts (152 bytes); header size is 230 + UTF-8 name length bytes. Kind 39 is `liquid_rail_feed`, fingerprint tag 30. A 24-byte record stores component index, injector/pump IDs and supply-temperature quantity. Typed coverage and exclusive rail/pump ownership are validated; a re-signed v25 downgrade rejects the new kind.
 

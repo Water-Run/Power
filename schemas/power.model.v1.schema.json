@@ -170,6 +170,9 @@
           },
           {
             "$ref": "#/$defs/liquidRailFeed"
+          },
+          {
+            "$ref": "#/$defs/liquidFuelTank"
           }
         ]
       },
@@ -909,7 +912,8 @@
             "actuator_integral_c",
             "actuator_integral_d",
             "actuator_integral_e",
-            "actuator_integral_f"
+            "actuator_integral_f",
+            "tank_state"
           ]
         },
         "min": {
@@ -6249,8 +6253,7 @@
           "additionalProperties": false,
           "required": [
             "injector_component",
-            "pump_component",
-            "supply_temperature"
+            "pump_component"
           ],
           "properties": {
             "injector_component": {
@@ -6264,6 +6267,108 @@
               "maximum": 4294967295
             },
             "supply_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "const": "k"
+                }
+              }
+            },
+            "tank_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "supply_temperature"
+              ],
+              "not": {
+                "required": [
+                  "tank_component"
+                ]
+              }
+            },
+            {
+              "required": [
+                "tank_component"
+              ],
+              "not": {
+                "required": [
+                  "supply_temperature"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "liquidFuelTank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "liquid_fuel_tank"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "injector_component",
+            "initial_mass",
+            "initial_temperature"
+          ],
+          "properties": {
+            "injector_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "initial_mass": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "const": "kg"
+                }
+              }
+            },
+            "initial_temperature": {
               "type": "object",
               "additionalProperties": false,
               "required": [

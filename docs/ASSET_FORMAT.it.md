@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione corrente 26
+## Versione corrente 27
+
+v27 conserva serbatoio e selezione e legge v1-v26. Ogni serbatoio aggiunge 4 stati nei limiti invariati. Scambio umido indipendente, pressione/energia d'albero esaurite analitiche, miscela di ritorno, bilanci completi, rollback, rami e passi senza allocazioni sono verificati.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.it.md](LIQUID_FUEL_TANK.it.md)
+
+## Versione 26 conservata
 
 Il codificatore scrive `power.asset.v26` e legge v1-v26. Ci sono 38 conteggi int32 (152 bytes); l'intestazione occupa 230 + lunghezza del nome UTF-8 bytes. Il tipo 39 è `liquid_rail_feed`, tag di impronta 30. Un record di 24 bytes salva indice, ID iniettore/pompa e temperatura sorgente. Tipi e proprietà esclusiva sono verificati; un downgrade v25 rifirmato rifiuta il nuovo tipo.
 

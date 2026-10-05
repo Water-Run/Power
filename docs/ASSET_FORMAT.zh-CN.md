@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 26
+## 当前版本 27
+
+资产 v27 保留油箱数据和补给选择，并读取 v1-v26。每个油箱在原有边界内增加 4 个报告状态。独立湿态交换、耗尽压力/轴能解析解、回流混合、完整账本、回滚、独立分支与无分配步进均有检查。
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.zh-CN.md](LIQUID_FUEL_TANK.zh-CN.md)
+
+## 保留的版本 26
 
 编码器写入 `power.asset.v26`，读取 v1-v26。计数为 38 个 int32（152 bytes）；头部为 230 + UTF-8 名称长度 bytes。种类 39 是 `liquid_rail_feed`，指纹标签为 30。24 bytes 记录保存组件索引、喷射器/泵 ID 和源温度量。检查类型覆盖与燃轨/泵的独占归属；重签名的 v25 降级拒绝新种类。
 
