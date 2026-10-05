@@ -50,7 +50,7 @@ internal static class PistonAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset);
-        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), piston = counts + 156 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 40 * 2, clutch = piston + 104;
+        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), piston = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 40 * 2, clutch = piston + 104;
         void Reject(byte[] bad)
         { SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(bad)); }
         void Change(int offset, int value)
@@ -61,7 +61,7 @@ internal static class PistonAssetChecks
         var duplicate = bytes.Take(piston + 104).Concat(bytes.Skip(piston).Take(104)).Concat(bytes.Skip(piston + 104)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 92), 2); Reject(duplicate);
         var missing = bytes.Take(piston).Concat(bytes.Skip(piston + 104)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 92), 0); Reject(missing);
-        var downgrade = bytes.Take(counts + 92).Concat(bytes.Skip(counts + 156).Take(piston - counts - 156)).Concat(bytes.Skip(clutch + 40)).ToArray();
+        var downgrade = bytes.Take(counts + 92).Concat(bytes.Skip(counts + 160).Take(piston - counts - 160)).Concat(bytes.Skip(clutch + 40)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgrade.AsSpan(8), 13); Reject(downgrade);
     }
 }

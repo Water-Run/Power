@@ -11,7 +11,7 @@ L'obiettivo è la piattaforma completa di gruppi motopropulsori Power!: fisica C
 | Nucleo gestito | Fisica a doppio target priva di dipendenze, topologia, unità, tempo intero, replay e transazioni atomiche | Validazione integrata di lungo periodo del gruppo motopropulsore |
 | Interfaccia agente | Strumenti MCP definiti da schema, diagnostica strutturata, revisioni, rami, annullamento e report compatti | Flussi di modellazione/controllo per l'ambito restante del gruppo motopropulsore completo |
 | Studio Unity | Importazione condivisa dei modelli, riproduzione dei laboratori, componenti schematici 3D e test preparati | Evidenza reale di Editor/Play/Player/IL2CPP e pacchettizzazione desktop |
-| Banco di modellazione | Asset portabile v27, lettori v1-v26 e definizioni JSON/CLI/MCP condivise | Modifica del grafo, salvataggio e grafici dei canali selezionabili |
+| Banco di modellazione | Asset portabile v28, lettori v1-v27 e definizioni JSON/CLI/MCP condivise | Modifica del grafo, salvataggio e grafici dei canali selezionabili |
 | Fisica del motore | Massa/energia del gas indipendenti, lavoro biella-manovella, valvole fasate, combustione prescritta, dosatura di carburante gassoso e liquido, binari finiti cedevoli, evaporazione del film e azionamento fisico dell'ago; [Rail di combustibile liquido alimentato da pompa](PUMP_FED_FUEL.it.md) | geometria/ventilazione del serbatoio e riempimento/regolazione misurati, comportamento magnetico/elettronico/a spruzzo raffinato, accoppiamento del volume liquido finito, controllo dell'accensione, aspirazione/scarico dettagliati, perdite meccaniche, termochimica e calibrazione misurata |
 | Trasmissione | Frizioni accoppiate, ingranaggi/planetari, convertitore/blocco mappato, idraulica e percorsi DCT a sette avanti/retromarcia e Ravigneaux a quattro avanti/retromarcia con rotazione dei satelliti e inerzia orbitale risolte | Cedevolezza/perdite di ingranamento e ripartizione del carico, azionamento DCT, controllo completo di pressione/cambio AT e instradamento misurato, mappe misurate, comportamento di valvole/tenute/cavitazione e dinamica più ricca del convertitore |
 | Controlli e integrazione elettrica | PI di pressione campionato, controllo di chiusura dell'ago e passaggio DCT graduale confermato dai sensori, tensione/duty cycle limitati, proprietà degli attuatori, circuito equivalente della batteria e accessori | Cicli ECU/TCU coordinati, sensori/attuatori, richieste di coppia, guasti, BMS e comportamento termico/elettrico misurato |
@@ -39,7 +39,7 @@ L'[archivio Zig](NATIVE_ZIG.it.md) conserva gli hash originali e la provenienza 
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v27 conserva percorsi, guadagni e clock e legge v1-v26.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v28 conserva percorsi, guadagni e clock e legge v1-v27.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -49,7 +49,7 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v27 conserva collegamenti e temperatura sorgente e legge v1-v26. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v28 conserva collegamenti e temperatura sorgente e legge v1-v27. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Capacità geometrica, ventilazione/spazio gas/oscillazione, cavitazione, riempimento/efficienza/regolazione misurati e spray risolto restano aperti. Parametri `unverified`; Unity Editor/Play/Player/IL2CPP reale e calibrazione OEM non sono verificati.
 
@@ -64,3 +64,11 @@ Energia termica e chimica del serbatoio entrano nello stoccaggio totale. Il tras
 Capacità geometrica, ventilazione/spazio gas/oscillazione, cavitazione, riempimento/efficienza/regolazione misurati e spray risolto restano aperti. Parametri `unverified`; Unity Editor/Play/Player/IL2CPP reale e calibrazione OEM non sono verificati.
 
 [LIQUID_FUEL_TANK.it.md](LIQUID_FUEL_TANK.it.md)
+
+## Ritorno di scarico carburante tracciato
+
+`liquid_rail_return` collega un'alimentazione a un `hydraulic_relief` unidirezionale esclusivo. La valvola collega il rail alla stessa pressione d'ingresso prescritta della pompa. Registrare ogni percorso; porte incompatibili, proprietà duplicate e percorsi non tracciati sono rifiutati.
+
+`fluid_heat_fraction` sceglie esplicitamente la quota [0,1] delle perdite portata dal carburante di ritorno. Il resto segue il percorso termico dichiarato. Miscelazione simultanea rail/serbatoio conserva massa, chimica, lavoro di pressione e calore. Il ritorno a sorgente esterna porta massa/energia oltre confine.
+
+[LIQUID_FUEL_RETURN.it.md](LIQUID_FUEL_RETURN.it.md)

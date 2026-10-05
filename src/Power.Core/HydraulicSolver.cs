@@ -58,6 +58,12 @@ internal sealed class HydraulicSolver
     private readonly Factorization _factor;
     internal readonly double[] MidPressure, WallHeat;
     internal double BoundaryWork, RejectedHeat;
+    internal double RestrictionVolume(int slot, double duration) => duration * _rates[slot];
+    internal double RestrictionLoss(int slot, double duration)
+    {
+        var c = _model.Components[_model.HydraulicComponents[slot]];
+        return duration * _rates[slot] * (MidPressure[_model.Nodes[c.A].Index] - (c.B < 0 ? c.P2 : MidPressure[_model.Nodes[c.B].Index]));
+    }
     private readonly double[] _liquidSupplyVolume;
     private double _liquidSupplyDuration;
     internal void PrepareLiquidSupply(LiquidTankState state, double duration)
@@ -254,7 +260,8 @@ internal sealed class HydraulicSolver
             double heat = transfer * difference;
             if (!Numeric.Finite(heat) || heat < 0) return false;
             if (b < 0) { volumeIn -= transfer; BoundaryWork -= transfer * c.P2; }
-            if (c.Heat < 0) RejectedHeat += heat; else WallHeat[_model.Nodes[c.Heat].Index] += heat;
+            double externalHeat = (1 - _model.ReturnHeatFractions[_model.HydraulicComponents[k]]) * heat;
+            if (c.Heat < 0) RejectedHeat += externalHeat; else WallHeat[_model.Nodes[c.Heat].Index] += externalHeat;
             state.Flow[k] += transfer; state.Power[k] += heat;
             Numeric.Accumulate(heat, ref state.Heat[k], ref state.Correction[k]);
         }

@@ -66,7 +66,8 @@ public sealed partial class CompiledModel
                 DiagnosticCode.Connection,c.Id,"liquid_rail_feed","A feed owns one injector/pressure node and one explicit-reservoir pump, at the injector receiver.");
             Require(node.Storage==rail.Rail.ComplianceCubicMetersPerPascal&&node.Initial==rail.Rail.InitialPressurePascals,
                 DiagnosticCode.Connection,c.Id,"liquid_rail_feed.pressure_node","Hydraulic pressure storage and initial pressure must match the rail exactly.");
-            Require(!Components.Any(x=>x.Kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve&& (x.A==p.B||x.B==p.B))&&
+            var declaredReturns=definitions.Where(x=>x.Kind==ComponentKind.LiquidRailReturn&&x.LiquidRailReturn!.FeedComponent==c.Id).Select(x=>x.LiquidRailReturn!.ValveComponent).ToHashSet();
+            Require(!Components.Any(x=>x.Kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve&& (x.A==p.B||x.B==p.B)&&!declaredReturns.Contains(x.Id))&&
                 !Components.Any(x=>x.Kind==ComponentKind.HydraulicPump&&x.Id!=p.Id&&(x.B==p.B||x.C==p.B))&&
                 !Components.Any(x=>x.Kind==ComponentKind.HydraulicPiston&&(x.B==p.B||x.C==p.B)),
                 DiagnosticCode.Connection,c.Id,"liquid_rail_feed.pressure_node","The rail pressure node has only its paired pump and injector; untracked hydraulic fluid paths are unsupported.");

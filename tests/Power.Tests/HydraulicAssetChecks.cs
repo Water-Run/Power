@@ -49,7 +49,7 @@ internal static class HydraulicAssetChecks
     private static void Corruption()
     {
         var asset=Asset(); var bytes=AssetCodec.Encode(asset);
-        int counts=78+Encoding.UTF8.GetByteCount(asset.Name), extension=counts+156+44*asset.Nodes.Count+156*asset.Components.Count;
+        int counts=78+Encoding.UTF8.GetByteCount(asset.Name), extension=counts+160+44*asset.Nodes.Count+156*asset.Components.Count;
         void Reject(byte[] bad)
         { SHA256.HashData(bad.AsSpan(0,bad.Length-32)).CopyTo(bad,bad.Length-32); Throws<ArgumentException>(()=>AssetCodec.Decode(bad)); }
         void Change(int offset,int value)
@@ -62,7 +62,7 @@ internal static class HydraulicAssetChecks
         var missing=bytes.Take(extension).Concat(bytes.Skip(extension+40)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts+64),1); Reject(missing);
         var duplicate=bytes.Take(actuator+64).Concat(bytes.Skip(actuator).Take(64)).Concat(bytes.Skip(actuator+64)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts+68),2); Reject(duplicate);
-        var down=bytes.Take(counts+64).Concat(bytes.Skip(counts+156).Take(extension-counts-156)).Concat(bytes.Skip(actuator+64)).ToArray();
+        var down=bytes.Take(counts+64).Concat(bytes.Skip(counts+160).Take(extension-counts-160)).Concat(bytes.Skip(actuator+64)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(down.AsSpan(8),9); Reject(down);
         // A hydraulic node without any extensions must still reject a pre-v10 downgrade.
         var single=PowerAsset.Create(new(){StepNanoseconds=1_000_000,Nodes=[NodeDefinition.Hydraulic(1,1e-12,1e6)],Components=[]},"Isolated",new string('d',64),1_000_000,1_000_000,[],[]);

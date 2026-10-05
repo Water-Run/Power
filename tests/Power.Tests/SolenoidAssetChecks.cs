@@ -53,7 +53,7 @@ internal static class SolenoidAssetChecks
             Throws<ArgumentException>(() => AssetCodec.Decode(bad));
         }
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset); int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int coil = counts + 156 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64 + 120;
+        int coil = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64 + 120;
         int stop = coil + 28, needle = stop + 40, driver = needle + 32;
         foreach (int field in new[] { 120, 124, 128, 132 })
         {
@@ -69,7 +69,7 @@ internal static class SolenoidAssetChecks
             var missing = bytes.Take(record.Item1).Concat(bytes.Skip(record.Item1 + record.Item2)).ToArray();
             BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + record.Item3), 0); Reject(missing);
         }
-        var downgrade = bytes.Take(counts + 120).Concat(bytes.Skip(counts + 156).Take(coil - counts - 156)).Concat(bytes.Skip(driver + 40)).ToArray();
+        var downgrade = bytes.Take(counts + 120).Concat(bytes.Skip(counts + 160).Take(coil - counts - 160)).Concat(bytes.Skip(driver + 40)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgrade.AsSpan(8), 19); Reject(downgrade);
         var baseModel = SolenoidChecks.Model(); var two = Asset(baseModel with { Components = [..baseModel.Components,
             ComponentDefinition.SolenoidCoil(12, 1, 2, 101, 4, .002, 8)] });

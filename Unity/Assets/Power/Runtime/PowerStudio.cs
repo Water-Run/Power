@@ -569,6 +569,11 @@ namespace Power.Studio
                     Shape("Liquid fuel tank " + component.Id, PrimitiveType.Cylinder, a + Vector3.right * 1.2f + Vector3.up * 0.7f, new Vector3(0.55f, 0.4f, 0.55f), blue);
                     continue;
                 }
+                if (component.Kind == ComponentKind.LiquidRailReturn)
+                {
+                    Shape("Liquid rail return " + component.Id, PrimitiveType.Cube, a + Vector3.left * 1.2f + Vector3.up * 0.8f, new Vector3(0.4f, 0.25f, 0.4f), blue);
+                    continue;
+                }
                 if (component.Kind == ComponentKind.HydraulicAtController)
                 {
                     Shape("AT feedback controller " + component.Id, PrimitiveType.Cube, a + Vector3.up * 1.4f, new Vector3(0.55f, 0.35f, 0.45f), blue);

@@ -64,7 +64,7 @@ internal static class GasAssetChecks
     {
         var asset = Sample(); byte[] source = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int tables = counts + 156;
+        int tables = counts + 160;
         int gasExtensions = tables + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 116;
         int orificeExtensions = gasExtensions + 24 * 2;
         void RejectInt(int offset, int value)

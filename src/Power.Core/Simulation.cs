@@ -5,7 +5,7 @@
 namespace Power.Core;
 
 /// <summary>Independent state. Successful stepping and snapshot reads allocate no managed memory.</summary>
-public sealed class Simulation
+public sealed partial class Simulation
 {
     private sealed class State(int dynamics, int thermal, int components, int gases, MixtureState? mixture, int clutches, int gears, int converters, int hydraulicNodes, int hydraulicComponents, int pumps, int controllers, int linearSprings, int injectors, int films)
     {
@@ -16,6 +16,7 @@ public sealed class Simulation
         internal LiquidInjectorState? LiquidInjectors;
         internal LiquidFeedState? LiquidFeeds;
         internal LiquidTankState? LiquidTanks;
+        internal LiquidReturnState? LiquidReturns;
         internal SolenoidState? Solenoids;
         internal NeedleDriverState? NeedleDrivers;
         internal DctControllerState? DctControllers;
@@ -38,7 +39,7 @@ public sealed class Simulation
             Array.Copy(other.Mass, Mass, Mass.Length); Array.Copy(other.Energy, Energy, Energy.Length);
             Mixture?.CopyFrom(other.Mixture!); Injectors?.CopyFrom(other.Injectors!);Films?.CopyFrom(other.Films!);
             LiquidInjectors?.CopyFrom(other.LiquidInjectors!);
-            LiquidFeeds?.CopyFrom(other.LiquidFeeds!); LiquidTanks?.CopyFrom(other.LiquidTanks!);
+            LiquidFeeds?.CopyFrom(other.LiquidFeeds!); LiquidTanks?.CopyFrom(other.LiquidTanks!); LiquidReturns?.CopyFrom(other.LiquidReturns!);
             Solenoids?.CopyFrom(other.Solenoids!); NeedleDrivers?.CopyFrom(other.NeedleDrivers!);
             DctControllers?.CopyFrom(other.DctControllers!);
             AtControllers?.CopyFrom(other.AtControllers!);
@@ -58,6 +59,7 @@ public sealed class Simulation
     }
 
     private readonly CompiledModel _model;
+    private readonly double[] _returnRailMassBefore;
     private State _state, _scratch;
     private readonly double[] _mid, _temperature, _inputCandidate;
     private readonly bool[] _inputSeen;
@@ -80,6 +82,7 @@ public sealed class Simulation
     internal Simulation(CompiledModel model)
     {
         _model = model;
+        _returnRailMassBefore = model.HasLiquidReturns ? new double[model.LiquidFeeds.Length] : [];
         if (model.HasBatteries) _electrical = new(model);
         if (model.Gears is not null) _gears = new(model.Gears);
         if (model.HasHydraulics) _hydraulics = new(model);
@@ -96,6 +99,7 @@ public sealed class Simulation
                 AtControllers = model.AtControllers.Length != 0 ? new(model.AtControllers.Length) : null,
                 LiquidFeeds = model.HasLiquidFeeds ? new(model.LiquidFeeds.Length,model.LiquidFuelInjectors.Length) : null,
                 LiquidTanks = model.HasLiquidTanks ? new(model.LiquidTanks.Length) : null,
+                LiquidReturns = model.HasLiquidReturns ? new(model.LiquidReturns.Length) : null,
                 PositionCorrection = model.DctControllers.Length != 0 || model.Components.Any(c => c.Kind is ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear)
                     ? new double[model.DynamicCount] : null };
         _state = CreateState(); _scratch = CreateState();
@@ -478,10 +482,16 @@ public sealed class Simulation
             if (crossing) return true; // Caller discards the speculative interval and brackets the first event.
         }
         else if (_mechanicalSolver is not null && !_mechanicalSolver.Solve(s.X, _mid, s.Energy, _combustion, cancellation)) return false;
+        if(s.LiquidReturns is not null)for(int i=0;i<_model.LiquidFeeds.Length;++i)_returnRailMassBefore[i]=_model.RailSample(_model.LiquidFeeds[i].Injector,s.LiquidInjectors!,s.Hydraulic).MassKilograms;
         if (_model.HasCoupledHydraulics && !_hydraulics!.Commit(s.Hydraulic!, dt, _mid)) return false;
         if(s.LiquidFeeds is not null)
             for(int i=0;i<_model.LiquidFeeds.Length;++i)
             {
+                if(_model.ReturnsByFeed[i].Length!=0)
+                {
+                    if(!TransferLiquidReturns(s,i,dt,out double boundaryMass,out double boundaryEnergy))return false;
+                    intake+=boundaryMass;enthalpy+=boundaryEnergy;continue;
+                }
                 var feed=_model.LiquidFeeds[i];var injector=_model.LiquidFuelInjectors[feed.Injector];
                 double mass=feed.Tank<0?feed.Density*feed.Displacement*dt*_mid[feed.Shaft+1]:feed.Density*_hydraulics!.PumpVolume(_model.Components[feed.Pump].Index,_mid[feed.Shaft+1],dt);
                 bool exhausted=feed.Tank>=0&&mass>=s.LiquidTanks!.Mass[feed.Tank];
@@ -742,6 +752,14 @@ public sealed class Simulation
         if (s.AtControllers is not null && !s.AtControllers.Finite()) return false;
         if(s.LiquidFeeds is not null && !s.LiquidFeeds.Finite())return false;
         if(s.LiquidTanks is not null && !s.LiquidTanks.Finite())return false;
+        if(s.LiquidReturns is not null && !s.LiquidReturns.Finite())return false;
+        if(_model.HasLiquidReturns)
+            for(int i=0;i<_model.LiquidTanks.Length;++i)
+            {
+                var tank=_model.LiquidTanks[i];var law=_model.FuelFilms[_model.LiquidFuelInjectors[tank.Injector].Film].Law;
+                double temperature=s.LiquidTanks!.Mass[i]==0?tank.InitialTemperature:law.Temperature(new(s.LiquidTanks.Mass[i],s.LiquidTanks.Energy[i]));
+                if(!Numeric.Finite(temperature)||temperature<=0||temperature>law.SaturationTemperatureKelvin)return false;
+            }
         if (s.PositionCorrection is not null) foreach (double value in s.PositionCorrection) if (!Numeric.Finite(value)) return false;
         if (s.Solenoids is not null)
         {
@@ -880,6 +898,7 @@ public sealed class Simulation
         if (s.LiquidInjectors is not null) h = s.LiquidInjectors.Hash(h);
         if(s.LiquidFeeds is not null)h=s.LiquidFeeds.Hash(h);
         if(s.LiquidTanks is not null)h=s.LiquidTanks.Hash(h);
+        if(s.LiquidReturns is not null)h=s.LiquidReturns.Hash(h);
         if (s.Solenoids is not null) h = s.Solenoids.Hash(h);
         if (s.NeedleDrivers is not null) h = s.NeedleDrivers.Hash(h);
         if (s.DctControllers is not null) h = s.DctControllers.Hash(h);
@@ -972,6 +991,13 @@ public sealed class Simulation
                     ? _model.Nodes[b.Index].Index : -1;
                 bool hydraulicNode = !b.IsComponent && b.Index >= 0 && _model.Nodes[b.Index].Domain == Domain.Hydraulic;
                 bool batteryNode = !b.IsComponent && b.Index >= 0 && _model.Nodes[b.Index].Domain == Domain.Battery;
+                int returnSlot=b.IsComponent?_model.ReturnByComponent[b.Index]:-1;
+                if(returnSlot>=0)
+                {
+                    var route=_model.LiquidReturns[returnSlot];var state=_state.LiquidReturns!;
+                    value=b.Field switch{Field.TotalFuelDelivered=>state.Mass[returnSlot],Field.ReservoirEnthalpy=>state.Thermal[returnSlot],Field.FuelEnergyIn=>state.Chemical[returnSlot],Field.FluidHeat=>state.Heat[returnSlot],Field.MassFlow=>_state.Hydraulic!.Flow[_model.Components[route.Valve].Index]*_model.LiquidFeeds[route.Feed].Density,_=>double.NaN};
+                    destination[i]=new(Channels.Output(b.ObjectId,b.Field),value);continue;
+                }
                 int tankSlot=b.IsComponent?_model.TankByComponent[b.Index]:-1;
                 if(tankSlot>=0)
                 {

@@ -32,7 +32,7 @@ internal static class LiquidFuelTankAssetChecks
     private static void Replay()
     {
         var asset = Asset(); var bytes = AssetCodec.Encode(asset); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 27 && decoded.Model.HasLiquidTanks);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == AssetCodec.FormatVersion && decoded.Model.HasLiquidTanks);
         Require(bytes.SequenceEqual(AssetCodec.Encode(decoded))); Compare(asset, decoded);
         var fixture = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "pump-fed-liquid-cylinder-v26.powerasset"));
         Require(BinaryPrimitives.ReadInt32LittleEndian(fixture.AsSpan(8)) == 26 && Convert.ToHexStringLower(SHA256.HashData(fixture)) == "b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d");
@@ -44,7 +44,7 @@ internal static class LiquidFuelTankAssetChecks
         void Reject(byte[] bad) { SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(bad)); }
         foreach (var change in new[] { (counts + 152, -1), (counts + 152, 0), (counts + 152, 65), (tank, -1), (tank + 4, 10), (tank + 16, (int)Unit.Pascal), (feed + 24, 12) })
         { var bad = bytes.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(change.Item1), change.Item2); Reject(bad); }
-        var down = bytes.Take(counts + 152).Concat(bytes.Skip(counts + 156).Take(feed + 24 - counts - 156)).Concat(bytes.Skip(tank + 32)).ToArray();
+        var down = bytes.Take(counts + 152).Concat(bytes.Skip(counts + 160).Take(feed + 24 - counts - 160)).Concat(bytes.Skip(tank + 32)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(down.AsSpan(8), 26); Reject(down);
     }
 }

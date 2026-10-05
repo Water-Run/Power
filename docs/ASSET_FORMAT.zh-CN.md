@@ -14,7 +14,22 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 27
+## 当前版本 28
+
+`recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v28 保留回流连接与热比例，并读取 v1-v27。每条回流在原有模型边界内增加 8 个状态。
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.zh-CN.md](LIQUID_FUEL_RETURN.zh-CN.md)
+
+## 保留的版本 27
 
 资产 v27 保留油箱数据和补给选择，并读取 v1-v26。每个油箱在原有边界内增加 4 个报告状态。独立湿态交换、耗尽压力/轴能解析解、回流混合、完整账本、回滚、独立分支与无分配步进均有检查。
 

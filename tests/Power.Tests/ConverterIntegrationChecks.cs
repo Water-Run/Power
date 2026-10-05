@@ -74,7 +74,7 @@ internal static class ConverterIntegrationChecks
         Require(JsonNode.DeepEquals(JsonNode.Parse(Source),JsonNode.Parse(example.GetRawText())));
         var capability=Data(AgentWorkspace.Capabilities());
         Require(capability.GetProperty("converter").GetProperty("maps").GetArrayLength()==4);
-        Require(capability.GetProperty("asset_format").GetString()=="power.asset.v27" && capability.GetProperty("readable_asset_formats").GetArrayLength()==AssetCodec.FormatVersion);
+        Require(capability.GetProperty("asset_format").GetString()=="power.asset.v28" && capability.GetProperty("readable_asset_formats").GetArrayLength()==AssetCodec.FormatVersion);
         var workspace=new AgentWorkspace(); var created=Data(workspace.CreateSession(example)); string id=created.GetProperty("session_id").GetString()!;
         string before=Data(workspace.ReadSnapshot(id)).GetRawText();
         Require(workspace.SetInputs(id,"0",[new("106",1.01)]).Error is { Code:"invalid_input",CurrentRevision:"0" });

@@ -67,7 +67,7 @@ internal static class BatteryAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset);
-        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), battery = counts + 156 + 44 * asset.Nodes.Count + 156 * asset.Components.Count, duty = battery + 68;
+        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), battery = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count, duty = battery + 68;
         void Reject(byte[] bad)
         { SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(bad)); }
         void Change(int offset, int value)
@@ -78,7 +78,7 @@ internal static class BatteryAssetChecks
         var duplicate = bytes.Take(battery + 68).Concat(bytes.Skip(battery).Take(68)).Concat(bytes.Skip(battery + 68)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 84), 2); Reject(duplicate);
         var missing = bytes.Take(battery).Concat(bytes.Skip(battery + 68)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 84), 0); Reject(missing);
-        var downgrade = bytes.Take(counts + 84).Concat(bytes.Skip(counts + 156).Take(battery - counts - 156)).Concat(bytes.Skip(duty + 80)).ToArray();
+        var downgrade = bytes.Take(counts + 84).Concat(bytes.Skip(counts + 160).Take(battery - counts - 160)).Concat(bytes.Skip(duty + 80)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgrade.AsSpan(8), 12); Reject(downgrade);
         var isolated = PowerAsset.Create(BatteryChecks.LoadModel() with { Components = [] }, "Isolated battery", new string('a', 64), 100_000_000, 10_000_000, [], []);
         Require(AssetCodec.Decode(AssetCodec.Encode(isolated)).Model.HasBatteries);

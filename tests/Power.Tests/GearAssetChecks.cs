@@ -57,7 +57,7 @@ internal static class GearAssetChecks
     {
         var asset = Asset(); var bytes = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int extension = counts + 156 + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
+        int extension = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count;
         void Reject(byte[] bad)
         {
             SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32);
@@ -73,7 +73,7 @@ internal static class GearAssetChecks
         BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 52), 1); Reject(missing);
         var duplicate = bytes.Take(extension + 8).Concat(bytes.Skip(extension).Take(8)).Concat(bytes.Skip(extension + 8)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 52), 3); Reject(duplicate);
-        var downgraded = bytes.Take(counts + 52).Concat(bytes.Skip(counts + 156).Take(extension - counts - 156)).Concat(bytes.Skip(extension + 16)).ToArray();
+        var downgraded = bytes.Take(counts + 52).Concat(bytes.Skip(counts + 160).Take(extension - counts - 160)).Concat(bytes.Skip(extension + 16)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgraded.AsSpan(8), 7); Reject(downgraded);
     }
 }

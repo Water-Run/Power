@@ -2,6 +2,58 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · **Italiano** · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-05: Ritorno di scarico carburante tracciato
+
+La verifica seriale richiesta passa localmente su Windows x64/.NET 10.0.12. I controlli Standard sono eseguiti su .NET 10; Unity Editor/Play/Player/IL2CPP reale non è verificato.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 398/398 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 45/45 |
+| laboratories | 42 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| asset_version | power.asset.v28 |
+| v27_fixture_sha256 | ee344fad148d226c223145d610b18f84912060bc722fee980cae6515ceea3d62 |
+| verification_log_sha256 | ee5eb035556dd2ba0cd17baa274672ee3663a8572982b72bd23da881ab877e41 |
+| prior_ci_scope | preceding_revision_only |
+| prior_ci_revision | 85eebeb442b455304c5e88aebd86279c8347aad2 |
+
+| Identifier | recirculating-liquid-cylinder | recirculating-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 54 | 63 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 8c295e86019b787b | 354faf7fae4a338e |
+| final_state_hash | d4a612015c1623dc | 8554f5721f716a34 |
+| source_sha256 | f7e499c1b155869fad912df7a10ba443f62aa22af585147523d4527f9f8937a4 | 8de240be98f08a3ceb110337228a09a68c25f5f54fbefac159daf517cca0f827 |
+| report_sha256 | 4a5e68862dc626a09471d5964f0623652efcf3056f6b2417545713ed00c421aa | d2efe3cb35bfc6bda3e61c2ef668f276784ed0f450909976d1b8dffaee4b5612 |
+| max_sampled_energy_j | 1.412331585015636e-09 | 1.4023612493474502e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 5.3600244902252125e-18 |
+| max_sampled_fuel_kg | 3.1238575094738597e-18 | 5.834362940687621e-18 |
+| max_sampled_hydraulic_volume_m3 | 4.1689902872672595e-21 | 7.239484721064098e-21 |
+
+- `artifacts/reports/liquid-return-final-2026-10-05.log`
+- `artifacts/reports/liquid-return-evidence-2026-10-05.json`
+- `artifacts/reports/liquid-return-schema-audit-2026-10-05.json`
+
+Decadimento/lavoro indipendenti, raffinamento meccanica/pressione/termica simultaneo, quote, percorsi, confini esterni, replay, rollback e allocazioni passano. Ebollizione o intervallo non risolto fa fallire l'intero lotto. Geometria/ventilazione, valvole/pompe misurate, cavitazione, spray, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti.
+
+[CI 37273231730](https://github.com/Water-Run/Power/actions/runs/37273231730)
+
+[LIQUID_FUEL_RETURN.it.md](LIQUID_FUEL_RETURN.it.md)
+
 ## 2026-10-05: Serbatoio finito di combustibile liquido
 
 La verifica seriale richiesta passa localmente su Windows x64/.NET 10.0.12. I controlli Standard sono eseguiti su .NET 10; Unity Editor/Play/Player/IL2CPP reale non è verificato.

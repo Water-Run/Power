@@ -48,7 +48,7 @@ internal static class SpoolAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] source = AssetCodec.Encode(asset);
-        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), land = counts + 156 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 80 + 104;
+        int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), land = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 80 + 104;
         void Reject(byte[] data) { SHA256.HashData(data.AsSpan(0, data.Length - 32)).CopyTo(data, data.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(data)); }
         foreach (int count in new[] { -1, 65, int.MaxValue }) { var bad = source.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(counts + 100), count); Reject(bad); }
         foreach (var replacement in new[] { (0, 0), (4, 999), (16, (int)Unit.Radian) })
@@ -56,7 +56,7 @@ internal static class SpoolAssetChecks
         var duplicate = source.Take(land + 32).Concat(source.Skip(land).Take(32)).Concat(source.Skip(land + 32)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 100), 2); Reject(duplicate);
         var missing = source.Take(land).Concat(source.Skip(land + 32)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 100), 0); Reject(missing);
-        var downgraded = source.Take(counts + 100).Concat(source.Skip(counts + 156).Take(land - counts - 156)).Concat(source.Skip(land + 32)).ToArray();
+        var downgraded = source.Take(counts + 100).Concat(source.Skip(counts + 160).Take(land - counts - 160)).Concat(source.Skip(land + 32)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgraded.AsSpan(8), 14); Reject(downgraded);
     }
 }

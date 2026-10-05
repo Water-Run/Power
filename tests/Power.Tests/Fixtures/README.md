@@ -248,3 +248,13 @@ Retained on 2026-10-05 from checkpoint `144ac3d`. SHA-256:
 `22cbbe4a983098f4`. `LiquidFuelTankAssetChecks` retains the original digest
 and exact every-boundary old/upgraded replay. Do not regenerate this fixture
 with the current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Finite liquid tank version 27
+
+`finite-tank-liquid-cylinder-v27.powerasset` retains verified v27 writer output
+before tracked relief returns. Source: `assets/labs/finite-tank-liquid-cylinder.power.json`.
+Retained on 2026-10-05 from checkpoint `85eebeb`. SHA-256:
+`ee344fad148d226c223145d610b18f84912060bc722fee980cae6515ceea3d62`. Fingerprint:
+`f7ee4872a034c885`. `LiquidRailReturnAssetChecks` preserves the digest and exact
+every-boundary old/upgraded replay. Do not regenerate this fixture with the
+current writer. The Power! GPL license and Unity Linking Exception apply.

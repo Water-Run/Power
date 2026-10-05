@@ -43,7 +43,7 @@ internal static class ClosurePredictionAssetChecks
     {
         var asset = Asset(); byte[] source = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int driver = counts + 156 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64 + 120 + 28 + 40 + 32;
+        int driver = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64 + 120 + 28 + 40 + 32;
         void Reject(byte[] data)
         { SHA256.HashData(data.AsSpan(0, data.Length - 32)).CopyTo(data, data.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(data)); }
         foreach (ulong horizon in new ulong[] { 1, 99_999, 40_970_000, ulong.MaxValue })

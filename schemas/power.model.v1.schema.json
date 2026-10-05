@@ -173,6 +173,9 @@
           },
           {
             "$ref": "#/$defs/liquidFuelTank"
+          },
+          {
+            "$ref": "#/$defs/liquidRailReturn"
           }
         ]
       },
@@ -6382,6 +6385,70 @@
                 },
                 "unit": {
                   "const": "k"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "liquidRailReturn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "liquid_rail_return"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "feed_component",
+            "valve_component",
+            "fluid_heat_fraction"
+          ],
+          "properties": {
+            "feed_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "valve_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "fluid_heat_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "const": "fraction"
                 }
               }
             }

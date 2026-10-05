@@ -52,7 +52,7 @@ internal static class LiquidFuelInjectorAssetChecks
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int record = counts + 156 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64;
+        int record = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64;
         void Reject(byte[] bad)
         {
             SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32);
@@ -70,7 +70,7 @@ internal static class LiquidFuelInjectorAssetChecks
         BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts + 116), 2); Reject(duplicate);
         var missing = bytes.Take(record).Concat(bytes.Skip(record + 120)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 116), 0); Reject(missing);
-        var downgrade = bytes.Take(counts + 116).Concat(bytes.Skip(counts + 156).Take(record - counts - 156)).Concat(bytes.Skip(record + 120)).ToArray();
+        var downgrade = bytes.Take(counts + 116).Concat(bytes.Skip(counts + 160).Take(record - counts - 160)).Concat(bytes.Skip(record + 120)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgrade.AsSpan(8), 18); Reject(downgrade);
     }
 }
