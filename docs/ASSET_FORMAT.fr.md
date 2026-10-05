@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version courante 24 et lecteurs conservés
+## Version courante 25
+
+L'encodeur écrit `power.asset.v25` et lit v1-v25. La table contient 37 valeurs int32 (148 bytes) ; l'en-tête mesure 226 + longueur du nom UTF-8 bytes. Le type 38 est `at_controller`, avec l'étiquette d'empreinte 29. Chaque enregistrement contient 208 bytes fixes plus 12 bytes par route. Le nombre de routes est 5 ou 6 ; le total borné est déclaré séparément. Types, horloges, unités, propriété et topologie sont vérifiés. Un déclassement v24 avec un nouveau digest rejette ce type.
+
+## Version 24 conservée
 
 L'encodeur écrit `power.asset.v24` ; les versions 1 à 24 restent lisibles. La table de comptes et les tailles d'enregistrement restent celles de v23. La sorte 37 est `carrier_gear` : son rapport de base est fini, signé et non nul ; son extension d'engrenage de 8 octets conserve l'index de composant et le porte-satellites mobile distinct. Les comptes typés couvrent chaque engrènement de porte-satellites. Une rétrogradation v23 rescellée par condensé rejette la nouvelle sorte.
 

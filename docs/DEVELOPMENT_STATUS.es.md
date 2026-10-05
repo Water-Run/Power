@@ -19,7 +19,7 @@ aplicación de escritorio de Unity aceptada.
 | Hidráulica | Volúmenes flexibles, restricciones, bombas con fugas y arrastre explícitos, alivio, pistones dinámicos, correderas dosificadas y acumuladores de gas de energía finita | Mapas medidos de válvulas, acumuladores y bombas, fricción de juntas, cavitación e hidráulica completa de transmisión |
 | Eléctrica | Motores RL, solenoides recíprocos de inductancia variable, batería de carga finita, polarización por resistencia y RC, conversión de ciclo de trabajo promediada y accesorios | Comportamiento químico y térmico medido, BMS, control de corriente e integración completa de la alimentación |
 | Controles | PI de presión muestreado, realimentación y predicción de cierre de la aguja, y control DCT escalonado confirmado por sensor, con propiedad de los actuadores, relojes enteros y memoria transaccional | Coordinación de par de ECU/TCU, sensores, actuadores y tratamiento de fallos |
-| Documentos y assets | Treinta y cuatro laboratorios JSON/CLI, treinta y tres ejemplos MCP, asset v24 con lectores v1-v23 | Edición y guardado en el banco de trabajo, y colecciones de modelos calibradas |
+| Documentos y assets | 36 laboratorios JSON/CLI, 35 ejemplos MCP, asset v25 y lectores v1-v24 | Edición/guardado y colecciones de modelos calibrados |
 | Agentes | Doce herramientas MCP definidas por esquema; evidencia compacta, comprobaciones de revisión y diagnósticos accionables | Flujos completos para el alcance físico y de control restante |
 | Unity | Importación de modelos, reproducción en ticks exactos, componentes 3D esquemáticos, controles, reinicio y pruebas de ciclo de vida preparadas | Aceptación real de Editor/Play, gráficas seleccionables, edición y guardado de grafos, y Player/IL2CPP |
 | Archivo nativo | Prototipos de investigación en Zig 0.15.2, ABI conservado y procedencia original de las fuentes | Referencia histórica; la migración gestionada sigue separada de la funcionalidad completa |
@@ -137,3 +137,13 @@ Se conservan las licencias y la procedencia histórica de las fuentes.
    Completa la selección de canales, la edición de grafos y el guardado como funciones distintas.
 5. Obtén mapas medidos, datos OEM y presupuestos de incertidumbre para los dos grupos
    motopropulsores objetivo antes de declarar muestras calibradas o preparación para la publicación.
+
+## Realimentación de AT hidráulica
+
+`at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
+
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v25 conserva rutas, ganancias y relojes y lee v1-v24.
+
+Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
+
+[AT_CONTROL.es.md](AT_CONTROL.es.md)

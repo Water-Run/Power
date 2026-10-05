@@ -217,3 +217,14 @@ Fingerprint: `63d28eb32bc4cfb2`. Source SHA-256:
 `ResolvedPlanetAssetChecks` retains its digest and exact every-boundary upgraded
 replay. Do not regenerate the fixture with the current writer. The Power! GPL
 license and Unity Linking Exception apply.
+
+## Hydraulic AT plant version 24
+
+`fired-hydraulic-ravigneaux-v24.powerasset` retains verified v24 output before
+adding the feedback controller records. Source:
+`assets/labs/fired-hydraulic-ravigneaux.power.json`; name: `Fired hydraulic
+Ravigneaux laboratory`. Retained locally on 2026-10-05 from the v24 checkpoint.
+SHA-256: `6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc`.
+Fingerprint: `4e83efb34de63922`. Tests retain the original digest and exact
+old/upgraded physical replay. Do not regenerate this fixture with the current
+encoder. The Power! GPL license and Unity Linking Exception apply.

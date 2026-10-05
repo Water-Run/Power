@@ -36,7 +36,7 @@ internal static class SolenoidAssetChecks
     private static void Replay()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 24 && decoded.Model.HasNeedleInjectors && decoded.Model.HasSolenoids);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 25 && decoded.Model.HasNeedleInjectors && decoded.Model.HasSolenoids);
         Require(asset.Components.SequenceEqual(decoded.Components) && bytes.SequenceEqual(AssetCodec.Encode(decoded))); Compare(asset, decoded);
         byte[] fixture = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "liquid-injected-cylinder-v19.powerasset"));
         Require(BinaryPrimitives.ReadInt32LittleEndian(fixture.AsSpan(8)) == 19 && Convert.ToHexStringLower(SHA256.HashData(fixture)) == "4ff5f6180006d53be5ffb6ef0663cc6de4af45f35f39dc4d52fd7e00e8cdd8c5");
@@ -53,7 +53,7 @@ internal static class SolenoidAssetChecks
             Throws<ArgumentException>(() => AssetCodec.Decode(bad));
         }
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset); int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int coil = counts + 140 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64 + 120;
+        int coil = counts + 148 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64 + 120;
         int stop = coil + 28, needle = stop + 40, driver = needle + 32;
         foreach (int field in new[] { 120, 124, 128, 132 })
         {
@@ -69,7 +69,7 @@ internal static class SolenoidAssetChecks
             var missing = bytes.Take(record.Item1).Concat(bytes.Skip(record.Item1 + record.Item2)).ToArray();
             BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + record.Item3), 0); Reject(missing);
         }
-        var downgrade = bytes.Take(counts + 120).Concat(bytes.Skip(counts + 140).Take(coil - counts - 140)).Concat(bytes.Skip(driver + 40)).ToArray();
+        var downgrade = bytes.Take(counts + 120).Concat(bytes.Skip(counts + 148).Take(coil - counts - 148)).Concat(bytes.Skip(driver + 40)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgrade.AsSpan(8), 19); Reject(downgrade);
         var baseModel = SolenoidChecks.Model(); var two = Asset(baseModel with { Components = [..baseModel.Components,
             ComponentDefinition.SolenoidCoil(12, 1, 2, 101, 4, .002, 8)] });

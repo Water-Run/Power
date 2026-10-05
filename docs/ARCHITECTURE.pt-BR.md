@@ -243,3 +243,13 @@ Engrenamentos do porta-planetas suportam relações relativas finitas, não nula
 ## Montagem compartilhada de acionamento hidráulico
 
 A [montagem de acionamento da AT](AT_HYDRAULIC_ACTUATION.pt-BR.md) reduz 1..6 alvos de embreagem declarados em embreagens reais de pistão/contato, restrições de enchimento/drenagem e molas de retorno alimentadas por uma bomba reversível compartilhada, vazamento/arrasto e alívio. Áreas dianteira/traseira explícitas conservam o inventário varrido e o trabalho de pressão de referência. Definições ordinárias imutáveis preservam a solução conjunta existente de pressão/movimento/atrito, a semântica portátil v24 e o estado atômico completo. Agendas prescritas de válvulas continuam separadas da realimentação/controle da AT e da aceitação medida do corpo de válvulas.
+
+## Realimentação de AT hidráulica
+
+`at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v25 preserva rotas, ganhos e relógios e lê v1-v24.
+
+São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.pt-BR.md](AT_CONTROL.pt-BR.md)

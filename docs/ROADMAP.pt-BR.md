@@ -11,7 +11,7 @@ O objetivo é a plataforma completa de powertrain do Power!: física moderna em 
 | Núcleo gerenciado | Física sem dependências e de alvo duplo, topologia, unidades, tempo inteiro, replay e transações atômicas | Validação de powertrain integrado em longa duração |
 | Interface de agente | Ferramentas MCP definidas por esquema, diagnósticos estruturados, revisões, ramificações, cancelamento e relatórios compactos | Fluxos de modelagem/controle para o escopo restante de powertrain completo |
 | Estúdio Unity | Importação compartilhada de modelo, reprodução de laboratório, componentes 3D esquemáticos e testes preparados | Evidência real de Editor/Play/Player/IL2CPP e empacotamento de desktop |
-| Bancada de modelagem | Asset portátil v24, leitores v1-v23 e definições compartilhadas de JSON/CLI/MCP | Edição de grafo, gravação e gráficos de canais selecionáveis |
+| Bancada de modelagem | Asset portátil v25, leitores v1-v24 e definições compartilhadas de JSON/CLI/MCP | Edição de grafo, gravação e gráficos de canais selecionáveis |
 | Física do motor | Massa/energia de gás independentes, trabalho de biela-manivela, válvulas cronometradas, combustão prescrita, medição de combustível gasoso e líquido, trilhos flexíveis finitos, evaporação de filme e acionamento físico da agulha | Bomba/reabastecimento do trilho, comportamento magnético/eletrônico/de pulverização refinado, acoplamento de volume líquido finito, controle de ignição, admissão/escape detalhados, perdas mecânicas, termoquímica e calibração medida |
 | Transmissão | Embreagens acopladas, engrenagens/planetárias, conversor/trava mapeados, hidráulica e caminhos DCT de sete marchas à frente/ré e Ravigneaux de quatro faixas à frente/ré com giro/inércia orbital dos planetas resolvidos | Flexibilidade/perdas de engrenamento e divisão de carga, acionamento DCT, controle completo de pressão/troca da AT e roteamento medido, mapas medidos, comportamento de válvula/vedação/cavitação e dinâmica mais rica do conversor |
 | Controles e integração elétrica | PI de pressão amostrado, controle de fechamento da agulha e entrega DCT escalonada confirmada por sensor, tensão/duty limitados, posse do atuador, circuito equivalente de bateria e acessórios | Ciclos coordenados de ECU/TCU, sensores/atuadores, solicitações de torque, falhas, BMS e comportamento térmico/elétrico medido |
@@ -34,3 +34,13 @@ Defina `POWER_UNITY_EDITOR` com o Editor fixado e execute `unity-test`. Obtenha 
 EA211 DJS + DQ200 e PSA EC5 + AT8 conservam fronteiras completas de powertrain, aplicabilidade do veículo e manifestos de evidência. Medições OEM ausentes não são substituídas por padrões silenciosos. Conclusão funcional, correção numérica e credibilidade medida do veículo exigem aceitação separada.
 
 O [acervo Zig](NATIVE_ZIG.pt-BR.md) conserva os hashes originais e a procedência Git em `legacy/native/migration-manifest.json`, incluindo a revisão C original `c342d4c`. Ele continua separado do aplicativo C#/Unity ativo. A migração nativa não conclui a migração de recursos gerenciados nem a aceitação do powertrain. Introduza paralelismo adicional, solução esparsa ou Burst quando as medições justificarem e os contratos do núcleo continuarem estáveis.
+
+## Realimentação de AT hidráulica
+
+`at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v25 preserva rotas, ganhos e relógios e lê v1-v24.
+
+São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.pt-BR.md](AT_CONTROL.pt-BR.md)

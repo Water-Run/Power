@@ -11,7 +11,7 @@ L'obiettivo è la piattaforma completa di gruppi motopropulsori Power!: fisica C
 | Nucleo gestito | Fisica a doppio target priva di dipendenze, topologia, unità, tempo intero, replay e transazioni atomiche | Validazione integrata di lungo periodo del gruppo motopropulsore |
 | Interfaccia agente | Strumenti MCP definiti da schema, diagnostica strutturata, revisioni, rami, annullamento e report compatti | Flussi di modellazione/controllo per l'ambito restante del gruppo motopropulsore completo |
 | Studio Unity | Importazione condivisa dei modelli, riproduzione dei laboratori, componenti schematici 3D e test preparati | Evidenza reale di Editor/Play/Player/IL2CPP e pacchettizzazione desktop |
-| Banco di modellazione | Asset portabile v24, lettori v1-v23 e definizioni JSON/CLI/MCP condivise | Modifica del grafo, salvataggio e grafici dei canali selezionabili |
+| Banco di modellazione | Asset portabile v25, lettori v1-v24 e definizioni JSON/CLI/MCP condivise | Modifica del grafo, salvataggio e grafici dei canali selezionabili |
 | Fisica del motore | Massa/energia del gas indipendenti, lavoro biella-manovella, valvole fasate, combustione prescritta, dosatura di carburante gassoso e liquido, binari finiti cedevoli, evaporazione del film e azionamento fisico dell'ago | Pompa/rabbocco del binario, comportamento magnetico/elettronico/a spruzzo raffinato, accoppiamento del volume liquido finito, controllo dell'accensione, aspirazione/scarico dettagliati, perdite meccaniche, termochimica e calibrazione misurata |
 | Trasmissione | Frizioni accoppiate, ingranaggi/planetari, convertitore/blocco mappato, idraulica e percorsi DCT a sette avanti/retromarcia e Ravigneaux a quattro avanti/retromarcia con rotazione dei satelliti e inerzia orbitale risolte | Cedevolezza/perdite di ingranamento e ripartizione del carico, azionamento DCT, controllo completo di pressione/cambio AT e instradamento misurato, mappe misurate, comportamento di valvole/tenute/cavitazione e dinamica più ricca del convertitore |
 | Controlli e integrazione elettrica | PI di pressione campionato, controllo di chiusura dell'ago e passaggio DCT graduale confermato dai sensori, tensione/duty cycle limitati, proprietà degli attuatori, circuito equivalente della batteria e accessori | Cicli ECU/TCU coordinati, sensori/attuatori, richieste di coppia, guasti, BMS e comportamento termico/elettrico misurato |
@@ -34,3 +34,13 @@ Imposta `POWER_UNITY_EDITOR` sull'Editor fissato ed esegui `unity-test`. Ottieni
 EA211 DJS + DQ200 e PSA EC5 + AT8 conservano i confini completi del gruppo motopropulsore, l'applicabilità al veicolo e i manifest di evidenza. Le misure OEM mancanti non sono sostituite da valori predefiniti silenziosi. Completamento funzionale, correttezza numerica e credibilità del veicolo misurato richiedono accettazioni separate.
 
 L'[archivio Zig](NATIVE_ZIG.it.md) conserva gli hash originali e la provenienza Git in `legacy/native/migration-manifest.json`, compresa la revisione C originale `c342d4c`. Resta separato dall'applicazione attiva C#/Unity. La migrazione nativa non completa la migrazione delle funzionalità gestite né l'accettazione del gruppo motopropulsore. Introduci parallelismo aggiuntivo, soluzione sparsa o Burst quando le misure lo giustificano e i contratti del nucleo restano stabili.
+
+## Retroazione AT idraulica
+
+`at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v25 conserva percorsi, guadagni e clock e legge v1-v24.
+
+Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.it.md](AT_CONTROL.it.md)

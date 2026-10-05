@@ -97,7 +97,7 @@ internal static class GasIntegrationChecks
     {
         var capabilities = Data(AgentWorkspace.Capabilities());
         Require(capabilities.GetProperty("domains").EnumerateArray().Any(d => d.GetString() == "gas"));
-        Require(capabilities.GetProperty("asset_format").GetString() == "power.asset.v24" && capabilities.GetProperty("readable_asset_formats").GetArrayLength() == 24);
+        Require(capabilities.GetProperty("asset_format").GetString() == "power.asset.v25" && capabilities.GetProperty("readable_asset_formats").GetArrayLength() == 25);
         var example = Data(AgentWorkspace.ExampleModel("gas-network"));
         Require(JsonNode.DeepEquals(JsonNode.Parse(example.GetRawText()), JsonNode.Parse(Source)));
         var workspace = new AgentWorkspace();

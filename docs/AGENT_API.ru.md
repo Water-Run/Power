@@ -42,7 +42,7 @@ Windows использует ту же команду `dotnet` и абсолют
 
 ## Инструменты и результаты
 
-В версии API агента 0.29.0 `get_example_model` принимает необязательный `name`: `electrothermal` (по умолчанию), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` или `fired-hydraulic-ravigneaux`. `get_capabilities` объявляет поддерживаемые уровни fidelity, читаемые версии активов, пределы решателя и границы входов. Экспорт использует `power.asset.v24`; активы v1–v23 остаются читаемыми. Каналы выходов и их единицы возвращают проверка модели и создание сессии. Пройденные KPI лаборатории не устанавливают полный или калиброванный силовой агрегат.
+В версии API агента 0.30.0 `get_example_model` принимает необязательный `name`: `electrothermal` (по умолчанию), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` или `fired-hydraulic-ravigneaux`. `get_capabilities` объявляет поддерживаемые уровни fidelity, читаемые версии активов, пределы решателя и границы входов. Экспорт использует `power.asset.v25`; активы v1–v23 остаются читаемыми. Каналы выходов и их единицы возвращают проверка модели и создание сессии. Пройденные KPI лаборатории не устанавливают полный или калиброванный силовой агрегат.
 
 | Инструмент | Назначение |
 |---|---|
@@ -287,3 +287,13 @@ flowchart TD
 Запросите `hydraulic-ravigneaux-transmission` или `fired-hydraulic-ravigneaux`. Используйте явные доли заполнения и слива на 700/701 по 708/709; блокировка со сгоранием использует 710/711. Прежние ID замыкания диапазона отсутствуют. Проверьте и обнаружьте каналы, прежде чем писать. Давление, ход и контакт поршня определяют ёмкости; команда, принятая API, не подтверждает физическую блокировку.
 
 Отчёты сохраняют давление линии и камеры, ход, контактную ёмкость, работу насоса, вытесненный объём, теплоту трения, сужения и демпфирования и каждый хеш модели. Полные ревизии, отмена, поздний откат и независимые ветвления со сбросом клапана используют обычные контракты. Граф использует существующие записи актива v24, а не новый формат сериализации. См. [AT_HYDRAULIC_ACTUATION.ru.md](AT_HYDRAULIC_ACTUATION.ru.md).
+
+## Обратная связь гидравлической AT
+
+`at_controller` принимает целочисленную передачу в [-1,4]; ноль означает нейтраль. Он управляет пятью парами клапанов наполнения/слива и необязательной блокировкой гидротрансформатора. Порядок: вход водила, малого солнца, большого солнца, тормоз водила, тормоз большого солнца, затем блокировка.
+
+Примеры `controlled-hydraulic-ravigneaux` и `controlled-fired-hydraulic-ravigneaux` используют канал 900 и ID 1400. Они сохраняют 99 и 122 отслеживаемых состояния при неизменном пределе 128. Формат v25 хранит маршруты, усиления и часы и читает v1-v24.
+
+Это исследовательское управление, параметры остаются `unverified`. Координация момента ECU, подробные датчики/клапаны, полный набор неисправностей автомобиля и калибровка OEM ещё не завершены. Проверки managed и Standard не подтверждают реальные Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.ru.md](AT_CONTROL.ru.md)

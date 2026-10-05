@@ -2,6 +2,54 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+
+## 2026-10-05: 液压 AT 反馈与压力控制
+
+所要求的串行验证已在 Windows x64/.NET 10.0.12 上通过。Release 构建没有警告或错误。实际 Unity 与新的 Linux/macOS 验收仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 367/367 |
+| standard_checks_on_dotnet | 283/283 |
+| actual_mcp_groups | 39/39 |
+| laboratories | 36 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v25 |
+| v24_fixture_sha256 | 6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc |
+
+| Identifier | controlled-hydraulic-ravigneaux | controlled-fired-hydraulic-ravigneaux |
+|---|---|---|
+| duration_s | 4.5 | 2.2 |
+| boundaries | 451 | 221 |
+| states | 99 | 122 |
+| confirmed_range | 1 | 4 |
+| fault | 0 | 0 |
+| lockup_state | 0 | 2 |
+| max_sampled_energy_j | 7.059115887386724e-7 | 2.7647047318168916e-7 |
+| max_sampled_hydraulic_volume_m3 | 1.7499700690273845e-18 | 2.7681036716270535e-18 |
+| fingerprint | ceb522c56530be00 | 9fa63e406ccae528 |
+| final_state_hash | 7ff1919e1f504740 | 958185fe86764b63 |
+| source_sha256 | 9cac20ed7a79a2b9dd30f630adf5c6b3ce1f5dbbe4fa837eba3f0465cf67855b | cd4bd02357168532793462903670f9ec59e0c47edcd24986adc71c27bb4e88af |
+
+- `artifacts/reports/at-control-final-2026-10-05.log`
+- `artifacts/reports/at-control-evidence-2026-10-05.json`
+- `artifacts/reports/at-control-schema-audit-2026-10-05.json`
+- `artifacts/reports/at-controller-probe-2026-10-05.log`
+
+8 组物理/事务检查覆盖所有前进挡与倒挡、真实压力/接触/锁定反馈、阀通道归属、采样时钟及 PI 边界。故障检查包括供压丢失、排油堵塞、接合/释放超时、移动方向互锁和已确认锁定丢失。2 组资产检查保留类型化支路并拒绝重签名降级。3 组组合检查与 2 个实际 MCP 场景逐项匹配所有标量和状态哈希。
+
+倒挡启动与故障恢复在 500 ms 时仍为 Applying，并在 800 ms 前于既定超时内完成确认。测试依据实际锁定而非固定延时。安全泄压命令不能消除物理堵塞。燃烧机/行星轮/执行器/控制组合保留 122 个状态，未改变 128 状态上限。
+
+参数仍为 `unverified`。协调 ECU 扭矩融合、详细传感器/阀行为、完整车辆故障、OEM 标定和实际 Editor/Play/Player/IL2CPP 验收仍待完成。
+
+[AT_CONTROL.zh-CN.md](AT_CONTROL.zh-CN.md)
+
+
 ## 2026-10-02:共享 AT 液压供油与动态活塞驱动
 
 要求的串行 `dotnet run --file tools/Build.cs -- verify` 在 Windows x64/.NET 10.0.12 上本地通过:**354/354** 项托管检查,**273/273** 项在 .NET 10 上托管运行的 Standard 程序集检查,**37/37** 组真实 MCP,**16/16** 项 Zig 测试以及六项原生模型 C# 检查。Release 构建报告零警告/错误。全部 **34** 个实验室通过,全部 **176** 个原始基线值精确匹配。C/C++/Lua 审计仍为空。实际 Unity 与新的 Linux/macOS 验收仍未验证。

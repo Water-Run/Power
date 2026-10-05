@@ -76,7 +76,7 @@ Windows usa el mismo comando `dotnet` y una ruta absoluta a la DLL. Una conexió
 
 ## Herramientas y resultados
 
-En la versión 0.29.0 de la API de agente, `get_example_model` acepta un `name` opcional: `electrothermal` (por defecto), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` o `fired-hydraulic-ravigneaux`. `get_capabilities` anuncia los niveles de fidelidad admitidos, las versiones de asset legibles, los límites del solver y las cotas de entrada. Las exportaciones usan `power.asset.v24`; los assets v1–v23 siguen siendo legibles. La validación del modelo y la creación de sesión devuelven los canales de salida y sus unidades. Aprobar los KPI de un laboratorio no establece un grupo motopropulsor completo ni calibrado.
+En la versión 0.30.0 de la API de agente, `get_example_model` acepta un `name` opcional: `electrothermal` (por defecto), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` o `fired-hydraulic-ravigneaux`. `get_capabilities` anuncia los niveles de fidelidad admitidos, las versiones de asset legibles, los límites del solver y las cotas de entrada. Las exportaciones usan `power.asset.v25`; los assets v1–v23 siguen siendo legibles. La validación del modelo y la creación de sesión devuelven los canales de salida y sus unidades. Aprobar los KPI de un laboratorio no establece un grupo motopropulsor completo ni calibrado.
 
 | Herramienta | Finalidad |
 |---|---|
@@ -605,3 +605,13 @@ barrido, el calor de fricción, de restricción y de amortiguación, y cada hash
 la cancelación, la reversión tardía y las bifurcaciones independientes de liberación de válvula usan los contratos
 ordinarios. El grafo usa registros existentes del asset v24, no un formato de serialización
 nuevo. Consulta [AT_HYDRAULIC_ACTUATION.es.md](AT_HYDRAULIC_ACTUATION.es.md).
+
+## Realimentación de AT hidráulica
+
+`at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
+
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v25 conserva rutas, ganancias y relojes y lee v1-v24.
+
+Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
+
+[AT_CONTROL.es.md](AT_CONTROL.es.md)

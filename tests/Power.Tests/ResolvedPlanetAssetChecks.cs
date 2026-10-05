@@ -32,7 +32,7 @@ internal static class ResolvedPlanetAssetChecks
     private static void Replay()
     {
         var asset=Asset();byte[] bytes=AssetCodec.Encode(asset);var decoded=AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8))==24&&decoded.Components.SequenceEqual(asset.Components)&&decoded.Nodes.SequenceEqual(asset.Nodes));
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8))==25&&decoded.Components.SequenceEqual(asset.Components)&&decoded.Nodes.SequenceEqual(asset.Nodes));
         Require(bytes.SequenceEqual(AssetCodec.Encode(decoded)));Compare(asset,decoded);
         byte[] fixture=File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory,"Fixtures","ravigneaux-transmission-v23.powerasset"));
         Require(BinaryPrimitives.ReadInt32LittleEndian(fixture.AsSpan(8))==23&&Convert.ToHexStringLower(SHA256.HashData(fixture))=="f2bd390e8ecf013e5843ed3352ccf2a2828133b541fc61d7927995f8ac1dc2e2");
@@ -41,7 +41,7 @@ internal static class ResolvedPlanetAssetChecks
     private static void Corruption()
     {
         var asset=Asset();byte[] bytes=AssetCodec.Encode(asset);int counts=78+Encoding.UTF8.GetByteCount(asset.Name);
-        int record=counts+140+44*asset.Nodes.Count+156*asset.Components.Count+28*5;
+        int record=counts+148+44*asset.Nodes.Count+156*asset.Components.Count+28*5;
         void Reject(byte[] bad){SHA256.HashData(bad.AsSpan(0,bad.Length-32)).CopyTo(bad,bad.Length-32);Throws<ArgumentException>(()=>AssetCodec.Decode(bad));}
         foreach(var change in new[]{(counts+52,-1),(counts+52,0),(counts+52,65),(record,-1),(record+4,0),(record+4,100),(record+8,0)})
         {var bad=bytes.ToArray();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(change.Item1),change.Item2);Reject(bad);}

@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione attuale 24 e lettori conservati
+## Versione corrente 25
+
+Il codificatore scrive `power.asset.v25` e legge v1-v25. La tabella contiene 37 valori int32 (148 bytes); l'intestazione occupa 226 + lunghezza del nome UTF-8 bytes. Il tipo 38 è `at_controller`, con tag di impronta 29. Ogni record ha 208 bytes fissi più 12 bytes per percorso. I percorsi sono 5 o 6; il totale limitato è dichiarato separatamente. Si verificano tipi, clock, unità, proprietà e topologia. Un downgrade v24 con digest rifirmato rifiuta il nuovo tipo.
+
+## Versione 24 conservata
 
 L'encoder scrive `power.asset.v24`; le versioni da 1 a 24 restano leggibili. La tabella dei conteggi e le dimensioni dei record restano quelle della v23. Il kind 37 è `carrier_gear`: il suo rapporto di base è finito, con segno e diverso da zero; la sua estensione di ingranaggio da 8 byte conserva l'indice del componente e il portasatelliti mobile distinto. I conteggi tipizzati coprono ogni ingranamento del portasatelliti. Una retrocessione v23 risigillata nel digest rifiuta il nuovo kind.
 

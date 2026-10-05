@@ -34,6 +34,8 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <EmbeddedResource Include="../../assets/labs/closure-compensated-cylinder.power.json" LogicalName="power.closure-compensated-cylinder.template.json" />
     <EmbeddedResource Include="../../assets/labs/dual-clutch-transmission.power.json" LogicalName="power.dual-clutch-transmission.template.json" />
     <EmbeddedResource Include="../../assets/labs/fired-dual-clutch.power.json" LogicalName="power.fired-dual-clutch.template.json" />
+    <EmbeddedResource Include="../../assets/labs/controlled-hydraulic-ravigneaux.power.json" LogicalName="power.controlled-hydraulic-ravigneaux.template.json" />
+    <EmbeddedResource Include="../../assets/labs/controlled-fired-hydraulic-ravigneaux.power.json" LogicalName="power.controlled-fired-hydraulic-ravigneaux.template.json" />
     <EmbeddedResource Include="../../assets/labs/hydraulic-ravigneaux-transmission.power.json" LogicalName="power.hydraulic-ravigneaux-transmission.template.json" />
     <EmbeddedResource Include="../../assets/labs/fired-hydraulic-ravigneaux.power.json" LogicalName="power.fired-hydraulic-ravigneaux.template.json" />
     <EmbeddedResource Include="../../assets/labs/resolved-ravigneaux-transmission.power.json" LogicalName="power.resolved-ravigneaux-transmission.template.json" />

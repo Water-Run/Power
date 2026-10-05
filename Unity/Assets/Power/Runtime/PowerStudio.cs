@@ -559,6 +559,11 @@ namespace Power.Studio
                     Connection((component.Kind == ComponentKind.CarrierGear ? "Carrier mesh port B " : "Planetary ring ") + component.Id, ring, center, steel, 0.08f);
                     Connection("Planetary carrier " + component.Id, carrier, center, blue, 0.08f);
                 }
+                if (component.Kind == ComponentKind.HydraulicAtController)
+                {
+                    Shape("AT feedback controller " + component.Id, PrimitiveType.Cube, a + Vector3.up * 1.4f, new Vector3(0.55f, 0.35f, 0.45f), blue);
+                    continue;
+                }
                 if (component.Kind == ComponentKind.DualClutchController)
                 {
                     Shape("DCT sampled controller " + component.Id, PrimitiveType.Cube, a + Vector3.up * 1.4f, new Vector3(0.55f, 0.35f, 0.45f), blue);

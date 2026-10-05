@@ -2,6 +2,54 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · **Español** · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+
+## 2026-10-05: Realimentación AT hidráulica y control de presión
+
+La verificación serie requerida pasa en Windows x64/.NET 10.0.12. La compilación Release no tiene advertencias ni errores. La aceptación real de Unity y nuevas verificaciones Linux/macOS sigue sin confirmar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 367/367 |
+| standard_checks_on_dotnet | 283/283 |
+| actual_mcp_groups | 39/39 |
+| laboratories | 36 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v25 |
+| v24_fixture_sha256 | 6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc |
+
+| Identifier | controlled-hydraulic-ravigneaux | controlled-fired-hydraulic-ravigneaux |
+|---|---|---|
+| duration_s | 4.5 | 2.2 |
+| boundaries | 451 | 221 |
+| states | 99 | 122 |
+| confirmed_range | 1 | 4 |
+| fault | 0 | 0 |
+| lockup_state | 0 | 2 |
+| max_sampled_energy_j | 7.059115887386724e-7 | 2.7647047318168916e-7 |
+| max_sampled_hydraulic_volume_m3 | 1.7499700690273845e-18 | 2.7681036716270535e-18 |
+| fingerprint | ceb522c56530be00 | 9fa63e406ccae528 |
+| final_state_hash | 7ff1919e1f504740 | 958185fe86764b63 |
+| source_sha256 | 9cac20ed7a79a2b9dd30f630adf5c6b3ce1f5dbbe4fa837eba3f0465cf67855b | cd4bd02357168532793462903670f9ec59e0c47edcd24986adc71c27bb4e88af |
+
+- `artifacts/reports/at-control-final-2026-10-05.log`
+- `artifacts/reports/at-control-evidence-2026-10-05.json`
+- `artifacts/reports/at-control-schema-audit-2026-10-05.json`
+- `artifacts/reports/at-controller-probe-2026-10-05.log`
+
+8 grupos físicos/transaccionales cubren todas las marchas adelante y atrás, presión/contacto/bloqueo reales, propiedad de válvulas, relojes y límites PI. Los fallos incluyen pérdida de alimentación, drenaje bloqueado, tiempo de aplicación/liberación, interbloqueo de dirección y pérdida de bloqueo confirmado. 2 grupos de assets conservan rutas tipadas y rechazan descensos firmados de nuevo. 3 grupos integrados y 2 escenarios MCP reales coinciden en cada escalar y hash de estado.
+
+El arranque en reversa y la recuperación siguen Applying a 500 ms y se confirman antes de 800 ms dentro del tiempo declarado. Las pruebas siguen el bloqueo real y no una demora fija. El vaciado seguro no elimina un bloqueo físico. El grafo motor/planetas/actuadores/control conserva 122 estados dentro del límite inalterado de 128.
+
+Los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo, calibración OEM y aceptación real Editor/Play/Player/IL2CPP siguen pendientes.
+
+[AT_CONTROL.es.md](AT_CONTROL.es.md)
+
+
 ## 2026-10-02: alimentación hidráulica AT compartida y actuación dinámica por pistón
 
 La verificación en serie exigida, `dotnet run --file tools/Build.cs -- verify`, pasa en local

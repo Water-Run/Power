@@ -14,7 +14,7 @@ calibration and desktop acceptance each need their own evidence.
 | Managed core | Dual-target dependency-free physics, topology, units, integer time, replay and atomic transactions | Long-run integrated powertrain validation |
 | Agent interface | Schema-defined MCP tools, structured diagnostics, revisions, branches, cancellation and compact reports | Modeling/control workflows for the remaining full-powertrain scope |
 | Unity studio | Shared model import, laboratory playback, 3D schematic components and prepared tests | Actual Editor/Play/Player/IL2CPP evidence and desktop packaging |
-| Modeling workbench | Portable asset v24, v1-v23 readers and shared JSON/CLI/MCP definitions | Graph editing, saving and selectable channel plots |
+| Modeling workbench | Portable asset v25, v1-v24 readers and shared JSON/CLI/MCP definitions | Graph editing, saving and selectable channel plots |
 | Engine physics | Independent gas mass/energy, slider-crank work, timed valves, prescribed combustion, gaseous and liquid fuel metering, finite compliant rails, film evaporation and physical needle actuation | Rail pump/refill, refined magnetic/electronic/spray behavior, finite-liquid-volume coupling, ignition control, detailed intake/exhaust, mechanical losses, thermochemistry and measured calibration |
 | Transmission | Coupled clutches, gears/planetaries, mapped converter/lockup, hydraulics and seven-forward/reverse DCT and four-forward/reverse Ravigneaux paths with resolved planet spin/orbital inertia | Mesh compliance/losses and load sharing, DCT actuation, complete AT pressure/shift control and measured routing, measured maps, valve/seal/cavitation behavior and richer converter dynamics |
 | Controls and electrical integration | Sampled pressure PI, needle closure control and sensor-confirmed staged DCT handoff, bounded voltage/duty, actuator ownership, battery equivalent circuit and accessories | Coordinated ECU/TCU cycles, sensors/actuators, torque requests, faults, BMS and measured thermal/electrical behavior |
@@ -69,3 +69,13 @@ It remains separate from the active C#/Unity application. Native migration doesn
 complete managed feature migration or powertrain acceptance. Introduce additional
 parallelism, sparse solving or Burst when measurements justify it and the core
 contracts remain stable.
+
+## Hydraulic AT feedback
+
+`at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
+
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v25 retains routes, gains and clocks and reads v1-v24.
+
+These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
+
+[AT_CONTROL.md](AT_CONTROL.md)

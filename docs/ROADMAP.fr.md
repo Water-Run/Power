@@ -11,7 +11,7 @@ L'objectif est la plateforme complète de groupe motopropulseur Power! : une phy
 | Cœur managé | Physique sans dépendance à double cible, topologie, unités, temps entier, rejeu et transactions atomiques | Validation de groupe motopropulseur intégré sur longue durée |
 | Interface agent | Outils MCP définis par schéma, diagnostics structurés, révisions, branches, annulation et rapports compacts | Flux de modélisation et de contrôle pour le périmètre de groupe motopropulseur complet qui reste |
 | Studio Unity | Import de modèle partagé, rejeu de laboratoire, composants schématiques 3D et tests préparés | Preuves réelles d'Editor/Play/Player/IL2CPP et empaquetage de bureau |
-| Établi de modélisation | Asset portable v24, lecteurs v1-v23 et définitions JSON/CLI/MCP partagées | Édition de graphe, enregistrement et tracés de canaux sélectionnables |
+| Établi de modélisation | Asset portable v25, lecteurs v1-v24 et définitions JSON/CLI/MCP partagées | Édition de graphe, enregistrement et tracés de canaux sélectionnables |
 | Physique moteur | Masse/énergie gazeuses indépendantes, travail bielle-manivelle, soupapes calées, combustion prescrite, dosage de carburant gazeux et liquide, rampes souples finies, évaporation de film et actionnement physique d'aiguille | Pompage/ravitaillement de rampe, comportement magnétique/électronique/pulvérisation affiné, couplage à volume liquide fini, contrôle d'allumage, admission/échappement détaillés, pertes mécaniques, thermochimie et calibration mesurée |
 | Transmission | Embrayages couplés, engrenages/planétaires, convertisseur/verrouillage cartographié, hydraulique, et chemins DCT à sept rapports avant/marche arrière et Ravigneaux à quatre plages avant/marche arrière avec rotation des planétaires et inertie orbitale résolues | Compliance/pertes d'engrènement et partage de charge, actionnement DCT, contrôle complet de pression/passage AT et routage mesuré, cartes mesurées, comportement de vanne/joint/cavitation et dynamique de convertisseur plus riche |
 | Contrôles et intégration électrique | PI de pression échantillonné, contrôle de fermeture d'aiguille et passation DCT étagée confirmée par capteur, tension/rapport cyclique bornés, propriété des actionneurs, circuit équivalent de batterie et accessoires | Cycles ECU/TCU coordonnés, capteurs/actionneurs, demandes de couple, défauts, BMS et comportement thermique/électrique mesuré |
@@ -34,3 +34,13 @@ Définir `POWER_UNITY_EDITOR` vers l'éditeur épinglé et exécuter `unity-test
 EA211 DJS + DQ200 et PSA EC5 + AT8 conservent les frontières complètes de groupe motopropulseur, l'applicabilité véhicule et les manifestes de preuve. Les mesures OEM manquantes ne sont pas remplacées par des valeurs par défaut silencieuses. L'achèvement fonctionnel, la correction numérique et la crédibilité d'un véhicule mesuré demandent des acceptations séparées.
 
 L'[archive Zig](NATIVE_ZIG.fr.md) conserve les hachages d'origine et la provenance Git dans `legacy/native/migration-manifest.json`, y compris la révision C d'origine `c342d4c`. Elle reste séparée de l'application C#/Unity active. La migration native n'achève ni la migration des fonctions managées ni l'acceptation du groupe motopropulseur. Introduire du parallélisme supplémentaire, une résolution creuse ou Burst lorsque les mesures le justifient et que les contrats du cœur restent stables.
+
+## Régulation hydraulique de boîte AT
+
+`at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
+
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v25 conserve routes, gains et horloges et lit v1-v24.
+
+Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
+
+[AT_CONTROL.fr.md](AT_CONTROL.fr.md)

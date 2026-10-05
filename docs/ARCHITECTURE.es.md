@@ -488,3 +488,13 @@ explícitas de las caras delantera y trasera conservan el inventario barrido y e
 ordinarias inmutables conservan la resolución conjunta existente de presión, movimiento y fricción,
 la semántica portátil de v24 y el estado atómico completo. Los calendarios de válvula prescritos
 siguen separados de la realimentación y el control de la AT, y de la aceptación medida del cuerpo de válvulas.
+
+## Realimentación de AT hidráulica
+
+`at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
+
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v25 conserva rutas, ganancias y relojes y lee v1-v24.
+
+Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
+
+[AT_CONTROL.es.md](AT_CONTROL.es.md)

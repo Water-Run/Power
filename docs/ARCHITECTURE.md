@@ -488,3 +488,13 @@ front/back areas retain swept inventory and reference-pressure work. Immutable
 ordinary definitions preserve the existing joint pressure/motion/friction solve,
 portable v24 semantics and complete atomic state. Prescribed valve schedules
 remain separate from AT feedback/control and measured valve-body acceptance.
+
+## Hydraulic AT feedback
+
+`at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
+
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v25 retains routes, gains and clocks and reads v1-v24.
+
+These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
+
+[AT_CONTROL.md](AT_CONTROL.md)

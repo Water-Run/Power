@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 无头实验"]
     mcp["Power.Mcp — 12 个 stdio MCP 工具"]
-    assets["Power.Assets — .powerasset v24"]
+    assets["Power.Assets — .powerasset v25"]
     unity["Unity 6.6 工作室 — 3D 实验室"]
 
     model --> core
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 所有示例参数均为 `unverified`——研究取值,不是标定测量值。
 
-下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v24`,并保留对更早资产的读取。
+下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v25`,并保留对更早资产的读取。
 
 <details>
 <summary>可用实验室(34 个)</summary>

@@ -2,6 +2,54 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+
+## 2026-10-05: 유압 AT 피드백과 압력 제어
+
+필수 직렬 검증이 Windows x64/.NET 10.0.12에서 통과했습니다. Release 빌드는 경고나 오류가 없습니다. 실제 Unity와 새로운 Linux/macOS 검증은 미확인 상태입니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 367/367 |
+| standard_checks_on_dotnet | 283/283 |
+| actual_mcp_groups | 39/39 |
+| laboratories | 36 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v25 |
+| v24_fixture_sha256 | 6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc |
+
+| Identifier | controlled-hydraulic-ravigneaux | controlled-fired-hydraulic-ravigneaux |
+|---|---|---|
+| duration_s | 4.5 | 2.2 |
+| boundaries | 451 | 221 |
+| states | 99 | 122 |
+| confirmed_range | 1 | 4 |
+| fault | 0 | 0 |
+| lockup_state | 0 | 2 |
+| max_sampled_energy_j | 7.059115887386724e-7 | 2.7647047318168916e-7 |
+| max_sampled_hydraulic_volume_m3 | 1.7499700690273845e-18 | 2.7681036716270535e-18 |
+| fingerprint | ceb522c56530be00 | 9fa63e406ccae528 |
+| final_state_hash | 7ff1919e1f504740 | 958185fe86764b63 |
+| source_sha256 | 9cac20ed7a79a2b9dd30f630adf5c6b3ce1f5dbbe4fa837eba3f0465cf67855b | cd4bd02357168532793462903670f9ec59e0c47edcd24986adc71c27bb4e88af |
+
+- `artifacts/reports/at-control-final-2026-10-05.log`
+- `artifacts/reports/at-control-evidence-2026-10-05.json`
+- `artifacts/reports/at-control-schema-audit-2026-10-05.json`
+- `artifacts/reports/at-controller-probe-2026-10-05.log`
+
+8개 물리/트랜잭션 그룹은 모든 전진/후진 단, 실제 압력/접촉/잠금, 밸브 소유권, 클록과 PI 한도를 확인합니다. 고장은 공급 손실, 막힌 배출, 체결/해제 시간 초과, 이동 방향 인터록과 확인된 잠금 손실을 포함합니다. 2개 자산 그룹은 형식화된 경로를 보존하고 재서명 다운그레이드를 거부합니다. 3개 통합 그룹과 2개 실제 MCP 시나리오는 모든 스칼라와 상태 해시가 일치합니다.
+
+후진 시작과 고장 복구는 500 ms에서 Applying이며 선언된 시간 초과 안에서 800 ms 이전에 확인됩니다. 검사는 고정 지연 대신 실제 잠금을 따릅니다. 안전 배출 명령은 물리적 막힘을 없애지 못합니다. 엔진/행성기어/액추에이터/제어 그래프는 변경 없는 128 한도 안에 122 상태를 보존합니다.
+
+매개변수는 `unverified`입니다. ECU 토크 협조, 상세 센서/밸브, 전체 차량 고장, OEM 보정 및 실제 Editor/Play/Player/IL2CPP 검증은 미완성입니다.
+
+[AT_CONTROL.ko.md](AT_CONTROL.ko.md)
+
+
 ## 2026-10-02: 공유 AT 유압 공급과 동적 피스톤 구동
 
 필수 직렬 `dotnet run --file tools/Build.cs -- verify`가 Windows x64/.NET 10.0.12에서 로컬로 통과합니다. 관리형 검사 **354/354**, .NET 10에서 호스팅된 Standard 어셈블리 검사 **273/273**, 실제 MCP 그룹 **37/37**, Zig 테스트 **16/16**, 네이티브 모델 C# 검사 여섯 개입니다. Release 빌드는 경고/오류가 0입니다. 실험실 **34**개가 모두 통과하고, 원래 기준선 값 **176**개가 모두 정확히 일치합니다. C/C++/Lua 감사는 비어 있습니다. 실제 Unity와 새로운 Linux/macOS 수용은 미검증으로 남습니다.

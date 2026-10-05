@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, comprobar la huella]
 ```
 
-## Versión actual 24 y lectores conservados
+## Versión actual 25
+
+El codificador escribe `power.asset.v25` y lee v1-v25. La tabla contiene 37 valores int32 (148 bytes); la cabecera ocupa 226 + longitud del nombre UTF-8 bytes. El tipo 38 es `at_controller`, con etiqueta de huella 29. Cada registro tiene 208 bytes fijos más 12 bytes por ruta. Las rutas son 5 o 6; el total limitado se declara por separado. Se comprueban tipos, relojes, unidades, propiedad y topología. Una reducción a v24 con digest firmado de nuevo rechaza el tipo nuevo.
+
+## Versión 24 conservada
 
 El codificador escribe `power.asset.v24`; las versiones 1 a 24 siguen siendo legibles.
 La tabla de recuentos y los tamaños de registro siguen siendo los de v23. El tipo 37 es `carrier_gear`:

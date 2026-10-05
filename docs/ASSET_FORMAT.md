@@ -14,7 +14,11 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 24 and retained readers
+## Current version 25
+
+The encoder writes `power.asset.v25` and reads v1-v25. The count table contains 37 int32 values (148 bytes); the header is 226 + UTF-8 name length bytes. Kind 38 is `at_controller`, with fingerprint tag 29. Each record has 208 fixed bytes plus 12 bytes per route. Route count is 5 or 6; the bounded total is declared separately. Typed coverage, clocks, units, ownership and topology are checked. A re-signed v24 downgrade rejects the new kind.
+
+## Retained version 24
 
 The encoder writes `power.asset.v24`; versions 1 through 24 remain readable.
 The count table and record sizes remain those of v23. Kind 37 is `carrier_gear`:

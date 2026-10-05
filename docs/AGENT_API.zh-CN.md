@@ -42,7 +42,7 @@ Windows 使用同一条 `dotnet` 命令,以及指向 DLL 的绝对路径。生�
 
 ## 工具与结果
 
-在智能体 API 版本 0.29.0 中,`get_example_model` 接受可选的 `name`:`electrothermal`(默认)、`sealed-cylinder`、`gas-network`、`moving-cylinder`、`crank-timed-cylinder`、`fired-cylinder`、`fired-clutch`、`fired-planetary`、`fired-converter`、`fired-hydraulic`、`fired-pump`、`fired-pump-losses`、`electric-pump`、`pressure-regulated-pump`、`battery-regulated-pump`、`piston-actuated-clutch`、`spool-regulated-pump`、`gas-accumulator-pump`、`metered-fired-cylinder`、`film-fired-cylinder`、`liquid-injected-cylinder`、`needle-actuated-cylinder`、`closure-compensated-cylinder`、`dual-clutch-transmission`、`fired-dual-clutch`、`controlled-dual-clutch`、`controlled-fired-dual-clutch`、`ravigneaux-transmission`、`fired-ravigneaux-converter`、`resolved-ravigneaux-transmission`、`fired-resolved-ravigneaux-converter`、`hydraulic-ravigneaux-transmission` 或 `fired-hydraulic-ravigneaux`。`get_capabilities` 通告支持的保真度级别、可读资产版本、求解器限制与输入界限。导出使用 `power.asset.v24`;v1–v23 资产仍可读取。输出通道及其单位由模型校验与会话创建返回。通过实验室 KPI 并不确立完整或已标定的动力总成。
+在智能体 API 版本 0.30.0 中,`get_example_model` 接受可选的 `name`:`electrothermal`(默认)、`sealed-cylinder`、`gas-network`、`moving-cylinder`、`crank-timed-cylinder`、`fired-cylinder`、`fired-clutch`、`fired-planetary`、`fired-converter`、`fired-hydraulic`、`fired-pump`、`fired-pump-losses`、`electric-pump`、`pressure-regulated-pump`、`battery-regulated-pump`、`piston-actuated-clutch`、`spool-regulated-pump`、`gas-accumulator-pump`、`metered-fired-cylinder`、`film-fired-cylinder`、`liquid-injected-cylinder`、`needle-actuated-cylinder`、`closure-compensated-cylinder`、`dual-clutch-transmission`、`fired-dual-clutch`、`controlled-dual-clutch`、`controlled-fired-dual-clutch`、`ravigneaux-transmission`、`fired-ravigneaux-converter`、`resolved-ravigneaux-transmission`、`fired-resolved-ravigneaux-converter`、`hydraulic-ravigneaux-transmission` 或 `fired-hydraulic-ravigneaux`。`get_capabilities` 通告支持的保真度级别、可读资产版本、求解器限制与输入界限。导出使用 `power.asset.v25`;v1–v23 资产仍可读取。输出通道及其单位由模型校验与会话创建返回。通过实验室 KPI 并不确立完整或已标定的动力总成。
 
 | 工具 | 作用 |
 |---|---|
@@ -287,3 +287,13 @@ flowchart TD
 请求 `hydraulic-ravigneaux-transmission` 或 `fired-hydraulic-ravigneaux`。在 700/701 直到 708/709 上使用显式充/放分数;点火锁止使用 710/711。先前的挡域接合 ID 不存在。写入之前先校验/发现通道。活塞压力/行程/接触决定容量;被 API 接受的指令并不确认物理锁止。
 
 报告保留管路/腔室压力、行程、接触容量、泵功、扫过体积、摩擦/节流/阻尼热以及每一个模型哈希。完整修订、取消、延迟回滚与独立的阀门释放分支使用普通契约。该图使用现有资产 v24 记录,而不是新的序列化格式。参见 [AT 驱动](AT_HYDRAULIC_ACTUATION.zh-CN.md)。
+
+## 液压 AT 反馈控制
+
+`at_controller` 接受 [-1,4] 范围内的整数目标挡位；零表示空挡。它管理五组充油/泄压阀以及可选的变矩器锁止支路。支路顺序为行星架输入、小太阳轮输入、大太阳轮输入、行星架制动、大太阳轮制动，最后是锁止。
+
+示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v25 保留支路、增益和时钟，并可读取 v1-v24。
+
+这是研究控制，参数仍为 `unverified`。协调 ECU 扭矩融合、详细传感器/阀模型、完整车辆故障及 OEM 标定仍待完成。托管和 Standard 检查不能证明实际 Unity Editor/Play/Player/IL2CPP 验收。
+
+[AT_CONTROL.zh-CN.md](AT_CONTROL.zh-CN.md)

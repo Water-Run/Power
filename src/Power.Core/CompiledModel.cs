@@ -12,16 +12,16 @@ internal readonly record struct GraphComponent(uint Id, ComponentKind Kind, int 
 internal readonly record struct OutputBinding(uint ObjectId, Field Field, int Index, bool IsComponent = false);
 
 /// <summary>Immutable, validated topology and solver factors shared by independent simulations.</summary>
-public sealed class CompiledModel
+public sealed partial class CompiledModel
 {
     public const int MaxNodes = 32, MaxComponents = 64, MaxStates = 128, MaxConverters = 8;
     public ulong StepNanoseconds { get; }
     public ulong Fingerprint { get; }
     public int NodeCount => Nodes.Length;
     public int ComponentCount => Components.Length;
-    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length;
+    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length;
     public int OutputCount => Outputs.Length;
-    public string Fidelity => DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
+    public string Fidelity => AtControllers.Length != 0 ? "sampled_hydraulic_at_control" : DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
         : HasPremixedGas ? "premixed_gas_transport"
         : HasValveTiming ? "crank_timed_gas_exchange"
         : GasCylinders.Any(c => c is not null) ? "moving_cylinder_gas_exchange"
@@ -65,6 +65,8 @@ public sealed class CompiledModel
     public bool HasClosurePrediction { get; }
     internal CompiledDctController[] DctControllers { get; }
     internal int[] DctControllerByComponent { get; }
+    internal CompiledAtController[] AtControllers { get; }
+    internal int[] AtControllerByComponent { get; }
     internal bool[] IntegerInputs { get; }
     internal bool[] CoordinateStates { get; }
     internal Burner?[] Burners { get; }
@@ -131,6 +133,8 @@ public sealed class CompiledModel
         foreach (var controller in DctControllers)
             if (Components[controller.Odd].InputChannel == ownedChannel || Components[controller.Even].InputChannel == ownedChannel ||
                 controller.Selectors.Any(i => Components[i].InputChannel == ownedChannel)) channel = Components[controller.Component].InputChannel;
+        foreach (var controller in AtControllers)
+            if (controller.Routes.Any(r => Components[r.Fill].InputChannel == ownedChannel || Components[r.Drain].InputChannel == ownedChannel)) channel = Components[controller.Component].InputChannel;
         if (channel != 0)
             foreach (var candidate in Channels) if (candidate.Id == channel && candidate.IsInput) { command = candidate; return true; }
         command = default; return false;
@@ -228,6 +232,8 @@ public sealed class CompiledModel
         HasClosurePrediction = cs.Any(c => c.NeedleDriver?.ClosurePredictionNanoseconds > 0);
         int[] dctControllers = Enumerable.Range(0, cs.Length).Where(i => cs[i].Kind == ComponentKind.DualClutchController).ToArray();
         DctControllers = new CompiledDctController[dctControllers.Length]; DctControllerByComponent = new int[cs.Length]; Array.Fill(DctControllerByComponent, -1);
+        AtControllers = new CompiledAtController[cs.Count(c => c.Kind == ComponentKind.HydraulicAtController)];
+        AtControllerByComponent = new int[cs.Length]; Array.Fill(AtControllerByComponent, -1);
         IntegerInputs = new bool[cs.Length];
         SpoolValves = new SpoolMetering?[cs.Length]; HasSpoolValves = cs.Any(c => c.Kind == ComponentKind.HydraulicSpoolValve);
         Pistons = new HydraulicPiston?[cs.Length]; PistonFriction = new PistonFriction?[cs.Length];
@@ -342,13 +348,15 @@ public sealed class CompiledModel
         {
             var c = cs[i];
             Require(c.Id != 0 && ids.Add(c.Id), DiagnosticCode.Id, c.Id, "id", "IDs must be nonzero and globally unique.");
-            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.CarrierGear,
+            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.HydraulicAtController,
                 DiagnosticCode.Schema, c.Id, "kind", "Unknown component kind.");
             Require((c.Kind == ComponentKind.SealedCylinder) == (c.Cylinder is not null),
                 DiagnosticCode.Schema, c.Id, "cylinder", "Cylinder parameters are required only for sealed cylinders.");
             bool film = c.Kind == ComponentKind.FuelFilm;
             bool liquidInjector = c.Kind == ComponentKind.LiquidFuelInjector;
             bool solenoid = c.Kind == ComponentKind.Solenoid, stop = c.Kind == ComponentKind.TravelStop, needleDriver = c.Kind == ComponentKind.NeedleDriver;
+            bool at = c.Kind == ComponentKind.HydraulicAtController;
+            Require(at == (c.HydraulicAtController is not null), DiagnosticCode.Schema, c.Id, "at_controller", "AT controller parameters apply only to AT controllers.");
             bool dct = c.Kind == ComponentKind.DualClutchController;
             Require(dct == (c.DualClutchController is not null), DiagnosticCode.Schema, c.Id, "dct_controller", "DCT controller parameters apply only to DCT controllers.");
             Require(solenoid == (c.Solenoid is not null) && stop == (c.TravelStop is not null) && needleDriver == (c.NeedleDriver is not null),
@@ -410,7 +418,7 @@ public sealed class CompiledModel
                 Require(!PistonComponents.TakeWhile(index => index != i).Any(index => cs[index].NodeA == c.NodeA), DiagnosticCode.Connection, c.Id, "node_a", "Each hydraulic piston owns a distinct translational slider.");
             }
             bool pair = c.Kind is ComponentKind.Shaft or ComponentKind.LinearSpring or ComponentKind.ThermalLink || orifice || clutch || gear || converter || liquid;
-            bool input = dct || solenoid || c.Kind is ComponentKind.DcMotor or ComponentKind.TorqueSource or ComponentKind.PressureController or ComponentKind.PressureDutyController or ComponentKind.BatteryMotor or ComponentKind.ForceSource;
+            bool input = at || dct || solenoid || c.Kind is ComponentKind.DcMotor or ComponentKind.TorqueSource or ComponentKind.PressureController or ComponentKind.PressureDutyController or ComponentKind.BatteryMotor or ComponentKind.ForceSource;
             Domain domain = solenoid || stop || linearGasPiston || piston || linearSpring || c.Kind == ComponentKind.ForceSource ? Domain.Translational : c.Kind == ComponentKind.ThermalLink ? Domain.Thermal
                 : orifice || wall || liquidInjector ? Domain.Gas : liquid || controller ? Domain.Hydraulic : load ? Domain.Battery : Domain.Rotational;
             int a = FindNode(c.NodeA), b = FindNode(c.NodeB), heat = FindNode(c.HeatNode);
@@ -424,10 +432,10 @@ public sealed class CompiledModel
             Require(c.HeatNode == 0 || (c.Kind is ComponentKind.Solenoid or ComponentKind.Shaft or ComponentKind.LinearSpring or ComponentKind.PistonClutch or ComponentKind.DcMotor or ComponentKind.BatteryMotor or ComponentKind.ResistiveLoad or ComponentKind.Clutch or ComponentKind.TorqueConverter or ComponentKind.HydraulicClutch or ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve &&
                     heat >= 0 && Nodes[heat].Domain == Domain.Thermal),
                 DiagnosticCode.Connection, c.Id, "heat_node", "Loss sinks must be thermal nodes.");
-            bool channelled = liquidInjector || injector || input || ((load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool)) && c.InputChannel != 0);
+            bool channelled = at || liquidInjector || injector || input || ((load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool)) && c.InputChannel != 0);
             Require(channelled ? c.InputChannel > 0 && c.InputChannel < 0x8000000000000000UL && !InputIndices.ContainsKey(c.InputChannel)
                                : c.InputChannel == 0, DiagnosticCode.Channel, c.Id, "input_channel", "Invalid or duplicate input channel.");
-            double initial = Convert(c.InitialInput, dct ? Unit.StateCode : injector || liquidInjector ? Unit.Kilogram : input ? (c.Kind == ComponentKind.ForceSource ? Unit.Newton : controller ? Unit.Pascal : batteryMotor ? Unit.Fraction : solenoid || c.Kind == ComponentKind.DcMotor ? Unit.Volt : Unit.NewtonMeter)
+            double initial = Convert(c.InitialInput, dct || at ? Unit.StateCode : injector || liquidInjector ? Unit.Kilogram : input ? (c.Kind == ComponentKind.ForceSource ? Unit.Newton : controller ? Unit.Pascal : batteryMotor ? Unit.Fraction : solenoid || c.Kind == ComponentKind.DcMotor ? Unit.Volt : Unit.NewtonMeter)
                 : load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool) ? Unit.Fraction : Unit.None, c.Id, "initial_input");
             Require(c.DischargeCoefficient == 1 || orifice || liquidInjector, DiagnosticCode.Schema, c.Id, "discharge_coefficient",
                 "A discharge coefficient applies only to a gas orifice.");
@@ -440,6 +448,10 @@ public sealed class CompiledModel
             int state = -1;
             switch (c.Kind)
             {
+                case ComponentKind.HydraulicAtController:
+                    Require(initial >= -1 && initial <= 4 && initial == Math.Truncate(initial), DiagnosticCode.Range, c.Id, "initial_input", "Requested range is an integer in [-1,4]; zero is neutral.");
+                    IntegerInputs[i] = true; InputMinimum[i] = -1; InputMaximum[i] = 4;
+                    goto case ComponentKind.NeedleDriver;
                 case ComponentKind.DualClutchController:
                     Require(initial >= -1 && initial <= 7 && initial == Math.Truncate(initial), DiagnosticCode.Range, c.Id, "initial_input", "Requested gear is an integer in [-1,7]; zero is neutral.");
                     IntegerInputs[i] = true; InputMinimum[i] = -1; InputMaximum[i] = 7;
@@ -835,7 +847,8 @@ public sealed class CompiledModel
             DctControllers[k] = new(index, Nodes[vehicle].Index, odd, even, selectors, d.SamplePeriodNanoseconds, d.ReleaseNanoseconds,
                 d.EngageNanoseconds, d.SynchronizeTimeoutNanoseconds, tolerance, direction); DctControllerByComponent[index] = k;
         }
-        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
+        CompileAtControllers(cs);
+        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
         HasValveTiming = Valves.Any(v => v is not null);
         DynamicCount = dynamics; ThermalCount = thermal;
         CoordinateStates = new bool[dynamics];
@@ -934,6 +947,19 @@ public sealed class CompiledModel
                 Output(c.Id, c.Kind == ComponentKind.Shaft ? Field.Torque : Field.Force, i, c.Kind == ComponentKind.Shaft ? Unit.NewtonMeter : Unit.Newton, c.Kind == ComponentKind.Shaft ? "reaction_torque_at_a" : "reaction_force_at_a", true);
                 if (c.Kind == ComponentKind.LinearSpring) Output(c.Id, Field.FrictionHeat, i, Unit.Joule, "cumulative_damping_heat", true);
             }
+            else if (c.Kind == ComponentKind.HydraulicAtController)
+            {
+                channels.Add(new(c.InputChannel,c.Id,true,Unit.StateCode,"requested_gear"));
+                Output(c.Id,Field.RequestedGear,i,Unit.StateCode,"live_requested_range",true);
+                Output(c.Id,Field.ActualGear,i,Unit.StateCode,"confirmed_active_range",true);
+                Output(c.Id,Field.ShiftPhase,i,Unit.StateCode,"at_shift_phase",true);
+                Output(c.Id,Field.SyncError,i,Unit.RadianPerSecond,"maximum_required_clutch_slip",true);
+                Output(c.Id,Field.ControlFault,i,Unit.StateCode,"at_control_fault",true);
+                Output(c.Id,Field.SampledPressure,i,Unit.Pascal,"sampled_line_pressure",true);
+                Output(c.Id,Field.LockupState,i,Unit.StateCode,"physical_lockup_phase",true);
+                for (int route=0;route<AtControllers[AtControllerByComponent[i]].Routes.Length;++route)
+                    Output(c.Id,(Field)((int)Field.ActuatorIntegralA+route),i,Unit.Fraction,"pressure_integral_"+(char)('a'+route),true);
+            }
             else if (c.Kind == ComponentKind.DualClutchController)
             {
                 channels.Add(new(c.InputChannel, c.Id, true, Unit.StateCode, "requested_gear"));
@@ -1004,7 +1030,7 @@ public sealed class CompiledModel
             }
             else if (c.Kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve)
             {
-                if (c.InputChannel != 0) channels.Add(new(c.InputChannel, c.Id, true, Unit.Fraction, "opening"));
+                if (c.InputChannel != 0 && !ControlledInputs.Contains(c.InputChannel)) channels.Add(new(c.InputChannel, c.Id, true, Unit.Fraction, "opening"));
                 Output(c.Id, Field.VolumeFlow, i, Unit.CubicMeterPerSecond, "last_tick_mean_volume_flow_a_to_b", true);
                 Output(c.Id, Field.HeatFlow, i, Unit.Watt, "last_tick_mean_hydraulic_loss", true);
                 Output(c.Id, Field.FluidHeat, i, Unit.Joule, "cumulative_hydraulic_loss", true);
@@ -1214,6 +1240,7 @@ public sealed class CompiledModel
         if (HasNeedleInjectors) h = Numeric.Hash(h, 23UL);
         if (NeedleDrivers.Length != 0) h = Numeric.Hash(h, 24UL);
         if (HasClosurePrediction) h = Numeric.Hash(h, 25UL);
+        if (AtControllers.Length != 0) h = Numeric.Hash(h, 29UL);
         if (DctControllers.Length != 0) h = Numeric.Hash(h, 26UL);
         if (Components.Any(c => c.Kind == ComponentKind.CarrierGear)) h = Numeric.Hash(h, 28UL);
         if (Components.Any(c => c.Kind == ComponentKind.DoublePinionPlanetaryGear)) h = Numeric.Hash(h, 27UL);
@@ -1270,6 +1297,15 @@ public sealed class CompiledModel
             foreach (int selector in controller.Selectors) h = Numeric.Hash(h, (ulong)Components[selector].Id);
             h = Numeric.Hash(h, controller.Period); h = Numeric.Hash(h, controller.Release); h = Numeric.Hash(h, controller.Engage); h = Numeric.Hash(h, controller.Timeout);
             h = Numeric.Hash(h, controller.Tolerance); h = Numeric.Hash(h, controller.DirectionLimit);
+        }
+        foreach (var at in AtControllers)
+        {
+            h = Numeric.Hash(h,(ulong)Nodes.First(n=>n.Index==at.Vehicle&&n.Domain==Domain.Rotational).Id);
+            h = Numeric.Hash(h,(ulong)Nodes.First(n=>n.Index==at.Supply&&n.Domain==Domain.Hydraulic).Id);
+            foreach (var route in at.Routes) { h=Numeric.Hash(h,(ulong)Components[route.Clutch].Id); h=Numeric.Hash(h,(ulong)Components[route.Fill].Id); h=Numeric.Hash(h,(ulong)Components[route.Drain].Id); }
+            foreach (ulong time in new[]{at.Period,at.ReleaseTimeout,at.ApplyTimeout,at.SupplyTimeout,at.LockupDwell}) h=Numeric.Hash(h,time);
+            foreach (double value in new[]{at.ApplyPressure,at.PressureTolerance,at.MinimumSupply,at.ReleaseForce,at.ApplyForce,at.Kp,at.Ki,at.SyncTolerance,at.DirectionLimit,at.LockupLimit,at.UnlockLimit,at.LockupMinimumSpeed}) h=Numeric.Hash(h,value);
+            h=Numeric.Hash(h,(ulong)at.LockupMinimumRange);
         }
         foreach (var injector in FuelInjectors)
         { h = Numeric.Hash(h, (ulong)Nodes.First(n => n.Index == injector.Crank && n.Domain == Domain.Rotational).Id); h = Numeric.Hash(h, injector.Profile.CycleAngleRadians); h = Numeric.Hash(h, injector.Profile.StartAngleRadians); h = Numeric.Hash(h, injector.Profile.DurationAngleRadians); h = Numeric.Hash(h, injector.Profile.MaximumDoseKilograms); }

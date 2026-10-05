@@ -14,7 +14,7 @@ calibración del vehículo y la aceptación de escritorio necesitan cada uno su 
 | Núcleo gestionado | Física sin dependencias y de doble destino, topología, unidades, tiempo entero, repetición y transacciones atómicas | Validación integrada de larga duración del grupo motopropulsor |
 | Interfaz de agente | Herramientas MCP definidas por esquema, diagnósticos estructurados, revisiones, ramas, cancelación e informes compactos | Flujos de modelado y control para el alcance restante del grupo motopropulsor completo |
 | Estudio de Unity | Importación de modelo compartida, reproducción de laboratorio, componentes esquemáticos 3D y pruebas preparadas | Evidencia real de Editor/Play/Player/IL2CPP y empaquetado de escritorio |
-| Banco de modelado | Asset portátil v24, lectores v1-v23 y definiciones compartidas de JSON/CLI/MCP | Edición de grafos, guardado y gráficas de canales seleccionables |
+| Banco de modelado | Asset portátil v25, lectores v1-v24 y definiciones compartidas de JSON/CLI/MCP | Edición de grafos, guardado y gráficas de canales seleccionables |
 | Física del motor | Masa y energía de gas independientes, trabajo de biela-manivela, válvulas temporizadas, combustión prescrita, dosificación de combustible gaseoso y líquido, raíles flexibles finitos, evaporación de película y accionamiento físico de la aguja | Bomba de raíl y repostaje, comportamiento magnético, electrónico y de pulverización refinado, acoplamiento de volumen líquido finito, control de encendido, admisión y escape detallados, pérdidas mecánicas, termoquímica y calibración medida |
 | Transmisión | Embragues acoplados, engranajes y planetarios, convertidor y bloqueo mapeados, hidráulica, y caminos DCT de siete marchas adelante y marcha atrás y Ravigneaux de cuatro adelante y marcha atrás, con giro de satélite e inercia orbital resueltos | Flexibilidad, pérdidas y reparto de carga del engrane, actuación DCT, control completo de presión y cambio de la AT y encaminamiento medido, mapas medidos, comportamiento de válvulas, juntas y cavitación, y dinámica de convertidor más rica |
 | Controles e integración eléctrica | PI de presión muestreado, control de cierre de aguja y entrega DCT escalonada confirmada por sensor, voltaje y ciclo de trabajo acotados, propiedad de los actuadores, circuito equivalente de batería y accesorios | Ciclos coordinados de ECU/TCU, sensores y actuadores, solicitudes de par, fallos, BMS y comportamiento térmico y eléctrico medido |
@@ -69,3 +69,13 @@ Sigue separado de la aplicación activa de C#/Unity. La migración nativa no
 completa la migración de funciones gestionadas ni la aceptación del grupo motopropulsor. Introduce
 paralelismo adicional, resolución dispersa o Burst cuando las mediciones lo justifiquen y los contratos
 del núcleo sigan estables.
+
+## Realimentación de AT hidráulica
+
+`at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
+
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v25 conserva rutas, ganancias y relojes y lee v1-v24.
+
+Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
+
+[AT_CONTROL.es.md](AT_CONTROL.es.md)

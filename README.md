@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — headless experiments"]
     mcp["Power.Mcp — 12 stdio MCP tools"]
-    assets["Power.Assets — .powerasset v24"]
+    assets["Power.Assets — .powerasset v25"]
     unity["Unity 6.6 studio — 3D laboratories"]
 
     model --> core
@@ -147,7 +147,7 @@ A four-range Ravigneaux research graph adds compound planetary paths and a conve
 > [!NOTE]
 > All sample parameters are `unverified` — research values, not calibrated measurements.
 
-The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v24`, with readers for earlier assets retained.
+The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v25`, with readers for earlier assets retained.
 
 <details>
 <summary>Available laboratories (34)</summary>

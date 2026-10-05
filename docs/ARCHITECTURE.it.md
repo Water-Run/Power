@@ -245,3 +245,13 @@ Gli ingranamenti del portasatelliti supportano rapporti relativi con segno finit
 ## Assemblaggio condiviso di azionamento idraulico
 
 L'[assemblaggio di azionamento AT](AT_HYDRAULIC_ACTUATION.it.md) abbassa i bersagli di frizione dichiarati 1..6 in frizioni reali a stantuffo/contatto, restrizioni di riempimento/scarico e molle di richiamo alimentate da una pompa reversibile condivisa, trafilamento/trascinamento e scarico. Le aree esplicite anteriore/posteriore conservano l'inventario spazzato e il lavoro della pressione di riferimento. Le definizioni ordinarie immutabili conservano la soluzione congiunta esistente di pressione/moto/attrito, la semantica portabile v24 e lo stato atomico completo. Le programmazioni di valvole prescritte restano separate dalla retroazione/dal controllo AT e dall'accettazione misurata del corpo valvole.
+
+## Retroazione AT idraulica
+
+`at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v25 conserva percorsi, guadagni e clock e legge v1-v24.
+
+Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.it.md](AT_CONTROL.it.md)

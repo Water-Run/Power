@@ -33,6 +33,8 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Compile Include="../Power.Tests/DctControllerAssetChecks.cs" Link="DctControllerAssetChecks.cs" />
     <Compile Include="../Power.Tests/DctControllerChecks.cs" Link="DctControllerChecks.cs" />
     <Compile Include="../Power.Tests/ResolvedPlanetAssetChecks.cs" Link="ResolvedPlanetAssetChecks.cs" />
+    <Compile Include="../Power.Tests/AtControllerAssetChecks.cs" Link="AtControllerAssetChecks.cs" />
+    <Compile Include="../Power.Tests/AtControllerChecks.cs" Link="AtControllerChecks.cs" />
     <Compile Include="../Power.Tests/HydraulicActuationChecks.cs" Link="HydraulicActuationChecks.cs" />
     <Compile Include="../Power.Tests/ResolvedPlanetChecks.cs" Link="ResolvedPlanetChecks.cs" />
     <Compile Include="../Power.Tests/RavigneauxChecks.cs" Link="RavigneauxChecks.cs" />

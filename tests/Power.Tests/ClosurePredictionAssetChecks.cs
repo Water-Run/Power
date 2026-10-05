@@ -32,7 +32,7 @@ internal static class ClosurePredictionAssetChecks
     private static void Replay()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 24 && decoded.Model.HasClosurePrediction);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 25 && decoded.Model.HasClosurePrediction);
         Require(asset.Components.SequenceEqual(decoded.Components) && bytes.SequenceEqual(AssetCodec.Encode(decoded))); Compare(asset, decoded);
         byte[] fixture = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "needle-actuated-cylinder-v20.powerasset"));
         Require(BinaryPrimitives.ReadInt32LittleEndian(fixture.AsSpan(8)) == 20 && Convert.ToHexStringLower(SHA256.HashData(fixture)) == "4d87e996d92a50508cfcffac610551b84220f2b3055f5b104c8ec7ec64ca9a2e");
@@ -43,7 +43,7 @@ internal static class ClosurePredictionAssetChecks
     {
         var asset = Asset(); byte[] source = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int driver = counts + 140 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64 + 120 + 28 + 40 + 32;
+        int driver = counts + 148 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64 + 120 + 28 + 40 + 32;
         void Reject(byte[] data)
         { SHA256.HashData(data.AsSpan(0, data.Length - 32)).CopyTo(data, data.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(data)); }
         foreach (ulong horizon in new ulong[] { 1, 99_999, 40_970_000, ulong.MaxValue })

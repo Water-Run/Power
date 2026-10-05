@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — ヘッドレス実験"]
     mcp["Power.Mcp — 12 個の stdio MCP ツール"]
-    assets["Power.Assets — .powerasset v24"]
+    assets["Power.Assets — .powerasset v25"]
     unity["Unity 6.6 スタジオ — 3D ラボラトリー"]
 
     model --> core
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > すべてのサンプルパラメーターは `unverified` です。研究値であり、キャリブレーション測定ではありません。
 
-以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v24` を使い、旧アセットのリーダーは保持されます。
+以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v25` を使い、旧アセットのリーダーは保持されます。
 
 <details>
 <summary>利用可能なラボラトリー(34)</summary>

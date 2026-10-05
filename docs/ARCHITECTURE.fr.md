@@ -244,3 +244,13 @@ Les engrènements de porte-satellites prennent en charge des rapports relatifs s
 ## Assemblage d'actionnement hydraulique partagé
 
 L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibles d'embrayage déclarées en embrayages réels à piston/contact, restrictions de remplissage/vidange et ressorts de rappel alimentés par une pompe réversible partagée, des fuites/traînée et une décharge. Les aires avant/arrière explicites conservent l'inventaire balayé et le travail de pression de référence. Les définitions ordinaires immuables préservent la résolution conjointe existante pression/mouvement/frottement, la sémantique portable v24 et l'état atomique complet. Les calendriers de vanne prescrits restent séparés du retour/contrôle AT et de l'acceptation mesurée du corps de vanne.
+
+## Régulation hydraulique de boîte AT
+
+`at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
+
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v25 conserve routes, gains et horloges et lit v1-v24.
+
+Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
+
+[AT_CONTROL.fr.md](AT_CONTROL.fr.md)

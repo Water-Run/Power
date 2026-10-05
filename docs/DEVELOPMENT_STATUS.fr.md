@@ -15,7 +15,7 @@ Power! a un cœur de simulation managé, des documents de modèle partagés et d
 | Hydraulique | Volumes souples, restrictions, pompes avec fuites/traînée explicites, décharge, pistons dynamiques, coulisseaux dosés et accumulateurs à gaz à énergie finie | Cartes mesurées de vanne/accumulateur/pompe, frottement de joint, cavitation et hydraulique de transmission complète |
 | Électrique | Moteurs RL, solénoïdes à inductance variable réciproques, batterie à charge finie, polarisation résistance/RC, conversion de rapport cyclique moyennée et accessoires | Comportement chimique/thermique mesuré, BMS, contrôle de courant et intégration complète de l'alimentation |
 | Contrôles | PI de pression échantillonné, retour d'aiguille/prédiction de fermeture et contrôle DCT étagé confirmé par capteur, avec propriété des actionneurs, horloges entières et mémoire transactionnelle | Coordination de couple ECU/TCU, capteurs, actionneurs et traitement des défauts |
-| Documents et assets | Trente-quatre laboratoires JSON/CLI, trente-trois exemples MCP, asset v24 avec lecteurs v1-v23 | Édition/enregistrement d'établi et collections de modèles calibrés |
+| Documents et assets | 36 laboratoires JSON/CLI, 35 exemples MCP, asset v25 et lecteurs v1-v24 | Édition/enregistrement et collections de modèles calibrés |
 | Agents | Douze outils MCP définis par schéma ; preuves compactes, contrôles de révision et diagnostics actionnables | Flux complets pour le périmètre physique/contrôle restant |
 | Unity | Import de modèle, rejeu à tick exact, composants 3D schématiques, contrôles, réinitialisation et tests de cycle de vie préparés | Acceptation réelle Editor/Play, tracés sélectionnables, édition/enregistrement de graphe et Player/IL2CPP |
 | Archive native | Prototypes de recherche Zig 0.15.2, ABI préservée et provenance des sources d'origine | Référence historique ; la migration managée reste séparée de la fonctionnalité complète |
@@ -53,3 +53,13 @@ Tous les paramètres de recherche restent `unverified`. EA211 DJS + DQ200 et PSA
 3. Étendre les chemins de recherche DCT vérifiés avec un actionnement détaillé, des propriétés/pertes de planétaires mesurées et une hydraulique/un contrôle AT complets, puis construire la coordination de passage/couple ECU/TCU à partir des primitives vérifiées d'engrenage, d'embrayage, de convertisseur et d'hydraulique. Ajouter un état de contrôleur borné, un comportement capteur/actionneur et une récupération de défaut.
 4. Exécuter `unity-test` avec l'éditeur épinglé, puis obtenir des preuves Player/IL2CPP. Achever la sélection de canaux, l'édition de graphe et l'enregistrement comme fonctions distinctes.
 5. Obtenir des cartes mesurées, des données OEM et des budgets d'incertitude pour les deux groupes motopropulseurs cibles avant de déclarer des échantillons calibrés ou une aptitude à la publication.
+
+## Régulation hydraulique de boîte AT
+
+`at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
+
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v25 conserve routes, gains et horloges et lit v1-v24.
+
+Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
+
+[AT_CONTROL.fr.md](AT_CONTROL.fr.md)

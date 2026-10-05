@@ -22,18 +22,18 @@ internal static class FuelFilmAssetChecks
  }
  private static void Replay()
  {
-  var asset=Asset();byte[] bytes=AssetCodec.Encode(asset);var decoded=AssetCodec.Decode(bytes);Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8))==24&&decoded.Model.Fidelity=="finite_liquid_film_evaporation");Require(asset.Components.SequenceEqual(decoded.Components)&&bytes.SequenceEqual(AssetCodec.Encode(decoded)));Compare(asset,decoded);
+  var asset=Asset();byte[] bytes=AssetCodec.Encode(asset);var decoded=AssetCodec.Decode(bytes);Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8))==25&&decoded.Model.Fidelity=="finite_liquid_film_evaporation");Require(asset.Components.SequenceEqual(decoded.Components)&&bytes.SequenceEqual(AssetCodec.Encode(decoded)));Compare(asset,decoded);
   byte[] fixture=File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory,"Fixtures","metered-fired-cylinder-v17.powerasset"));Require(Convert.ToHexStringLower(SHA256.HashData(fixture))=="d51dc0968bc3d154b2c3b227f74b7210215d4ee00c5a47e8dd16dc1d71cd5da1");
   var original=AssetCodec.Decode(fixture);Require(original.Model.Fingerprint.ToString("x16")=="099db1021c8df1fe"&&!original.Model.HasFuelFilms);Compare(original,AssetCodec.Decode(AssetCodec.Encode(original)));var final=original.CreatePlayback();Require(final.Advance(original.DurationNanoseconds)==SimulationStatus.Ok);AssetChecks.Reference(final,(16,Field.TotalFuelDelivered,28e-6,1e-15),(15,Field.HeatReleased,1228.918308706072,1e-6));
  }
  private static void Corruption()
  {
-  var asset=Asset();byte[] source=AssetCodec.Encode(asset);int counts=78+Encoding.UTF8.GetByteCount(asset.Name),record=counts+140+44*asset.Nodes.Count+156*asset.Components.Count+24+40;
+  var asset=Asset();byte[] source=AssetCodec.Encode(asset);int counts=78+Encoding.UTF8.GetByteCount(asset.Name),record=counts+148+44*asset.Nodes.Count+156*asset.Components.Count+24+40;
   void Reject(byte[] data){SHA256.HashData(data.AsSpan(0,data.Length-32)).CopyTo(data,data.Length-32);Throws<ArgumentException>(()=>AssetCodec.Decode(data));}
   foreach(int count in new[]{-1,65,int.MaxValue}){var bad=source.ToArray();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(counts+112),count);Reject(bad);}
   foreach(var change in new[]{(0,1),(12,(int)Unit.Joule),(60,(int)Unit.Kelvin)}){var bad=source.ToArray();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(record+change.Item1),change.Item2);Reject(bad);}
   var duplicate=source.Take(record+64).Concat(source.Skip(record).Take(64)).Concat(source.Skip(record+64)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts+112),2);Reject(duplicate);
   var missing=source.Take(record).Concat(source.Skip(record+64)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts+112),0);Reject(missing);
-  var old=source.Take(counts+112).Concat(source.Skip(counts+140).Take(record-counts-140)).Concat(source.Skip(record+64)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(old.AsSpan(8),17);Reject(old);
+  var old=source.Take(counts+112).Concat(source.Skip(counts+148).Take(record-counts-148)).Concat(source.Skip(record+64)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(old.AsSpan(8),17);Reject(old);
  }
 }

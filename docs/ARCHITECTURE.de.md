@@ -245,3 +245,13 @@ Trägerverzahnungen unterstützen endliche, von null verschiedene, vorzeichenbeh
 ## Gemeinsame Baugruppe der hydraulischen Betätigung
 
 Die [Baugruppe der AT-Ansteuerung](AT_HYDRAULIC_ACTUATION.de.md) senkt 1..6 erklärte Kupplungsziele in tatsächliche Kolben- und Kontaktkupplungen, Füll- und Ablassdrosseln sowie Rückstellfedern ab, versorgt von einer gemeinsamen reversiblen Pumpe, von Leckage und Schlepp und von der Druckbegrenzung. Explizite Vorder- und Rückflächen erhalten überstrichenen Bestand und Arbeit des Referenzdrucks. Unveränderliche gewöhnliche Definitionen erhalten die bestehende gemeinsame Lösung aus Druck, Bewegung und Reibung, die portable Semantik von v24 und den vollständigen atomaren Zustand. Vorgeschriebene Ventilzeitpläne bleiben getrennt von AT-Rückführung und AT-Regelung sowie von der gemessenen Abnahme des Ventilkörpers.
+
+## Hydraulische AT-Rückführung
+
+`at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
+
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v25 speichert Routen, Verstärkungen und Uhren und liest v1-v24.
+
+Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
+
+[AT_CONTROL.de.md](AT_CONTROL.de.md)

@@ -2,6 +2,54 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+
+## 2026-10-05: 油圧 AT フィードバックと圧力制御
+
+必須の直列検証は Windows x64/.NET 10.0.12 で通過しました。Release ビルドに警告やエラーはありません。実際の Unity と新しい Linux/macOS の受入は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 367/367 |
+| standard_checks_on_dotnet | 283/283 |
+| actual_mcp_groups | 39/39 |
+| laboratories | 36 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v25 |
+| v24_fixture_sha256 | 6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc |
+
+| Identifier | controlled-hydraulic-ravigneaux | controlled-fired-hydraulic-ravigneaux |
+|---|---|---|
+| duration_s | 4.5 | 2.2 |
+| boundaries | 451 | 221 |
+| states | 99 | 122 |
+| confirmed_range | 1 | 4 |
+| fault | 0 | 0 |
+| lockup_state | 0 | 2 |
+| max_sampled_energy_j | 7.059115887386724e-7 | 2.7647047318168916e-7 |
+| max_sampled_hydraulic_volume_m3 | 1.7499700690273845e-18 | 2.7681036716270535e-18 |
+| fingerprint | ceb522c56530be00 | 9fa63e406ccae528 |
+| final_state_hash | 7ff1919e1f504740 | 958185fe86764b63 |
+| source_sha256 | 9cac20ed7a79a2b9dd30f630adf5c6b3ce1f5dbbe4fa837eba3f0465cf67855b | cd4bd02357168532793462903670f9ec59e0c47edcd24986adc71c27bb4e88af |
+
+- `artifacts/reports/at-control-final-2026-10-05.log`
+- `artifacts/reports/at-control-evidence-2026-10-05.json`
+- `artifacts/reports/at-control-schema-audit-2026-10-05.json`
+- `artifacts/reports/at-controller-probe-2026-10-05.log`
+
+8 組の物理/トランザクション検査は全前進段と後退、実際の圧力/接触/ロック、弁所有権、時計、PI 境界を確認します。故障検査は供給喪失、排油詰まり、係合/解放タイムアウト、移動方向インターロック、確認済みロック喪失を含みます。2 組のアセット検査は型付き経路を保持し再署名した降格を拒否します。3 組の統合検査と 2 つの実 MCP シナリオは全スカラーと状態ハッシュで一致します。
+
+後退起動と故障復旧は 500 ms で Applying のままで、設定タイムアウト内の 800 ms 前に確認されます。検査は固定遅延ではなく実際のロックに従います。安全排油は物理的詰まりを除去できません。エンジン/惑星歯車/アクチュエーター/制御グラフは、変更していない 128 上限内で 122 状態を保持します。
+
+パラメーターは `unverified` のままです。ECU トルク協調、詳細なセンサー/弁、包括的な車両故障、OEM 校正、実際の Editor/Play/Player/IL2CPP 受入は未完成です。
+
+[AT_CONTROL.ja.md](AT_CONTROL.ja.md)
+
+
 ## 2026-10-02: 共有 AT 油圧供給と動的ピストン駆動
 
 必須の逐次 `dotnet run --file tools/Build.cs -- verify` は、Windows x64/.NET 10.0.12 上でローカルに合格します。マネージド検査 **354/354**、.NET 10 上でホストされた Standard アセンブリ検査 **273/273**、実際の MCP 群 **37/37**、Zig テスト **16/16**、ネイティブモデルの C# 検査 6 件です。Release ビルドは警告/エラー 0 を報告します。**34** のラボラトリーすべてが合格し、元のベースライン値 **176** 件すべてが正確に一致します。C/C++/Lua 監査は空のままです。実際の Unity と、新しい Linux/macOS の受け入れは未検証のままです。

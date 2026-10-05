@@ -42,7 +42,7 @@ Windows도 같은 `dotnet` 명령과 DLL의 절대 경로를 사용합니다. �
 
 ## 도구와 결과
 
-에이전트 API 버전 0.29.0에서 `get_example_model`은 선택적 `name`을 받습니다. `electrothermal`(기본값), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission`, `fired-hydraulic-ravigneaux`입니다. `get_capabilities`는 지원되는 충실도 수준, 읽을 수 있는 자산 버전, 솔버 한계, 입력 한계를 알립니다. 내보내기는 `power.asset.v24`를 사용합니다. v1–v23 자산은 계속 읽을 수 있습니다. 출력 채널과 그 단위는 모델 검증과 세션 생성이 반환합니다. 실험실 KPI를 통과해도 완전하거나 교정된 파워트레인이 확립되지는 않습니다.
+에이전트 API 버전 0.30.0에서 `get_example_model`은 선택적 `name`을 받습니다. `electrothermal`(기본값), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission`, `fired-hydraulic-ravigneaux`입니다. `get_capabilities`는 지원되는 충실도 수준, 읽을 수 있는 자산 버전, 솔버 한계, 입력 한계를 알립니다. 내보내기는 `power.asset.v25`를 사용합니다. v1–v23 자산은 계속 읽을 수 있습니다. 출력 채널과 그 단위는 모델 검증과 세션 생성이 반환합니다. 실험실 KPI를 통과해도 완전하거나 교정된 파워트레인이 확립되지는 않습니다.
 
 | 도구 | 목적 |
 |---|---|
@@ -287,3 +287,13 @@ KPI와 리플레이 증거를 평가하려면 `run_experiment`를, 개정 검사
 `hydraulic-ravigneaux-transmission` 또는 `fired-hydraulic-ravigneaux`를 요청하세요. 700/701부터 708/709까지 명시적 충전/배출 분율을 사용합니다. 점화 록업은 710/711을 사용합니다. 이전 레인지 체결 ID는 없습니다. 쓰기 전에 채널을 검증하고 탐색하세요. 피스톤 압력/이동/접촉이 용량을 결정합니다. API가 수용한 명령이 물리적 잠금을 확인하지는 않습니다.
 
 보고서는 라인/챔버 압력, 이동, 접촉 용량, 펌프 일, 쓸린 체적, 마찰/유동 제한/감쇠 열, 모든 모델 해시를 유지합니다. 완전한 개정, 취소, 늦은 롤백, 독립적인 밸브 해제 분기는 보통 계약을 사용합니다. 그래프는 새 직렬화 형식이 아니라 기존 자산 v24 레코드를 사용합니다. [AT_HYDRAULIC_ACTUATION.ko.md](AT_HYDRAULIC_ACTUATION.ko.md)를 참고하세요.
+
+## 유압 AT 피드백
+
+`at_controller`는 [-1,4] 범위의 정수 목표 단을 받으며 0은 중립입니다. 다섯 쌍의 충전/배출 밸브와 선택적인 토크 컨버터 록업을 관리합니다. 경로 순서는 캐리어 입력, 작은 선기어 입력, 큰 선기어 입력, 캐리어 브레이크, 큰 선기어 브레이크, 마지막으로 록업입니다.
+
+예제 `controlled-hydraulic-ravigneaux`와 `controlled-fired-hydraulic-ravigneaux`는 요청 채널 900과 컨트롤러 ID 1400을 사용합니다. 변경되지 않은 128 상태 한도 안에서 99와 122개의 보고 상태를 보존합니다. v25는 경로, 게인과 클록을 저장하고 v1-v24를 읽습니다.
+
+연구용 제어이며 매개변수는 `unverified`입니다. ECU 토크 협조, 상세 센서/밸브, 전체 차량 고장과 OEM 보정은 아직 미완성입니다. managed 및 Standard 검사는 실제 Unity Editor/Play/Player/IL2CPP 검증을 입증하지 않습니다.
+
+[AT_CONTROL.ko.md](AT_CONTROL.ko.md)

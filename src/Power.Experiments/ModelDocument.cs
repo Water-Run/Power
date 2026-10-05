@@ -43,7 +43,8 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     };
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
-        ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault,
+        ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault, ["lockup_state"] = Field.LockupState,
+        ["actuator_integral_a"] = Field.ActuatorIntegralA, ["actuator_integral_b"] = Field.ActuatorIntegralB, ["actuator_integral_c"] = Field.ActuatorIntegralC, ["actuator_integral_d"] = Field.ActuatorIntegralD, ["actuator_integral_e"] = Field.ActuatorIntegralE, ["actuator_integral_f"] = Field.ActuatorIntegralF,
         ["copper_heat"] = Field.CopperHeat, ["predicted_fuel_mass"] = Field.PredictedFuelMass, ["prediction_ticks"] = Field.PredictionTicks, ["driver_state"] = Field.DriverState, ["closing_delay_ticks"] = Field.ClosingDelayTicks,
         ["sampled_pressure"] = Field.SampledPressure, ["pressure_error"] = Field.PressureError,
         ["integral_voltage"] = Field.IntegralVoltage, ["command_voltage"] = Field.CommandVoltage,
@@ -176,7 +177,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 "torque_converter" => ComponentKind.TorqueConverter, "shaft" => ComponentKind.Shaft, "dc_motor" => ComponentKind.DcMotor,
                 "torque_source" => ComponentKind.TorqueSource, "thermal_link" => ComponentKind.ThermalLink,
                 "sealed_cylinder" => ComponentKind.SealedCylinder,
-                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink, "fuel_film" => ComponentKind.FuelFilm, "liquid_fuel_injector" => ComponentKind.LiquidFuelInjector, "solenoid" => ComponentKind.Solenoid, "travel_stop" => ComponentKind.TravelStop, "needle_driver" => ComponentKind.NeedleDriver, "dct_controller" => ComponentKind.DualClutchController,
+                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink, "fuel_film" => ComponentKind.FuelFilm, "liquid_fuel_injector" => ComponentKind.LiquidFuelInjector, "solenoid" => ComponentKind.Solenoid, "travel_stop" => ComponentKind.TravelStop, "needle_driver" => ComponentKind.NeedleDriver, "dct_controller" => ComponentKind.DualClutchController, "at_controller" => ComponentKind.HydraulicAtController,
                 "gas_cylinder" => ComponentKind.GasCylinder, "gas_piston" => ComponentKind.GasPiston, "premixed_combustion" => ComponentKind.PremixedCombustion,
                 "clutch" => ComponentKind.Clutch,
                 "ideal_gear" => ComponentKind.IdealGear, "planetary_gear" => ComponentKind.PlanetaryGear, "double_pinion_planetary_gear" => ComponentKind.DoublePinionPlanetaryGear, "carrier_gear" => ComponentKind.CarrierGear,
@@ -188,7 +189,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             else if (kind is ComponentKind.PressureController or ComponentKind.PressureDutyController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if (kind == ComponentKind.BatteryMotor) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"], "heat_node");
             else if (kind == ComponentKind.ResistiveLoad) Object(c, ["id", "kind", "node_a", "initial_input", "parameters"], "input_channel", "heat_node");
-            else if (kind == ComponentKind.DualClutchController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
+            else if (kind is ComponentKind.DualClutchController or ComponentKind.HydraulicAtController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if (kind == ComponentKind.Solenoid) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"], "heat_node");
             else if (kind is ComponentKind.TravelStop or ComponentKind.NeedleDriver) Object(c, ["id", "kind", "node_a", "parameters"]);
             else if (kind == ComponentKind.LiquidFuelInjector) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
@@ -222,6 +223,21 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 return result;
             }
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
+            if (kind == ComponentKind.HydraulicAtController)
+            {
+                Object(parameters,["vehicle_node","ring_node","supply_pressure_node","routes","sample_period_ns","release_timeout_ns","apply_timeout_ns","low_supply_timeout_ns","lockup_dwell_ns",
+                    "apply_pressure","pressure_tolerance","minimum_supply_pressure","release_force","minimum_apply_force","proportional_gain","integral_gain","synchronize_tolerance","direction_speed_limit",
+                    "lockup_speed_limit","unlock_speed_limit","minimum_lockup_input_speed","minimum_lockup_forward_range"]);
+                var routes=parameters.GetProperty("routes");if(routes.ValueKind!=JsonValueKind.Array||routes.GetArrayLength() is <5 or >6)throw new ArgumentException("AT routes require five range elements and optional lockup.");
+                var bindings=routes.EnumerateArray().Select(route=>{Object(route,["clutch","fill_valve","drain_valve"]);return new AtActuatorRoute(Id(route,"clutch"),Id(route,"fill_valve"),Id(route,"drain_valve"));}).ToArray();
+                return result with { HydraulicAtController=new() { VehicleNode=Id(parameters,"vehicle_node"),RingNode=Id(parameters,"ring_node"),SupplyPressureNode=Id(parameters,"supply_pressure_node"),Routes=bindings,
+                    SamplePeriodNanoseconds=Integer(parameters.GetProperty("sample_period_ns"),1_000_000_000,1),ReleaseTimeoutNanoseconds=Integer(parameters.GetProperty("release_timeout_ns"),10_000_000_000,1),
+                    ApplyTimeoutNanoseconds=Integer(parameters.GetProperty("apply_timeout_ns"),10_000_000_000,1),LowSupplyTimeoutNanoseconds=Integer(parameters.GetProperty("low_supply_timeout_ns"),10_000_000_000,1),LockupDwellNanoseconds=Integer(parameters.GetProperty("lockup_dwell_ns"),10_000_000_000),
+                    ApplyPressure=Quantity(parameters.GetProperty("apply_pressure")),PressureTolerance=Quantity(parameters.GetProperty("pressure_tolerance")),MinimumSupplyPressure=Quantity(parameters.GetProperty("minimum_supply_pressure")),
+                    ReleaseForce=Quantity(parameters.GetProperty("release_force")),MinimumApplyForce=Quantity(parameters.GetProperty("minimum_apply_force")),ProportionalGain=Quantity(parameters.GetProperty("proportional_gain")),IntegralGain=Quantity(parameters.GetProperty("integral_gain")),
+                    SynchronizeTolerance=Quantity(parameters.GetProperty("synchronize_tolerance")),DirectionChangeSpeedLimit=Quantity(parameters.GetProperty("direction_speed_limit")),LockupSpeedLimit=Quantity(parameters.GetProperty("lockup_speed_limit")),UnlockSpeedLimit=Quantity(parameters.GetProperty("unlock_speed_limit")),
+                    MinimumLockupInputSpeed=Quantity(parameters.GetProperty("minimum_lockup_input_speed")),MinimumLockupForwardRange=(int)Integer(parameters.GetProperty("minimum_lockup_forward_range"),4,1) } };
+            }
             if (kind == ComponentKind.DualClutchController)
             {
                 Object(parameters, ["vehicle_node", "odd_clutch", "even_clutch", "selectors", "sample_period_ns", "release_ns", "engage_ns", "synchronize_timeout_ns", "synchronize_tolerance", "direction_speed_limit"]);

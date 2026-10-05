@@ -17,6 +17,7 @@ public sealed class Simulation
         internal SolenoidState? Solenoids;
         internal NeedleDriverState? NeedleDrivers;
         internal DctControllerState? DctControllers;
+        internal AtControllerState? AtControllers;
         internal double[]? PositionCorrection;
         internal readonly FuelInjectorState? Injectors = injectors == 0 ? null : new(injectors);
         internal readonly ClutchState? Clutches = clutches == 0 ? null : new(clutches);
@@ -37,6 +38,7 @@ public sealed class Simulation
             LiquidInjectors?.CopyFrom(other.LiquidInjectors!);
             Solenoids?.CopyFrom(other.Solenoids!); NeedleDrivers?.CopyFrom(other.NeedleDrivers!);
             DctControllers?.CopyFrom(other.DctControllers!);
+            AtControllers?.CopyFrom(other.AtControllers!);
             if (PositionCorrection is not null) Array.Copy(other.PositionCorrection!, PositionCorrection, PositionCorrection.Length);
             Clutches?.CopyFrom(other.Clutches!);
             Converters?.CopyFrom(other.Converters!); Hydraulic?.CopyFrom(other.Hydraulic!);
@@ -88,6 +90,7 @@ public sealed class Simulation
             model.HasPremixedGas ? new(model) : null, model.ClutchComponents.Length, model.GearComponents.Length, model.ConverterComponents.Length, model.HydraulicCount, model.HydraulicComponents.Length, model.PumpComponents.Length, model.PressureControllers.Length, model.LinearSpringCount, model.FuelInjectors.Length, model.FuelFilms.Length)
             { Solenoids = model.HasSolenoids ? new(model.Solenoids.Length) : null, NeedleDrivers = model.NeedleDrivers.Length != 0 ? new(model.NeedleDrivers.Length, model.HasClosurePrediction) : null,
                 DctControllers = model.DctControllers.Length != 0 ? new(model.DctControllers.Length) : null,
+                AtControllers = model.AtControllers.Length != 0 ? new(model.AtControllers.Length) : null,
                 PositionCorrection = model.DctControllers.Length != 0 || model.Components.Any(c => c.Kind is ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear)
                     ? new double[model.DynamicCount] : null };
         _state = CreateState(); _scratch = CreateState();
@@ -289,6 +292,11 @@ public sealed class Simulation
 
     private bool Tick(State s, CancellationToken cancellation)
     {
+        for (int k = 0; !_forecasting && k < _model.AtControllers.Length; ++k)
+        {
+            var controller = _model.AtControllers[k]; if (s.Time % controller.Period != 0) continue;
+            if (!AtControl.Sample(_model,controller,s.AtControllers!,k,s.Time,(int)s.Inputs[controller.Component],s.X,s.Hydraulic!.Pressure,s.Inputs,s.Clutches!)) return false;
+        }
         for (int k = 0; !_forecasting && k < _model.DctControllers.Length; ++k)
         {
             var controller = _model.DctControllers[k]; if (s.Time % controller.Period != 0) continue;
@@ -688,6 +696,7 @@ public sealed class Simulation
 
     private bool ObservablesFinite(State s)
     {
+        if (s.AtControllers is not null && !s.AtControllers.Finite()) return false;
         if (s.PositionCorrection is not null) foreach (double value in s.PositionCorrection) if (!Numeric.Finite(value)) return false;
         if (s.Solenoids is not null)
         {
@@ -827,6 +836,7 @@ public sealed class Simulation
         if (s.Solenoids is not null) h = s.Solenoids.Hash(h);
         if (s.NeedleDrivers is not null) h = s.NeedleDrivers.Hash(h);
         if (s.DctControllers is not null) h = s.DctControllers.Hash(h);
+        if (s.AtControllers is not null) h = s.AtControllers.Hash(h);
         if (s.PositionCorrection is not null) foreach (double value in s.PositionCorrection) h = Numeric.Hash(h, value);
         foreach (double loss in s.DampingHeat) h = Numeric.Hash(h, loss);
         foreach (double correction in s.DampingCorrection) h = Numeric.Hash(h, correction);
@@ -954,6 +964,18 @@ public sealed class Simulation
                     destination[i] = new(Channels.Output(b.ObjectId, b.Field), value); continue;
                 }
                 int driverSlot = b.IsComponent ? _model.NeedleDriverByComponent[b.Index] : -1;
+                int atSlot = b.IsComponent ? _model.AtControllerByComponent[b.Index] : -1;
+                if (atSlot >= 0)
+                {
+                    var state=_state.AtControllers!; var controller=_model.AtControllers[atSlot];
+                    int active=state.Active[atSlot];
+                    if (!AtControl.Confirmed(_model,controller,active,_state.X,_state.Clutches!)) active=0;
+                    value=b.Field switch { Field.RequestedGear=>_state.Inputs[b.Index], Field.ActualGear=>active,
+                        Field.ShiftPhase=>(int)state.Phase[atSlot], Field.SyncError=>state.Error[atSlot], Field.ControlFault=>(int)state.Fault[atSlot],
+                        Field.SampledPressure=>state.LinePressure[atSlot],Field.LockupState=>(int)AtControl.Lockup(_model,controller,state,atSlot,_state.X,_state.Clutches!),
+                        >=Field.ActuatorIntegralA and <=Field.ActuatorIntegralF=>state.Integral[atSlot][(int)b.Field-(int)Field.ActuatorIntegralA],_=>double.NaN };
+                    destination[i]=new(Channels.Output(b.ObjectId,b.Field),value); continue;
+                }
                 int dctSlot = b.IsComponent ? _model.DctControllerByComponent[b.Index] : -1;
                 if (dctSlot >= 0)
                 {

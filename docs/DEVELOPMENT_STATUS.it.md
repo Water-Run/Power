@@ -15,7 +15,7 @@ Power! ha un nucleo di simulazione gestito, documenti di modello condivisi e ass
 | Idraulica | Volumi cedevoli, restrizioni, pompe con trafilamento/trascinamento espliciti, scarico, stantuffi dinamici, cursori dosati e accumulatori a gas a energia finita | Mappe misurate di valvole/accumulatori/pompe, attrito delle tenute, cavitazione e idraulica completa della trasmissione |
 | Elettrica | Motori RL, solenoidi a induttanza variabile reciproca, batteria a carica finita, polarizzazione resistiva/RC, conversione di duty mediata e accessori | Comportamento chimico/termico misurato, BMS, controllo di corrente e integrazione completa dell'alimentazione |
 | Controlli | PI di pressione campionato, retroazione dell'ago/predizione di chiusura e controllo DCT graduale confermato dai sensori, con proprietà degli attuatori, orologi interi e memoria transazionale | Coordinamento di coppia ECU/TCU, sensori, attuatori e gestione dei guasti |
-| Documenti e asset | Trentaquattro laboratori JSON/CLI, trentatré esempi MCP, asset v24 con lettori v1-v23 | Modifica/salvataggio del banco e collezioni di modelli calibrati |
+| Documenti e asset | 36 laboratori JSON/CLI, 35 esempi MCP, asset v25 e lettori v1-v24 | Modifica/salvataggio e raccolte di modelli calibrati |
 | Agenti | Dodici strumenti MCP definiti da schema; evidenza compatta, controlli di revisione e diagnostica azionabile | Flussi completi per l'ambito fisico/di controllo restante |
 | Unity | Importazione dei modelli, riproduzione a tick esatti, componenti schematici 3D, controlli, reset e test del ciclo di vita preparati | Accettazione reale di Editor/Play, grafici selezionabili, modifica/salvataggio del grafo e Player/IL2CPP |
 | Archivio nativo | Prototipi di ricerca Zig 0.15.2, ABI conservata e provenienza dei sorgenti originali | Riferimento storico; la migrazione gestita resta separata dalla funzionalità completa |
@@ -54,3 +54,13 @@ Tutti i parametri di ricerca restano `unverified`. EA211 DJS + DQ200 e PSA EC5 +
 3. Estendi i percorsi di ricerca DCT verificati con azionamento dettagliato, proprietà/perdite misurate dei satelliti e idraulica/controllo AT completi, poi costruisci il coordinamento di cambio/coppia ECU/TCU dai primitivi verificati di ingranaggi, frizione, convertitore e idraulica. Aggiungi stato del regolatore limitato, comportamento di sensori/attuatori e recupero dai guasti.
 4. Esegui `unity-test` con l'Editor fissato, poi ottieni evidenza Player/IL2CPP. Completa selezione dei canali, modifica del grafo e salvataggio come funzionalità distinte.
 5. Ottieni mappe misurate, dati OEM e budget di incertezza per i due gruppi motopropulsori obiettivo prima di dichiarare campioni calibrati o prontezza al rilascio.
+
+## Retroazione AT idraulica
+
+`at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v25 conserva percorsi, guadagni e clock e legge v1-v24.
+
+Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.it.md](AT_CONTROL.it.md)

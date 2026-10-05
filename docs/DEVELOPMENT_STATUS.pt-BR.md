@@ -15,7 +15,7 @@ O Power! tem um núcleo de simulação gerenciado, documentos de modelo comparti
 | Hidráulica | Volumes flexíveis, restrições, bombas com vazamento/arrasto explícitos, alívio, pistões dinâmicos, carretéis dosados e acumuladores de gás de energia finita | Mapas medidos de válvula/acumulador/bomba, atrito de vedação, cavitação e hidráulica completa da transmissão |
 | Elétrica | Motores RL, solenoides recíprocos de indutância variável, bateria de carga finita, polarização por resistência/RC, conversão de duty médio e acessórios | Comportamento químico/térmico medido, BMS, controle de corrente e integração completa da alimentação |
 | Controles | PI de pressão amostrado, realimentação da agulha/predição de fechamento e controle DCT escalonado confirmado por sensor, com posse do atuador, relógios inteiros e memória transacional | Coordenação de torque ECU/TCU, sensores, atuadores e tratamento de falhas |
-| Documentos e assets | Trinta e quatro laboratórios JSON/CLI, trinta e três exemplos MCP, asset v24 com leitores v1-v23 | Edição/gravação na bancada e coleções de modelos calibrados |
+| Documentos e assets | 36 laboratórios JSON/CLI, 35 exemplos MCP, asset v25 e leitores v1-v24 | Edição/salvamento e coleções de modelos calibrados |
 | Agentes | Doze ferramentas MCP definidas por esquema; evidência compacta, verificações de revisão e diagnósticos acionáveis | Fluxos de trabalho completos para o escopo físico/de controle restante |
 | Unity | Importação de modelo, reprodução em ticks exatos, componentes 3D esquemáticos, controles, reinício e testes de ciclo de vida preparados | Aceitação real de Editor/Play, gráficos selecionáveis, edição/gravação de grafo e Player/IL2CPP |
 | Acervo nativo | Protótipos de pesquisa Zig 0.15.2, ABI preservado e procedência original das fontes | Referência histórica; a migração gerenciada continua separada da funcionalidade completa |
@@ -53,3 +53,13 @@ Todos os parâmetros de pesquisa continuam `unverified`. EA211 DJS + DQ200 e PSA
 3. Estenda os caminhos de pesquisa DCT verificados com acionamento detalhado, propriedades/perdas medidas dos planetas e hidráulica/controle completos da AT, e então construa a coordenação de troca/torque de ECU/TCU a partir dos primitivos verificados de engrenagem, embreagem, conversor e hidráulica. Acrescente estado limitado de controlador, comportamento de sensor/atuador e recuperação de falha.
 4. Execute `unity-test` com o Editor fixado e depois obtenha evidência de Player/IL2CPP. Complete a seleção de canais, a edição de grafo e a gravação como recursos distintos.
 5. Obtenha mapas medidos, dados OEM e orçamentos de incerteza para os dois powertrains alvo antes de declarar amostras calibradas ou prontidão de lançamento.
+
+## Realimentação de AT hidráulica
+
+`at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v25 preserva rotas, ganhos e relógios e lê v1-v24.
+
+São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.pt-BR.md](AT_CONTROL.pt-BR.md)

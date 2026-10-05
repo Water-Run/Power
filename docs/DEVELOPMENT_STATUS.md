@@ -19,7 +19,7 @@ accepted Unity desktop application remain unfinished.
 | Hydraulics | Compliant volumes, restrictions, pumps with explicit leakage/drag, relief, dynamic pistons, metered spools and finite-energy gas accumulators | Measured valve/accumulator/pump maps, seal friction, cavitation and complete transmission hydraulics |
 | Electrical | RL motors, reciprocal variable-inductance solenoids, finite-charge battery, resistance/RC polarization, averaged duty conversion and accessories | Measured chemistry/thermal behavior, BMS, current control and complete supply integration |
 | Controls | Sampled pressure PI, needle feedback/closure prediction and sensor-confirmed staged DCT control with actuator ownership, integer clocks and transactional memory | ECU/TCU torque coordination, sensors, actuators and fault handling |
-| Documents and assets | Thirty-four JSON/CLI laboratories, thirty-three MCP examples, asset v24 with v1-v23 readers | Workbench editing/saving and calibrated model collections |
+| Documents and assets | 36 JSON/CLI laboratories, 35 MCP examples, asset v25 with v1-v24 readers | Workbench editing/saving and calibrated model collections |
 | Agents | Twelve schema-defined MCP tools; compact evidence, revision checks and actionable diagnostics | Complete workflows for the remaining physical/control scope |
 | Unity | Model import, exact-tick playback, schematic 3D components, controls, reset and prepared lifecycle tests | Actual Editor/Play acceptance, selectable plots, graph editing/saving and Player/IL2CPP |
 | Native archive | Zig 0.15.2 research prototypes, preserved ABI and original source provenance | Historical reference; managed migration remains separate from full functionality |
@@ -138,3 +138,13 @@ Licenses and historical source provenance are preserved.
    Complete channel selection, graph editing and saving as distinct features.
 5. Obtain measured maps, OEM data and uncertainty budgets for the two target
    powertrains before declaring calibrated samples or release readiness.
+
+## Hydraulic AT feedback
+
+`at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
+
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v25 retains routes, gains and clocks and reads v1-v24.
+
+These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
+
+[AT_CONTROL.md](AT_CONTROL.md)

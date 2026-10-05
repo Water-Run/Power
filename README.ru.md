@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — эксперименты без интерфейса"]
     mcp["Power.Mcp — 12 инструментов MCP через stdio"]
-    assets["Power.Assets — .powerasset v24"]
+    assets["Power.Assets — .powerasset v25"]
     unity["Студия Unity 6.6 — 3D-лаборатории"]
 
     model --> core
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > Все параметры образцов — `unverified`: исследовательские значения, а не калиброванные измерения.
 
-Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v24`, читатели прежних активов сохранены.
+Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v25`, читатели прежних активов сохранены.
 
 <details>
 <summary>Доступные лаборатории (34)</summary>
