@@ -12,12 +12,12 @@ calibration and desktop acceptance each need their own evidence.
 | Milestone | Available foundation | Work still required |
 |---|---|---|
 | Managed core | Dual-target dependency-free physics, topology, units, integer time, replay and atomic transactions | Long-run integrated powertrain validation |
-| Agent interface | Schema-defined MCP tools, structured diagnostics, revisions, branches, cancellation and compact reports | Modeling/control workflows for the remaining full-powertrain scope |
+| Agent interface | Schema-defined MCP tools, structured diagnostics, revisions, branches, cancellation and compact reports; `list-labs` / `get_capabilities.examples` | Modeling/control workflows for the remaining full-powertrain scope |
 | Unity studio | Shared model import, laboratory playback, 3D schematic components and prepared tests | Actual Editor/Play/Player/IL2CPP evidence and desktop packaging |
-| Modeling workbench | Portable asset v24, v1-v23 readers and shared JSON/CLI/MCP definitions | Graph editing, saving and selectable channel plots |
-| Engine physics | Independent gas mass/energy, slider-crank work, timed valves, prescribed combustion, gaseous and liquid fuel metering, finite compliant rails, film evaporation and physical needle actuation | Rail pump/refill, refined magnetic/electronic/spray behavior, finite-liquid-volume coupling, ignition control, detailed intake/exhaust, mechanical losses, thermochemistry and measured calibration |
+| Modeling workbench | Portable asset v29, v1-v28 readers and shared JSON/CLI/MCP definitions | Graph editing, saving and selectable channel plots |
+| Engine physics | Independent gas mass/energy, slider-crank work, timed valves, prescribed combustion, gaseous and liquid fuel metering, finite compliant rails, film evaporation and physical needle actuation; [Pump-fed liquid fuel rail](PUMP_FED_FUEL.md); finite tanks and conserving relief returns; [Geometric tank and finite headspace](TANK_HEADSPACE.md) | slosh/hydrostatic shape and measured pump filling/regulation, refined magnetic/electronic/spray behavior, finite-liquid-volume coupling, ignition control, detailed intake/exhaust, mechanical losses, thermochemistry and measured calibration |
 | Transmission | Coupled clutches, gears/planetaries, mapped converter/lockup, hydraulics and seven-forward/reverse DCT and four-forward/reverse Ravigneaux paths with resolved planet spin/orbital inertia | Mesh compliance/losses and load sharing, DCT actuation, complete AT pressure/shift control and measured routing, measured maps, valve/seal/cavitation behavior and richer converter dynamics |
-| Controls and electrical integration | Sampled pressure PI, needle closure control and sensor-confirmed staged DCT handoff, bounded voltage/duty, actuator ownership, battery equivalent circuit and accessories | Coordinated ECU/TCU cycles, sensors/actuators, torque requests, faults, BMS and measured thermal/electrical behavior |
+| Controls and electrical integration | Sampled pressure PI, needle closure control and sensor-confirmed staged DCT handoff, bounded voltage/duty, actuator ownership, battery equivalent circuit and accessories; [`at_controller`](AT_CONTROL.md) | Coordinated ECU/TCU cycles, sensors/actuators, torque requests, faults, BMS and measured thermal/electrical behavior |
 | Vehicle evidence and release | Research samples with complete boundaries and provenance | Two complete measured powertrains, uncertainty budgets, stability, desktop acceptance and distribution |
 
 Current numerical checkpoints, authentic asset fixtures and platform-specific
@@ -28,14 +28,13 @@ its recorded revision; new local changes need separate platform acceptance.
 
 ## Next managed work
 
-Continue the [liquid injection contract](LIQUID_FUEL_INJECTION.md) with rail
-pump/refill and refined magnetic/electronic actuation. Finite compliant source mass
+Extend pressure-dependent phase equilibrium, cavitation, measured pump filling/regulation and refined magnetic/electronic actuation. Finite compliant source mass
 and pressure energy, actual needle motion, sampled dose feedback, film replenishment
 and evaporation are implemented. See [the needle contract](NEEDLE_ACTUATION.md) and [bounded closure prediction](CLOSURE_PREDICTION.md). The
 receiver still exports displacement pressure work under the declared negligible
 liquid volume boundary; resolved spray/displacement must replace it with verified
 geometry and momentum/work coupling. Keep delivery, vapor availability and
-prescribed reaction separate, and retain analytic/conservation/convergence evidence.
+prescribed reaction separate, and retain analytic/conservation/convergence evidence. [Pump-fed liquid fuel rail](PUMP_FED_FUEL.md)
 
 Then extend ignition/control, intake/exhaust dynamics and engine mechanical
 losses. The current Wiebe burn is prescribed and doesn't establish predictive

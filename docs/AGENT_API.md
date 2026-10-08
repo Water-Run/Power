@@ -76,7 +76,7 @@ Windows uses the same `dotnet` command and an absolute path to the DLL. A produc
 
 ## Tools and results
 
-In agent API version 0.29.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` or `fired-hydraulic-ravigneaux`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v24`; v1–v23 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
+In agent API version 0.34.0, `get_example_model` takes an optional `name`, defaulting to `electrothermal`. `get_capabilities.examples` lists all 43 available examples, including finite-tank and recirculating fuel models. CLI `list-labs` returns all 44 laboratories as [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON; `thermal-network` is CLI-only by design. Capabilities also advertise supported components, fidelity, solver limits and input bounds. Exports use `power.asset.v29`, with v1-v28 readers retained. Validation and session creation return output channels and units. Passing laboratory KPIs doesn't establish a complete or calibrated powertrain.
 
 | Tool | Purpose |
 |---|---|
@@ -605,3 +605,49 @@ volume, friction/restriction/damping heat and every model hash. Full revisions,
 cancellation, late rollback and independent valve-release forks use the ordinary
 contracts. The graph uses existing asset v24 records, not a new serialization
 format. See [AT_HYDRAULIC_ACTUATION.md](AT_HYDRAULIC_ACTUATION.md).
+
+## Hydraulic AT feedback
+
+`at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
+
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v29 retains routes, gains and clocks and reads v1-v28.
+
+These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
+
+[AT_CONTROL.md](AT_CONTROL.md)
+
+## Pump-fed liquid fuel rail
+
+`liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
+
+Asset v29 retains feed links and source temperature and reads v1-v28. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+
+[PUMP_FED_FUEL.md](PUMP_FED_FUEL.md)
+
+## Finite liquid fuel tank
+
+`liquid_fuel_tank` stores finite liquid mass and caloric energy using the paired injector's density, film thermal reference and heating value. A feed selects it with `tank_component` and omits `supply_temperature`. Each tank belongs to one feed with matching fuel properties.
+
+Tank caloric and chemical energy enter the complete stored-energy ledger. Tank-to-rail transfer adds no external mass or chemical supply. The explicit prescribed pump inlet pressure retains its pressure-work boundary. Gas inlet/exhaust can still carry chemical boundary energy.
+
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+
+[LIQUID_FUEL_TANK.md](LIQUID_FUEL_TANK.md)
+
+## Tracked fuel relief return
+
+`liquid_rail_return` pairs a feed with an exclusively owned one-way `hydraulic_relief`. The valve connects the rail to the pump's same prescribed inlet pressure. Register every fluid path; incompatible ports, duplicate valve ownership and untracked paths reject.
+
+`fluid_heat_fraction` explicitly selects the fraction in [0,1] of valve loss carried with returned fuel. The remaining heat follows the valve's declared heat path. Simultaneous rail/tank caloric mixing preserves the full mass, chemical, pressure-work and thermal ledgers. External-source returns instead carry mass and energy out through the boundary.
+
+[LIQUID_FUEL_RETURN.md](LIQUID_FUEL_RETURN.md)
+
+## Geometric tank and finite headspace
+
+`liquid_fuel_tank.parameters.headspace` declares `capacity` in `m3` or `l` and `gas_node`. The gas node omits `storage`: its volume is `capacity - liquid_mass / density`. It must have one owner and remain positive. The paired pump and relief return use zero prescribed reservoir pressure because the finite gas owns inlet pressure.
+
+The coupled solve exchanges shaft, rail and gas pressure work without an external pressure source. Gas orifices and heat links provide explicit vent/thermal paths. Read tank `pressure`, `fill_fraction` and signed cumulative `hydraulic_work`, plus headspace gas mass, energy and volume. Prescribed dose, delivered liquid, evaporation and burn remain separate.
+
+[Geometric tank and finite headspace](TANK_HEADSPACE.md)

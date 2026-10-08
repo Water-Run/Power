@@ -2,6 +2,322 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-08: タンク形状と有限ヘッドスペース
+
+必須の直列検証はローカルの Windows x64/.NET 10.0.12 で合格しました。Standard アセンブリ検証は .NET 10 上で実行しており、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 411/411 |
+| standard_checks_on_dotnet | 313/313 |
+| actual_mcp_groups | 48/48 |
+| laboratories | 44 |
+| agent_examples | 43 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| physical_transaction_groups | 6 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| initial_headspace_pressure_pa | 100000 |
+| tank_capacity_m3 | 2e-7 |
+| vent_input | 960 |
+| vent_close_ns | 200000000 |
+| vent_reopen_ns | 400000000 |
+| headspace_interval_volume_fraction | 0.25 |
+| asset_version | power.asset.v29 |
+| agent_api_version | 0.34.0 |
+| audited_documents | 140 |
+| documentation_locales | 10 |
+| v28_fixture_sha256 | 3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57 |
+| verification_log_sha256 | 5e043f1b2638849a1a0ec7d29e59ee98408cf507e92b0fdeba048be5d2980f27 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| acceptance_scope | local_windows_only |
+
+| Identifier | vented-tank-liquid-cylinder | vented-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 58 | 67 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 3e1af7af1d0de7c7 | eed5469fc995ca45 |
+| final_state_hash | f34b39e6adfe540d | 189ed72df2d82b75 |
+| source_sha256 | 033c2ea4594cec4a3e173e16e9ba806f74ae1ff211e524b520b62c212afaa573 | bb25d8f37bbde15acd2f5788b7d877abf37e1200dfbf25e72a77b1ed27442b57 |
+| report_sha256 | 1ededb11489f67f12dbde919c67b61d8fd6b481261c6369026c1e80bc5b3deab | 6e0b0dd64663278e2eb022409706d29e2b621c8bbcb48c6e5948b17eaa5d3904 |
+| max_sampled_energy_j | 9.768825748324161e-10 | 1.2995997167308815e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 8.944667923005412e-18 |
+| max_sampled_fuel_kg | 1.5754812818929986e-18 | 6.274820073259857e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.5617169965001163e-21 | 9.171778631987971e-21 |
+
+`vented-tank-liquid-cylinder` と `vented-tank-needle-cylinder` はタンク 1513、気体 1520、通気入力 960 を使います。アセット v29 は形状を保存し v1-v28 を読みます。解析仕事/導関数、独立 ODE 収束、収支、portable/MCP 再生、ロールバックとゼロ割当ステップに合格しました。
+
+- `artifacts/reports/tank-headspace-closure-2026-10-08.log`
+- `artifacts/reports/tank-headspace-evidence-2026-10-08.json`
+- `artifacts/reports/tank-headspace-doc-audit-2026-10-08.json`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/vented-tank-liquid-cylinder.json`
+- `artifacts/reports/vented-tank-needle-cylinder.json`
+- `tests/Power.Tests/Fixtures/recirculating-liquid-cylinder-v28.powerasset`
+
+剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、相平衡、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
+
+[TANK_HEADSPACE.ja.md](TANK_HEADSPACE.ja.md)
+
+## 2026-10-08: 完全なラボとコンポーネント検出
+
+必須の直列検証はローカルの Windows x64/.NET 10.0.12 で合格しました。Standard アセンブリ検証は .NET 10 上で実行しており、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 400/400 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 46/46 |
+| laboratories | 42 |
+| agent_examples | 41 |
+| supported_components | 41 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| audited_documents | 50 |
+| documentation_locales | 10 |
+| catalog_schema_matches_cli | true |
+| asset_version | power.asset.v28 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| verification_log_sha256 | 5dbc2ef47f7ba1621f5e3ce09a2290acb770eeab97b090466c3d1c0d7bf20196 |
+| catalog_sha256 | a84748a97884ad9bdfea9f6e74ecd7bcc100d26fd4afb284c67aca2264675db4 |
+| catalog_schema_sha256 | d38c90471e424519c092e35f372834a32e26bccc6fac51ab56468ec8866be69a |
+| acceptance_scope | local_windows_only |
+
+CLI `list-labs`、MCP サンプル、Unity 出力と直列検証は共通カタログを使用します。全ソースを網羅し、公開サンプルは実際の stdio で検証され、公開コンポーネントは完全なモデルスキーマと一致します。全ラボの指紋、ソースハッシュと各サンプル状態ハッシュは基準と一致します。アセット v28 と以前のリーダーは変更していません。
+
+文書監査は全十言語の対応する節、単一の言語切替行と完全なラボ表を確認します。カタログと CLI 応答は `power.laboratory_catalog.v1.schema.json` に準拠します。
+
+- `artifacts/reports/development-review-baseline-2026-10-08.log`
+- `artifacts/reports/development-review-final-2026-10-08.log`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/development-review-evidence-2026-10-08.json`
+- `artifacts/reports/development-review-catalog-2026-10-08.json`
+
+タンク形状/ヘッドスペース、より完全なエンジン挙動、ECU/TCU 協調、実測較正と実際の Unity 受け入れは未完了です。研究パラメーターは引き続き `unverified` です。
+
+## 2026-10-05: 追跡可能な燃料リリーフ戻り流れ
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しています。Standard アセンブリ検査は .NET 10 で実行し、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 398/398 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 45/45 |
+| laboratories | 42 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| asset_version | power.asset.v28 |
+| v27_fixture_sha256 | ee344fad148d226c223145d610b18f84912060bc722fee980cae6515ceea3d62 |
+| verification_log_sha256 | ee5eb035556dd2ba0cd17baa274672ee3663a8572982b72bd23da881ab877e41 |
+| prior_ci_scope | preceding_revision_only |
+| prior_ci_revision | 85eebeb442b455304c5e88aebd86279c8347aad2 |
+
+| Identifier | recirculating-liquid-cylinder | recirculating-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 54 | 63 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 8c295e86019b787b | 354faf7fae4a338e |
+| final_state_hash | d4a612015c1623dc | 8554f5721f716a34 |
+| source_sha256 | f7e499c1b155869fad912df7a10ba443f62aa22af585147523d4527f9f8937a4 | 8de240be98f08a3ceb110337228a09a68c25f5f54fbefac159daf517cca0f827 |
+| report_sha256 | 4a5e68862dc626a09471d5964f0623652efcf3056f6b2417545713ed00c421aa | d2efe3cb35bfc6bda3e61c2ef668f276784ed0f450909976d1b8dffaee4b5612 |
+| max_sampled_energy_j | 1.412331585015636e-09 | 1.4023612493474502e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 5.3600244902252125e-18 |
+| max_sampled_fuel_kg | 3.1238575094738597e-18 | 5.834362940687621e-18 |
+| max_sampled_hydraulic_volume_m3 | 4.1689902872672595e-21 | 7.239484721064098e-21 |
+
+- `artifacts/reports/liquid-return-final-2026-10-05.log`
+- `artifacts/reports/liquid-return-evidence-2026-10-05.json`
+- `artifacts/reports/liquid-return-schema-audit-2026-10-05.json`
+
+独立リリーフ減衰/仕事、機械/圧力/熱同時細化、熱割合、複数経路、外部境界、replay、rollback、割り当て検査は合格します。沸騰や未解像移送区間は全バッチを失敗させます。タンク形状/通気、実測弁/ポンプ、キャビテーション、噴霧、OEM 校正、実 Unity Editor/Play/Player/IL2CPP は未完了です。
+
+[CI 37273231730](https://github.com/Water-Run/Power/actions/runs/37273231730)
+
+[LIQUID_FUEL_RETURN.ja.md](LIQUID_FUEL_RETURN.ja.md)
+
+## 2026-10-05: 有限液体燃料タンク
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しています。Standard アセンブリ検査は .NET 10 で実行し、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 388/388 |
+| standard_checks_on_dotnet | 298/298 |
+| actual_mcp_groups | 43/43 |
+| laboratories | 40 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| asset_version | power.asset.v27 |
+| v26_fixture_sha256 | b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d |
+| verification_log_sha256 | 6c7b9ad52c6e4977b2817c6f6bdd9de4eaf6aeeb943efba255a2ad4956a27d70 |
+
+| Identifier | finite-tank-liquid-cylinder | finite-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 43 | 52 |
+| step_ns | 50000 | 10000 |
+| fingerprint | f7ee4872a034c885 | 8be53a56f175aeeb |
+| final_state_hash | 9fbab09b0d8fea77 | e77e6d4adaf785eb |
+| source_sha256 | 0a67c3eaaac79992b21b647efd6535d0c5c81159808006e5dde40552c3fd5934 | 508a8d163f965b2fc62c965d1984d9abd0e88011685a4099be110470c92baac6 |
+| report_sha256 | 038cbafab19f3e587b7e4a156c017e06531fd04cbaca8619240b81b8e14d6936 | ab18f538eae81bcead2a1a929ab97a0b6ef856a9b6058f1a375e2195d0747edc |
+| max_sampled_energy_j | 5.5981672630878165e-09 | 1.93150526683894e-08 |
+| max_sampled_mass_kg | 1.1926223897340549e-18 | 3.63207727782644e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 1.3137481011914198e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.2977429835191313e-21 | 1.826414792517085e-21 |
+
+- `artifacts/reports/finite-tank-integrated-2026-10-05.log`
+- `artifacts/reports/finite-tank-evidence-2026-10-05.json`
+- `artifacts/reports/finite-tank-schema-audit-2026-10-05.json`
+
+タンク質量と熱エネルギーは正確にゼロになり、前進ポンプ流量/反力が消えても軸は実際の動特性を保持します。逆流はレール混合温度で湿潤在庫を回復します。独立湿潤解析交換、枯渇軸/圧力エネルギー、完全 rollback と割り当て検査は合格です。
+
+化学境界エネルギーには排気に出る未燃燃料が含まれます。タンク移送は内部であり、統合検査は化学全在庫変化と放出熱の和を正味化学境界エネルギーと比較します。
+
+形状容量、通気/気相空間/揺動、キャビテーション、実測充液/効率/調圧、解像噴霧は未完了です。パラメーターは `unverified` で、実際の Unity Editor/Play/Player/IL2CPP と OEM 校正は未検証です。
+
+前のポンプ供給リビジョンは Windows、Linux、macOS CI に合格しています。その実行は今回の有限タンク変更を検証しません。
+
+`144ac3d5d0f15d0eafefe713996f2b08d8ae3ea4` · [CI 37269218379](https://github.com/Water-Run/Power/actions/runs/37269218379)
+
+[LIQUID_FUEL_TANK.ja.md](LIQUID_FUEL_TANK.ja.md)
+
+## 2026-10-05: ポンプ供給の液体燃料レール
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しています。Standard アセンブリ検査は .NET 10 で実行し、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 378/378 |
+| standard_checks_on_dotnet | 291/291 |
+| actual_mcp_groups | 41/41 |
+| laboratories | 38 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v26 |
+| v25_fixture_sha256 | df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc |
+| verification_log_sha256 | 2a2c3aa19317c8251c970a4b98a169b402d1855838e7fb79831d273593bfdf29 |
+
+| Identifier | pump-fed-liquid-cylinder | pump-fed-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 39 | 48 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 22cbbe4a983098f4 | 782b15c21ad211c2 |
+| final_state_hash | 4004b74f7f1d8c22 | e322d7a4bd72088c |
+| source_sha256 | 1bc97e3f985567f93fd4ace4006307ab571d2e10850e1bd75a1537ed6f0954bb | 3a801026e05e9e6cb67d298145ac20aea9948ab28e2c4552f8dee0d4f1eb4cce |
+| report_sha256 | 9869c20db74d4bb1dd22f5b3a924402001ca29451acee7fcc72b9188f25bf437 | 16ac066d9f9e268b98d874aba37f75efeb6b1fa1034b6b06562899f20f67fbbb |
+| max_sampled_energy_j | 4.160256139584817e-09 | 2.0303104975027964e-08 |
+| max_sampled_mass_kg | 9.215718466126788e-19 | 2.439454888092385e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 2.825701912040346e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.523666688322677e-21 | 3.763671787116276e-21 |
+
+- `artifacts/reports/rail-feed-integrated-2026-10-05.log`
+- `artifacts/reports/rail-feed-evidence-2026-10-05.json`
+- `artifacts/reports/rail-feed-schema-audit-2026-10-05.json`
+
+物理/トランザクション六組、アセット二組、統合三組、実際の MCP シナリオ二組で補給経路を検査します。流入燃料の熱/化学エネルギーはガス境界エネルギーと累積し、圧力貯蔵は一度だけ計上します。圧力 KPI は初期圧力の代わりにポンプのみの解析上限 920541.8 Pa を使います。
+
+源は明示的な外部境界であり、有限燃料タンクのモデルではありません。タンク枯渇、ポンプ効率/調圧、配管損失、キャビテーション、圧力依存物性、有限体積噴霧は未完成です。パラメーターは `unverified` であり、OEM 校正や実際の Unity Editor/Play/Player/IL2CPP 受入を証明しません。
+
+先の AT チェックポイントも記録したリビジョンで Windows、Linux、macOS CI に合格しています。この実行は今回の燃料補給変更を検証しません。
+
+`0d5a98583723b39e5a0b7723d06e988ebea1a425` · [CI 37259428892](https://github.com/Water-Run/Power/actions/runs/37259428892)
+
+[PUMP_FED_FUEL.ja.md](PUMP_FED_FUEL.ja.md)
+
+## 2026-10-05: 油圧 AT フィードバックと圧力制御
+
+必須の直列検証は Windows x64/.NET 10.0.12 で通過しました。Release ビルドに警告やエラーはありません。実際の Unity と新しい Linux/macOS の受入は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 367/367 |
+| standard_checks_on_dotnet | 283/283 |
+| actual_mcp_groups | 39/39 |
+| laboratories | 36 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v25 |
+| v24_fixture_sha256 | 6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc |
+
+| Identifier | controlled-hydraulic-ravigneaux | controlled-fired-hydraulic-ravigneaux |
+|---|---|---|
+| duration_s | 4.5 | 2.2 |
+| boundaries | 451 | 221 |
+| states | 99 | 122 |
+| confirmed_range | 1 | 4 |
+| fault | 0 | 0 |
+| lockup_state | 0 | 2 |
+| max_sampled_energy_j | 7.059115887386724e-7 | 2.7647047318168916e-7 |
+| max_sampled_hydraulic_volume_m3 | 1.7499700690273845e-18 | 2.7681036716270535e-18 |
+| fingerprint | ceb522c56530be00 | 9fa63e406ccae528 |
+| final_state_hash | 7ff1919e1f504740 | 958185fe86764b63 |
+| source_sha256 | 9cac20ed7a79a2b9dd30f630adf5c6b3ce1f5dbbe4fa837eba3f0465cf67855b | cd4bd02357168532793462903670f9ec59e0c47edcd24986adc71c27bb4e88af |
+
+- `artifacts/reports/at-control-final-2026-10-05.log`
+- `artifacts/reports/at-control-evidence-2026-10-05.json`
+- `artifacts/reports/at-control-schema-audit-2026-10-05.json`
+- `artifacts/reports/at-controller-probe-2026-10-05.log`
+
+8 組の物理/トランザクション検査は全前進段と後退、実際の圧力/接触/ロック、弁所有権、時計、PI 境界を確認します。故障検査は供給喪失、排油詰まり、係合/解放タイムアウト、移動方向インターロック、確認済みロック喪失を含みます。2 組のアセット検査は型付き経路を保持し再署名した降格を拒否します。3 組の統合検査と 2 つの実 MCP シナリオは全スカラーと状態ハッシュで一致します。
+
+後退起動と故障復旧は 500 ms で Applying のままで、設定タイムアウト内の 800 ms 前に確認されます。検査は固定遅延ではなく実際のロックに従います。安全排油は物理的詰まりを除去できません。エンジン/惑星歯車/アクチュエーター/制御グラフは、変更していない 128 上限内で 122 状態を保持します。
+
+パラメーターは `unverified` のままです。ECU トルク協調、詳細なセンサー/弁、包括的な車両故障、OEM 校正、実際の Editor/Play/Player/IL2CPP 受入は未完成です。
+
+[AT_CONTROL.ja.md](AT_CONTROL.ja.md)
+
+
 ## 2026-10-02: 共有 AT 油圧供給と動的ピストン駆動
 
 必須の逐次 `dotnet run --file tools/Build.cs -- verify` は、Windows x64/.NET 10.0.12 上でローカルに合格します。マネージド検査 **354/354**、.NET 10 上でホストされた Standard アセンブリ検査 **273/273**、実際の MCP 群 **37/37**、Zig テスト **16/16**、ネイティブモデルの C# 検査 6 件です。Release ビルドは警告/エラー 0 を報告します。**34** のラボラトリーすべてが合格し、元のベースライン値 **176** 件すべてが正確に一致します。C/C++/Lua 監査は空のままです。実際の Unity と、新しい Linux/macOS の受け入れは未検証のままです。

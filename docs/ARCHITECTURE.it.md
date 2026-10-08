@@ -245,3 +245,49 @@ Gli ingranamenti del portasatelliti supportano rapporti relativi con segno finit
 ## Assemblaggio condiviso di azionamento idraulico
 
 L'[assemblaggio di azionamento AT](AT_HYDRAULIC_ACTUATION.it.md) abbassa i bersagli di frizione dichiarati 1..6 in frizioni reali a stantuffo/contatto, restrizioni di riempimento/scarico e molle di richiamo alimentate da una pompa reversibile condivisa, trafilamento/trascinamento e scarico. Le aree esplicite anteriore/posteriore conservano l'inventario spazzato e il lavoro della pressione di riferimento. Le definizioni ordinarie immutabili conservano la soluzione congiunta esistente di pressione/moto/attrito, la semantica portabile v24 e lo stato atomico completo. Le programmazioni di valvole prescritte restano separate dalla retroazione/dal controllo AT e dall'accettazione misurata del corpo valvole.
+
+## Retroazione AT idraulica
+
+`at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v29 conserva percorsi, guadagni e clock e legge v1-v28.
+
+Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.it.md](AT_CONTROL.it.md)
+
+## Rail di combustibile liquido alimentato da pompa
+
+`liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
+
+v29 conserva collegamenti e temperatura sorgente e legge v1-v28. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, equilibrio di fase, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
+
+[PUMP_FED_FUEL.it.md](PUMP_FED_FUEL.it.md)
+
+## Serbatoio finito di combustibile liquido
+
+`liquid_fuel_tank` conserva massa liquida finita ed energia termica con densità, riferimento termico del film e potere calorifico dell'iniettore associato. L'alimentazione lo seleziona con `tank_component` e omette `supply_temperature`. Ogni serbatoio appartiene a un'alimentazione compatibile.
+
+Energia termica e chimica del serbatoio entrano nello stoccaggio totale. Il trasferimento interno non aggiunge massa o energia chimica esterna. La pressione prescritta all'ingresso mantiene il confine di lavoro di pressione. Aspirazione/scarico gas possono ancora trasportare energia chimica.
+
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, equilibrio di fase, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
+
+[LIQUID_FUEL_TANK.it.md](LIQUID_FUEL_TANK.it.md)
+
+## Ritorno di scarico carburante tracciato
+
+`liquid_rail_return` collega un'alimentazione a un `hydraulic_relief` unidirezionale esclusivo. La valvola collega il rail alla stessa pressione d'ingresso prescritta della pompa. Registrare ogni percorso; porte incompatibili, proprietà duplicate e percorsi non tracciati sono rifiutati.
+
+`fluid_heat_fraction` sceglie esplicitamente la quota [0,1] delle perdite portata dal carburante di ritorno. Il resto segue il percorso termico dichiarato. Miscelazione simultanea rail/serbatoio conserva massa, chimica, lavoro di pressione e calore. Il ritorno a sorgente esterna porta massa/energia oltre confine.
+
+[LIQUID_FUEL_RETURN.it.md](LIQUID_FUEL_RETURN.it.md)
+
+## Geometria del serbatoio e spazio gassoso finito
+
+`liquid_fuel_tank.parameters.headspace` dichiara `capacity` in `m3` o `l` e `gas_node`. Il gas omette `storage`: volume `capacity - liquid_mass / density`, un proprietario e volume positivo. Pompa e ritorno usano pressione prescritta nulla: il gas finito determina la pressione d'ingresso.
+
+Il solver accoppiato scambia lavoro di pressione fra albero, rail e gas senza fonte esterna. Orifizi gassosi e collegamenti termici forniscono sfiato/calore espliciti. Leggere `pressure`, `fill_fraction`, `hydraulic_work` cumulativo con segno e massa, energia, volume del gas. Dose, liquido, evaporazione e combustione restano separati.
+
+[Geometria del serbatoio e spazio gassoso finito](TANK_HEADSPACE.it.md)

@@ -32,7 +32,7 @@ internal static class DctControllerAssetChecks
     private static void Replay()
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset); var decoded = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 24 && decoded.Model.Fidelity == "sampled_dual_clutch_control");
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == AssetCodec.FormatVersion && decoded.Model.Fidelity == "sampled_dual_clutch_control");
         Require(bytes.SequenceEqual(AssetCodec.Encode(decoded)));
         var controller = decoded.Components.Single(c => c.Kind == ComponentKind.DualClutchController).DualClutchController!;
         Require(controller.Selectors.SequenceEqual(Enumerable.Range(300, 8).Select(i => (uint)i)) && controller.SamplePeriodNanoseconds == 1_000_000);
@@ -44,14 +44,14 @@ internal static class DctControllerAssetChecks
     private static void Corruption()
     {
         var asset = Asset(); byte[] source = AssetCodec.Encode(asset); int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int record = counts + 140 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 28 * 10 + 8 * 12;
+        int record = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 28 * 10 + 8 * 12;
         void Reject(byte[] data) { SHA256.HashData(data.AsSpan(0, data.Length - 32)).CopyTo(data, data.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(data)); }
         foreach (int count in new[] { -1, 65, int.MaxValue }) { var bad = source.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(counts + 136), count); Reject(bad); }
         foreach (var edit in new[] { (record, 0), (record + 8, 401), (record + 20, 300), (record + 88, (int)Unit.NewtonMeter) })
         { var bad = source.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(edit.Item1), edit.Item2); Reject(bad); }
         var period = source.ToArray(); BinaryPrimitives.WriteUInt64LittleEndian(period.AsSpan(record + 48), 99999); Reject(period);
         var missing = source.Take(record).Concat(source.Skip(record + 104)).ToArray(); BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts + 136), 0); Reject(missing);
-        var down = source.Take(counts + 136).Concat(source.Skip(counts + 140).Take(record - counts - 140)).Concat(source.Skip(record + 104)).ToArray();
+        var down = source.Take(counts + 136).Concat(source.Skip(counts + 160).Take(record - counts - 160)).Concat(source.Skip(record + 104)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(down.AsSpan(8), 21); Reject(down);
     }
 }

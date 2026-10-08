@@ -14,7 +14,65 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 24 and retained readers
+## Current version 29
+
+`liquid_fuel_tank.parameters.headspace` declares `capacity` in `m3` or `l` and `gas_node`. The gas node omits `storage`: its volume is `capacity - liquid_mass / density`. It must have one owner and remain positive. The paired pump and relief return use zero prescribed reservoir pressure because the finite gas owns inlet pressure.
+
+The examples `vented-tank-liquid-cylinder` and `vented-tank-needle-cylinder` use tank 1513, headspace 1520 and vent input 960. Asset v29 stores geometry and reads v1-v28. Analytic work/derivative checks, independent simultaneous ODE refinement, complete ledgers, portable/MCP replay, rollback and allocation-free stepping pass.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[Geometric tank and finite headspace](TANK_HEADSPACE.md)
+
+## Retained version 28
+
+`recirculating-liquid-cylinder` and `recirculating-needle-cylinder` retain finite fuel, actual injection, evaporation and optional needle dynamics. Asset v28 retains return links and heat fraction and reads v1-v27. Each return adds 8 states within the unchanged model bounds.
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.md](LIQUID_FUEL_RETURN.md)
+
+## Retained version 27
+
+Asset v27 retains tank data and feed selection and reads v1-v26. Each tank adds 4 reported states within the unchanged bounds. Independent wet exchange, analytic exhausted pressure/shaft energy, reverse mixing, complete ledgers, rollback, forks and allocation-free stepping are checked.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.md](LIQUID_FUEL_TANK.md)
+
+## Retained version 26
+
+The encoder writes `power.asset.v26` and reads v1-v26. There are 38 int32 counts (152 bytes); header size is 230 + UTF-8 name length bytes. Kind 39 is `liquid_rail_feed`, fingerprint tag 30. A 24-byte record stores component index, injector/pump IDs and supply-temperature quantity. Typed coverage and exclusive rail/pump ownership are validated; a re-signed v25 downgrade rejects the new kind.
+
+## Retained version 25
+
+The encoder writes `power.asset.v25` and reads v1-v25. The count table contains 37 int32 values (148 bytes); the header is 226 + UTF-8 name length bytes. Kind 38 is `at_controller`, with fingerprint tag 29. Each record has 208 fixed bytes plus 12 bytes per route. Route count is 5 or 6; the bounded total is declared separately. Typed coverage, clocks, units, ownership and topology are checked. A re-signed v24 downgrade rejects the new kind.
+
+## Retained version 24
 
 The encoder writes `power.asset.v24`; versions 1 through 24 remain readable.
 The count table and record sizes remain those of v23. Kind 37 is `carrier_gear`:

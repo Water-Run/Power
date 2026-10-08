@@ -14,7 +14,65 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version courante 24 et lecteurs conservés
+## Version actuelle 29
+
+`liquid_fuel_tank.parameters.headspace` déclare `capacity` en `m3` ou `l` et `gas_node`. Le gaz omet `storage` : son volume vaut `capacity - liquid_mass / density`, avec un seul propriétaire et un volume positif. Pompe et retour utilisent une pression prescrite nulle car le gaz fini détermine la pression d'entrée.
+
+Les exemples `vented-tank-liquid-cylinder` et `vented-tank-needle-cylinder` utilisent réservoir 1513, gaz 1520 et entrée de ventilation 960. Asset v29 conserve la géométrie et lit v1-v28. Travail/dérivées analytiques, convergence ODE indépendante, bilans, rejeu portable/MCP, retour arrière et avancement sans allocation passent.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)
+
+## Version conservée 28
+
+`recirculating-liquid-cylinder` et `recirculating-needle-cylinder` gardent carburant fini, injection réelle, évaporation et aiguille facultative. v28 conserve liens et fraction et lit v1-v27. Chaque retour ajoute 8 états dans les mêmes bornes.
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.fr.md](LIQUID_FUEL_RETURN.fr.md)
+
+## Version 27 conservée
+
+v27 conserve les données et la sélection et lit v1-v26. Chaque réservoir ajoute 4 états dans les bornes inchangées. Échange humide indépendant, pression/énergie d'arbre après épuisement analytiques, mélange retour, bilans complets, rollback, branches et pas sans allocation sont vérifiés.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.fr.md](LIQUID_FUEL_TANK.fr.md)
+
+## Version 26 conservée
+
+L'encodeur écrit `power.asset.v26` et lit v1-v26. Il y a 38 comptes int32 (152 bytes) ; l'en-tête mesure 230 + longueur du nom UTF-8 bytes. Le type 39 est `liquid_rail_feed`, étiquette d'empreinte 30. Un enregistrement de 24 bytes contient index, IDs injecteur/pompe et température source. Types et propriété exclusive sont vérifiés ; un déclassement v25 resigné rejette le type nouveau.
+
+## Version 25 conservée
+
+L'encodeur écrit `power.asset.v25` et lit v1-v25. La table contient 37 valeurs int32 (148 bytes) ; l'en-tête mesure 226 + longueur du nom UTF-8 bytes. Le type 38 est `at_controller`, avec l'étiquette d'empreinte 29. Chaque enregistrement contient 208 bytes fixes plus 12 bytes par route. Le nombre de routes est 5 ou 6 ; le total borné est déclaré séparément. Types, horloges, unités, propriété et topologie sont vérifiés. Un déclassement v24 avec un nouveau digest rejette ce type.
+
+## Version 24 conservée
 
 L'encodeur écrit `power.asset.v24` ; les versions 1 à 24 restent lisibles. La table de comptes et les tailles d'enregistrement restent celles de v23. La sorte 37 est `carrier_gear` : son rapport de base est fini, signé et non nul ; son extension d'engrenage de 8 octets conserve l'index de composant et le porte-satellites mobile distinct. Les comptes typés couvrent chaque engrènement de porte-satellites. Une rétrogradation v23 rescellée par condensé rejette la nouvelle sorte.
 

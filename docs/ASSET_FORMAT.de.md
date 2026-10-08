@@ -14,7 +14,65 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 24 und erhaltene Leser
+## Aktuelle Version 29
+
+`liquid_fuel_tank.parameters.headspace` deklariert `capacity` in `m3` oder `l` und `gas_node`. Der Gasnode lässt `storage` aus: Volumen `capacity - liquid_mass / density`, ein Eigentümer und positives Volumen. Pumpe und Rücklauf setzen den vorgeschriebenen Reservoirdruck auf null; das endliche Gas bestimmt den Einlassdruck.
+
+`vented-tank-liquid-cylinder` und `vented-tank-needle-cylinder` nutzen Tank 1513, Gas 1520 und Entlüftungseingang 960. Asset v29 speichert Geometrie und liest v1-v28. Analytische Arbeit/Ableitungen, unabhängige ODE-Konvergenz, Bilanzen, portable/MCP-Replay, Rollback und allokationsfreie Schritte bestehen.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md)
+
+## Beibehaltene Version 28
+
+`recirculating-liquid-cylinder` und `recirculating-needle-cylinder` behalten endlichen Kraftstoff, tatsächliche Einspritzung, Verdampfung und optionale Nadeldynamik. v28 speichert Verknüpfung/Wärmeanteil und liest v1-v27. Jeder Rücklauf fügt 8 Zustände innerhalb gleicher Grenzen hinzu.
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.de.md](LIQUID_FUEL_RETURN.de.md)
+
+## Beibehaltene Version 27
+
+v27 speichert Tank und Speisewahl und liest v1-v26. Jeder Tank fügt 4 Zustände innerhalb gleicher Grenzen hinzu. Unabhängiger Nass-Austausch, analytischer Leerdruck/Wellenenergie, Rückmischung, vollständige Bilanzen, rollback, Zweige und allokationsfreie Schritte sind geprüft.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.de.md](LIQUID_FUEL_TANK.de.md)
+
+## Beibehaltene Version 26
+
+Der Encoder schreibt `power.asset.v26` und liest v1-v26. Es gibt 38 int32-Zähler (152 bytes); der Header umfasst 230 + UTF-8-Namenslänge bytes. Typ 39 ist `liquid_rail_feed`, Fingerprint-Tag 30. Ein 24-bytes-Datensatz speichert Index, Injektor-/Pumpen-IDs und Quellentemperatur. Typen und exklusiver Besitz werden geprüft; ein neu signiertes v25-Downgrade weist den neuen Typ zurück.
+
+## Beibehaltene Version 25
+
+Der Encoder schreibt `power.asset.v25` und liest v1-v25. Die Tabelle enthält 37 int32-Werte (148 bytes); der Header umfasst 226 + UTF-8-Namenslänge bytes. Typ 38 ist `at_controller`, mit Fingerprint-Tag 29. Jeder Datensatz hat 208 feste bytes plus 12 bytes je Route. Die Routenzahl ist 5 oder 6; die begrenzte Summe wird getrennt angegeben. Typen, Uhren, Einheiten, Eigentümer und Topologie werden geprüft. Ein neu signiertes v24-Downgrade weist den neuen Typ zurück.
+
+## Beibehaltene Version 24
 
 Der Encoder schreibt `power.asset.v24`; die Versionen 1 bis 24 bleiben lesbar.
 Zähltabelle und Datensatzgrößen bleiben die von v23. Kind 37 ist `carrier_gear`:

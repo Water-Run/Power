@@ -14,7 +14,65 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現行バージョン 24 と保持されるリーダー
+## 現在のバージョン 29
+
+`liquid_fuel_tank.parameters.headspace` は `m3` または `l` の `capacity` と `gas_node` を指定します。気体ノードは `storage` を省略し、体積は `capacity - liquid_mass / density` です。所有者は一つで体積は正を維持します。有限気体が入口圧力を決めるため、ポンプと戻りの指定リザーバー圧力はゼロです。
+
+`vented-tank-liquid-cylinder` と `vented-tank-needle-cylinder` はタンク 1513、気体 1520、通気入力 960 を使います。アセット v29 は形状を保存し v1-v28 を読みます。解析仕事/導関数、独立 ODE 収束、収支、portable/MCP 再生、ロールバックとゼロ割当ステップに合格しました。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md)
+
+## 保持バージョン 28
+
+`recirculating-liquid-cylinder` と `recirculating-needle-cylinder` は有限燃料、実噴射、蒸発、任意のニードル動特性を保持します。v28 は接続/熱割合を保存し v1-v27 を読みます。各戻りは既存上限内で 8 状態を追加します。
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.ja.md](LIQUID_FUEL_RETURN.ja.md)
+
+## 保持するバージョン 27
+
+v27 はタンクと補給選択を保存し v1-v26 を読みます。各タンクは既存上限内で 4 状態を追加します。独立湿潤交換、枯渇後の圧力/軸エネルギー解析解、逆流混合、全台帳、rollback、分岐、割り当てなしステップを検査します。
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.ja.md](LIQUID_FUEL_TANK.ja.md)
+
+## 保持するバージョン 26
+
+エンコーダーは `power.asset.v26` を書き、v1-v26 を読みます。計数は 38 個の int32（152 bytes）、ヘッダーは 230 + UTF-8 名称長 bytes です。種類 39 は `liquid_rail_feed`、指紋タグは 30 です。24 bytes のレコードは索引、噴射器/ポンプ ID、源温度量を保存します。型とレール/ポンプの独占所有権を確認し、再署名した v25 降格は新種類を拒否します。
+
+## 保持するバージョン 25
+
+エンコーダーは `power.asset.v25` を書き、v1-v25 を読みます。計数表は 37 個の int32（148 bytes）、ヘッダーは 226 + UTF-8 名称長 bytes です。種類 38 は `at_controller`、指紋タグは 29 です。各レコードは固定 208 bytes と経路ごとの 12 bytes です。経路数は 5 または 6 で、有界合計を別に宣言します。型、時計、単位、所有権、トポロジーを確認します。digest を再署名した v24 への降格は新しい種類を拒否します。
+
+## 保持するバージョン 24
 
 エンコーダーは `power.asset.v24` を書き出します。バージョン 1 から 24 までは読み取れます。件数テーブルとレコードサイズは v23 のままです。種別 37 は `carrier_gear` です。基本変速比は有限で、符号付き、かつ非ゼロです。8 バイトの歯車拡張は、コンポーネントインデックスと、区別される可動キャリアを保持します。型付き件数は、すべてのキャリア噛み合いを網羅します。ダイジェストを再封した v23 ダウングレードは、新しい種別を拒否します。
 

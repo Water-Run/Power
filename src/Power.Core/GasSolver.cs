@@ -71,8 +71,15 @@ internal sealed class GasNetwork
         }
     }
 
-    internal double VolumeAt(int gas, double[] dynamics)
+    internal double VolumeAt(int gas, double[] dynamics, LiquidTankState? tanks = null)
     {
+        int tankComponent = _model.TankHeadspaceByNode[NodeIndex[gas]];
+        if (tankComponent >= 0 && tanks is not null)
+        {
+            int tank = _model.TankByComponent[tankComponent];
+            var headspace = _model.TankHeadspaces[_model.HeadspaceByTank[tank]];
+            return headspace.Geometry.GasVolumeCubicMeters(tanks.Mass[tank]);
+        }
         int component = _model.GasCylinderByNode[NodeIndex[gas]];
         return component < 0 ? Volume[gas] : _model.GasPistons[component] is { } piston ? piston.VolumeAt(dynamics[_model.Nodes[_model.Components[component].A].Index]) : _model.GasCylinders[component]!
             .GeometryAt(dynamics[_model.Nodes[_model.Components[component].A].Index]).VolumeCubicMeters;
@@ -228,10 +235,10 @@ internal sealed class GasSolver
     /// Advance the gas states across one whole tick. On success <see cref="WallHeat"/> holds the joules
     /// delivered to each thermal node and the reservoir fields hold the net mass and enthalpy taken in.
     /// </summary>
-    internal bool Advance(double[] mass, double[] energy, double[] wallTemperature, double[] inputs, double[] dynamics, double dt, MixtureState? mixture, FuelInjectorState? injectors = null)
+    internal bool Advance(double[] mass, double[] energy, double[] wallTemperature, double[] inputs, double[] dynamics, double dt, MixtureState? mixture, FuelInjectorState? injectors = null, LiquidTankState? tanks = null)
     {
-        if (_model.HasMovingGas)
-            for (int i = 0; i < _volume.Length; ++i) _volume[i] = _network.VolumeAt(i, dynamics);
+        if (_model.HasMovingGas || _model.HasTankHeadspaces)
+            for (int i = 0; i < _volume.Length; ++i) _volume[i] = _network.VolumeAt(i, dynamics, tanks);
         foreach (int component in _network.OrificeComponent)
         {
             int slot = _model.InjectorByComponent[component];

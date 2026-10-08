@@ -14,7 +14,65 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, conferir a impressão digital]
 ```
 
-## Versão atual 24 e leitores retidos
+## Versão atual 29
+
+`liquid_fuel_tank.parameters.headspace` declara `capacity` em `m3` ou `l` e `gas_node`. O gás omite `storage`: volume `capacity - liquid_mass / density`, um proprietário e volume positivo. Bomba e retorno usam pressão prescrita nula: o gás finito determina a pressão de entrada.
+
+`vented-tank-liquid-cylinder` e `vented-tank-needle-cylinder` usam tanque 1513, gás 1520 e entrada de ventilação 960. Asset v29 guarda geometria e lê v1-v28. Passam trabalho/derivadas analíticos, convergência ODE independente, balanços, replay portable/MCP, rollback e passos sem alocação.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[Geometria do tanque e espaço gasoso finito](TANK_HEADSPACE.pt-BR.md)
+
+## Versão mantida 28
+
+`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` mantêm combustível finito, injeção real, evaporação e agulha opcional. v28 guarda conexões/fração e lê v1-v27. Cada retorno acrescenta 8 estados nos mesmos limites.
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.pt-BR.md](LIQUID_FUEL_RETURN.pt-BR.md)
+
+## Versão 27 preservada
+
+v27 preserva tanque e seleção e lê v1-v26. Cada tanque acrescenta 4 estados dentro dos limites mantidos. Troca úmida independente, pressão/energia do eixo esgotadas analíticas, mistura de retorno, balanços completos, rollback, ramos e passos sem alocação são verificados.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.pt-BR.md](LIQUID_FUEL_TANK.pt-BR.md)
+
+## Versão 26 preservada
+
+O codificador escreve `power.asset.v26` e lê v1-v26. Há 38 contagens int32 (152 bytes); o cabeçalho ocupa 230 + comprimento do nome UTF-8 bytes. O tipo 39 é `liquid_rail_feed`, etiqueta de impressão 30. Um registro de 24 bytes guarda índice, IDs injetor/bomba e temperatura fonte. Tipos e propriedade exclusiva são verificados; um downgrade v25 reassinado rejeita o novo tipo.
+
+## Versão 25 preservada
+
+O codificador escreve `power.asset.v25` e lê v1-v25. A tabela contém 37 valores int32 (148 bytes); o cabeçalho ocupa 226 + comprimento do nome UTF-8 bytes. O tipo 38 é `at_controller`, com etiqueta de impressão 29. Cada registro tem 208 bytes fixos mais 12 bytes por rota. As rotas são 5 ou 6; o total limitado é declarado separadamente. Tipos, relógios, unidades, propriedade e topologia são verificados. Um downgrade v24 com digest reassinado rejeita o novo tipo.
+
+## Versão 24 preservada
 
 O codificador escreve `power.asset.v24`; as versões 1 a 24 continuam legíveis. A tabela de contagens e os tamanhos de registro continuam os da v23. O tipo 37 é `carrier_gear`: sua relação de base é finita, com sinal e não nula; sua extensão de engrenagem de 8 bytes conserva o índice do componente e o porta-planetas móvel distinto. Contagens tipadas cobrem cada engrenamento do porta-planetas. Um rebaixamento v23 com digest recalculado rejeita o tipo novo.
 

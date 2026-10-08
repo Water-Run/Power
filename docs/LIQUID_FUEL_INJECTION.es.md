@@ -9,10 +9,7 @@ del raíl y la energía de presión determinan la entrega. La película calienta
 evapora el líquido; la reacción prescrita existente solo consume vapor.
 
 Esto conecta la entrega, el cambio de fase y la reacción, y mantiene observable cada inventario
-y cada transferencia de energía. Es un modelo de investigación de densidad y flexibilidad constantes.
-La bomba y el repostaje del raíl, las propiedades medidas, el accionamiento magnético y electrónico refinado,
-la pulverización y la incorporación, la cavitación, el encendido y la ECU, y el hardware de gasolina calibrado
-siguen siendo trabajo necesario hacia el objetivo del grupo motopropulsor completo.
+y cada transferencia de energía. Es un modelo de investigación de densidad y flexibilidad constantes. La alimentación opcional por bomba usa una frontera externa explícita de materia/calor. Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
 
 ```mermaid
 flowchart LR
@@ -28,6 +25,8 @@ flowchart LR
 El raíl tiene densidad líquida constante `rho`, flexibilidad positiva `C` en m3/Pa,
 masa inicial `m0` y presión absoluta inicial `P0`. Su volumen de referencia a presión
 nula debe ser no negativo:
+
+Sin alimentación por bomba, el raíl sigue estas ecuaciones y conserva la temperatura suministrada.
 
 ```text
 V_reference = m0 / rho - C P0
@@ -181,13 +180,7 @@ la reacción prescrita accionan el mismo modelo de cigüeñal y carga que los de
 la CLI, los assets portátiles y el servidor MCP real comparten sus definiciones y sus límites
 de repetición. Todos los parámetros siguen siendo `unverified`.
 
-Se comprueban el decaimiento analítico de presión y el trabajo, la dosis, la inversión y el agotamiento, el refinamiento acoplado
-independiente, los libros completos de fuente, película, constituyentes y energía, los límites de asignación
-activa y la reversión especulativa del embrague. [VALIDATION.es.md](VALIDATION.es.md)
-registra los resultados observados. Las vistas de raíl y tobera y las pruebas de ciclo de vida preparadas en Unity
-siguen exigiendo evidencia real de Editor, Play y Player. El repostaje y las bombas del raíl, la dinámica de la aguja,
-la pulverización y el desplazamiento resueltos, el encendido y la ECU, la transmisión y el control completos, y los grupos
-motopropulsores medidos siguen sin terminar.
+Trabajo de eje, presión y almacenamiento térmico mezclado tienen pruebas de conservación y ODE independientes; la aceptación Unity real sigue pendiente. [VALIDATION.es.md](VALIDATION.es.md) Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
 
 ## Extensión de aguja física
 
@@ -197,3 +190,13 @@ movimiento. En este modo, la dosis solicitada es un objetivo del controlador; no
 durante el retardo de cierre, el rebote ni la inversión. El camino ideal limitado por cuota permanece
 aparte y sin cambios. El comportamiento magnético, de controlador y de pulverización refinado, y la calibración,
 siguen abiertos.
+
+## Raíl de combustible líquido alimentado por bomba
+
+`liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
+
+v27 conserva enlaces y temperatura de fuente y lee v1-v26. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+
+Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
+
+[PUMP_FED_FUEL.es.md](PUMP_FED_FUEL.es.md)

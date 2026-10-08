@@ -12,12 +12,12 @@ und Desktop-Abnahme brauchen jeweils eigene Nachweise.
 | Meilenstein | Vorhandene Grundlage | Noch erforderliche Arbeit |
 |---|---|---|
 | Verwalteter Kern | Abhängigkeitsfreie Physik mit Doppelziel, Topologie, Einheiten, Ganzzahlzeit, Replay und atomare Transaktionen | Langzeit-Validierung eines integrierten Antriebsstrangs |
-| Agent-Schnittstelle | Schema-definierte MCP-Werkzeuge, strukturierte Diagnosen, Revisionen, Zweige, Abbruch und kompakte Berichte | Modellierungs- und Regelungsabläufe für den verbleibenden vollen Antriebsstrangumfang |
+| Agent-Schnittstelle | Schema-definierte MCP-Werkzeuge, strukturierte Diagnosen, Revisionen, Zweige, Abbruch und kompakte Berichte; `list-labs` / `get_capabilities.examples` | Modellierungs- und Regelungsabläufe für den verbleibenden vollen Antriebsstrangumfang |
 | Unity-Studio | Gemeinsamer Modellimport, Laborwiedergabe, schematische 3D-Komponenten und vorbereitete Tests | Tatsächliche Editor-/Play-/Player-/IL2CPP-Nachweise und Desktop-Paketierung |
-| Modellierwerkbank | Portables Asset v24, Leser für v1-v23 und gemeinsame JSON-/CLI-/MCP-Definitionen | Graphbearbeitung, Speichern und wählbare Kanaldiagramme |
-| Motorphysik | Unabhängige Gasmasse/-energie, Schubkurbelarbeit, zeitgesteuerte Ventile, vorgeschriebene Verbrennung, gasförmige und flüssige Kraftstoffdosierung, endliche nachgiebige Leitungen, Filmverdampfung und physische Nadelansteuerung | Leitungspumpe und Nachfüllung, verfeinertes magnetisches/elektronisches/Spray-Verhalten, Kopplung endlichen Flüssigkeitsvolumens, Zündungsregelung, detaillierte Saug- und Auslassseite, mechanische Verluste, Thermochemie und gemessene Kalibrierung |
+| Modellierwerkbank | Portables Asset v29, Leser für v1-v28 und gemeinsame JSON-/CLI-/MCP-Definitionen | Graphbearbeitung, Speichern und wählbare Kanaldiagramme |
+| Motorphysik | Unabhängige Gasmasse/-energie, Schubkurbelarbeit, zeitgesteuerte Ventile, vorgeschriebene Verbrennung, gasförmige und flüssige Kraftstoffdosierung, endliche nachgiebige Leitungen, Filmverdampfung und physische Nadelansteuerung; [Pumpengespeiste Flüssigkraftstoffschiene](PUMP_FED_FUEL.de.md); endliche Tanks und erhaltende Entlastungsrückläufe; [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md) | Schwappen/hydrostatische Form und gemessene Pumpenfüllung/Regelung, verfeinertes magnetisches/elektronisches/Spray-Verhalten, Kopplung endlichen Flüssigkeitsvolumens, Zündungsregelung, detaillierte Saug- und Auslassseite, mechanische Verluste, Thermochemie und gemessene Kalibrierung |
 | Getriebe | Gekoppelte Kupplungen, Zahnräder/Planetensätze, tabellierter Wandler/Überbrückung, Hydraulik sowie DCT-Pfade mit sieben Vorwärtsgängen/Rückwärtsgang und Ravigneaux-Pfade mit vier Vorwärtsgängen/Rückwärtsgang bei aufgelöster Planetendrehung/Bahnträgheit | Nachgiebigkeit, Verluste und Lastverteilung der Verzahnung, DCT-Ansteuerung, vollständige AT-Druck- und Schaltregelung und gemessene Führung, gemessene Kennfelder, Ventil-/Dichtungs-/Kavitationsverhalten und reichere Wandlerdynamik |
-| Regelungen und elektrische Integration | Abgetasteter Druck-PI, Nadelschließregelung und sensorbestätigte gestaffelte DCT-Übergabe, begrenzte Spannung/Tastverhältnis, Stellgliedbesitz, Batterie-Ersatzschaltbild und Zusatzverbraucher | Abgestimmte ECU-/TCU-Zyklen, Sensoren/Stellglieder, Momentenanforderungen, Fehler, BMS und gemessenes thermisches/elektrisches Verhalten |
+| Regelungen und elektrische Integration | Abgetasteter Druck-PI, Nadelschließregelung und sensorbestätigte gestaffelte DCT-Übergabe, begrenzte Spannung/Tastverhältnis, Stellgliedbesitz, Batterie-Ersatzschaltbild und Zusatzverbraucher; [`at_controller`](AT_CONTROL.de.md) | Abgestimmte ECU-/TCU-Zyklen, Sensoren/Stellglieder, Momentenanforderungen, Fehler, BMS und gemessenes thermisches/elektrisches Verhalten |
 | Fahrzeugnachweis und Veröffentlichung | Forschungsbeispiele mit vollständigen Grenzen und Herkunft | Zwei vollständig gemessene Antriebsstränge, Unsicherheitsbudgets, Stabilität, Desktop-Abnahme und Verteilung |
 
 Aktuelle numerische Prüfpunkte, authentische Asset-Fixtures und plattformspezifische
@@ -28,14 +28,13 @@ die dort festgehaltene Revision; neue lokale Änderungen brauchen eine eigene Pl
 
 ## Nächste verwaltete Arbeit
 
-Den [Vertrag der Flüssigeinspritzung](LIQUID_FUEL_INJECTION.de.md) mit Leitungspumpe
-und Nachfüllung sowie verfeinerter magnetischer/elektronischer Ansteuerung fortsetzen. Endliche nachgiebige Quellenmasse
+Druckabhängiges Phasengleichgewicht, Kavitation, gemessene Pumpenfüllung/Regelung und verfeinerte magnetische/elektronische Ansteuerung erweitern. Endliche nachgiebige Quellenmasse
 und Druckenergie, tatsächliche Nadelbewegung, abgetastete Dosisrückführung, Filmnachschub
 und Verdampfung sind umgesetzt. Siehe [den Nadelvertrag](NEEDLE_ACTUATION.de.md) und die [begrenzte Schließvorhersage](CLOSURE_PREDICTION.de.md). Der
 Empfänger exportiert weiterhin Verdrängungsdruckarbeit unter der erklärten Grenze vernachlässigbaren
 Flüssigkeitsvolumens; aufgelöstes Spray und aufgelöste Verdrängung müssen sie durch geprüfte
 Geometrie und Impuls-/Arbeitskopplung ersetzen. Lieferung, Dampfverfügbarkeit und
-vorgeschriebene Reaktion getrennt halten und analytische, Erhaltungs- und Konvergenznachweise behalten.
+vorgeschriebene Reaktion getrennt halten und analytische, Erhaltungs- und Konvergenznachweise behalten. [Pumpengespeiste Flüssigkraftstoffschiene](PUMP_FED_FUEL.de.md)
 
 Danach Zündung und Regelung, Saug- und Auslassdynamik sowie mechanische
 Motorverluste erweitern. Die aktuelle Wiebe-Verbrennung ist vorgeschrieben und begründet keine vorhersagende

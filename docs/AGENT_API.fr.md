@@ -42,7 +42,7 @@ Windows utilise la même commande `dotnet` et un chemin absolu vers la DLL. Une 
 
 ## Outils et résultats
 
-Dans la version 0.29.0 de l'API agent, `get_example_model` accepte un `name` facultatif : `electrothermal` (défaut), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` ou `fired-hydraulic-ravigneaux`. `get_capabilities` annonce les niveaux de fidélité pris en charge, les versions d'asset lisibles, les limites du solveur et les bornes d'entrée. Les exports utilisent `power.asset.v24` ; les assets v1–v23 restent lisibles. Les canaux de sortie et leurs unités sont renvoyés par la validation du modèle et la création de session. Des KPI de laboratoire réussis n'établissent pas un groupe motopropulseur complet ou calibré.
+Dans l'API agent version 0.34.0, `get_example_model` accepte un `name` optionnel, avec `electrothermal` par défaut. `get_capabilities.examples` liste les 43 exemples disponibles, dont les modèles à réservoir fini et recirculation. CLI `list-labs` retourne les 44 laboratoires en JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) ; `thermal-network` est réservé au CLI par conception. Les capacités annoncent aussi composants, fidélité, limites du solveur et bornes d'entrée. Les exports utilisent `power.asset.v29`, avec lecteurs v1-v28 conservés. Validation et création de session retournent les canaux et unités. Des KPI de laboratoire réussis ne constituent pas un groupe motopropulseur complet ou calibré.
 
 | Outil | Rôle |
 |---|---|
@@ -287,3 +287,49 @@ Demandez `resolved-ravigneaux-transmission` ou `fired-resolved-ravigneaux-conver
 Demandez `hydraulic-ravigneaux-transmission` ou `fired-hydraulic-ravigneaux`. Utilisez des fractions explicites de remplissage/vidange sur 700/701 jusqu'à 708/709 ; le verrouillage allumé utilise 710/711. Les ID d'engagement de plage précédents sont absents. Validez et découvrez les canaux avant d'écrire. La pression/course/contact du piston déterminent les capacités ; une commande acceptée par l'API ne confirme pas le verrouillage physique.
 
 Les rapports conservent la pression de ligne/chambre, la course, la capacité de contact, le travail de pompe, le volume balayé, la chaleur de frottement/restriction/amortissement et chaque hachage de modèle. Les révisions complètes, l'annulation, le rollback tardif et les dérivations indépendantes de relâchement de vanne utilisent les contrats ordinaires. Le graphe utilise les enregistrements d'asset v24 existants, pas un nouveau format de sérialisation. Voir [AT_HYDRAULIC_ACTUATION.fr.md](AT_HYDRAULIC_ACTUATION.fr.md).
+
+## Régulation hydraulique de boîte AT
+
+`at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
+
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v29 conserve routes, gains et horloges et lit v1-v28.
+
+Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
+
+[AT_CONTROL.fr.md](AT_CONTROL.fr.md)
+
+## Rampe de carburant liquide alimentée par pompe
+
+`liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
+
+Le format v29 conserve les liens et la température source et lit v1-v28. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
+
+[PUMP_FED_FUEL.fr.md](PUMP_FED_FUEL.fr.md)
+
+## Réservoir fini de carburant liquide
+
+`liquid_fuel_tank` stocke masse liquide finie et énergie calorique avec la densité, référence thermique du film et pouvoir calorifique de l'injecteur associé. L'alimentation le choisit via `tank_component` et omet `supply_temperature`. Chaque réservoir appartient à une alimentation compatible.
+
+Énergies calorique et chimique du réservoir entrent dans le stockage complet. Le transfert interne n'ajoute aucune matière ni énergie chimique externe. La pression d'entrée prescrite garde sa frontière de travail de pression. Admission/échappement gazeux peuvent encore transporter de l'énergie chimique.
+
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
+
+[LIQUID_FUEL_TANK.fr.md](LIQUID_FUEL_TANK.fr.md)
+
+## Retour suivi de décharge de carburant
+
+`liquid_rail_return` associe une alimentation à un `hydraulic_relief` unidirectionnel exclusif. La soupape relie la rampe à la même pression d'entrée prescrite que la pompe. Toute voie doit être enregistrée ; ports incompatibles, propriété dupliquée et voies non suivies sont rejetés.
+
+`fluid_heat_fraction` choisit explicitement la part [0,1] des pertes transportée par le carburant de retour. Le reste suit le chemin thermique déclaré. Le mélange simultané rampe/réservoir conserve les bilans matière, chimie, travail de pression et chaleur. Les retours à source externe sortent matière et énergie par la frontière.
+
+[LIQUID_FUEL_RETURN.fr.md](LIQUID_FUEL_RETURN.fr.md)
+
+## Géométrie du réservoir et espace gazeux fini
+
+`liquid_fuel_tank.parameters.headspace` déclare `capacity` en `m3` ou `l` et `gas_node`. Le gaz omet `storage` : son volume vaut `capacity - liquid_mass / density`, avec un seul propriétaire et un volume positif. Pompe et retour utilisent une pression prescrite nulle car le gaz fini détermine la pression d'entrée.
+
+Le solveur couplé échange le travail de pression entre arbre, rampe et gaz sans source externe. Orifices gazeux et liens thermiques fournissent ventilation et chaleur explicites. Lire `pressure`, `fill_fraction`, `hydraulic_work` cumulé signé et masse, énergie, volume du gaz. Dose, liquide livré, évaporation et combustion restent distincts.
+
+[Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)

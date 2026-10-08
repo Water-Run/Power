@@ -31,7 +31,7 @@ flowchart LR
 | Dokument | Worum es geht |
 |---|---|
 | [Agent-API](AGENT_API.de.md) | MCP-Werkzeuge, Revisionen, Fehler und die Operationsfolge |
-| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v24 und die Leser für v1 bis v23 |
+| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v29 und die Leser für v1 bis v28 |
 | [Native Zig-Grenze](NATIVE_ZIG.de.md) | Die archivierten Zig-Prototypen und das versionierte ABI |
 
 ## Motor und Kraftstoff
@@ -49,6 +49,7 @@ flowchart LR
 | [Flüssigeinspritzung](LIQUID_FUEL_INJECTION.de.md) | Endliche nachgiebige Flüssigkeitsleitung, die einen Film speist |
 | [Nadelansteuerung](NEEDLE_ACTUATION.de.md) | Positionsabhängiges Solenoid, Nadelmasse, Schließverzögerung und Abprall |
 | [Schließvorhersage](CLOSURE_PREDICTION.de.md) | Begrenztes Strecken-Replay, das die Spannungsabschaltung plant |
+| [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md) | Starre Kapazität, endliche Gasdruckarbeit und explizite Entlüftung |
 
 ## Getriebe
 

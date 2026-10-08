@@ -217,3 +217,54 @@ Fingerprint: `63d28eb32bc4cfb2`. Source SHA-256:
 `ResolvedPlanetAssetChecks` retains its digest and exact every-boundary upgraded
 replay. Do not regenerate the fixture with the current writer. The Power! GPL
 license and Unity Linking Exception apply.
+
+## Hydraulic AT plant version 24
+
+`fired-hydraulic-ravigneaux-v24.powerasset` retains verified v24 output before
+adding the feedback controller records. Source:
+`assets/labs/fired-hydraulic-ravigneaux.power.json`; name: `Fired hydraulic
+Ravigneaux laboratory`. Retained locally on 2026-10-05 from the v24 checkpoint.
+SHA-256: `6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc`.
+Fingerprint: `4e83efb34de63922`. Tests retain the original digest and exact
+old/upgraded physical replay. Do not regenerate this fixture with the current
+encoder. The Power! GPL license and Unity Linking Exception apply.
+
+## Closure-compensated injector version 25
+
+`closure-compensated-cylinder-v25.powerasset` retains the verified v25 writer output
+before adding liquid feed records. Source: `assets/labs/closure-compensated-cylinder.power.json`.
+Retained locally on 2026-10-05 from checkpoint `0d5a985`; no later writer output
+is substituted. SHA-256: `df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc`.
+Fingerprint: `ddefea6d870e7e75`. `LiquidRailFeedAssetChecks` retains its digest
+and exact every-boundary old/upgraded replay. Do not regenerate this fixture
+with the current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Pump-fed liquid rail version 26
+
+`pump-fed-liquid-cylinder-v26.powerasset` retains the verified v26 writer output
+before finite tank records. Source: `assets/labs/pump-fed-liquid-cylinder.power.json`.
+Retained on 2026-10-05 from checkpoint `144ac3d`. SHA-256:
+`b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d`. Fingerprint:
+`22cbbe4a983098f4`. `LiquidFuelTankAssetChecks` retains the original digest
+and exact every-boundary old/upgraded replay. Do not regenerate this fixture
+with the current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Finite liquid tank version 27
+
+`finite-tank-liquid-cylinder-v27.powerasset` retains verified v27 writer output
+before tracked relief returns. Source: `assets/labs/finite-tank-liquid-cylinder.power.json`.
+Retained on 2026-10-05 from checkpoint `85eebeb`. SHA-256:
+`ee344fad148d226c223145d610b18f84912060bc722fee980cae6515ceea3d62`. Fingerprint:
+`f7ee4872a034c885`. `LiquidRailReturnAssetChecks` preserves the digest and exact
+every-boundary old/upgraded replay. Do not regenerate this fixture with the
+current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Recirculating fuel version 28
+
+`recirculating-liquid-cylinder-v28.powerasset` retains v28 writer output before
+geometric tank headspace records. Source: `assets/labs/recirculating-liquid-cylinder.power.json`.
+Retained on 2026-10-08 from the encoder/model sources at `90e70cd`, before changing
+the asset format. SHA-256: `3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57`.
+Fingerprint: `8c295e86019b787b`. `TankHeadspaceAssetChecks` checks its digest and
+every-boundary old/upgraded replay. Do not regenerate it with the current writer.
+The Power! GPL license and Unity Linking Exception apply.

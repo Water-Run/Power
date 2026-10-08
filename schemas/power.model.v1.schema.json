@@ -164,6 +164,18 @@
           },
           {
             "$ref": "#/$defs/carrierGear"
+          },
+          {
+            "$ref": "#/$defs/atController"
+          },
+          {
+            "$ref": "#/$defs/liquidRailFeed"
+          },
+          {
+            "$ref": "#/$defs/liquidFuelTank"
+          },
+          {
+            "$ref": "#/$defs/liquidRailReturn"
           }
         ]
       },
@@ -449,7 +461,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -582,7 +594,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -792,7 +804,7 @@
               "channel": {
                 "type": "integer",
                 "minimum": 1,
-                "maximum": 9223372036854775807
+                "maximum": 9223372036854776000
               },
               "value": {
                 "type": "number"
@@ -896,7 +908,16 @@
             "selected_even_gear",
             "shift_phase",
             "sync_error",
-            "control_fault"
+            "control_fault",
+            "lockup_state",
+            "actuator_integral_a",
+            "actuator_integral_b",
+            "actuator_integral_c",
+            "actuator_integral_d",
+            "actuator_integral_e",
+            "actuator_integral_f",
+            "tank_state",
+            "fill_fraction"
           ]
         },
         "min": {
@@ -1278,7 +1299,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -1805,7 +1826,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -1997,7 +2018,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -2316,7 +2337,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -2459,7 +2480,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -2988,7 +3009,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3026,7 +3047,7 @@
             "target_channel": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 9223372036854775807
+              "maximum": 9223372036854776000
             },
             "sample_period_ns": {
               "type": "integer",
@@ -3359,7 +3380,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3498,7 +3519,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3574,7 +3595,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3612,7 +3633,7 @@
             "target_channel": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 9223372036854775807
+              "maximum": 9223372036854776000
             },
             "sample_period_ns": {
               "type": "integer",
@@ -3931,7 +3952,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -4607,7 +4628,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -4934,7 +4955,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -5270,7 +5291,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -5558,7 +5579,7 @@
             "closure_prediction_ns": {
               "type": "integer",
               "minimum": 0,
-              "maximum": 18446744073709551615
+              "maximum": 18446744073709552000
             }
           }
         }
@@ -5688,7 +5709,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -5811,6 +5832,663 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 4294967295
+        }
+      }
+    },
+    "atController": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "input_channel",
+        "initial_input",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "at_controller"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "required": [
+            "vehicle_node",
+            "ring_node",
+            "supply_pressure_node",
+            "routes",
+            "sample_period_ns",
+            "release_timeout_ns",
+            "apply_timeout_ns",
+            "low_supply_timeout_ns",
+            "lockup_dwell_ns",
+            "apply_pressure",
+            "pressure_tolerance",
+            "minimum_supply_pressure",
+            "release_force",
+            "minimum_apply_force",
+            "proportional_gain",
+            "integral_gain",
+            "synchronize_tolerance",
+            "direction_speed_limit",
+            "lockup_speed_limit",
+            "unlock_speed_limit",
+            "minimum_lockup_input_speed",
+            "minimum_lockup_forward_range"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "vehicle_node": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "ring_node": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "supply_pressure_node": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "routes": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 6,
+              "items": {
+                "type": "object",
+                "required": [
+                  "clutch",
+                  "fill_valve",
+                  "drain_valve"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "clutch": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4294967295
+                  },
+                  "fill_valve": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4294967295
+                  },
+                  "drain_valve": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4294967295
+                  }
+                }
+              }
+            },
+            "sample_period_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000000
+            },
+            "release_timeout_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000000000
+            },
+            "apply_timeout_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000000000
+            },
+            "low_supply_timeout_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000000000
+            },
+            "lockup_dwell_ns": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000000000
+            },
+            "apply_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "pressure_tolerance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "minimum_supply_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "release_force": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "n"
+                  ]
+                }
+              }
+            },
+            "minimum_apply_force": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "n"
+                  ]
+                }
+              }
+            },
+            "proportional_gain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "fraction_pa"
+                  ]
+                }
+              }
+            },
+            "integral_gain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "fraction_pa_s"
+                  ]
+                }
+              }
+            },
+            "synchronize_tolerance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "direction_speed_limit": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "lockup_speed_limit": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "unlock_speed_limit": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "minimum_lockup_input_speed": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "minimum_lockup_forward_range": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            }
+          }
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854776000
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 4
+            },
+            "unit": {
+              "enum": [
+                "state_code"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "liquidRailFeed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "liquid_rail_feed"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "injector_component",
+            "pump_component"
+          ],
+          "properties": {
+            "injector_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "pump_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "supply_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "const": "k"
+                }
+              }
+            },
+            "tank_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "supply_temperature"
+              ],
+              "not": {
+                "required": [
+                  "tank_component"
+                ]
+              }
+            },
+            {
+              "required": [
+                "tank_component"
+              ],
+              "not": {
+                "required": [
+                  "supply_temperature"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "liquidFuelTank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "liquid_fuel_tank"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "injector_component",
+            "initial_mass",
+            "initial_temperature"
+          ],
+          "properties": {
+            "injector_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "initial_mass": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "const": "kg"
+                }
+              }
+            },
+            "initial_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "const": "k"
+                }
+              }
+            },
+            "headspace": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "capacity",
+                "gas_node"
+              ],
+              "properties": {
+                "capacity": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "m3",
+                        "l"
+                      ]
+                    }
+                  }
+                },
+                "gas_node": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4294967295
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "liquidRailReturn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "liquid_rail_return"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "feed_component",
+            "valve_component",
+            "fluid_heat_fraction"
+          ],
+          "properties": {
+            "feed_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "valve_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "fluid_heat_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "const": "fraction"
+                }
+              }
+            }
+          }
         }
       }
     }

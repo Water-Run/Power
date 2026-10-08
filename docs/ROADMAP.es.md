@@ -12,12 +12,12 @@ calibración del vehículo y la aceptación de escritorio necesitan cada uno su 
 | Hito | Base disponible | Trabajo que aún falta |
 |---|---|---|
 | Núcleo gestionado | Física sin dependencias y de doble destino, topología, unidades, tiempo entero, repetición y transacciones atómicas | Validación integrada de larga duración del grupo motopropulsor |
-| Interfaz de agente | Herramientas MCP definidas por esquema, diagnósticos estructurados, revisiones, ramas, cancelación e informes compactos | Flujos de modelado y control para el alcance restante del grupo motopropulsor completo |
+| Interfaz de agente | Herramientas MCP definidas por esquema, diagnósticos estructurados, revisiones, ramas, cancelación e informes compactos; `list-labs` / `get_capabilities.examples` | Flujos de modelado y control para el alcance restante del grupo motopropulsor completo |
 | Estudio de Unity | Importación de modelo compartida, reproducción de laboratorio, componentes esquemáticos 3D y pruebas preparadas | Evidencia real de Editor/Play/Player/IL2CPP y empaquetado de escritorio |
-| Banco de modelado | Asset portátil v24, lectores v1-v23 y definiciones compartidas de JSON/CLI/MCP | Edición de grafos, guardado y gráficas de canales seleccionables |
-| Física del motor | Masa y energía de gas independientes, trabajo de biela-manivela, válvulas temporizadas, combustión prescrita, dosificación de combustible gaseoso y líquido, raíles flexibles finitos, evaporación de película y accionamiento físico de la aguja | Bomba de raíl y repostaje, comportamiento magnético, electrónico y de pulverización refinado, acoplamiento de volumen líquido finito, control de encendido, admisión y escape detallados, pérdidas mecánicas, termoquímica y calibración medida |
+| Banco de modelado | Asset portátil v29, lectores v1-v28 y definiciones compartidas de JSON/CLI/MCP | Edición de grafos, guardado y gráficas de canales seleccionables |
+| Física del motor | Masa y energía de gas independientes, trabajo de biela-manivela, válvulas temporizadas, combustión prescrita, dosificación de combustible gaseoso y líquido, raíles flexibles finitos, evaporación de película y accionamiento físico de la aguja; [Raíl de combustible líquido alimentado por bomba](PUMP_FED_FUEL.es.md); tanques finitos y retornos de alivio conservativos; [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md) | oleaje/forma hidrostática y llenado/regulación medidos, comportamiento magnético, electrónico y de pulverización refinado, acoplamiento de volumen líquido finito, control de encendido, admisión y escape detallados, pérdidas mecánicas, termoquímica y calibración medida |
 | Transmisión | Embragues acoplados, engranajes y planetarios, convertidor y bloqueo mapeados, hidráulica, y caminos DCT de siete marchas adelante y marcha atrás y Ravigneaux de cuatro adelante y marcha atrás, con giro de satélite e inercia orbital resueltos | Flexibilidad, pérdidas y reparto de carga del engrane, actuación DCT, control completo de presión y cambio de la AT y encaminamiento medido, mapas medidos, comportamiento de válvulas, juntas y cavitación, y dinámica de convertidor más rica |
-| Controles e integración eléctrica | PI de presión muestreado, control de cierre de aguja y entrega DCT escalonada confirmada por sensor, voltaje y ciclo de trabajo acotados, propiedad de los actuadores, circuito equivalente de batería y accesorios | Ciclos coordinados de ECU/TCU, sensores y actuadores, solicitudes de par, fallos, BMS y comportamiento térmico y eléctrico medido |
+| Controles e integración eléctrica | PI de presión muestreado, control de cierre de aguja y entrega DCT escalonada confirmada por sensor, voltaje y ciclo de trabajo acotados, propiedad de los actuadores, circuito equivalente de batería y accesorios; [`at_controller`](AT_CONTROL.es.md) | Ciclos coordinados de ECU/TCU, sensores y actuadores, solicitudes de par, fallos, BMS y comportamiento térmico y eléctrico medido |
 | Evidencia de vehículo y publicación | Muestras de investigación con límites y procedencia completos | Dos grupos motopropulsores medidos completos, presupuestos de incertidumbre, estabilidad, aceptación de escritorio y distribución |
 
 Los puntos de control numéricos actuales, los fixtures auténticos de assets y los registros
@@ -28,14 +28,13 @@ su revisión registrada; los cambios locales nuevos necesitan una aceptación de
 
 ## Siguiente trabajo gestionado
 
-Continúa el [contrato de inyección líquida](LIQUID_FUEL_INJECTION.es.md) con bomba
-de raíl y repostaje, y con actuación magnética y electrónica refinada. Están implementados la masa
+Ampliar equilibrio de fases dependiente de la presión, cavitación, llenado/regulación medidos y actuación magnética/electrónica refinada. Están implementados la masa
 de fuente flexible y finita y la energía de presión, el movimiento real de la aguja, la realimentación de dosis muestreada,
 la reposición de la película y la evaporación. Consulta [el contrato de la aguja](NEEDLE_ACTUATION.es.md) y la [predicción de cierre acotada](CLOSURE_PREDICTION.es.md). El
 receptor sigue exportando trabajo de presión de desplazamiento bajo el límite declarado de volumen
 líquido despreciable; la pulverización y el desplazamiento resueltos deben sustituirlo por una
 geometría verificada y un acoplamiento de cantidad de movimiento y de trabajo. Mantén separados la entrega, la disponibilidad de vapor y
-la reacción prescrita, y conserva la evidencia analítica, de conservación y de convergencia.
+la reacción prescrita, y conserva la evidencia analítica, de conservación y de convergencia. [Raíl de combustible líquido alimentado por bomba](PUMP_FED_FUEL.es.md)
 
 Después amplía el encendido y el control, la dinámica de admisión y escape, y las pérdidas mecánicas
 del motor. El quemado de Wiebe actual es prescrito y no establece combustión

@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — эксперименты без интерфейса"]
     mcp["Power.Mcp — 12 инструментов MCP через stdio"]
-    assets["Power.Assets — .powerasset v24"]
+    assets["Power.Assets — .powerasset v29"]
     unity["Студия Unity 6.6 — 3D-лаборатории"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | Узнать модели, ограничения, соглашения о времени и ревизиях. Начните отсюда. |
 | `get_model_schema` | JSON Schema 2020-12 для `power.model.v1` |
-| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (33 примера) |
+| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (43 примера) |
 | `validate_model` | Проверить модель без запуска; структурированная диагностика исправлений |
 | `run_experiment` | Ограниченный запуск без интерфейса с пакетным повтором, KPI и происхождением |
 | `export_model_asset` | Экспортировать переносимый `.powerasset` |
@@ -147,10 +147,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > Все параметры образцов — `unverified`: исследовательские значения, а не калиброванные измерения.
 
-Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v24`, читатели прежних активов сохранены.
+Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v29`, читатели прежних активов сохранены.
 
 <details>
-<summary>Доступные лаборатории (34)</summary>
+<summary>Доступные лаборатории (44)</summary>
 
 | Имя образца (`get_example_model`) | Лаборатория | Что проверяет |
 |---|---|---|
@@ -188,8 +188,24 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `ravigneaux-transmission` | `assets/labs/ravigneaux-transmission.power.json` | составные планетарные передачи вверх/вниз в четырёх диапазонах |
 | `fired-ravigneaux-converter` | `assets/labs/fired-ravigneaux-converter.power.json` | двигатель со сгоранием, гидротрансформатор/блокировка и составная трансмиссия |
 | `controlled-fired-dual-clutch` | `assets/labs/controlled-fired-dual-clutch.power.json` | двигатель со сгоранием, дискретное управление DCT и полные свидетельства |
+| `controlled-hydraulic-ravigneaux` | `assets/labs/controlled-hydraulic-ravigneaux.power.json` | дискретное управление давлением и подтверждение фактической передачи/блокировки |
+| `controlled-fired-hydraulic-ravigneaux` | `assets/labs/controlled-fired-hydraulic-ravigneaux.power.json` | работающий двигатель и гидравлические переключения AT с обратной связью |
+| `pump-fed-liquid-cylinder` | `assets/labs/pump-fed-liquid-cylinder.power.json` | пополнение рампы от вала, тепловое смешение и полные балансы |
+| `pump-fed-needle-cylinder` | `assets/labs/pump-fed-needle-cylinder.power.json` | рампа с насосом, физической иглой и управлением дозой |
+| `finite-tank-liquid-cylinder` | `assets/labs/finite-tank-liquid-cylinder.power.json` | исчерпание конечного бака, сухая работа насоса и внутренний перенос топлива |
+| `finite-tank-needle-cylinder` | `assets/labs/finite-tank-needle-cylinder.power.json` | конечная подача с физической иглой и испарением |
+| `vented-tank-liquid-cylinder` | `assets/labs/vented-tank-liquid-cylinder.power.json` | конечный газ, внутренняя работа давления и управляемая вентиляция |
+| `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | конечный газ и вентиляция с физической динамикой иглы |
+| `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | возврат через клапан, совместное смешение бака/рампы и тепло потерь |
+| `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | рециркуляция с физической иглой и полным воспроизведением |
 
 </details>
+
+Вывести все лаборатории в JSON:
+
+```sh
+dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll list-labs
+```
 
 Запросите `get_example_model` с параметром `name` или запустите напрямую:
 
@@ -203,7 +219,7 @@ dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.
 
 Полные силовые агрегаты — цель, а не текущее состояние. Ещё открыто:
 
-- Полное поведение двигателя: моделирование впуска/выпуска, жидкостная подкачка/заправка, уточнённое магнитное/электронное/распыляющее поведение, фазовые переходы от давления, более богатая термохимия и управление зажиганием.
+- Полное поведение двигателя: плеск/гидростатическая форма, фазовое равновесие по давлению и кавитация, измеренное заполнение/регулирование насоса, уточнённые магнитные/электронные/распылительные процессы, зажигание, впуск/выпуск, механические потери и более полная термохимия.
 - Полный привод DCT, топология AT и управление трансмиссией (ECU/TCU).
 - Измеренные карты потерь и управления насоса, измеренная химия батареи и BMS, измеренная динамика клапанов/аккумуляторов.
 - Калиброванные силовые агрегаты.
@@ -219,7 +235,7 @@ OEM-исследования EA211 DJS + DQ200 и PSA EC5 + AT8 остаются
 | Проект | [Архитектура](docs/ARCHITECTURE.ru.md) · [Дорожная карта](docs/ROADMAP.ru.md) · [Статус разработки](docs/DEVELOPMENT_STATUS.ru.md) · [Журнал валидации](docs/VALIDATION.ru.md) · [Заметки о возобновлении работ по двигателю](docs/NEXT_ENGINE_STEP.ru.md) |
 | Интерфейсы | [API агента](docs/AGENT_API.ru.md) · [Формат активов](docs/ASSET_FORMAT.ru.md) · [Граница нативного Zig](docs/NATIVE_ZIG.ru.md) |
 | Двигатель и газ | [Закрытый цилиндр](docs/SEALED_CYLINDER.ru.md) · [Газовая сеть](docs/GAS_NETWORK.ru.md) · [Газообмен](docs/GAS_EXCHANGE.ru.md) · [Подвижный цилиндр](docs/MOVING_CYLINDER.ru.md) · [Фазы клапанов](docs/VALVE_TIMING.ru.md) · [Premixed-сгорание](docs/PREMIXED_COMBUSTION.ru.md) |
-| Топливо и впрыск | [Дозирование топлива](docs/FUEL_METERING.ru.md) · [Топливная плёнка](docs/FUEL_FILM.ru.md) · [Жидкостный впрыск](docs/LIQUID_FUEL_INJECTION.ru.md) · [Привод иглы](docs/NEEDLE_ACTUATION.ru.md) · [Предсказание закрытия](docs/CLOSURE_PREDICTION.ru.md) |
+| Топливо и впрыск | [Дозирование топлива](docs/FUEL_METERING.ru.md) · [Топливная плёнка](docs/FUEL_FILM.ru.md) · [Жидкостный впрыск](docs/LIQUID_FUEL_INJECTION.ru.md) · [Привод иглы](docs/NEEDLE_ACTUATION.ru.md) · [Предсказание закрытия](docs/CLOSURE_PREDICTION.ru.md) · [Геометрия бака и конечное газовое пространство](docs/TANK_HEADSPACE.ru.md) |
 | Трансмиссия | [Сеть сцеплений](docs/CLUTCH_NETWORK.ru.md) · [Физика сцепления](docs/CLUTCH_PHYSICS.ru.md) · [Зубчатая сеть](docs/GEAR_NETWORK.ru.md) · [Идеальные шестерни](docs/IDEAL_GEARS.ru.md) · [Гидротрансформатор](docs/CONVERTER_NETWORK.ru.md) · [Трансмиссия с двумя сцеплениями](docs/DUAL_CLUTCH_TRANSMISSION.ru.md) · [Управление DCT](docs/DCT_CONTROL.ru.md) · [Трансмиссия Ravigneaux](docs/RAVIGNEAUX_TRANSMISSION.ru.md) · [Разрешённые планетарные ряды](docs/RESOLVED_PLANETS.ru.md) |
 | Гидравлика | [Гидравлическая сеть](docs/HYDRAULIC_NETWORK.ru.md) · [Насос](docs/HYDRAULIC_PUMP.ru.md) · [Поршень](docs/HYDRAULIC_PISTON.ru.md) · [Золотник](docs/HYDRAULIC_SPOOL.ru.md) · [Газовый аккумулятор](docs/GAS_PISTON.ru.md) · [Привод AT](docs/AT_HYDRAULIC_ACTUATION.ru.md) |
 

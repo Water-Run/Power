@@ -31,7 +31,7 @@ flowchart LR
 | Documento | O que é |
 |---|---|
 | [API de agente](AGENT_API.pt-BR.md) | Ferramentas MCP, revisões, erros e a sequência de operação |
-| [Formato de asset](ASSET_FORMAT.pt-BR.md) | `.powerasset` v24 e os leitores de v1 a v23 |
+| [Formato de asset](ASSET_FORMAT.pt-BR.md) | `.powerasset` v29 e os leitores de v1 a v28 |
 | [Fronteira Zig nativa](NATIVE_ZIG.pt-BR.md) | Os protótipos Zig arquivados e o ABI versionado |
 
 ## Motor e combustível
@@ -49,6 +49,7 @@ flowchart LR
 | [Injeção líquida](LIQUID_FUEL_INJECTION.pt-BR.md) | Trilho líquido finito e flexível que alimenta um filme |
 | [Acionamento da agulha](NEEDLE_ACTUATION.pt-BR.md) | Solenoide dependente da posição, massa da agulha, atraso de fechamento e ricochete |
 | [Predição de fechamento](CLOSURE_PREDICTION.pt-BR.md) | Replay limitado da planta que agenda a remoção da tensão |
+| [Geometria do tanque e espaço gasoso finito](TANK_HEADSPACE.pt-BR.md) | Capacidade rígida, trabalho do gás finito e ventilação explícita |
 
 ## Transmissão
 

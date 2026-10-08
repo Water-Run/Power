@@ -41,7 +41,7 @@ internal static class GasAssetChecks
     private static void RoundTrip()
     {
         var asset = Sample(); var bytes = AssetCodec.Encode(asset); var restored = AssetCodec.Decode(bytes);
-        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 24);
+        Require(BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == AssetCodec.FormatVersion);
         Require(restored.Nodes.SequenceEqual(asset.Nodes) && restored.Components.SequenceEqual(asset.Components));
         Require(restored.SourceSha256 == asset.SourceSha256 && restored.Inputs.SequenceEqual(asset.Inputs) && restored.Checks.SequenceEqual(asset.Checks));
         Require(restored.Model.Fingerprint == asset.Model.Fingerprint && AssetCodec.Encode(restored).SequenceEqual(bytes));
@@ -64,7 +64,7 @@ internal static class GasAssetChecks
     {
         var asset = Sample(); byte[] source = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int tables = counts + 140;
+        int tables = counts + 160;
         int gasExtensions = tables + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 116;
         int orificeExtensions = gasExtensions + 24 * 2;
         void RejectInt(int offset, int value)

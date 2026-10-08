@@ -14,7 +14,65 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 24와 유지되는 판독기
+## 현재 버전 29
+
+`liquid_fuel_tank.parameters.headspace`는 `m3` 또는 `l`의 `capacity`와 `gas_node`를 지정합니다. 기체 노드는 `storage`를 생략하며 체적은 `capacity - liquid_mass / density`입니다. 소유자는 하나이고 체적은 양수여야 합니다. 유한 기체가 입구 압력을 결정하므로 펌프와 반환의 지정 저장소 압력은 0입니다.
+
+`vented-tank-liquid-cylinder`와 `vented-tank-needle-cylinder`는 탱크 1513, 기체 1520, 통기 입력 960을 사용합니다. 자산 v29는 형상을 저장하고 v1-v28을 읽습니다. 해석적 일/미분, 독립 ODE 수렴, 수지, portable/MCP 재현, 롤백과 무할당 단계 검사가 통과했습니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[탱크 형상과 유한 헤드스페이스](TANK_HEADSPACE.ko.md)
+
+## 유지 버전 28
+
+`recirculating-liquid-cylinder`와 `recirculating-needle-cylinder`는 유한 연료, 실제 분사, 증발과 선택적 니들 동역학을 보존합니다. v28은 연결/열 비율을 저장하고 v1-v27을 읽습니다. 각 반환은 기존 상한 내 8개 상태를 추가합니다.
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.ko.md](LIQUID_FUEL_RETURN.ko.md)
+
+## 유지된 버전 27
+
+v27은 탱크와 공급 선택을 저장하고 v1-v26을 읽습니다. 각 탱크는 기존 상한 안에서 4개 상태를 추가합니다. 독립 습윤 교환, 고갈 압력/축 에너지 해석, 반환 혼합, 전체 원장, rollback, 분기와 무할당 스텝을 검사합니다.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.ko.md](LIQUID_FUEL_TANK.ko.md)
+
+## 유지된 버전 26
+
+인코더는 `power.asset.v26`를 쓰고 v1-v26을 읽습니다. 38개의 int32 계수(152 bytes)가 있고 헤더는 230 + UTF-8 이름 길이 bytes입니다. 종류 39는 `liquid_rail_feed`, 지문 태그는 30입니다. 24 bytes 레코드는 색인, 인젝터/펌프 ID와 원천 온도량을 저장합니다. 형식과 레일/펌프 독점 소유권을 확인하며 재서명 v25 다운그레이드는 새 종류를 거부합니다.
+
+## 유지된 버전 25
+
+인코더는 `power.asset.v25`를 쓰고 v1-v25를 읽습니다. 계수 표에는 37개의 int32 값(148 bytes)이 있고 헤더는 226 + UTF-8 이름 길이 bytes입니다. 종류 38은 `at_controller`이고 지문 태그는 29입니다. 각 레코드는 고정 208 bytes와 경로마다 12 bytes를 가집니다. 경로 수는 5 또는 6이며 제한된 합계를 별도로 선언합니다. 형식, 클록, 단위, 소유권과 토폴로지를 확인합니다. digest를 다시 서명한 v24 다운그레이드는 새 종류를 거부합니다.
+
+## 유지된 버전 24
 
 인코더는 `power.asset.v24`를 씁니다. 버전 1부터 24까지 계속 읽을 수 있습니다. 개수 표와 레코드 크기는 v23의 것을 유지합니다. 종류 37은 `carrier_gear`입니다. 기본 변속비는 유한하고, 부호가 있으며, 0이 아닙니다. 8바이트 기어 확장은 컴포넌트 인덱스와 구분되는 움직이는 캐리어를 유지합니다. 타입이 있는 개수는 모든 캐리어 물림을 덮습니다. 다이제스트를 다시 봉인한 v23 다운그레이드는 새 종류를 거부합니다.
 

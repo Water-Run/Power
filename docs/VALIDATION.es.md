@@ -2,6 +2,322 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · **Español** · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-08: Geometría del tanque y espacio gaseoso finito
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Los controles Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 411/411 |
+| standard_checks_on_dotnet | 313/313 |
+| actual_mcp_groups | 48/48 |
+| laboratories | 44 |
+| agent_examples | 43 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| physical_transaction_groups | 6 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| initial_headspace_pressure_pa | 100000 |
+| tank_capacity_m3 | 2e-7 |
+| vent_input | 960 |
+| vent_close_ns | 200000000 |
+| vent_reopen_ns | 400000000 |
+| headspace_interval_volume_fraction | 0.25 |
+| asset_version | power.asset.v29 |
+| agent_api_version | 0.34.0 |
+| audited_documents | 140 |
+| documentation_locales | 10 |
+| v28_fixture_sha256 | 3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57 |
+| verification_log_sha256 | 5e043f1b2638849a1a0ec7d29e59ee98408cf507e92b0fdeba048be5d2980f27 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| acceptance_scope | local_windows_only |
+
+| Identifier | vented-tank-liquid-cylinder | vented-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 58 | 67 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 3e1af7af1d0de7c7 | eed5469fc995ca45 |
+| final_state_hash | f34b39e6adfe540d | 189ed72df2d82b75 |
+| source_sha256 | 033c2ea4594cec4a3e173e16e9ba806f74ae1ff211e524b520b62c212afaa573 | bb25d8f37bbde15acd2f5788b7d877abf37e1200dfbf25e72a77b1ed27442b57 |
+| report_sha256 | 1ededb11489f67f12dbde919c67b61d8fd6b481261c6369026c1e80bc5b3deab | 6e0b0dd64663278e2eb022409706d29e2b621c8bbcb48c6e5948b17eaa5d3904 |
+| max_sampled_energy_j | 9.768825748324161e-10 | 1.2995997167308815e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 8.944667923005412e-18 |
+| max_sampled_fuel_kg | 1.5754812818929986e-18 | 6.274820073259857e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.5617169965001163e-21 | 9.171778631987971e-21 |
+
+`vented-tank-liquid-cylinder` y `vented-tank-needle-cylinder` usan tanque 1513, gas 1520 y entrada de venteo 960. Asset v29 guarda geometría y lee v1-v28. Pasan trabajo/derivadas analíticos, convergencia ODE independiente, balances, replay portable/MCP, rollback y pasos sin asignación.
+
+- `artifacts/reports/tank-headspace-closure-2026-10-08.log`
+- `artifacts/reports/tank-headspace-evidence-2026-10-08.json`
+- `artifacts/reports/tank-headspace-doc-audit-2026-10-08.json`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/vented-tank-liquid-cylinder.json`
+- `artifacts/reports/vented-tank-needle-cylinder.json`
+- `tests/Power.Tests/Fixtures/recirculating-liquid-cylinder-v28.powerasset`
+
+Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
+
+[TANK_HEADSPACE.es.md](TANK_HEADSPACE.es.md)
+
+## 2026-10-08: Descubrimiento completo de laboratorios y componentes
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Los controles Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 400/400 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 46/46 |
+| laboratories | 42 |
+| agent_examples | 41 |
+| supported_components | 41 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| audited_documents | 50 |
+| documentation_locales | 10 |
+| catalog_schema_matches_cli | true |
+| asset_version | power.asset.v28 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| verification_log_sha256 | 5dbc2ef47f7ba1621f5e3ce09a2290acb770eeab97b090466c3d1c0d7bf20196 |
+| catalog_sha256 | a84748a97884ad9bdfea9f6e74ecd7bcc100d26fd4afb284c67aca2264675db4 |
+| catalog_schema_sha256 | d38c90471e424519c092e35f372834a32e26bccc6fac51ab56468ec8866be69a |
+| acceptance_scope | local_windows_only |
+
+CLI `list-labs`, ejemplos MCP, exports Unity y verificación serie comparten el catálogo. Cada fuente está cubierta, cada ejemplo anunciado se valida por stdio real y los componentes coinciden con el esquema completo. Las huellas, hashes fuente y cada hash de estado muestreado coinciden con la base. Asset v28 y lectores anteriores no cambian.
+
+La auditoría documental cubre secciones correspondientes, una sola línea de idiomas y tablas completas en los diez idiomas. El catálogo y la respuesta CLI cumplen `power.laboratory_catalog.v1.schema.json`.
+
+- `artifacts/reports/development-review-baseline-2026-10-08.log`
+- `artifacts/reports/development-review-final-2026-10-08.log`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/development-review-evidence-2026-10-08.json`
+- `artifacts/reports/development-review-catalog-2026-10-08.json`
+
+Geometría/espacio gaseoso del tanque, motor más completo, coordinación ECU/TCU, calibración medida y aceptación Unity real siguen pendientes. Los parámetros de investigación siguen `unverified`.
+
+## 2026-10-05: Retorno de alivio de combustible trazado
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Las pruebas Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 398/398 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 45/45 |
+| laboratories | 42 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| asset_version | power.asset.v28 |
+| v27_fixture_sha256 | ee344fad148d226c223145d610b18f84912060bc722fee980cae6515ceea3d62 |
+| verification_log_sha256 | ee5eb035556dd2ba0cd17baa274672ee3663a8572982b72bd23da881ab877e41 |
+| prior_ci_scope | preceding_revision_only |
+| prior_ci_revision | 85eebeb442b455304c5e88aebd86279c8347aad2 |
+
+| Identifier | recirculating-liquid-cylinder | recirculating-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 54 | 63 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 8c295e86019b787b | 354faf7fae4a338e |
+| final_state_hash | d4a612015c1623dc | 8554f5721f716a34 |
+| source_sha256 | f7e499c1b155869fad912df7a10ba443f62aa22af585147523d4527f9f8937a4 | 8de240be98f08a3ceb110337228a09a68c25f5f54fbefac159daf517cca0f827 |
+| report_sha256 | 4a5e68862dc626a09471d5964f0623652efcf3056f6b2417545713ed00c421aa | d2efe3cb35bfc6bda3e61c2ef668f276784ed0f450909976d1b8dffaee4b5612 |
+| max_sampled_energy_j | 1.412331585015636e-09 | 1.4023612493474502e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 5.3600244902252125e-18 |
+| max_sampled_fuel_kg | 3.1238575094738597e-18 | 5.834362940687621e-18 |
+| max_sampled_hydraulic_volume_m3 | 4.1689902872672595e-21 | 7.239484721064098e-21 |
+
+- `artifacts/reports/liquid-return-final-2026-10-05.log`
+- `artifacts/reports/liquid-return-evidence-2026-10-05.json`
+- `artifacts/reports/liquid-return-schema-audit-2026-10-05.json`
+
+Pasan decaimiento/trabajo independiente, refinamiento mecánico/presión/térmico simultáneo, fracciones, rutas, fronteras externas, replay, rollback y asignaciones. Ebullición o intervalo sin resolver falla todo el lote. Geometría/ventilación, válvulas/bombas medidas, cavitación, spray, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos.
+
+[CI 37273231730](https://github.com/Water-Run/Power/actions/runs/37273231730)
+
+[LIQUID_FUEL_RETURN.es.md](LIQUID_FUEL_RETURN.es.md)
+
+## 2026-10-05: Tanque finito de combustible líquido
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Las pruebas Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 388/388 |
+| standard_checks_on_dotnet | 298/298 |
+| actual_mcp_groups | 43/43 |
+| laboratories | 40 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| asset_version | power.asset.v27 |
+| v26_fixture_sha256 | b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d |
+| verification_log_sha256 | 6c7b9ad52c6e4977b2817c6f6bdd9de4eaf6aeeb943efba255a2ad4956a27d70 |
+
+| Identifier | finite-tank-liquid-cylinder | finite-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 43 | 52 |
+| step_ns | 50000 | 10000 |
+| fingerprint | f7ee4872a034c885 | 8be53a56f175aeeb |
+| final_state_hash | 9fbab09b0d8fea77 | e77e6d4adaf785eb |
+| source_sha256 | 0a67c3eaaac79992b21b647efd6535d0c5c81159808006e5dde40552c3fd5934 | 508a8d163f965b2fc62c965d1984d9abd0e88011685a4099be110470c92baac6 |
+| report_sha256 | 038cbafab19f3e587b7e4a156c017e06531fd04cbaca8619240b81b8e14d6936 | ab18f538eae81bcead2a1a929ab97a0b6ef856a9b6058f1a375e2195d0747edc |
+| max_sampled_energy_j | 5.5981672630878165e-09 | 1.93150526683894e-08 |
+| max_sampled_mass_kg | 1.1926223897340549e-18 | 3.63207727782644e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 1.3137481011914198e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.2977429835191313e-21 | 1.826414792517085e-21 |
+
+- `artifacts/reports/finite-tank-integrated-2026-10-05.log`
+- `artifacts/reports/finite-tank-evidence-2026-10-05.json`
+- `artifacts/reports/finite-tank-schema-audit-2026-10-05.json`
+
+Masa y energía térmica llegan exactamente a cero; caudal/reacción adelante desaparecen mientras el eje conserva su dinámica real. El retorno restaura inventario líquido a temperatura mezclada del raíl. Pasan intercambio húmedo analítico, energía de eje/presión agotada, rollback completo y asignaciones.
+
+La energía química de frontera incluye combustible sin quemar que sale por escape. El tanque transfiere internamente; las pruebas integradas comparan cambio total de inventario químico más calor liberado con energía química neta de frontera.
+
+Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
+
+La revisión anterior pasa CI Windows, Linux y macOS. Esa ejecución no verifica este tanque finito.
+
+`144ac3d5d0f15d0eafefe713996f2b08d8ae3ea4` · [CI 37269218379](https://github.com/Water-Run/Power/actions/runs/37269218379)
+
+[LIQUID_FUEL_TANK.es.md](LIQUID_FUEL_TANK.es.md)
+
+## 2026-10-05: Raíl de combustible líquido alimentado por bomba
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Las pruebas Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 378/378 |
+| standard_checks_on_dotnet | 291/291 |
+| actual_mcp_groups | 41/41 |
+| laboratories | 38 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v26 |
+| v25_fixture_sha256 | df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc |
+| verification_log_sha256 | 2a2c3aa19317c8251c970a4b98a169b402d1855838e7fb79831d273593bfdf29 |
+
+| Identifier | pump-fed-liquid-cylinder | pump-fed-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 39 | 48 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 22cbbe4a983098f4 | 782b15c21ad211c2 |
+| final_state_hash | 4004b74f7f1d8c22 | e322d7a4bd72088c |
+| source_sha256 | 1bc97e3f985567f93fd4ace4006307ab571d2e10850e1bd75a1537ed6f0954bb | 3a801026e05e9e6cb67d298145ac20aea9948ab28e2c4552f8dee0d4f1eb4cce |
+| report_sha256 | 9869c20db74d4bb1dd22f5b3a924402001ca29451acee7fcc72b9188f25bf437 | 16ac066d9f9e268b98d874aba37f75efeb6b1fa1034b6b06562899f20f67fbbb |
+| max_sampled_energy_j | 4.160256139584817e-09 | 2.0303104975027964e-08 |
+| max_sampled_mass_kg | 9.215718466126788e-19 | 2.439454888092385e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 2.825701912040346e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.523666688322677e-21 | 3.763671787116276e-21 |
+
+- `artifacts/reports/rail-feed-integrated-2026-10-05.log`
+- `artifacts/reports/rail-feed-evidence-2026-10-05.json`
+- `artifacts/reports/rail-feed-schema-audit-2026-10-05.json`
+
+Seis grupos físicos/transaccionales, dos de activos, tres integrados y dos escenarios MCP reales cubren la alimentación. Energía térmica/química entrante se acumula con la energía de frontera gaseosa; la presión se almacena una vez. El KPI usa la cota analítica de bomba de 920541.8 Pa en lugar de la presión inicial.
+
+La fuente es una frontera externa explícita, no un tanque finito modelado. Agotamiento, eficiencia/regulación de bomba, pérdidas de línea, cavitación, propiedades dependientes de presión y spray de volumen finito siguen abiertos. Parámetros `unverified`; no se acredita calibración OEM ni aceptación real Unity Editor/Play/Player/IL2CPP.
+
+El checkpoint AT anterior también pasa CI Windows, Linux y macOS en la revisión registrada. Esa ejecución no verifica estos cambios de alimentación.
+
+`0d5a98583723b39e5a0b7723d06e988ebea1a425` · [CI 37259428892](https://github.com/Water-Run/Power/actions/runs/37259428892)
+
+[PUMP_FED_FUEL.es.md](PUMP_FED_FUEL.es.md)
+
+## 2026-10-05: Realimentación AT hidráulica y control de presión
+
+La verificación serie requerida pasa en Windows x64/.NET 10.0.12. La compilación Release no tiene advertencias ni errores. La aceptación real de Unity y nuevas verificaciones Linux/macOS sigue sin confirmar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 367/367 |
+| standard_checks_on_dotnet | 283/283 |
+| actual_mcp_groups | 39/39 |
+| laboratories | 36 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v25 |
+| v24_fixture_sha256 | 6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc |
+
+| Identifier | controlled-hydraulic-ravigneaux | controlled-fired-hydraulic-ravigneaux |
+|---|---|---|
+| duration_s | 4.5 | 2.2 |
+| boundaries | 451 | 221 |
+| states | 99 | 122 |
+| confirmed_range | 1 | 4 |
+| fault | 0 | 0 |
+| lockup_state | 0 | 2 |
+| max_sampled_energy_j | 7.059115887386724e-7 | 2.7647047318168916e-7 |
+| max_sampled_hydraulic_volume_m3 | 1.7499700690273845e-18 | 2.7681036716270535e-18 |
+| fingerprint | ceb522c56530be00 | 9fa63e406ccae528 |
+| final_state_hash | 7ff1919e1f504740 | 958185fe86764b63 |
+| source_sha256 | 9cac20ed7a79a2b9dd30f630adf5c6b3ce1f5dbbe4fa837eba3f0465cf67855b | cd4bd02357168532793462903670f9ec59e0c47edcd24986adc71c27bb4e88af |
+
+- `artifacts/reports/at-control-final-2026-10-05.log`
+- `artifacts/reports/at-control-evidence-2026-10-05.json`
+- `artifacts/reports/at-control-schema-audit-2026-10-05.json`
+- `artifacts/reports/at-controller-probe-2026-10-05.log`
+
+8 grupos físicos/transaccionales cubren todas las marchas adelante y atrás, presión/contacto/bloqueo reales, propiedad de válvulas, relojes y límites PI. Los fallos incluyen pérdida de alimentación, drenaje bloqueado, tiempo de aplicación/liberación, interbloqueo de dirección y pérdida de bloqueo confirmado. 2 grupos de assets conservan rutas tipadas y rechazan descensos firmados de nuevo. 3 grupos integrados y 2 escenarios MCP reales coinciden en cada escalar y hash de estado.
+
+El arranque en reversa y la recuperación siguen Applying a 500 ms y se confirman antes de 800 ms dentro del tiempo declarado. Las pruebas siguen el bloqueo real y no una demora fija. El vaciado seguro no elimina un bloqueo físico. El grafo motor/planetas/actuadores/control conserva 122 estados dentro del límite inalterado de 128.
+
+Los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo, calibración OEM y aceptación real Editor/Play/Player/IL2CPP siguen pendientes.
+
+[AT_CONTROL.es.md](AT_CONTROL.es.md)
+
+
 ## 2026-10-02: alimentación hidráulica AT compartida y actuación dinámica por pistón
 
 La verificación en serie exigida, `dotnet run --file tools/Build.cs -- verify`, pasa en local
@@ -2166,5 +2482,3 @@ Define primero `POWER_UNITY_EDITOR`. Los registros de Unity y los resultados XML
 La entrada de publicación es `Power.Studio.Editor.ProjectSetup.BuildPlayer`, con el destino de escritorio seleccionado e IL2CPP. Necesita el módulo de compilación de la plataforma Unity correspondiente. Aún no hay un paquete de Player compilado ni probado.
 
 Cada parámetro actual es un parámetro de experimento sintético. Un motor y una transmisión completos, la calibración del vehículo, las emisiones, la acústica, un presupuesto de tiempo real y las ejecuciones largas aún necesitan su propia implementación y su evidencia. Estas comprobaciones no establecen ese trabajo.
-
-

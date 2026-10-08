@@ -14,7 +14,65 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 24 与保留的读取器
+## 当前版本 29
+
+`liquid_fuel_tank.parameters.headspace` 声明单位为 `m3` 或 `l` 的 `capacity` 和 `gas_node`。气体节点省略 `storage`，其体积为 `capacity - liquid_mass / density`，必须有唯一所有者且保持为正。配对泵及泄压回流的设定储液器压力为零，由有限气体决定入口压力。
+
+示例 `vented-tank-liquid-cylinder` 和 `vented-tank-needle-cylinder` 使用油箱 1513、气相 1520、通气输入 960。资产 v29 保留几何并读取 v1-v28。解析功及导数、独立联立 ODE 细化、完整账本、资产/MCP 回放、回滚和零分配推进检查通过。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md)
+
+## 保留版本 28
+
+`recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v28 保留回流连接与热比例，并读取 v1-v27。每条回流在原有模型边界内增加 8 个状态。
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.zh-CN.md](LIQUID_FUEL_RETURN.zh-CN.md)
+
+## 保留的版本 27
+
+资产 v27 保留油箱数据和补给选择，并读取 v1-v26。每个油箱在原有边界内增加 4 个报告状态。独立湿态交换、耗尽压力/轴能解析解、回流混合、完整账本、回滚、独立分支与无分配步进均有检查。
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.zh-CN.md](LIQUID_FUEL_TANK.zh-CN.md)
+
+## 保留的版本 26
+
+编码器写入 `power.asset.v26`，读取 v1-v26。计数为 38 个 int32（152 bytes）；头部为 230 + UTF-8 名称长度 bytes。种类 39 是 `liquid_rail_feed`，指纹标签为 30。24 bytes 记录保存组件索引、喷射器/泵 ID 和源温度量。检查类型覆盖与燃轨/泵的独占归属；重签名的 v25 降级拒绝新种类。
+
+## 保留的版本 25
+
+编码器写入 `power.asset.v25`，可读取 v1-v25。计数表包含 37 个 int32（148 bytes）；头部为 226 + UTF-8 名称长度 bytes。种类 38 为 `at_controller`，指纹标签为 29。每条记录包含 208 固定 bytes，加上每支路 12 bytes。支路数量为 5 或 6，另行声明有界总数。类型覆盖、时钟、单位、归属和拓扑均需检查。重新签署摘要的 v24 降级会拒绝新种类。
+
+## 保留的版本 24
 
 编码器写出 `power.asset.v24`;版本 1 到 24 仍可读取。计数表与记录大小仍是 v23 的那些。种类 37 是 `carrier_gear`:其基线速比有限、有符号且非零;其 8 字节齿轮扩展保留元件索引与彼此不同的运动行星架。带类型的计数覆盖每一个行星架啮合。重新封装摘要的 v23 降级会拒绝这个新种类。
 

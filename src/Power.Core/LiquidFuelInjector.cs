@@ -103,7 +103,7 @@ public sealed class CompliantLiquidRail
 }
 
 internal sealed record CompiledLiquidInjector(int Component, int Film, CompiledInjector Meter,
-    CompliantLiquidRail Rail, double SupplyTemperature, double SpecificThermalEnergy, double HeatingValue, CompiledNeedle? Needle = null);
+    CompliantLiquidRail Rail, double SupplyTemperature, double SpecificThermalEnergy, double HeatingValue, CompiledNeedle? Needle = null, int PressureNode = -1);
 
 internal sealed class LiquidInjectorState(int count)
 {
@@ -147,7 +147,7 @@ internal sealed class LiquidFuelInjectorSolver(CompiledModel model, FuelFilmSolv
     internal void BeginInterval() => ReceiverWork = 0;
 
     internal bool Advance(LiquidInjectorState state, FuelFilmState filmState, double[] dynamics,
-        double[] gasEnergy, double[] inputs, double duration, bool reverse = false)
+        double[] gasEnergy, double[] inputs, double duration, bool reverse = false, HydraulicState? hydraulics = null, LiquidFeedState? feedState = null)
     {
         for (int slot = 0; slot < model.LiquidFuelInjectors.Length; ++slot)
         {
@@ -156,17 +156,24 @@ internal sealed class LiquidFuelInjectorSolver(CompiledModel model, FuelFilmSolv
             if (!state.Quota.Prepare(i, injector.Meter, dynamics, inputs[injector.Component], duration,
                 out double opening, out double rateLimit)) return false;
             double ceiling = rateLimit * duration;
-            if (injector.Needle is { } needle) { opening = needle.Opening(dynamics); ceiling = injector.Rail.InitialMassKilograms; }
+            if (injector.Needle is { } needle) { opening = needle.Opening(dynamics); ceiling = model.RailSample(i,state,hydraulics).MassKilograms; }
             if (opening == 0) continue;
             var film = model.FuelFilms[injector.Film];
             double volume = model.Gas!.VolumeAt(film.Gas, dynamics);
             double pressure = (model.Gas.Gases[film.Gas].Gamma - 1) * gasEnergy[film.Gas] / volume;
-            var rail = injector.Rail.StateAfterDelivery(state.Quota.Total[i]);
+            var rail = model.RailSample(i,state,hydraulics);
             if (!injector.Rail.TryAdvance(rail, pressure, duration * opening, ceiling, out var transfer)) return false;
             double mass = transfer.DeliveredMassKilograms;
             if (!state.Quota.Accept(i, mass, enforceQuota: injector.Needle is null)) return false;
             filmState.Mass[injector.Film] += mass;
-            filmState.Energy[injector.Film] += mass * injector.SpecificThermalEnergy;
+            double caloric=injector.PressureNode<0?mass*injector.SpecificThermalEnergy:mass==0?0:mass*feedState!.RailEnergy[i]/rail.MassKilograms;
+            filmState.Energy[injector.Film] += caloric;
+            if(injector.PressureNode>=0)
+            {
+                Numeric.Accumulate(-caloric,ref feedState!.RailEnergy[i],ref feedState.RailCorrection[i]);
+                hydraulics!.Pressure[injector.PressureNode]=transfer.Rail.PressurePascals;
+                Numeric.Accumulate(-mass/injector.Rail.DensityKilogramsPerCubicMeter,ref hydraulics.VolumeIn,ref hydraulics.VolumeCorrection);
+            }
             films.AddHeat(film.Wall, film.WallCapacity, transfer.NozzleHeatJoules);
             Numeric.Accumulate(transfer.SourcePressureWorkJoules, ref state.SourceWork[i], ref state.SourceCorrection[i]);
             Numeric.Accumulate(transfer.ReceiverPressureWorkJoules, ref state.ReceiverWork[i], ref state.ReceiverCorrection[i]);

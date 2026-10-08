@@ -58,12 +58,94 @@ internal sealed class HydraulicSolver
     private readonly Factorization _factor;
     internal readonly double[] MidPressure, WallHeat;
     internal double BoundaryWork, RejectedHeat;
+    internal int PressureCount => _mid.Length;
+    private readonly double[] _headVolume, _headEnergy, _headGamma, _headTransfer, _restrictionSlopes;
+    internal int PumpInlet(int pump)
+    {
+        int headspace = _model.HeadspaceByPump[pump];
+        var c = _model.Components[_model.PumpComponents[pump]];
+        return headspace >= 0 ? _model.HydraulicCount + headspace : c.C < 0 ? -1 : _model.Nodes[c.C].Index;
+    }
+    private int RestrictionOutlet(int restriction)
+    {
+        int headspace = _model.HeadspaceByRestriction[restriction];
+        var c = _model.Components[_model.HydraulicComponents[restriction]];
+        return headspace >= 0 ? _model.HydraulicCount + headspace : c.B < 0 ? -1 : _model.Nodes[c.B].Index;
+    }
+    internal void PrepareHeadspaces(LiquidTankState tanks, double[] energy)
+    {
+        for (int i = 0; i < _model.TankHeadspaces.Length; ++i)
+        {
+            var h = _model.TankHeadspaces[i];
+            _headVolume[i] = h.Geometry.GasVolumeCubicMeters(tanks.Mass[h.Tank]);
+            _headEnergy[i] = energy[h.Gas]; _headGamma[i] = _model.Gas!.Gases[h.Gas].Gamma;
+        }
+    }
+    internal void InitialHeadspacePressures(double[] values, int offset)
+    {
+        for (int i = 0; i < _headVolume.Length; ++i)
+            values[offset + _model.HydraulicCount + i] = (_headGamma[i] - 1) * _headEnergy[i] / _headVolume[i];
+    }
+    internal bool CommitHeadspaces(LiquidTankState tanks, double[] energy)
+    {
+        for (int i = 0; i < _model.TankHeadspaces.Length; ++i)
+        {
+            var h = _model.TankHeadspaces[i];
+            double volume = h.Geometry.GasVolumeCubicMeters(tanks.Mass[h.Tank]);
+            double expected = _headVolume[i] + _headTransfer[i];
+            if (volume <= 0 || volume > h.Geometry.CapacityCubicMeters ||
+                Math.Abs(volume - expected) > 128 * GearReference.Epsilon * h.Geometry.CapacityCubicMeters ||
+                !LiquidTankHeadspace.TryPressureWork(_headVolume[i], _headTransfer[i], _headEnergy[i], _headGamma[i], out var work)) return false;
+            energy[h.Gas] += work.GasEnergyChangeJoules;
+            Numeric.Accumulate(-work.GasEnergyChangeJoules, ref tanks.HeadspaceWork![h.Tank], ref tanks.WorkCorrection![h.Tank]);
+        }
+        return true;
+    }
+    internal double RestrictionVolume(int slot, double duration) => duration * _rates[slot];
+    internal double RestrictionLoss(int slot, double duration)
+    {
+        var c = _model.Components[_model.HydraulicComponents[slot]];
+        int outlet = RestrictionOutlet(slot);
+        return duration * _rates[slot] * (MidPressure[_model.Nodes[c.A].Index] - (outlet < 0 ? c.P2 : MidPressure[outlet]));
+    }
+    private readonly double[] _liquidSupplyVolume;
+    private double _liquidSupplyDuration;
+    internal void PrepareLiquidSupply(LiquidTankState state, double duration)
+    {
+        _liquidSupplyDuration = duration;
+        Array.Fill(_liquidSupplyVolume, double.PositiveInfinity);
+        foreach (var feed in _model.LiquidFeeds)
+            if (feed.Tank >= 0) _liquidSupplyVolume[_model.Components[feed.Pump].Index] = state.Mass[feed.Tank] / feed.Density;
+    }
+    internal double PumpVolume(int pump, double speed, double duration)
+    {
+        double ordinary = duration * _model.Components[_model.PumpComponents[pump]].P0 * speed;
+        return Math.Min(ordinary, _liquidSupplyVolume[pump]);
+    }
+    internal double PumpFlowLaw(int pump, double speed, out double effectiveDisplacement, out double displacementSlope, out double flowSlope)
+    {
+        double displacement = _model.Components[_model.PumpComponents[pump]].P0;
+        double limit = _liquidSupplyVolume[pump];
+        if (speed >= 0 && !double.IsPositiveInfinity(limit) && (speed == 0 && limit == 0 || displacement * speed > limit / _liquidSupplyDuration))
+        {
+            double flow = limit / _liquidSupplyDuration;
+            effectiveDisplacement = speed == 0 ? 0 : flow / speed;
+            displacementSlope = speed == 0 ? 0 : -effectiveDisplacement / speed;
+            flowSlope = 0; return flow;
+        }
+        effectiveDisplacement = flowSlope = displacement; displacementSlope = 0;
+        return displacement * speed;
+    }
     internal HydraulicSolver(CompiledModel model)
     {
-        _model = model; int count = model.HydraulicCount;
+        _model = model; int count = model.HydraulicCount + model.TankHeadspaces.Length;
+        _headVolume = new double[model.TankHeadspaces.Length]; _headEnergy = new double[_headVolume.Length];
+        _headGamma = new double[_headVolume.Length]; _headTransfer = new double[_headVolume.Length];
+        _restrictionSlopes = new double[model.HydraulicComponents.Length];
+        _liquidSupplyVolume = new double[model.PumpComponents.Length]; Array.Fill(_liquidSupplyVolume, double.PositiveInfinity);
         _compliance = new double[count];
         foreach (var node in model.Nodes) if (node.Domain == Domain.Hydraulic) _compliance[node.Index] = node.Storage;
-        _mid = new double[count]; _trial = new double[count]; _next = new double[count]; _residual = new double[count];
+        _mid = new double[count]; _trial = new double[count]; _next = new double[model.HydraulicCount]; _residual = new double[count];
         _trialResidual = new double[count]; _change = new double[count]; MidPressure = new double[count];
         _rates = new double[model.HydraulicComponents.Length]; WallHeat = new double[model.ThermalCount];
         _meteringSlopes = new double[model.HasSpoolValves ? model.HydraulicComponents.Length : 0];
@@ -73,12 +155,13 @@ internal sealed class HydraulicSolver
         double[]? coordinates = null, int pistonOffset = 0, double[]? dynamics = null)
     {
         if (derivatives) Array.Clear(_jacobian, 0, _jacobian.Length);
-        for (int i = 0; i < pressures.Length; ++i)
+        Array.Clear(residual, old.Length, residual.Length - old.Length);
+        for (int i = 0; i < old.Length; ++i)
         { residual[i] = pressures[i] - old[i]; if (derivatives) _jacobian[i, i] = 1; }
         for (int k = 0; k < _rates.Length; ++k)
         {
             int index = _model.HydraulicComponents[k]; var c = _model.Components[index];
-            int a = _model.Nodes[c.A].Index, b = c.B < 0 ? -1 : _model.Nodes[c.B].Index;
+            int a = _model.Nodes[c.A].Index, b = RestrictionOutlet(k);
             double difference = pressures[a] - (b < 0 ? c.P2 : pressures[b]);
             double rate, slope;
             if (_model.SpoolValves[index] is { } metering)
@@ -87,15 +170,16 @@ internal sealed class HydraulicSolver
                 if (!metering.Law.Evaluate(difference, position, out rate, out slope, out _meteringSlopes[k])) return double.PositiveInfinity;
             }
             else if (!_model.HydraulicLaws[index]!.Evaluate(difference, c.Kind == ComponentKind.HydraulicRelief ? 1 : inputs[index], out rate, out slope)) return double.PositiveInfinity;
-            _rates[k] = rate;
-            double left = .5 * duration / _compliance[a], right = b < 0 ? 0 : .5 * duration / _compliance[b];
-            residual[a] += left * rate; if (b >= 0) residual[b] -= right * rate;
+            _rates[k] = rate; _restrictionSlopes[k] = slope;
+            double left = .5 * duration / _compliance[a], right = b < 0 || b >= old.Length ? 0 : .5 * duration / _compliance[b];
+            residual[a] += left * rate; if (b >= 0 && b < old.Length) residual[b] -= right * rate;
             if (!derivatives) continue;
             _jacobian[a, a] += left * slope;
-            if (b >= 0) { _jacobian[a, b] -= left * slope; _jacobian[b, a] -= right * slope; _jacobian[b, b] += right * slope; }
+            if (b >= 0) _jacobian[a, b] -= left * slope;
+            if (b >= 0 && b < old.Length) { _jacobian[b, a] -= right * slope; _jacobian[b, b] += right * slope; }
         }
         double norm = 0;
-        for (int i = 0; i < pressures.Length; ++i)
+        for (int i = 0; i < old.Length; ++i)
         {
             if (!Numeric.Finite(residual[i]) || !Numeric.Finite(pressures[i])) return double.PositiveInfinity;
             double tolerance = 2e-7 + 64 * GearReference.Epsilon * (Math.Abs(pressures[i]) + Math.Abs(old[i]));
@@ -154,15 +238,15 @@ internal sealed class HydraulicSolver
         for (int k = 0; k < _model.PumpComponents.Length; ++k)
         {
             var c = _model.Components[_model.PumpComponents[k]];
-            int outlet = _model.Nodes[c.B].Index, inlet = c.C < 0 ? -1 : _model.Nodes[c.C].Index;
-            double flow = c.P0 * values[pumpOffset + k];
-            double delivery = .5 * duration / _compliance[outlet], intake = inlet < 0 ? 0 : .5 * duration / _compliance[inlet];
+            int outlet = _model.Nodes[c.B].Index, inlet = PumpInlet(k);
+            double flow = PumpFlowLaw(k, values[pumpOffset + k], out _, out _, out double flowSlope);
+            double delivery = .5 * duration / _compliance[outlet], intake = inlet < 0 || inlet >= old.Length ? 0 : .5 * duration / _compliance[inlet];
             residual[offset + outlet] -= delivery * flow;
-            if (inlet >= 0) residual[offset + inlet] += intake * flow;
+            if (inlet >= 0 && inlet < old.Length) residual[offset + inlet] += intake * flow;
             if (jacobian is not null)
             {
-                jacobian[offset + outlet, pumpOffset + k] -= delivery * c.P0;
-                if (inlet >= 0) jacobian[offset + inlet, pumpOffset + k] += intake * c.P0;
+                jacobian[offset + outlet, pumpOffset + k] -= delivery * flowSlope;
+                if (inlet >= 0 && inlet < old.Length) jacobian[offset + inlet, pumpOffset + k] += intake * flowSlope;
             }
         }
         for (int k = 0; k < _model.PistonComponents.Length; ++k)
@@ -173,11 +257,34 @@ internal sealed class HydraulicSolver
             if (jacobian is not null)
             { jacobian[offset + front, pistonOffset + k] += frontScale; if (back >= 0) jacobian[offset + back, pistonOffset + k] -= backScale; }
         }
+        for (int h = 0; h < _model.TankHeadspaces.Length; ++h)
+        {
+            var headspace = _model.TankHeadspaces[h];
+            double withdrawal = duration * PumpFlowLaw(headspace.Pump, values[pumpOffset + headspace.Pump], out _, out _, out double flowSlope);
+            foreach (int route in _model.ReturnsByFeed[headspace.Feed])
+                withdrawal -= duration * _rates[_model.Components[_model.LiquidReturns[route].Valve].Index];
+            if (Math.Abs(withdrawal) > .25 * _headVolume[h] || !LiquidTankHeadspace.TryPressureWork(_headVolume[h], withdrawal, _headEnergy[h], _headGamma[h], out var work)) return double.PositiveInfinity;
+            int row = offset + _model.HydraulicCount + h;
+            residual[row] = values[row] - work.MeanPressurePascals; _headTransfer[h] = withdrawal;
+            if (jacobian is not null)
+            {
+                jacobian[row, row] = 1;
+                jacobian[row, pumpOffset + headspace.Pump] = -work.PressureDerivativePascalsPerCubicMeter * duration * flowSlope;
+                foreach (int route in _model.ReturnsByFeed[headspace.Feed])
+                {
+                    var valve = _model.Components[_model.LiquidReturns[route].Valve];
+                    double slope = work.PressureDerivativePascalsPerCubicMeter * duration * _restrictionSlopes[valve.Index];
+                    jacobian[row, offset + _model.Nodes[valve.A].Index] += slope;
+                    jacobian[row, row] -= slope;
+                }
+            }
+        }
         double norm = 0;
         for (int i = 0; i < _mid.Length; ++i)
         {
             if (!Numeric.Finite(residual[offset + i])) return double.PositiveInfinity;
-            norm = Math.Max(norm, Math.Abs(residual[offset + i]) / (2e-7 + 64 * GearReference.Epsilon * (Math.Abs(_mid[i]) + Math.Abs(old[i]))));
+            double previous = i < old.Length ? old[i] : (_headGamma[i - old.Length] - 1) * _headEnergy[i - old.Length] / _headVolume[i - old.Length];
+            norm = Math.Max(norm, Math.Abs(residual[offset + i]) / (2e-7 + 64 * GearReference.Epsilon * (Math.Abs(_mid[i]) + Math.Abs(previous))));
         }
         return norm;
     }
@@ -200,7 +307,7 @@ internal sealed class HydraulicSolver
         {
             var c = _model.Components[_model.PumpComponents[k]];
             int outlet = _model.Nodes[c.B].Index, inlet = c.C < 0 ? -1 : _model.Nodes[c.C].Index;
-            double transfer = duration * c.P0 * shaftMidpoint![_model.Nodes[c.A].Index + 1];
+            double transfer = PumpVolume(k, shaftMidpoint![_model.Nodes[c.A].Index + 1], duration);
             _next[outlet] += transfer / _compliance[outlet]; if (inlet >= 0) _next[inlet] -= transfer / _compliance[inlet];
         }
         foreach (int index in _model.PistonComponents)
@@ -209,35 +316,40 @@ internal sealed class HydraulicSolver
             double travel = duration * shaftMidpoint![_model.Nodes[c.A].Index + 1];
             _next[front] -= c.P0 * travel / _compliance[front]; if (back >= 0) _next[back] += c.P1 * travel / _compliance[back];
         }
-        for (int i = 0; i < _mid.Length; ++i)
+        for (int i = 0; i < _next.Length; ++i)
         {
             if (!Numeric.Finite(_next[i]) || _next[i] < 0) return false; // No hidden cavitation clamp.
             MidPressure[i] = .5 * state.Pressure[i] + .5 * _next[i];
             double tolerance = 2e-7 + 64 * GearReference.Epsilon * (Math.Abs(_mid[i]) + Math.Abs(state.Pressure[i]));
             if (Math.Abs(MidPressure[i] - _mid[i]) > 4 * tolerance) return false;
         }
+        for (int i = _next.Length; i < _mid.Length; ++i) MidPressure[i] = _mid[i];
         double volumeIn = 0;
         for (int k = 0; k < _rates.Length; ++k)
         {
             var c = _model.Components[_model.HydraulicComponents[k]];
-            int a = _model.Nodes[c.A].Index, b = c.B < 0 ? -1 : _model.Nodes[c.B].Index;
+            int a = _model.Nodes[c.A].Index, b = RestrictionOutlet(k);
             double transfer = duration * _rates[k], difference = MidPressure[a] - (b < 0 ? c.P2 : MidPressure[b]);
             double heat = transfer * difference;
             if (!Numeric.Finite(heat) || heat < 0) return false;
-            if (b < 0) { volumeIn -= transfer; BoundaryWork -= transfer * c.P2; }
-            if (c.Heat < 0) RejectedHeat += heat; else WallHeat[_model.Nodes[c.Heat].Index] += heat;
+            if (b < 0 || b >= _next.Length) volumeIn -= transfer;
+            if (b < 0) BoundaryWork -= transfer * c.P2;
+            double externalHeat = (1 - _model.ReturnHeatFractions[_model.HydraulicComponents[k]]) * heat;
+            if (c.Heat < 0) RejectedHeat += externalHeat; else WallHeat[_model.Nodes[c.Heat].Index] += externalHeat;
             state.Flow[k] += transfer; state.Power[k] += heat;
             Numeric.Accumulate(heat, ref state.Heat[k], ref state.Correction[k]);
         }
         for (int k = 0; k < _model.PumpComponents.Length; ++k)
         {
             var c = _model.Components[_model.PumpComponents[k]];
-            int outlet = _model.Nodes[c.B].Index, inlet = c.C < 0 ? -1 : _model.Nodes[c.C].Index;
-            double flow = c.P0 * shaftMidpoint![_model.Nodes[c.A].Index + 1];
+            int outlet = _model.Nodes[c.B].Index, inlet = PumpInlet(k);
+            double speed = shaftMidpoint![_model.Nodes[c.A].Index + 1];
+            double flow = PumpFlowLaw(k, speed, out double displacement, out _, out _);
             double pin = inlet < 0 ? c.P2 : MidPressure[inlet], difference = MidPressure[outlet] - pin;
             double work = duration * flow * difference;
-            if (inlet < 0) { volumeIn += duration * flow; BoundaryWork += duration * flow * pin; }
-            state.PumpFlow[k] += duration * flow; state.PumpTorque[k] -= duration * c.P0 * difference; state.PumpPower[k] += work;
+            if (inlet < 0 || inlet >= _next.Length) volumeIn += duration * flow;
+            if (inlet < 0) BoundaryWork += duration * flow * pin;
+            state.PumpFlow[k] += duration * flow; state.PumpTorque[k] -= duration * displacement * difference; state.PumpPower[k] += work;
             Numeric.Accumulate(work, ref state.PumpWork[k], ref state.PumpCorrection[k]);
         }
         foreach (int index in _model.PistonComponents)

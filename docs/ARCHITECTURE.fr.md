@@ -244,3 +244,49 @@ Les engrènements de porte-satellites prennent en charge des rapports relatifs s
 ## Assemblage d'actionnement hydraulique partagé
 
 L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibles d'embrayage déclarées en embrayages réels à piston/contact, restrictions de remplissage/vidange et ressorts de rappel alimentés par une pompe réversible partagée, des fuites/traînée et une décharge. Les aires avant/arrière explicites conservent l'inventaire balayé et le travail de pression de référence. Les définitions ordinaires immuables préservent la résolution conjointe existante pression/mouvement/frottement, la sémantique portable v24 et l'état atomique complet. Les calendriers de vanne prescrits restent séparés du retour/contrôle AT et de l'acceptation mesurée du corps de vanne.
+
+## Régulation hydraulique de boîte AT
+
+`at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
+
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v29 conserve routes, gains et horloges et lit v1-v28.
+
+Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
+
+[AT_CONTROL.fr.md](AT_CONTROL.fr.md)
+
+## Rampe de carburant liquide alimentée par pompe
+
+`liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
+
+Le format v29 conserve les liens et la température source et lit v1-v28. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
+
+[PUMP_FED_FUEL.fr.md](PUMP_FED_FUEL.fr.md)
+
+## Réservoir fini de carburant liquide
+
+`liquid_fuel_tank` stocke masse liquide finie et énergie calorique avec la densité, référence thermique du film et pouvoir calorifique de l'injecteur associé. L'alimentation le choisit via `tank_component` et omet `supply_temperature`. Chaque réservoir appartient à une alimentation compatible.
+
+Énergies calorique et chimique du réservoir entrent dans le stockage complet. Le transfert interne n'ajoute aucune matière ni énergie chimique externe. La pression d'entrée prescrite garde sa frontière de travail de pression. Admission/échappement gazeux peuvent encore transporter de l'énergie chimique.
+
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
+
+[LIQUID_FUEL_TANK.fr.md](LIQUID_FUEL_TANK.fr.md)
+
+## Retour suivi de décharge de carburant
+
+`liquid_rail_return` associe une alimentation à un `hydraulic_relief` unidirectionnel exclusif. La soupape relie la rampe à la même pression d'entrée prescrite que la pompe. Toute voie doit être enregistrée ; ports incompatibles, propriété dupliquée et voies non suivies sont rejetés.
+
+`fluid_heat_fraction` choisit explicitement la part [0,1] des pertes transportée par le carburant de retour. Le reste suit le chemin thermique déclaré. Le mélange simultané rampe/réservoir conserve les bilans matière, chimie, travail de pression et chaleur. Les retours à source externe sortent matière et énergie par la frontière.
+
+[LIQUID_FUEL_RETURN.fr.md](LIQUID_FUEL_RETURN.fr.md)
+
+## Géométrie du réservoir et espace gazeux fini
+
+`liquid_fuel_tank.parameters.headspace` déclare `capacity` en `m3` ou `l` et `gas_node`. Le gaz omet `storage` : son volume vaut `capacity - liquid_mass / density`, avec un seul propriétaire et un volume positif. Pompe et retour utilisent une pression prescrite nulle car le gaz fini détermine la pression d'entrée.
+
+Le solveur couplé échange le travail de pression entre arbre, rampe et gaz sans source externe. Orifices gazeux et liens thermiques fournissent ventilation et chaleur explicites. Lire `pressure`, `fill_fraction`, `hydraulic_work` cumulé signé et masse, énergie, volume du gaz. Dose, liquide livré, évaporation et combustion restent distincts.
+
+[Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)

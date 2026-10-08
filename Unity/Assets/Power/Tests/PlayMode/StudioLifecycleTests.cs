@@ -234,6 +234,30 @@ namespace Power.Studio.Tests
         [UnityTest]
         public IEnumerator FiredHydraulicRavigneauxImportsAndReplays() => PumpAssemblyReplay("FiredHydraulicRavigneaux", "Piston actuator 21");
 
+        [UnityTest]
+        public IEnumerator ControlledATImportsAndReplays() => PumpAssemblyReplay("ControlledHydraulicRavigneaux", "AT feedback controller 1400");
+
+        [UnityTest]
+        public IEnumerator ControlledFiredATImportsAndReplays() => PumpAssemblyReplay("ControlledFiredHydraulicRavigneaux", "AT feedback controller 1400");
+
+        [UnityTest]
+        public IEnumerator PumpFedFuelImportsAndReplays() => PumpAssemblyReplay("PumpFedLiquidCylinder", "Liquid rail feed 1511");
+
+        [UnityTest]
+        public IEnumerator PumpFedNeedleImportsAndReplays() => PumpAssemblyReplay("PumpFedNeedleCylinder", "Liquid rail feed 1511");
+
+        [UnityTest]
+        public IEnumerator FiniteTankFuelImportsAndReplays() => PumpAssemblyReplay("FiniteTankLiquidCylinder", "Liquid fuel tank 1513");
+
+        [UnityTest]
+        public IEnumerator FiniteTankNeedleImportsAndReplays() => PumpAssemblyReplay("FiniteTankNeedleCylinder", "Liquid fuel tank 1513");
+
+        [UnityTest]
+        public IEnumerator RecirculatingFuelImportsAndReplays() => PumpAssemblyReplay("RecirculatingLiquidCylinder", "Liquid rail return 1515");
+
+        [UnityTest]
+        public IEnumerator RecirculatingNeedleImportsAndReplays() => PumpAssemblyReplay("RecirculatingNeedleCylinder", "Liquid rail return 1515");
+
         private IEnumerator PumpAssemblyReplay(string resource, string pumpName)
         {
             _host = new GameObject(resource + " test");

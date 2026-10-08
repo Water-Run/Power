@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — ヘッドレス実験"]
     mcp["Power.Mcp — 12 個の stdio MCP ツール"]
-    assets["Power.Assets — .powerasset v24"]
+    assets["Power.Assets — .powerasset v29"]
     unity["Unity 6.6 スタジオ — 3D ラボラトリー"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | モデル・制限・時間とリビジョンの規約を検索。ここから始めてください。 |
 | `get_model_schema` | `power.model.v1` の JSON Schema 2020-12 |
-| `get_example_model` | 編集可能な合成モデルと実験を取得(33 例) |
+| `get_example_model` | 編集可能な合成モデルと実験を取得(43 例) |
 | `validate_model` | 実行せずにモデルを検証。構造化された修復診断 |
 | `run_experiment` | 境界付きヘッドレス実行。バッチリプレイ・KPI・来歴付き |
 | `export_model_asset` | 移植可能な `.powerasset` をエクスポート |
@@ -147,10 +147,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > すべてのサンプルパラメーターは `unverified` です。研究値であり、キャリブレーション測定ではありません。
 
-以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v24` を使い、旧アセットのリーダーは保持されます。
+以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v29` を使い、旧アセットのリーダーは保持されます。
 
 <details>
-<summary>利用可能なラボラトリー(34)</summary>
+<summary>利用可能なラボラトリー(44)</summary>
 
 | 例名(`get_example_model`) | ラボラトリー | 検証内容 |
 |---|---|---|
@@ -188,8 +188,24 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `ravigneaux-transmission` | `assets/labs/ravigneaux-transmission.power.json` | 4 レンジ複合遊星の昇降段引き継ぎ |
 | `fired-ravigneaux-converter` | `assets/labs/fired-ravigneaux-converter.power.json` | 燃焼エンジン、コンバーター/ロックアップと複合トランスミッション |
 | `controlled-fired-dual-clutch` | `assets/labs/controlled-fired-dual-clutch.power.json` | 燃焼エンジン、サンプリング DCT 制御と完全なエビデンス |
+| `controlled-hydraulic-ravigneaux` | `assets/labs/controlled-hydraulic-ravigneaux.power.json` | サンプル圧力制御と実際の変速段/ロックアップ確認 |
+| `controlled-fired-hydraulic-ravigneaux` | `assets/labs/controlled-fired-hydraulic-ravigneaux.power.json` | 燃焼エンジンとフィードバック制御の油圧 AT 変速 |
+| `pump-fed-liquid-cylinder` | `assets/labs/pump-fed-liquid-cylinder.power.json` | 軸駆動レール補給、熱混合と完全な収支 |
+| `pump-fed-needle-cylinder` | `assets/labs/pump-fed-needle-cylinder.power.json` | ポンプ供給レール、物理ニードルと投与制御 |
+| `finite-tank-liquid-cylinder` | `assets/labs/finite-tank-liquid-cylinder.power.json` | 有限タンクの枯渇、空運転と内部燃料移送 |
+| `finite-tank-needle-cylinder` | `assets/labs/finite-tank-needle-cylinder.power.json` | 有限供給、物理ニードルと蒸発 |
+| `vented-tank-liquid-cylinder` | `assets/labs/vented-tank-liquid-cylinder.power.json` | 有限ヘッドスペース、内部圧力仕事と制御通気 |
+| `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | 有限ヘッドスペースと通気、物理ニードル動特性 |
+| `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | リリーフ戻り、タンク/レール同時混合と損失熱 |
+| `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | 燃料循環、物理ニードルと完全な再生 |
 
 </details>
+
+全ラボを JSON で表示します：
+
+```sh
+dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll list-labs
+```
 
 `name` を付けて `get_example_model` を要求するか、直接実行します:
 
@@ -203,7 +219,7 @@ dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.
 
 完全なパワートレインは目標であって現状ではありません。未解決:
 
-- 完全なエンジン挙動:吸排気モデリング、液体ポンプ/補給、精密化した磁気/電子/噴霧挙動、圧力依存の相挙動、より豊富な熱化学、点火制御。
+- 完全なエンジン挙動：スロッシング/静水圧形状、圧力依存相平衡とキャビテーション、実測ポンプ充填/調圧、精密な磁気/電子/噴霧挙動、点火制御、吸排気動態、機械損失とより詳細な熱化学。
 - 完全な DCT アクチュエーション、AT トポロジーとトランスミッション制御(ECU/TCU)。
 - 実測のポンプ損失/制御マップ、実測の電池化学と BMS、実測のバルブ/アキュムレーター動特性。
 - キャリブレーション済みパワートレイン。
@@ -219,7 +235,7 @@ EA211 DJS + DQ200 と PSA EC5 + AT8 の OEM リサーチは [assets/samples](ass
 | プロジェクト | [アーキテクチャ](docs/ARCHITECTURE.ja.md) · [ロードマップ](docs/ROADMAP.ja.md) · [開発ステータス](docs/DEVELOPMENT_STATUS.ja.md) · [検証記録](docs/VALIDATION.ja.md) · [エンジン再開ノート](docs/NEXT_ENGINE_STEP.ja.md) |
 | インターフェース | [エージェント API](docs/AGENT_API.ja.md) · [アセット形式](docs/ASSET_FORMAT.ja.md) · [ネイティブ Zig 境界](docs/NATIVE_ZIG.ja.md) |
 | エンジンとガス | [密閉気筒](docs/SEALED_CYLINDER.ja.md) · [ガスネットワーク](docs/GAS_NETWORK.ja.md) · [ガス交換](docs/GAS_EXCHANGE.ja.md) · [可動気筒](docs/MOVING_CYLINDER.ja.md) · [バルブタイミング](docs/VALVE_TIMING.ja.md) · [予混合燃焼](docs/PREMIXED_COMBUSTION.ja.md) |
-| 燃料と噴射 | [燃料計量](docs/FUEL_METERING.ja.md) · [燃料フィルム](docs/FUEL_FILM.ja.md) · [液体噴射](docs/LIQUID_FUEL_INJECTION.ja.md) · [ニードル駆動](docs/NEEDLE_ACTUATION.ja.md) · [クロージャ予測](docs/CLOSURE_PREDICTION.ja.md) |
+| 燃料と噴射 | [燃料計量](docs/FUEL_METERING.ja.md) · [燃料フィルム](docs/FUEL_FILM.ja.md) · [液体噴射](docs/LIQUID_FUEL_INJECTION.ja.md) · [ニードル駆動](docs/NEEDLE_ACTUATION.ja.md) · [クロージャ予測](docs/CLOSURE_PREDICTION.ja.md) · [タンク形状と有限ヘッドスペース](docs/TANK_HEADSPACE.ja.md) |
 | トランスミッション | [クラッチネットワーク](docs/CLUTCH_NETWORK.ja.md) · [クラッチ物理](docs/CLUTCH_PHYSICS.ja.md) · [歯車ネットワーク](docs/GEAR_NETWORK.ja.md) · [理想歯車](docs/IDEAL_GEARS.ja.md) · [コンバーター](docs/CONVERTER_NETWORK.ja.md) · [デュアルクラッチトランスミッション](docs/DUAL_CLUTCH_TRANSMISSION.ja.md) · [DCT 制御](docs/DCT_CONTROL.ja.md) · [Ravigneaux トランスミッション](docs/RAVIGNEAUX_TRANSMISSION.ja.md) · [分解遊星](docs/RESOLVED_PLANETS.ja.md) |
 | 油圧 | [油圧ネットワーク](docs/HYDRAULIC_NETWORK.ja.md) · [ポンプ](docs/HYDRAULIC_PUMP.ja.md) · [ピストン](docs/HYDRAULIC_PISTON.ja.md) · [スプール](docs/HYDRAULIC_SPOOL.ja.md) · [ガスアキュムレーター](docs/GAS_PISTON.ja.md) · [AT 駆動](docs/AT_HYDRAULIC_ACTUATION.ja.md) |
 

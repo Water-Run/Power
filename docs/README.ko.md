@@ -31,7 +31,7 @@ flowchart LR
 | 문서 | 내용 |
 |---|---|
 | [에이전트 API](AGENT_API.ko.md) | MCP 도구, 개정, 오류, 작업 순서 |
-| [자산 형식](ASSET_FORMAT.ko.md) | `.powerasset` v24와 v1부터 v23까지의 판독기 |
+| [자산 형식](ASSET_FORMAT.ko.md) | `.powerasset` v29와 v1부터 v28까지의 판독기 |
 | [네이티브 Zig 경계](NATIVE_ZIG.ko.md) | 보관된 Zig 프로토타입과 버전이 있는 ABI |
 
 ## 엔진과 연료
@@ -49,6 +49,7 @@ flowchart LR
 | [액체 분사](LIQUID_FUEL_INJECTION.ko.md) | 필름에 공급하는 유한 컴플라이언트 액체 레일 |
 | [니들 구동](NEEDLE_ACTUATION.ko.md) | 위치 의존 솔레노이드, 니들 질량, 닫힘 지연과 반발 |
 | [폐쇄 예측](CLOSURE_PREDICTION.ko.md) | 전압 제거를 계획하는 유계 플랜트 리플레이 |
+| [탱크 형상과 유한 헤드스페이스](TANK_HEADSPACE.ko.md) | 강체 용량, 유한 기체 압력 일과 명시적 통기 |
 
 ## 변속기
 

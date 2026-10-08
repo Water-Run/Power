@@ -12,7 +12,14 @@ try
 {
     if (args.Length == 0 || args[0] is "--help" or "-h")
     {
-        Console.WriteLine("Power! model lab (.NET 10 / C# 14)\nUsage: power <model.power.json> [--output report.json] [--step-ns integer]\n       power export <model.power.json> --output model.powerasset [--name title] [--step-ns integer]");
+        Console.WriteLine("Power! model lab (.NET 10 / C# 14)\nUsage: power <model.power.json> [--output report.json] [--step-ns integer]\n       power export <model.power.json> --output model.powerasset [--name title] [--step-ns integer]\n       power list-labs");
+        return 0;
+    }
+    if (args[0] == "list-labs")
+    {
+        if (args.Length != 1) throw new ArgumentException("Usage: power list-labs");
+        Console.WriteLine(JsonSerializer.Serialize(new { schema = LaboratoryCatalog.Schema, calibration = "unverified",
+            laboratories = LaboratoryCatalog.Entries }, options));
         return 0;
     }
     bool export = args[0] == "export";

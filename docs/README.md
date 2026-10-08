@@ -31,7 +31,7 @@ flowchart LR
 | Document | What it is |
 |---|---|
 | [Agent API](AGENT_API.md) | MCP tools, revisions, errors and the operation sequence |
-| [Asset format](ASSET_FORMAT.md) | `.powerasset` v24 and the readers for v1 through v23 |
+| [Asset format](ASSET_FORMAT.md) | `.powerasset` v29 and the readers for v1 through v28 |
 | [Native Zig boundary](NATIVE_ZIG.md) | The archived Zig prototypes and the versioned ABI |
 
 ## Engine and fuel
@@ -49,6 +49,7 @@ flowchart LR
 | [Liquid injection](LIQUID_FUEL_INJECTION.md) | Finite compliant liquid rail feeding a film |
 | [Needle actuation](NEEDLE_ACTUATION.md) | Position-dependent solenoid, needle mass, closing delay and rebound |
 | [Closure prediction](CLOSURE_PREDICTION.md) | Bounded plant replay that schedules voltage removal |
+| [Geometric tank and finite headspace](TANK_HEADSPACE.md) | Rigid tank capacity, finite gas pressure work and explicit venting |
 
 ## Transmission
 

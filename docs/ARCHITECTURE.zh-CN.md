@@ -244,3 +244,49 @@ CLI 与 MCP 共享气体文档、资产与实验语义。工作室读取同一�
 ## 共享液压驱动总成
 
 [AT 驱动总成](AT_HYDRAULIC_ACTUATION.zh-CN.md) 把 1..6 个声明的离合器目标降为真实的活塞/接触离合器、充/放节流与回位弹簧,由共享的可逆泵、泄漏/黏性阻力与泄压供能。显式的前/后面积保留扫过存量与参考压力功。不可变普通定义保留现有的联合压力/运动/摩擦求解、可移植 v24 语义与完整原子状态。预设阀门排程与 AT 反馈/控制以及实测阀体验收保持分开。
+
+## 液压 AT 反馈控制
+
+`at_controller` 接受 [-1,4] 范围内的整数目标挡位；零表示空挡。它管理五组充油/泄压阀以及可选的变矩器锁止支路。支路顺序为行星架输入、小太阳轮输入、大太阳轮输入、行星架制动、大太阳轮制动，最后是锁止。
+
+示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v29 保留支路、增益和时钟，并可读取 v1-v28。
+
+这是研究控制，参数仍为 `unverified`。协调 ECU 扭矩融合、详细传感器/阀模型、完整车辆故障及 OEM 标定仍待完成。托管和 Standard 检查不能证明实际 Unity Editor/Play/Player/IL2CPP 验收。
+
+[AT_CONTROL.zh-CN.md](AT_CONTROL.zh-CN.md)
+
+## 泵送液体燃油轨
+
+`liquid_rail_feed` 将液体喷射器与现有排量泵及显式质量/热边界配对。液压出口节点必须与燃轨的顺应性和初始绝对压力一致。配对泵和喷射器管理该压力节点；其他未计入的流体路径会被拒绝。
+
+资产 v29 保留补给连接和源温度，并读取 v1-v28。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
+
+该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、气液相平衡、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
+
+[PUMP_FED_FUEL.zh-CN.md](PUMP_FED_FUEL.zh-CN.md)
+
+## 有限液体燃油箱
+
+`liquid_fuel_tank` 使用配对喷射器的密度、油膜热参考和热值，存储有限液体质量及热能。补给通过 `tank_component` 选择它，并省略 `supply_temperature`。每个油箱属于一个燃料属性相同的补给。
+
+油箱热能和化学能进入完整储能账本。油箱到燃轨的传递不增加外部质量或化学供给。显式设定的泵入口压力保留其压力功边界。气体进气/排气仍可携带化学边界能量。
+
+该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、气液相平衡、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
+
+[LIQUID_FUEL_TANK.zh-CN.md](LIQUID_FUEL_TANK.zh-CN.md)
+
+## 可追踪的燃油泄压回流
+
+`liquid_rail_return` 将补给与独占的单向 `hydraulic_relief` 配对。阀连接燃轨与泵相同的设定入口压力。每条流体路径都须登记；不兼容端口、重复阀所有权和未追踪路径会被拒绝。
+
+`fluid_heat_fraction` 显式选择阀损失中随回流燃油携带的比例，范围为 [0,1]。剩余热量沿阀声明的热路径传递。燃轨/油箱联立热混合保持完整质量、化学、压力功和热账本。外部源模式则由回流跨边界带出质量与能量。
+
+[LIQUID_FUEL_RETURN.zh-CN.md](LIQUID_FUEL_RETURN.zh-CN.md)
+
+## 油箱几何与有限气相空间
+
+`liquid_fuel_tank.parameters.headspace` 声明单位为 `m3` 或 `l` 的 `capacity` 和 `gas_node`。气体节点省略 `storage`，其体积为 `capacity - liquid_mass / density`，必须有唯一所有者且保持为正。配对泵及泄压回流的设定储液器压力为零，由有限气体决定入口压力。
+
+耦合求解在轴、燃轨和气体之间交换压力功，不引入外部压力源。气体孔口和热连接提供显式通气及传热路径。读取油箱 `pressure`、`fill_fraction`、带符号累计 `hydraulic_work`，以及气相的质量、能量和体积。请求剂量、液体供给、蒸发和燃烧保持独立。
+
+[油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md)
