@@ -12,9 +12,9 @@ The examples `pump-fed-liquid-cylinder` and `pump-fed-needle-cylinder` retain ph
 
 ## Evidence and limits
 
-Asset v28 retains feed links and source temperature and reads v1-v27. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v29 retains feed links and source temperature and reads v1-v28. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
-Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
 ## Finite liquid fuel tank
 
@@ -22,7 +22,7 @@ Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/effi
 
 Tank caloric and chemical energy enter the complete stored-energy ledger. Tank-to-rail transfer adds no external mass or chemical supply. The explicit prescribed pump inlet pressure retains its pressure-work boundary. Gas inlet/exhaust can still carry chemical boundary energy.
 
-Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
 [LIQUID_FUEL_TANK.md](LIQUID_FUEL_TANK.md)
 
@@ -33,3 +33,11 @@ Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/effi
 `fluid_heat_fraction` explicitly selects the fraction in [0,1] of valve loss carried with returned fuel. The remaining heat follows the valve's declared heat path. Simultaneous rail/tank caloric mixing preserves the full mass, chemical, pressure-work and thermal ledgers. External-source returns instead carry mass and energy out through the boundary.
 
 [LIQUID_FUEL_RETURN.md](LIQUID_FUEL_RETURN.md)
+
+## Geometric tank and finite headspace
+
+`liquid_fuel_tank.parameters.headspace` declares `capacity` in `m3` or `l` and `gas_node`. The gas node omits `storage`: its volume is `capacity - liquid_mass / density`. It must have one owner and remain positive. The paired pump and relief return use zero prescribed reservoir pressure because the finite gas owns inlet pressure.
+
+The coupled solve exchanges shaft, rail and gas pressure work without an external pressure source. Gas orifices and heat links provide explicit vent/thermal paths. Read tank `pressure`, `fill_fraction` and signed cumulative `hydraulic_work`, plus headspace gas mass, energy and volume. Prescribed dose, delivered liquid, evaporation and burn remain separate.
+
+[Geometric tank and finite headspace](TANK_HEADSPACE.md)

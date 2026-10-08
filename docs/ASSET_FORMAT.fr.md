@@ -14,7 +14,25 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version courante 28
+## Version actuelle 29
+
+`liquid_fuel_tank.parameters.headspace` déclare `capacity` en `m3` ou `l` et `gas_node`. Le gaz omet `storage` : son volume vaut `capacity - liquid_mass / density`, avec un seul propriétaire et un volume positif. Pompe et retour utilisent une pression prescrite nulle car le gaz fini détermine la pression d'entrée.
+
+Les exemples `vented-tank-liquid-cylinder` et `vented-tank-needle-cylinder` utilisent réservoir 1513, gaz 1520 et entrée de ventilation 960. Asset v29 conserve la géométrie et lit v1-v28. Travail/dérivées analytiques, convergence ODE indépendante, bilans, rejeu portable/MCP, retour arrière et avancement sans allocation passent.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)
+
+## Version conservée 28
 
 `recirculating-liquid-cylinder` et `recirculating-needle-cylinder` gardent carburant fini, injection réelle, évaporation et aiguille facultative. v28 conserve liens et fraction et lit v1-v27. Chaque retour ajoute 8 états dans les mêmes bornes.
 

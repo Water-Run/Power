@@ -14,7 +14,25 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現行バージョン 28
+## 現在のバージョン 29
+
+`liquid_fuel_tank.parameters.headspace` は `m3` または `l` の `capacity` と `gas_node` を指定します。気体ノードは `storage` を省略し、体積は `capacity - liquid_mass / density` です。所有者は一つで体積は正を維持します。有限気体が入口圧力を決めるため、ポンプと戻りの指定リザーバー圧力はゼロです。
+
+`vented-tank-liquid-cylinder` と `vented-tank-needle-cylinder` はタンク 1513、気体 1520、通気入力 960 を使います。アセット v29 は形状を保存し v1-v28 を読みます。解析仕事/導関数、独立 ODE 収束、収支、portable/MCP 再生、ロールバックとゼロ割当ステップに合格しました。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md)
+
+## 保持バージョン 28
 
 `recirculating-liquid-cylinder` と `recirculating-needle-cylinder` は有限燃料、実噴射、蒸発、任意のニードル動特性を保持します。v28 は接続/熱割合を保存し v1-v27 を読みます。各戻りは既存上限内で 8 状態を追加します。
 

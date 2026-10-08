@@ -258,3 +258,13 @@ Retained on 2026-10-05 from checkpoint `85eebeb`. SHA-256:
 `f7ee4872a034c885`. `LiquidRailReturnAssetChecks` preserves the digest and exact
 every-boundary old/upgraded replay. Do not regenerate this fixture with the
 current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Recirculating fuel version 28
+
+`recirculating-liquid-cylinder-v28.powerasset` retains v28 writer output before
+geometric tank headspace records. Source: `assets/labs/recirculating-liquid-cylinder.power.json`.
+Retained on 2026-10-08 from the encoder/model sources at `90e70cd`, before changing
+the asset format. SHA-256: `3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57`.
+Fingerprint: `8c295e86019b787b`. `TankHeadspaceAssetChecks` checks its digest and
+every-boundary old/upgraded replay. Do not regenerate it with the current writer.
+The Power! GPL license and Unity Linking Exception apply.

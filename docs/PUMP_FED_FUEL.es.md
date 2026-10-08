@@ -12,9 +12,9 @@ La energía de presión se almacena una sola vez en el nodo hidráulico. Caudal 
 
 ## Evidencia y límites
 
-v28 conserva enlaces y temperatura de fuente y lee v1-v27. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v29 conserva enlaces y temperatura de fuente y lee v1-v28. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
-Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
+Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
 ## Tanque finito de combustible líquido
 
@@ -22,7 +22,7 @@ Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado
 
 Energías térmica y química del tanque forman el almacenamiento completo. La transferencia interna no agrega masa ni suministro químico externos. La presión de entrada prescrita mantiene su frontera de trabajo de presión. Admisión/escape gaseoso aún pueden llevar energía química.
 
-Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
+Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
 [LIQUID_FUEL_TANK.es.md](LIQUID_FUEL_TANK.es.md)
 
@@ -33,3 +33,11 @@ Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado
 `fluid_heat_fraction` elige explícitamente la fracción [0,1] de pérdida transportada por combustible retornado. El resto sigue la ruta térmica declarada. Mezcla simultánea raíl/tanque conserva masa, química, trabajo de presión y calor. El retorno a fuente externa saca masa/energía por la frontera.
 
 [LIQUID_FUEL_RETURN.es.md](LIQUID_FUEL_RETURN.es.md)
+
+## Geometría del tanque y espacio gaseoso finito
+
+`liquid_fuel_tank.parameters.headspace` declara `capacity` en `m3` o `l` y `gas_node`. El gas omite `storage`: volumen `capacity - liquid_mass / density`, con un propietario y volumen positivo. Bomba y retorno usan presión prescrita nula: el gas finito determina la presión de entrada.
+
+El solver acoplado intercambia trabajo de presión entre eje, riel y gas sin fuente externa. Orificios gaseosos y enlaces térmicos dan venteo/calor explícitos. Leer `pressure`, `fill_fraction`, `hydraulic_work` acumulado con signo y masa, energía, volumen del gas. Dosis, líquido, evaporación y combustión permanecen separados.
+
+[Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md)

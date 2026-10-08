@@ -44,7 +44,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
         ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault, ["lockup_state"] = Field.LockupState,
-        ["actuator_integral_a"] = Field.ActuatorIntegralA, ["actuator_integral_b"] = Field.ActuatorIntegralB, ["actuator_integral_c"] = Field.ActuatorIntegralC, ["actuator_integral_d"] = Field.ActuatorIntegralD, ["actuator_integral_e"] = Field.ActuatorIntegralE, ["actuator_integral_f"] = Field.ActuatorIntegralF, ["tank_state"] = Field.TankState,
+        ["actuator_integral_a"] = Field.ActuatorIntegralA, ["actuator_integral_b"] = Field.ActuatorIntegralB, ["actuator_integral_c"] = Field.ActuatorIntegralC, ["actuator_integral_d"] = Field.ActuatorIntegralD, ["actuator_integral_e"] = Field.ActuatorIntegralE, ["actuator_integral_f"] = Field.ActuatorIntegralF, ["tank_state"] = Field.TankState, ["fill_fraction"] = Field.FillFraction,
         ["copper_heat"] = Field.CopperHeat, ["predicted_fuel_mass"] = Field.PredictedFuelMass, ["prediction_ticks"] = Field.PredictionTicks, ["driver_state"] = Field.DriverState, ["closing_delay_ticks"] = Field.ClosingDelayTicks,
         ["sampled_pressure"] = Field.SampledPressure, ["pressure_error"] = Field.PressureError,
         ["integral_voltage"] = Field.IntegralVoltage, ["command_voltage"] = Field.CommandVoltage,
@@ -236,8 +236,14 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             }
             if (kind == ComponentKind.LiquidFuelTank)
             {
-                Object(parameters,["injector_component","initial_mass","initial_temperature"]);
-                return result with{LiquidFuelTank=new(){InjectorComponent=Id(parameters,"injector_component"),InitialMass=Quantity(parameters.GetProperty("initial_mass")),InitialTemperature=Quantity(parameters.GetProperty("initial_temperature"))}};
+                Object(parameters,["injector_component","initial_mass","initial_temperature"],"headspace");
+                LiquidTankHeadspaceDefinition? headspace = null;
+                if (parameters.TryGetProperty("headspace", out var geometry))
+                {
+                    Object(geometry, ["capacity", "gas_node"]);
+                    headspace = new() { Capacity = Quantity(geometry.GetProperty("capacity")), GasNode = Id(geometry, "gas_node") };
+                }
+                return result with{LiquidFuelTank=new(){InjectorComponent=Id(parameters,"injector_component"),InitialMass=Quantity(parameters.GetProperty("initial_mass")),InitialTemperature=Quantity(parameters.GetProperty("initial_temperature")),Headspace=headspace}};
             }
             if (kind == ComponentKind.HydraulicAtController)
             {

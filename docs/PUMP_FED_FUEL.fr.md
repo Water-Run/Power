@@ -12,9 +12,9 @@ L'énergie de pression est stockée une seule fois dans le nœud hydraulique. D�
 
 ## Preuves et limites
 
-Le format v28 conserve les liens et la température source et lit v1-v27. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v29 conserve les liens et la température source et lit v1-v28. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
-Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
 ## Réservoir fini de carburant liquide
 
@@ -22,7 +22,7 @@ Capacité géométrique, évent/espace gazeux/ballottement, cavitation, rempliss
 
 Énergies calorique et chimique du réservoir entrent dans le stockage complet. Le transfert interne n'ajoute aucune matière ni énergie chimique externe. La pression d'entrée prescrite garde sa frontière de travail de pression. Admission/échappement gazeux peuvent encore transporter de l'énergie chimique.
 
-Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
 [LIQUID_FUEL_TANK.fr.md](LIQUID_FUEL_TANK.fr.md)
 
@@ -33,3 +33,11 @@ Capacité géométrique, évent/espace gazeux/ballottement, cavitation, rempliss
 `fluid_heat_fraction` choisit explicitement la part [0,1] des pertes transportée par le carburant de retour. Le reste suit le chemin thermique déclaré. Le mélange simultané rampe/réservoir conserve les bilans matière, chimie, travail de pression et chaleur. Les retours à source externe sortent matière et énergie par la frontière.
 
 [LIQUID_FUEL_RETURN.fr.md](LIQUID_FUEL_RETURN.fr.md)
+
+## Géométrie du réservoir et espace gazeux fini
+
+`liquid_fuel_tank.parameters.headspace` déclare `capacity` en `m3` ou `l` et `gas_node`. Le gaz omet `storage` : son volume vaut `capacity - liquid_mass / density`, avec un seul propriétaire et un volume positif. Pompe et retour utilisent une pression prescrite nulle car le gaz fini détermine la pression d'entrée.
+
+Le solveur couplé échange le travail de pression entre arbre, rampe et gaz sans source externe. Orifices gazeux et liens thermiques fournissent ventilation et chaleur explicites. Lire `pressure`, `fill_fraction`, `hydraulic_work` cumulé signé et masse, énergie, volume du gaz. Dose, liquide livré, évaporation et combustion restent distincts.
+
+[Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)

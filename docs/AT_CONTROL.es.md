@@ -14,6 +14,6 @@ El bloqueo opcional usa límites de marcha adelante, velocidad de entrada, desli
 
 ## Evidencia y límites
 
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v28 conserva rutas, ganancias y relojes y lee v1-v27.
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v29 conserva rutas, ganancias y relojes y lee v1-v28.
 
 Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.

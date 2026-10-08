@@ -12,11 +12,17 @@ Energías térmica y química del tanque forman el almacenamiento completo. La t
 
 `finite-tank-liquid-cylinder` y `finite-tank-needle-cylinder` usan tanque ID 1513 y alimentación ID 1511. Leer `mass`, `temperature`, `internal_energy`, `chemical_energy` y `tank_state`; 0 significa líquido y 1 vacío. La temperatura seca informa la referencia inicial declarada.
 
+## Geometría del tanque y espacio gaseoso finito
+
+`liquid_fuel_tank.parameters.headspace` declara `capacity` en `m3` o `l` y `gas_node`. El gas omite `storage`: volumen `capacity - liquid_mass / density`, con un propietario y volumen positivo. Bomba y retorno usan presión prescrita nula: el gas finito determina la presión de entrada.
+
+[Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md)
+
 ## Evidencia y límites
 
-v28 conserva tanque y selección y lee v1-v27. Cada tanque añade 4 estados dentro de las mismas cotas. Se verifican intercambio húmedo independiente, presión/energía de eje agotadas analíticas, mezcla de retorno, balances completos, rollback, ramas y pasos sin asignación.
+v29 conserva tanque y selección y lee v1-v28. Cada tanque añade 4 estados dentro de las mismas cotas. Se verifican intercambio húmedo independiente, presión/energía de eje agotadas analíticas, mezcla de retorno, balances completos, rollback, ramas y pasos sin asignación.
 
-Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
+Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
 [VALIDATION.es.md](VALIDATION.es.md)
 

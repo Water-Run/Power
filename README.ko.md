@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 헤드리스 실험"]
     mcp["Power.Mcp — stdio MCP 도구 12개"]
-    assets["Power.Assets — .powerasset v28"]
+    assets["Power.Assets — .powerasset v29"]
     unity["Unity 6.6 스튜디오 — 3D 실험실"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | 모델, 제한, 시간과 개정 규약을 탐색. 여기서 시작하세요. |
 | `get_model_schema` | `power.model.v1`의 JSON Schema 2020-12 |
-| `get_example_model` | 편집 가능한 합성 모델과 실험 가져오기 (예제 33개) |
+| `get_example_model` | 편집 가능한 합성 모델과 실험 가져오기 (예제 43개) |
 | `validate_model` | 실행 없이 모델 검증. 구조화된 수리 진단 |
 | `run_experiment` | 경계가 있는 헤드리스 실행, 배치 리플레이·KPI·출처 포함 |
 | `export_model_asset` | 이식 가능한 `.powerasset` 내보내기 |
@@ -147,10 +147,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 모든 샘플 매개변수는 `unverified`입니다. 연구 값이지 교정 측정값이 아닙니다.
 
-아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v28`를 사용하며 이전 자산의 판독기는 유지됩니다.
+아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v29`를 사용하며 이전 자산의 판독기는 유지됩니다.
 
 <details>
-<summary>사용 가능한 실험실 (34)</summary>
+<summary>사용 가능한 실험실 (44)</summary>
 
 | 예제 이름(`get_example_model`) | 실험실 | 다루는 내용 |
 |---|---|---|
@@ -188,8 +188,24 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `ravigneaux-transmission` | `assets/labs/ravigneaux-transmission.power.json` | 4레인지 복합 유성 상/하단 인계 |
 | `fired-ravigneaux-converter` | `assets/labs/fired-ravigneaux-converter.power.json` | 점화 엔진, 컨버터/록업과 복합 변속기 |
 | `controlled-fired-dual-clutch` | `assets/labs/controlled-fired-dual-clutch.power.json` | 점화 엔진, 샘플링 DCT 제어와 완전한 증거 |
+| `controlled-hydraulic-ravigneaux` | `assets/labs/controlled-hydraulic-ravigneaux.power.json` | 샘플 압력 제어와 실제 기어/록업 확인 |
+| `controlled-fired-hydraulic-ravigneaux` | `assets/labs/controlled-fired-hydraulic-ravigneaux.power.json` | 연소 엔진과 피드백 제어 유압 AT 변속 |
+| `pump-fed-liquid-cylinder` | `assets/labs/pump-fed-liquid-cylinder.power.json` | 축 구동 레일 보충, 열 혼합과 전체 수지 |
+| `pump-fed-needle-cylinder` | `assets/labs/pump-fed-needle-cylinder.power.json` | 펌프 공급 레일, 물리 니들과 용량 제어 |
+| `finite-tank-liquid-cylinder` | `assets/labs/finite-tank-liquid-cylinder.power.json` | 유한 탱크 고갈, 건식 펌핑과 내부 연료 이동 |
+| `finite-tank-needle-cylinder` | `assets/labs/finite-tank-needle-cylinder.power.json` | 유한 공급, 물리 니들과 증발 |
+| `vented-tank-liquid-cylinder` | `assets/labs/vented-tank-liquid-cylinder.power.json` | 유한 기체 공간, 내부 압력 일과 제어 통기 |
+| `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | 유한 기체 공간/통기와 물리적 니들 동역학 |
+| `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | 릴리프 반환, 탱크/레일 동시 혼합과 손실 열 |
+| `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | 연료 순환, 물리 니들과 전체 재현 |
 
 </details>
+
+모든 실험실을 JSON으로 나열합니다:
+
+```sh
+dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll list-labs
+```
 
 `name`과 함께 `get_example_model`을 요청하거나 직접 실행하세요:
 
@@ -203,7 +219,7 @@ dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.
 
 완전한 파워트레인은 목표이지 현재 상태가 아닙니다. 아직 열려 있는 항목:
 
-- 완전한 엔진 동작: 흡기/배기 모델링, 액체 펌프/보충, 정밀화된 자기/전자/분무 동작, 압력 의존 상 거동, 더 풍부한 열화학, 점화 제어.
+- 완전한 엔진 동작: 슬로싱/정수압 형상, 압력 의존 상평형과 캐비테이션, 실측 펌프 충전/조절, 정교한 자기/전자/분무 동작, 점화 제어, 흡배기 동역학, 기계 손실과 더 풍부한 열화학.
 - 완전한 DCT 액추에이션, AT 토폴로지와 변속 제어(ECU/TCU).
 - 실측 펌프 손실/제어 맵, 실측 배터리 화학과 BMS, 실측 밸브/어큐뮬레이터 동역학.
 - 교정된 파워트레인.
@@ -219,7 +235,7 @@ EA211 DJS + DQ200과 PSA EC5 + AT8에 대한 OEM 연구는 [assets/samples](asse
 | 프로젝트 | [아키텍처](docs/ARCHITECTURE.ko.md) · [로드맵](docs/ROADMAP.ko.md) · [개발 상태](docs/DEVELOPMENT_STATUS.ko.md) · [검증 기록](docs/VALIDATION.ko.md) · [엔진 재개 노트](docs/NEXT_ENGINE_STEP.ko.md) |
 | 인터페이스 | [에이전트 API](docs/AGENT_API.ko.md) · [자산 형식](docs/ASSET_FORMAT.ko.md) · [네이티브 Zig 경계](docs/NATIVE_ZIG.ko.md) |
 | 엔진과 가스 | [밀폐 실린더](docs/SEALED_CYLINDER.ko.md) · [가스 네트워크](docs/GAS_NETWORK.ko.md) · [가스 교환](docs/GAS_EXCHANGE.ko.md) · [가동 실린더](docs/MOVING_CYLINDER.ko.md) · [밸브 타이밍](docs/VALVE_TIMING.ko.md) · [예혼합 연소](docs/PREMIXED_COMBUSTION.ko.md) |
-| 연료와 분사 | [연료 계량](docs/FUEL_METERING.ko.md) · [연료 필름](docs/FUEL_FILM.ko.md) · [액체 분사](docs/LIQUID_FUEL_INJECTION.ko.md) · [니들 구동](docs/NEEDLE_ACTUATION.ko.md) · [폐쇄 예측](docs/CLOSURE_PREDICTION.ko.md) |
+| 연료와 분사 | [연료 계량](docs/FUEL_METERING.ko.md) · [연료 필름](docs/FUEL_FILM.ko.md) · [액체 분사](docs/LIQUID_FUEL_INJECTION.ko.md) · [니들 구동](docs/NEEDLE_ACTUATION.ko.md) · [폐쇄 예측](docs/CLOSURE_PREDICTION.ko.md) · [탱크 형상과 유한 헤드스페이스](docs/TANK_HEADSPACE.ko.md) |
 | 변속기 | [클러치 네트워크](docs/CLUTCH_NETWORK.ko.md) · [클러치 물리](docs/CLUTCH_PHYSICS.ko.md) · [기어 네트워크](docs/GEAR_NETWORK.ko.md) · [이상 기어](docs/IDEAL_GEARS.ko.md) · [컨버터](docs/CONVERTER_NETWORK.ko.md) · [듀얼 클러치 변속기](docs/DUAL_CLUTCH_TRANSMISSION.ko.md) · [DCT 제어](docs/DCT_CONTROL.ko.md) · [Ravigneaux 변속기](docs/RAVIGNEAUX_TRANSMISSION.ko.md) · [분해 유성](docs/RESOLVED_PLANETS.ko.md) |
 | 유압 | [유압 네트워크](docs/HYDRAULIC_NETWORK.ko.md) · [펌프](docs/HYDRAULIC_PUMP.ko.md) · [피스톤](docs/HYDRAULIC_PISTON.ko.md) · [스풀](docs/HYDRAULIC_SPOOL.ko.md) · [가스 어큐뮬레이터](docs/GAS_PISTON.ko.md) · [AT 구동](docs/AT_HYDRAULIC_ACTUATION.ko.md) |
 

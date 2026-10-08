@@ -12,11 +12,17 @@ Le débit positif est borné par l'inventaire restant sur l'intervalle accepté.
 
 `finite-tank-liquid-cylinder` et `finite-tank-needle-cylinder` utilisent réservoir ID 1513 et alimentation ID 1511. Lire `mass`, `temperature`, `internal_energy`, `chemical_energy` et `tank_state` ; 0 signifie liquide présent et 1 vide. La température sèche rapporte la référence initiale déclarée.
 
+## Géométrie du réservoir et espace gazeux fini
+
+`liquid_fuel_tank.parameters.headspace` déclare `capacity` en `m3` ou `l` et `gas_node`. Le gaz omet `storage` : son volume vaut `capacity - liquid_mass / density`, avec un seul propriétaire et un volume positif. Pompe et retour utilisent une pression prescrite nulle car le gaz fini détermine la pression d'entrée.
+
+[Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)
+
 ## Preuves et limites
 
-v28 conserve les données et la sélection et lit v1-v27. Chaque réservoir ajoute 4 états dans les bornes inchangées. Échange humide indépendant, pression/énergie d'arbre après épuisement analytiques, mélange retour, bilans complets, rollback, branches et pas sans allocation sont vérifiés.
+v29 conserve les données et la sélection et lit v1-v28. Chaque réservoir ajoute 4 états dans les bornes inchangées. Échange humide indépendant, pression/énergie d'arbre après épuisement analytiques, mélange retour, bilans complets, rollback, branches et pas sans allocation sont vérifiés.
 
-Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
 [VALIDATION.fr.md](VALIDATION.fr.md)
 

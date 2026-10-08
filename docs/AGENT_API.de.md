@@ -74,7 +74,7 @@ Windows verwendet denselben Befehl `dotnet` und einen absoluten Pfad zur DLL. Ei
 
 ## Werkzeuge und Ergebnisse
 
-In Agent-API-Version 0.33.0 nimmt `get_example_model` einen optionalen `name` an: `electrothermal` (Vorgabe), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` oder `fired-hydraulic-ravigneaux`. `get_capabilities` nennt unterstützte Modelltreue-Stufen, lesbare Asset-Versionen, Lösergrenzen und Eingabegrenzen. Exporte verwenden `power.asset.v28`; Assets v1–v23 bleiben lesbar. Ausgabekanäle und ihre Einheiten liefern die Modellprüfung und die Sitzungserzeugung. Bestandene Labor-KPIs begründen keinen vollständigen oder kalibrierten Antriebsstrang.
+In Agent-API-Version 0.34.0 akzeptiert `get_example_model` einen optionalen `name` mit Standardwert `electrothermal`. `get_capabilities.examples` listet alle 43 Beispiele einschließlich endlicher Tanks und Kraftstoffumlauf auf. CLI `list-labs` liefert alle 44 Labore als [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json)-JSON; `thermal-network` ist konstruktionsgemäß nur im CLI verfügbar. Die Fähigkeiten nennen auch Komponenten, Modelltreue, Solvergrenzen und Eingabegrenzen. Exporte nutzen `power.asset.v29` mit erhaltenen v1-v28-Lesern. Validierung und Sitzungserstellung liefern Ausgabekanäle und Einheiten. Bestandene Labor-KPIs belegen keinen vollständigen oder kalibrierten Antriebsstrang.
 
 | Werkzeug | Aufgabe |
 |---|---|
@@ -586,7 +586,7 @@ Verträge. Der Graph verwendet bestehende Datensätze von Asset v24, kein neues 
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v28 speichert Routen, Verstärkungen und Uhren und liest v1-v27.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v29 speichert Routen, Verstärkungen und Uhren und liest v1-v28.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -596,9 +596,9 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v28 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v27. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v29 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v28. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
-Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
+Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Phasengleichgewicht, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
 [PUMP_FED_FUEL.de.md](PUMP_FED_FUEL.de.md)
 
@@ -608,7 +608,7 @@ Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Fü
 
 Kalorische und chemische Tankenergie gehören zur gesamten Speicherung. Interner Transfer fügt keine äußere Masse oder chemische Versorgung hinzu. Der erklärte Einlassdruck behält seine Druckarbeitsgrenze. Gaseinlass/-auslass kann weiterhin chemische Grenzenergie tragen.
 
-Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Füllung/Wirkungsgrad/Regelung und aufgelöster Spray bleiben offen. Parameter sind `unverified`; tatsächliches Unity Editor/Play/Player/IL2CPP und OEM-Kalibrierung bleiben ungeprüft.
+Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Phasengleichgewicht, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
 [LIQUID_FUEL_TANK.de.md](LIQUID_FUEL_TANK.de.md)
 
@@ -619,3 +619,11 @@ Geometrische Kapazität, Belüftung/Gasraum/Schwappen, Kavitation, gemessene Fü
 `fluid_heat_fraction` wählt ausdrücklich den Anteil [0,1] des Ventilverlusts im Rückkraftstoff. Restwärme folgt dem erklärten Ventilwärmepfad. Gleichzeitige Schienen-/Tankmischung erhält Masse-, Chemie-, Druckarbeits- und Wärmebilanzen. Rückfluss zur Außenquelle führt Masse/Energie über die Grenze hinaus.
 
 [LIQUID_FUEL_RETURN.de.md](LIQUID_FUEL_RETURN.de.md)
+
+## Tankgeometrie und endlicher Gasraum
+
+`liquid_fuel_tank.parameters.headspace` deklariert `capacity` in `m3` oder `l` und `gas_node`. Der Gasnode lässt `storage` aus: Volumen `capacity - liquid_mass / density`, ein Eigentümer und positives Volumen. Pumpe und Rücklauf setzen den vorgeschriebenen Reservoirdruck auf null; das endliche Gas bestimmt den Einlassdruck.
+
+Die gekoppelte Lösung tauscht Druckarbeit zwischen Welle, Rail und Gas ohne externe Druckquelle. Gasdrosseln und Wärmeverbindungen bilden explizite Entlüftung/Wärmewege. `pressure`, `fill_fraction`, vorzeichenbehaftete kumulierte `hydraulic_work` sowie Gasmasse, Energie und Volumen lesen. Dosis, Flüssigkeit, Verdampfung und Verbrennung bleiben getrennt.
+
+[Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md)

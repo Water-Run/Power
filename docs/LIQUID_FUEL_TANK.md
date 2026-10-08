@@ -12,11 +12,17 @@ Tank caloric and chemical energy enter the complete stored-energy ledger. Tank-t
 
 The examples `finite-tank-liquid-cylinder` and `finite-tank-needle-cylinder` use tank ID 1513 and feed ID 1511. Read `mass`, `temperature`, `internal_energy`, `chemical_energy` and `tank_state`; 0 means wet and 1 means empty. Dry temperature reports the declared initial reference.
 
+## Geometric tank and finite headspace
+
+`liquid_fuel_tank.parameters.headspace` declares `capacity` in `m3` or `l` and `gas_node`. The gas node omits `storage`: its volume is `capacity - liquid_mass / density`. It must have one owner and remain positive. The paired pump and relief return use zero prescribed reservoir pressure because the finite gas owns inlet pressure.
+
+[Geometric tank and finite headspace](TANK_HEADSPACE.md)
+
 ## Evidence and limits
 
-Asset v28 retains tank data and feed selection and reads v1-v27. Each tank adds 4 reported states within the unchanged bounds. Independent wet exchange, analytic exhausted pressure/shaft energy, reverse mixing, complete ledgers, rollback, forks and allocation-free stepping are checked.
+Asset v29 retains tank data and feed selection and reads v1-v28. Each tank adds 4 reported states within the unchanged bounds. Independent wet exchange, analytic exhausted pressure/shaft energy, reverse mixing, complete ledgers, rollback, forks and allocation-free stepping are checked.
 
-Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
 [VALIDATION.md](VALIDATION.md)
 

@@ -26,15 +26,15 @@ public sealed class AgentWorkspace
 
     public static AgentReply Capabilities() => AgentReply.Success(new
     {
-        version = "0.33.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
-        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", "power.asset.v11", "power.asset.v12", "power.asset.v13", "power.asset.v14", "power.asset.v15", "power.asset.v16", "power.asset.v17", "power.asset.v18", "power.asset.v19", "power.asset.v20", "power.asset.v21", "power.asset.v22", "power.asset.v23", "power.asset.v24", "power.asset.v25", "power.asset.v26", "power.asset.v27", AssetCodec.FormatName },
+        version = "0.34.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
+        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", "power.asset.v11", "power.asset.v12", "power.asset.v13", "power.asset.v14", "power.asset.v15", "power.asset.v16", "power.asset.v17", "power.asset.v18", "power.asset.v19", "power.asset.v20", "power.asset.v21", "power.asset.v22", "power.asset.v23", "power.asset.v24", "power.asset.v25", "power.asset.v26", "power.asset.v27", "power.asset.v28", AssetCodec.FormatName },
         domains = new[] { "rotational", "thermal", "gas", "hydraulic", "battery", "translational" },
-        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief", "pressure_controller", "battery_motor", "resistive_load", "pressure_duty_controller", "linear_spring", "hydraulic_piston", "piston_clutch", "force_source", "hydraulic_spool_valve", "gas_piston", "gas_fuel_injector", "fuel_film", "liquid_fuel_injector", "solenoid", "travel_stop", "needle_driver", "dct_controller", "double_pinion_planetary_gear", "carrier_gear", "at_controller", "liquid_rail_feed" },
-        examples = new[] { "electrothermal", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump", "gas-accumulator-pump", "metered-fired-cylinder", "film-fired-cylinder", "liquid-injected-cylinder", "needle-actuated-cylinder", "closure-compensated-cylinder", "dual-clutch-transmission", "fired-dual-clutch", "controlled-dual-clutch", "controlled-fired-dual-clutch", "ravigneaux-transmission", "fired-ravigneaux-converter", "resolved-ravigneaux-transmission", "fired-resolved-ravigneaux-converter", "hydraulic-ravigneaux-transmission", "fired-hydraulic-ravigneaux", "controlled-hydraulic-ravigneaux", "controlled-fired-hydraulic-ravigneaux", "pump-fed-liquid-cylinder", "pump-fed-needle-cylinder" },
+        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief", "pressure_controller", "battery_motor", "resistive_load", "pressure_duty_controller", "linear_spring", "hydraulic_piston", "piston_clutch", "force_source", "hydraulic_spool_valve", "gas_piston", "gas_fuel_injector", "fuel_film", "liquid_fuel_injector", "solenoid", "travel_stop", "needle_driver", "dct_controller", "double_pinion_planetary_gear", "carrier_gear", "at_controller", "liquid_rail_feed", "liquid_fuel_tank", "liquid_rail_return" },
+        examples = LaboratoryCatalog.Entries.Where(lab => lab.AgentExample).Select(lab => lab.Name).ToArray(),
         limits = new { nodes = CompiledModel.MaxNodes, components = CompiledModel.MaxComponents, states = CompiledModel.MaxStates,
             sessions = MaxSessions, ticks_per_step = 1_000_000, experiment_ticks = 10_000_000, document_bytes = 1_048_576, asset_bytes = AssetCodec.MaxBytes },
         determinism = "Exact replay within the same binary/runtime/architecture. Compare tolerances across platforms.",
-        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics", "sampled_pressure_control", "battery_electromechanical", "battery_pressure_control", "dynamic_piston_powertrain", "mechanically_regulated_hydraulics", "linear_gas_actuation", "gas_accumulator_powertrain", "cycle_fuel_metering", "metered_fired_powertrain", "finite_liquid_film_evaporation", "film_evaporation_fired_powertrain", "finite_liquid_fuel_delivery", "liquid_injected_fired_powertrain", "electromagnetic_linear_actuation", "elastic_translational_contact", "needle_actuated_liquid_delivery", "needle_actuated_fired_powertrain", "closure_compensated_liquid_delivery", "closure_compensated_fired_powertrain", "sampled_dual_clutch_control", "sampled_hydraulic_at_control", "pump_fed_liquid_fuel_powertrain", "finite_tank_liquid_fuel_powertrain", "recirculating_liquid_fuel_powertrain" }, calibration = "unverified",
+        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics", "sampled_pressure_control", "battery_electromechanical", "battery_pressure_control", "dynamic_piston_powertrain", "mechanically_regulated_hydraulics", "linear_gas_actuation", "gas_accumulator_powertrain", "cycle_fuel_metering", "metered_fired_powertrain", "finite_liquid_film_evaporation", "film_evaporation_fired_powertrain", "finite_liquid_fuel_delivery", "liquid_injected_fired_powertrain", "electromagnetic_linear_actuation", "elastic_translational_contact", "needle_actuated_liquid_delivery", "needle_actuated_fired_powertrain", "closure_compensated_liquid_delivery", "closure_compensated_fired_powertrain", "sampled_dual_clutch_control", "sampled_hydraulic_at_control", "pump_fed_liquid_fuel_powertrain", "finite_tank_liquid_fuel_powertrain", "recirculating_liquid_fuel_powertrain", "geometric_tank_liquid_fuel_powertrain" }, calibration = "unverified",
         at_controller = new { component = "at_controller", input = "Integral requested_gear state_code in [-1,4]; zero requests vented neutral.",
             ownership = "Owns all fill/drain pairs; write requested gear instead of owned valve fractions.",
             phases = new[] { "Neutral", "Releasing", "Applying", "Driving", "Fault" },
@@ -58,13 +58,18 @@ public sealed class AgentWorkspace
             control = "Sampled forward-window/delivered-dose feedback owns coil voltage; write the injector kg request. Held voltage, sampled dose and every physical history share integer clocks, rollback and forks.",
             scope = "Pressure-balanced needle, constant R and linear unsaturated inductance. No nonlinear magnetic maps, hysteresis/eddy losses, flyback/PWM hardware, axial fluid force or calibrated actuation." },
         liquid_rail_return = new { component = "liquid_rail_return", valve = "hydraulic_relief",
-            flow = "Explicit exclusive one-way relief from rail to the feed source at the pump prescribed inlet pressure. Unregistered fluid paths reject.",
+            flow = "Explicit exclusive one-way relief from rail to the feed source at prescribed inlet pressure or coupled finite headspace pressure. Unregistered fluid paths reject.",
             thermal = "Simultaneous rail/tank caloric mixing. Explicit fraction [0,1] of valve loss travels with returned fuel; the remainder follows the valve heat route.",
             evidence = "Returned mass, caloric/chemical energy, carried fluid heat and mean flow remain observable. Research valve law; no measured regulator, cavitation or liquid boiling model." },
         liquid_fuel_tank = new { component = "liquid_fuel_tank", feed_parameter = "tank_component",
-            inventory = "Finite mixed liquid mass, caloric and chemical storage at the pump prescribed inlet pressure. Return flow mixes current rail temperature.",
+            headspace = new { optional_parameter = "headspace", capacity_unit = "m3", gas_node = "Finite gas node with omitted storage; tank capacity minus liquid volume owns it.",
+                pressure_work = "Coupled finite gas pressure sets pump inlet and relief return pressure; its adiabatic work is internal, not an external reservoir source.",
+                vent = "Explicit existing gas_orifice and gas_heat_link paths; no implicit ambient clamp.",
+                observables = new[] { "pressure", "fill_fraction", "hydraulic_work", "gas mass", "gas internal_energy", "gas volume" },
+                interval = "Accepted net withdrawal is at most one quarter of the old headspace volume; refine ticks for unresolved transport or capacity failure." },
+            inventory = "Finite mixed liquid mass, caloric and chemical storage. Prescribed inlet pressure applies without headspace; geometric headspace owns the coupled pressure. Return flow mixes current rail temperature.",
             filling = "Interval-average fill fraction limits positive displacement flow by remaining inventory and scales shaft reaction with the same work-conjugate displacement. Dry forward rotation transfers no fluid work.",
-            scope = "Explicit prescribed inlet pressure-work boundary; no finite geometric capacity, vent/slosh, cavitation, measured filling dynamics or calibrated tank/pump hardware." },
+            scope = "Optional rigid geometric capacity with incompressible liquid and ideal-gas pressure work, explicit vents and heat paths. Without headspace the prescribed inlet pressure-work boundary remains. No slosh, phase equilibrium, cavitation, measured filling dynamics or calibrated tank/pump hardware." },
         liquid_fuel_injector = new { component = "liquid_fuel_injector", source = "Finite compliant liquid inventory; absolute pressure falls with discharged volume.",
             input_unit = "kg", density_unit = "kg_m3", compliance_unit = "m3_pa",
             delivery = "Forward cycle quota is latched once. Exact fixed-receiver pressure-head decay limits delivery by pressure, finite inventory and remaining dose.",
@@ -198,51 +203,16 @@ public sealed class AgentWorkspace
         return document.RootElement.Clone();
     }
     public static AgentReply ModelSchema() => AgentReply.Success(Resource("power.model.schema.json"));
-    public static AgentReply ExampleModel(string name = "electrothermal") => name switch
+    public static AgentReply ExampleModel(string name = "electrothermal")
     {
-        "electrothermal" => AgentReply.Success(Resource("power.template.json")),
-        "sealed-cylinder" => AgentReply.Success(Resource("power.cylinder.template.json")),
-        "gas-network" => AgentReply.Success(Resource("power.gas.template.json")),
-        "moving-cylinder" => AgentReply.Success(Resource("power.moving-cylinder.template.json")),
-        "crank-timed-cylinder" => AgentReply.Success(Resource("power.crank-timed-cylinder.template.json")),
-        "fired-cylinder" => AgentReply.Success(Resource("power.fired-cylinder.template.json")),
-        "fired-clutch" => AgentReply.Success(Resource("power.fired-clutch.template.json")),
-        "fired-pump" => AgentReply.Success(Resource("power.fired-pump.template.json")),
-        "fired-pump-losses" => AgentReply.Success(Resource("power.fired-pump-losses.template.json")),
-        "electric-pump" => AgentReply.Success(Resource("power.electric-pump.template.json")),
-        "pressure-regulated-pump" => AgentReply.Success(Resource("power.pressure-regulated-pump.template.json")),
-        "battery-regulated-pump" => AgentReply.Success(Resource("power.battery-regulated-pump.template.json")),
-        "piston-actuated-clutch" => AgentReply.Success(Resource("power.piston-actuated-clutch.template.json")),
-        "spool-regulated-pump" => AgentReply.Success(Resource("power.spool-regulated-pump.template.json")),
-        "gas-accumulator-pump" => AgentReply.Success(Resource("power.gas-accumulator-pump.template.json")),
-        "metered-fired-cylinder" => AgentReply.Success(Resource("power.metered-fired-cylinder.template.json")),
-        "film-fired-cylinder" => AgentReply.Success(Resource("power.film-fired-cylinder.template.json")),
-        "liquid-injected-cylinder" => AgentReply.Success(Resource("power.liquid-injected-cylinder.template.json")),
-        "needle-actuated-cylinder" => AgentReply.Success(Resource("power.needle-actuated-cylinder.template.json")),
-        "closure-compensated-cylinder" => AgentReply.Success(Resource("power.closure-compensated-cylinder.template.json")),
-        "dual-clutch-transmission" => AgentReply.Success(Resource("power.dual-clutch-transmission.template.json")),
-        "fired-dual-clutch" => AgentReply.Success(Resource("power.fired-dual-clutch.template.json")),
-        "recirculating-liquid-cylinder" => AgentReply.Success(Resource("power.recirculating-liquid-cylinder.template.json")),
-        "recirculating-needle-cylinder" => AgentReply.Success(Resource("power.recirculating-needle-cylinder.template.json")),
-        "finite-tank-liquid-cylinder" => AgentReply.Success(Resource("power.finite-tank-liquid-cylinder.template.json")),
-        "finite-tank-needle-cylinder" => AgentReply.Success(Resource("power.finite-tank-needle-cylinder.template.json")),
-        "pump-fed-liquid-cylinder" => AgentReply.Success(Resource("power.pump-fed-liquid-cylinder.template.json")),
-        "pump-fed-needle-cylinder" => AgentReply.Success(Resource("power.pump-fed-needle-cylinder.template.json")),
-        "controlled-hydraulic-ravigneaux" => AgentReply.Success(Resource("power.controlled-hydraulic-ravigneaux.template.json")),
-        "controlled-fired-hydraulic-ravigneaux" => AgentReply.Success(Resource("power.controlled-fired-hydraulic-ravigneaux.template.json")),
-        "hydraulic-ravigneaux-transmission" => AgentReply.Success(Resource("power.hydraulic-ravigneaux-transmission.template.json")),
-        "fired-hydraulic-ravigneaux" => AgentReply.Success(Resource("power.fired-hydraulic-ravigneaux.template.json")),
-        "resolved-ravigneaux-transmission" => AgentReply.Success(Resource("power.resolved-ravigneaux-transmission.template.json")),
-        "fired-resolved-ravigneaux-converter" => AgentReply.Success(Resource("power.fired-resolved-ravigneaux-converter.template.json")),
-        "ravigneaux-transmission" => AgentReply.Success(Resource("power.ravigneaux-transmission.template.json")),
-        "fired-ravigneaux-converter" => AgentReply.Success(Resource("power.fired-ravigneaux-converter.template.json")),
-        "controlled-dual-clutch" => AgentReply.Success(Resource("power.controlled-dual-clutch.template.json")),
-        "controlled-fired-dual-clutch" => AgentReply.Success(Resource("power.controlled-fired-dual-clutch.template.json")),
-        "fired-hydraulic" => AgentReply.Success(Resource("power.fired-hydraulic.template.json")),
-        "fired-converter" => AgentReply.Success(Resource("power.fired-converter.template.json")),
-        "fired-planetary" => AgentReply.Success(Resource("power.fired-planetary.template.json")),
-        _ => AgentReply.Failure("unknown_example", "Available examples: electrothermal, sealed-cylinder, gas-network, moving-cylinder, crank-timed-cylinder, fired-cylinder, fired-clutch, fired-planetary, fired-converter, fired-hydraulic, fired-pump, fired-pump-losses, electric-pump, pressure-regulated-pump, battery-regulated-pump, piston-actuated-clutch, spool-regulated-pump, gas-accumulator-pump, metered-fired-cylinder, film-fired-cylinder, liquid-injected-cylinder, needle-actuated-cylinder, closure-compensated-cylinder, dual-clutch-transmission, fired-dual-clutch, controlled-dual-clutch, controlled-fired-dual-clutch, ravigneaux-transmission, fired-ravigneaux-converter, resolved-ravigneaux-transmission, fired-resolved-ravigneaux-converter, hydraulic-ravigneaux-transmission, fired-hydraulic-ravigneaux, controlled-hydraulic-ravigneaux, controlled-fired-hydraulic-ravigneaux, pump-fed-liquid-cylinder, pump-fed-needle-cylinder, finite-tank-liquid-cylinder, finite-tank-needle-cylinder, recirculating-liquid-cylinder, recirculating-needle-cylinder.", field: "name")
-    };
+        var lab = LaboratoryCatalog.Entries.FirstOrDefault(entry => entry.AgentExample && entry.Name == name);
+        if (lab is null)
+            return AgentReply.Failure("unknown_example",
+                "Available examples: " + string.Join(", ", LaboratoryCatalog.Entries.Where(entry => entry.AgentExample).Select(entry => entry.Name)) + ".",
+                field: "name");
+        using var document = JsonDocument.Parse(LaboratoryCatalog.ReadSource(lab.Name));
+        return AgentReply.Success(document.RootElement);
+    }
 
     private static AgentReply Guard(Func<AgentReply> work)
     {

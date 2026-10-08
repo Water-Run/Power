@@ -14,7 +14,25 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 28
+## 当前版本 29
+
+`liquid_fuel_tank.parameters.headspace` 声明单位为 `m3` 或 `l` 的 `capacity` 和 `gas_node`。气体节点省略 `storage`，其体积为 `capacity - liquid_mass / density`，必须有唯一所有者且保持为正。配对泵及泄压回流的设定储液器压力为零，由有限气体决定入口压力。
+
+示例 `vented-tank-liquid-cylinder` 和 `vented-tank-needle-cylinder` 使用油箱 1513、气相 1520、通气输入 960。资产 v29 保留几何并读取 v1-v28。解析功及导数、独立联立 ODE 细化、完整账本、资产/MCP 回放、回滚和零分配推进检查通过。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md)
+
+## 保留版本 28
 
 `recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v28 保留回流连接与热比例，并读取 v1-v27。每条回流在原有模型边界内增加 8 个状态。
 

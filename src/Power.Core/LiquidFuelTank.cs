@@ -10,19 +10,24 @@ public sealed record LiquidFuelTankDefinition
     public uint InjectorComponent { get; init; }
     public Quantity InitialMass { get; init; }
     public Quantity InitialTemperature { get; init; }
+    public LiquidTankHeadspaceDefinition? Headspace { get; init; }
 }
 
 internal sealed record CompiledLiquidTank(int Component, int Injector, double InitialMass,
     double InitialTemperature, double InitialEnergy, double Density, double HeatingValue);
 
-internal sealed class LiquidTankState(int count)
+internal sealed class LiquidTankState(int count, bool headspaces = false)
 {
     internal readonly double[] Mass = new double[count], MassCorrection = new double[count];
     internal readonly double[] Energy = new double[count], EnergyCorrection = new double[count];
+    internal readonly double[]? HeadspaceWork = headspaces ? new double[count] : null;
+    internal readonly double[]? WorkCorrection = headspaces ? new double[count] : null;
     internal void CopyFrom(LiquidTankState other)
     {
         Array.Copy(other.Mass, Mass, Mass.Length); Array.Copy(other.MassCorrection, MassCorrection, Mass.Length);
         Array.Copy(other.Energy, Energy, Mass.Length); Array.Copy(other.EnergyCorrection, EnergyCorrection, Mass.Length);
+        if (HeadspaceWork is not null)
+        { Array.Copy(other.HeadspaceWork!, HeadspaceWork, Mass.Length); Array.Copy(other.WorkCorrection!, WorkCorrection!, Mass.Length); }
     }
     internal ulong Hash(ulong hash)
     {
@@ -30,13 +35,15 @@ internal sealed class LiquidTankState(int count)
         {
             hash = Numeric.Hash(hash, Mass[i]); hash = Numeric.Hash(hash, MassCorrection[i]);
             hash = Numeric.Hash(hash, Energy[i]); hash = Numeric.Hash(hash, EnergyCorrection[i]);
+            if (HeadspaceWork is not null) { hash = Numeric.Hash(hash, HeadspaceWork[i]); hash = Numeric.Hash(hash, WorkCorrection![i]); }
         }
         return hash;
     }
     internal bool Finite()
     {
         for (int i = 0; i < Mass.Length; ++i)
-            if (!GearReference.Finite(Mass[i], MassCorrection[i], Energy[i], EnergyCorrection[i]) || Mass[i] < 0 || Mass[i] == 0 && Energy[i] != 0) return false;
+            if (!GearReference.Finite(Mass[i], MassCorrection[i], Energy[i], EnergyCorrection[i]) || Mass[i] < 0 || Mass[i] == 0 && Energy[i] != 0 ||
+                HeadspaceWork is not null && (!Numeric.Finite(HeadspaceWork[i]) || !Numeric.Finite(WorkCorrection![i]))) return false;
         return true;
     }
 }

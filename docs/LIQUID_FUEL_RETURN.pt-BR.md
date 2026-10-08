@@ -12,8 +12,16 @@ Leia `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_heat
 
 ## Evidências e limites
 
-`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` mantêm combustível finito, injeção real, evaporação e agulha opcional. v28 guarda conexões/fração e lê v1-v27. Cada retorno acrescenta 8 estados nos mesmos limites.
+`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` mantêm combustível finito, injeção real, evaporação e agulha opcional. v29 guarda conexões/fração e lê v1-v28. Cada retorno acrescenta 8 estados nos mesmos limites.
 
-Passam decaimento/trabalho independentes, refinamento mecânica/pressão/térmico simultâneo, frações, rotas, fronteiras externas, replay, rollback e alocações. Ebulição ou intervalo não resolvido falha o lote inteiro. Geometria/ventilação, válvulas/bombas medidas, cavitação, spray, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos.
+Passam decaimento/trabalho independentes, refinamento mecânica/pressão/térmico simultâneo, frações, rotas, fronteiras externas, replay, rollback e alocações. Ebulição ou intervalo não resolvido falha o lote inteiro.
+
+Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, equilíbrio de fases, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
 [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md)
+
+## Geometria do tanque e espaço gasoso finito
+
+`liquid_fuel_tank.parameters.headspace` declara `capacity` em `m3` ou `l` e `gas_node`. O gás omite `storage`: volume `capacity - liquid_mass / density`, um proprietário e volume positivo. Bomba e retorno usam pressão prescrita nula: o gás finito determina a pressão de entrada.
+
+[Geometria do tanque e espaço gasoso finito](TANK_HEADSPACE.pt-BR.md)

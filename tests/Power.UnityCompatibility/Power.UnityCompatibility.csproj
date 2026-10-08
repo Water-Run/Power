@@ -39,6 +39,8 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Compile Include="../Power.Tests/LiquidRailReturnAssetChecks.cs" Link="LiquidRailReturnAssetChecks.cs" />
     <Compile Include="../Power.Tests/LiquidRailReturnChecks.cs" Link="LiquidRailReturnChecks.cs" />
     <Compile Include="../Power.Tests/LiquidFuelTankChecks.cs" Link="LiquidFuelTankChecks.cs" />
+    <Compile Include="../Power.Tests/TankHeadspaceChecks.cs" Link="TankHeadspaceChecks.cs" />
+    <Compile Include="../Power.Tests/TankHeadspaceAssetChecks.cs" Link="TankHeadspaceAssetChecks.cs" />
     <Compile Include="../Power.Tests/LiquidRailFeedChecks.cs" Link="LiquidRailFeedChecks.cs" />
     <Compile Include="../Power.Tests/AtControllerChecks.cs" Link="AtControllerChecks.cs" />
     <Compile Include="../Power.Tests/HydraulicActuationChecks.cs" Link="HydraulicActuationChecks.cs" />

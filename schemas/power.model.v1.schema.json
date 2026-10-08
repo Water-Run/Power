@@ -461,7 +461,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -594,7 +594,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -804,7 +804,7 @@
               "channel": {
                 "type": "integer",
                 "minimum": 1,
-                "maximum": 9223372036854775807
+                "maximum": 9223372036854776000
               },
               "value": {
                 "type": "number"
@@ -916,7 +916,8 @@
             "actuator_integral_d",
             "actuator_integral_e",
             "actuator_integral_f",
-            "tank_state"
+            "tank_state",
+            "fill_fraction"
           ]
         },
         "min": {
@@ -1298,7 +1299,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -1825,7 +1826,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -2017,7 +2018,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -2336,7 +2337,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -2479,7 +2480,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3008,7 +3009,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3046,7 +3047,7 @@
             "target_channel": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 9223372036854775807
+              "maximum": 9223372036854776000
             },
             "sample_period_ns": {
               "type": "integer",
@@ -3379,7 +3380,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3518,7 +3519,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3594,7 +3595,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3632,7 +3633,7 @@
             "target_channel": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 9223372036854775807
+              "maximum": 9223372036854776000
             },
             "sample_period_ns": {
               "type": "integer",
@@ -3951,7 +3952,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -4627,7 +4628,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -4954,7 +4955,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -5290,7 +5291,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -5578,7 +5579,7 @@
             "closure_prediction_ns": {
               "type": "integer",
               "minimum": 0,
-              "maximum": 18446744073709551615
+              "maximum": 18446744073709552000
             }
           }
         }
@@ -5708,7 +5709,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -6204,7 +6205,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -6385,6 +6386,41 @@
                 },
                 "unit": {
                   "const": "k"
+                }
+              }
+            },
+            "headspace": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "capacity",
+                "gas_node"
+              ],
+              "properties": {
+                "capacity": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "m3",
+                        "l"
+                      ]
+                    }
+                  }
+                },
+                "gas_node": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4294967295
                 }
               }
             }

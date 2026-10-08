@@ -12,12 +12,12 @@ calibration and desktop acceptance each need their own evidence.
 | Milestone | Available foundation | Work still required |
 |---|---|---|
 | Managed core | Dual-target dependency-free physics, topology, units, integer time, replay and atomic transactions | Long-run integrated powertrain validation |
-| Agent interface | Schema-defined MCP tools, structured diagnostics, revisions, branches, cancellation and compact reports | Modeling/control workflows for the remaining full-powertrain scope |
+| Agent interface | Schema-defined MCP tools, structured diagnostics, revisions, branches, cancellation and compact reports; `list-labs` / `get_capabilities.examples` | Modeling/control workflows for the remaining full-powertrain scope |
 | Unity studio | Shared model import, laboratory playback, 3D schematic components and prepared tests | Actual Editor/Play/Player/IL2CPP evidence and desktop packaging |
-| Modeling workbench | Portable asset v28, v1-v27 readers and shared JSON/CLI/MCP definitions | Graph editing, saving and selectable channel plots |
-| Engine physics | Independent gas mass/energy, slider-crank work, timed valves, prescribed combustion, gaseous and liquid fuel metering, finite compliant rails, film evaporation and physical needle actuation; [Pump-fed liquid fuel rail](PUMP_FED_FUEL.md) | tank geometry/venting and measured pump filling/regulation, refined magnetic/electronic/spray behavior, finite-liquid-volume coupling, ignition control, detailed intake/exhaust, mechanical losses, thermochemistry and measured calibration |
+| Modeling workbench | Portable asset v29, v1-v28 readers and shared JSON/CLI/MCP definitions | Graph editing, saving and selectable channel plots |
+| Engine physics | Independent gas mass/energy, slider-crank work, timed valves, prescribed combustion, gaseous and liquid fuel metering, finite compliant rails, film evaporation and physical needle actuation; [Pump-fed liquid fuel rail](PUMP_FED_FUEL.md); finite tanks and conserving relief returns; [Geometric tank and finite headspace](TANK_HEADSPACE.md) | slosh/hydrostatic shape and measured pump filling/regulation, refined magnetic/electronic/spray behavior, finite-liquid-volume coupling, ignition control, detailed intake/exhaust, mechanical losses, thermochemistry and measured calibration |
 | Transmission | Coupled clutches, gears/planetaries, mapped converter/lockup, hydraulics and seven-forward/reverse DCT and four-forward/reverse Ravigneaux paths with resolved planet spin/orbital inertia | Mesh compliance/losses and load sharing, DCT actuation, complete AT pressure/shift control and measured routing, measured maps, valve/seal/cavitation behavior and richer converter dynamics |
-| Controls and electrical integration | Sampled pressure PI, needle closure control and sensor-confirmed staged DCT handoff, bounded voltage/duty, actuator ownership, battery equivalent circuit and accessories | Coordinated ECU/TCU cycles, sensors/actuators, torque requests, faults, BMS and measured thermal/electrical behavior |
+| Controls and electrical integration | Sampled pressure PI, needle closure control and sensor-confirmed staged DCT handoff, bounded voltage/duty, actuator ownership, battery equivalent circuit and accessories; [`at_controller`](AT_CONTROL.md) | Coordinated ECU/TCU cycles, sensors/actuators, torque requests, faults, BMS and measured thermal/electrical behavior |
 | Vehicle evidence and release | Research samples with complete boundaries and provenance | Two complete measured powertrains, uncertainty budgets, stability, desktop acceptance and distribution |
 
 Current numerical checkpoints, authentic asset fixtures and platform-specific
@@ -28,7 +28,7 @@ its recorded revision; new local changes need separate platform acceptance.
 
 ## Next managed work
 
-Extend the finite tank with geometric capacity, vent/headspace dynamics, measured pump filling/regulation and refined magnetic/electronic actuation. Finite compliant source mass
+Extend pressure-dependent phase equilibrium, cavitation, measured pump filling/regulation and refined magnetic/electronic actuation. Finite compliant source mass
 and pressure energy, actual needle motion, sampled dose feedback, film replenishment
 and evaporation are implemented. See [the needle contract](NEEDLE_ACTUATION.md) and [bounded closure prediction](CLOSURE_PREDICTION.md). The
 receiver still exports displacement pressure work under the declared negligible
@@ -68,41 +68,3 @@ It remains separate from the active C#/Unity application. Native migration doesn
 complete managed feature migration or powertrain acceptance. Introduce additional
 parallelism, sparse solving or Burst when measurements justify it and the core
 contracts remain stable.
-
-## Hydraulic AT feedback
-
-`at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
-
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v28 retains routes, gains and clocks and reads v1-v27.
-
-These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
-
-[AT_CONTROL.md](AT_CONTROL.md)
-
-## Pump-fed liquid fuel rail
-
-`liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
-
-Asset v28 retains feed links and source temperature and reads v1-v27. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
-
-Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
-
-[PUMP_FED_FUEL.md](PUMP_FED_FUEL.md)
-
-## Finite liquid fuel tank
-
-`liquid_fuel_tank` stores finite liquid mass and caloric energy using the paired injector's density, film thermal reference and heating value. A feed selects it with `tank_component` and omits `supply_temperature`. Each tank belongs to one feed with matching fuel properties.
-
-Tank caloric and chemical energy enter the complete stored-energy ledger. Tank-to-rail transfer adds no external mass or chemical supply. The explicit prescribed pump inlet pressure retains its pressure-work boundary. Gas inlet/exhaust can still carry chemical boundary energy.
-
-Geometric capacity, vent/headspace/slosh, cavitation, measured pump filling/efficiency/regulation and resolved spray remain open. Parameters are `unverified`; actual Unity Editor/Play/Player/IL2CPP and OEM calibration remain unverified.
-
-[LIQUID_FUEL_TANK.md](LIQUID_FUEL_TANK.md)
-
-## Tracked fuel relief return
-
-`liquid_rail_return` pairs a feed with an exclusively owned one-way `hydraulic_relief`. The valve connects the rail to the pump's same prescribed inlet pressure. Register every fluid path; incompatible ports, duplicate valve ownership and untracked paths reject.
-
-`fluid_heat_fraction` explicitly selects the fraction in [0,1] of valve loss carried with returned fuel. The remaining heat follows the valve's declared heat path. Simultaneous rail/tank caloric mixing preserves the full mass, chemical, pressure-work and thermal ledgers. External-source returns instead carry mass and energy out through the boundary.
-
-[LIQUID_FUEL_RETURN.md](LIQUID_FUEL_RETURN.md)

@@ -7,48 +7,5 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
   <ItemGroup><ProjectReference Include="../Power.Experiments/Power.Experiments.csproj" /></ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="../../assets/labs/spool-regulated-pump.power.json" LogicalName="power.spool-regulated-pump.template.json" />
-    <EmbeddedResource Include="../../assets/labs/electrothermal.power.json" LogicalName="power.template.json" />
-    <EmbeddedResource Include="../../assets/labs/sealed-cylinder.power.json" LogicalName="power.cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/gas-network.power.json" LogicalName="power.gas.template.json" />
-    <EmbeddedResource Include="../../assets/labs/moving-cylinder.power.json" LogicalName="power.moving-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/crank-timed-cylinder.power.json" LogicalName="power.crank-timed-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-cylinder.power.json" LogicalName="power.fired-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-clutch.power.json" LogicalName="power.fired-clutch.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-pump.power.json" LogicalName="power.fired-pump.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-pump-losses.power.json" LogicalName="power.fired-pump-losses.template.json" />
-    <EmbeddedResource Include="../../assets/labs/electric-pump.power.json" LogicalName="power.electric-pump.template.json" />
-    <EmbeddedResource Include="../../assets/labs/pressure-regulated-pump.power.json" LogicalName="power.pressure-regulated-pump.template.json" />
-    <EmbeddedResource Include="../../assets/labs/battery-regulated-pump.power.json" LogicalName="power.battery-regulated-pump.template.json" />
-    <EmbeddedResource Include="../../assets/labs/piston-actuated-clutch.power.json" LogicalName="power.piston-actuated-clutch.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-hydraulic.power.json" LogicalName="power.fired-hydraulic.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-converter.power.json" LogicalName="power.fired-converter.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-planetary.power.json" LogicalName="power.fired-planetary.template.json" />
-    <EmbeddedResource Include="../../schemas/power.model.v1.schema.json" LogicalName="power.model.schema.json" />
-      <EmbeddedResource Include="../../assets/labs/gas-accumulator-pump.power.json" LogicalName="power.gas-accumulator-pump.template.json" />
-    <EmbeddedResource Include="../../assets/labs/metered-fired-cylinder.power.json" LogicalName="power.metered-fired-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/film-fired-cylinder.power.json" LogicalName="power.film-fired-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/liquid-injected-cylinder.power.json" LogicalName="power.liquid-injected-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/needle-actuated-cylinder.power.json" LogicalName="power.needle-actuated-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/closure-compensated-cylinder.power.json" LogicalName="power.closure-compensated-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/dual-clutch-transmission.power.json" LogicalName="power.dual-clutch-transmission.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-dual-clutch.power.json" LogicalName="power.fired-dual-clutch.template.json" />
-    <EmbeddedResource Include="../../assets/labs/recirculating-liquid-cylinder.power.json" LogicalName="power.recirculating-liquid-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/recirculating-needle-cylinder.power.json" LogicalName="power.recirculating-needle-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/finite-tank-liquid-cylinder.power.json" LogicalName="power.finite-tank-liquid-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/finite-tank-needle-cylinder.power.json" LogicalName="power.finite-tank-needle-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/pump-fed-liquid-cylinder.power.json" LogicalName="power.pump-fed-liquid-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/pump-fed-needle-cylinder.power.json" LogicalName="power.pump-fed-needle-cylinder.template.json" />
-    <EmbeddedResource Include="../../assets/labs/controlled-hydraulic-ravigneaux.power.json" LogicalName="power.controlled-hydraulic-ravigneaux.template.json" />
-    <EmbeddedResource Include="../../assets/labs/controlled-fired-hydraulic-ravigneaux.power.json" LogicalName="power.controlled-fired-hydraulic-ravigneaux.template.json" />
-    <EmbeddedResource Include="../../assets/labs/hydraulic-ravigneaux-transmission.power.json" LogicalName="power.hydraulic-ravigneaux-transmission.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-hydraulic-ravigneaux.power.json" LogicalName="power.fired-hydraulic-ravigneaux.template.json" />
-    <EmbeddedResource Include="../../assets/labs/resolved-ravigneaux-transmission.power.json" LogicalName="power.resolved-ravigneaux-transmission.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-resolved-ravigneaux-converter.power.json" LogicalName="power.fired-resolved-ravigneaux-converter.template.json" />
-    <EmbeddedResource Include="../../assets/labs/ravigneaux-transmission.power.json" LogicalName="power.ravigneaux-transmission.template.json" />
-    <EmbeddedResource Include="../../assets/labs/fired-ravigneaux-converter.power.json" LogicalName="power.fired-ravigneaux-converter.template.json" />
-    <EmbeddedResource Include="../../assets/labs/controlled-dual-clutch.power.json" LogicalName="power.controlled-dual-clutch.template.json" />
-    <EmbeddedResource Include="../../assets/labs/controlled-fired-dual-clutch.power.json" LogicalName="power.controlled-fired-dual-clutch.template.json" />
-  </ItemGroup>
+  <ItemGroup><EmbeddedResource Include="../../schemas/power.model.v1.schema.json" LogicalName="power.model.schema.json" /></ItemGroup>
 </Project>

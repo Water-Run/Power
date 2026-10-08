@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 28, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v28";
+    public const int FormatVersion = 29, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v29";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -55,7 +55,7 @@ public static class AssetCodec
         int liquidReturns=asset.Components.Count(c=>c.LiquidRailReturn is not null);
         long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 40 * 4 +
             44L * asset.Nodes.Count + 156L * asset.Components.Count + 116L * cylinders + 24L * gases + 36L * orifices +
-            72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 64L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + 40L * needleDrivers + 104L * dctControllers + 208L * atControllers + 12L * atRoutes + 28L * liquidFeeds + 32L * liquidTanks + 24L * liquidReturns + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
+            72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 64L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + 40L * needleDrivers + 104L * dctControllers + 208L * atControllers + 12L * atRoutes + 28L * liquidFeeds + 48L * liquidTanks + 24L * liquidReturns + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
         if (size > MaxBytes) throw new AssetFormatException("Asset exceeds 1 MiB.");
         using var stream = new MemoryStream((int)size);
         using var writer = new BinaryWriter(stream, Utf8, true);
@@ -234,7 +234,7 @@ public static class AssetCodec
             {writer.Write(i);writer.Write(feed.InjectorComponent);writer.Write(feed.PumpComponent);Quantity(feed.SupplyTemperature);writer.Write(feed.TankComponent);}
         for(int i=0;i<asset.Components.Count;++i)
             if(asset.Components[i].LiquidFuelTank is { } tank)
-            {writer.Write(i);writer.Write(tank.InjectorComponent);Quantity(tank.InitialMass);Quantity(tank.InitialTemperature);}
+            {writer.Write(i);writer.Write(tank.InjectorComponent);Quantity(tank.InitialMass);Quantity(tank.InitialTemperature);Quantity(tank.Headspace?.Capacity ?? default);writer.Write(tank.Headspace?.GasNode ?? 0);}
         for(int i=0;i<asset.Components.Count;++i)
             if(asset.Components[i].LiquidRailReturn is { } route)
             {writer.Write(i);writer.Write(route.FeedComponent);writer.Write(route.ValveComponent);Quantity(route.FluidHeatFraction);}
@@ -267,7 +267,7 @@ public static class AssetCodec
             using var reader = new BinaryReader(stream, Utf8);
             if (!reader.ReadBytes(8).AsSpan().SequenceEqual(Magic)) throw new AssetFormatException("Unknown asset signature.");
             int version = reader.ReadInt32();
-            if (version is < 1 or > FormatVersion) throw new AssetFormatException("Unsupported asset format version; supported versions are 1 through 26.");
+            if (version is < 1 or > FormatVersion) throw new AssetFormatException($"Unsupported asset format version; supported versions are 1 through {FormatVersion}.");
             ulong fingerprint = reader.ReadUInt64(), step = reader.ReadUInt64(), duration = reader.ReadUInt64(), sample = reader.ReadUInt64();
             int nameLength = reader.ReadUInt16();
             if (nameLength is < 1 or > 512 || stream.Length - stream.Position < nameLength + 32) throw new AssetFormatException("Invalid asset name length.");
@@ -307,7 +307,7 @@ public static class AssetCodec
             int liquidFeeds=version>=26?Count(components):0;
             int liquidTanks=version>=27?Count(components):0;
             int liquidReturns=version>=28?Count(components):0;
-            if (stream.Length - stream.Position != 44L * nodes + 156L * components + 116L * cylinders + 24L * gases + 36L * orifices + 72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 64L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + (version >= 21 ? 40L : 32L) * needleDrivers + 104L * dctControllers + 208L * atControllers + 12L * atRoutes + (version>=27?28L:24L) * liquidFeeds + 32L * liquidTanks + 24L * liquidReturns + 24L * inputs + 33L * checks)
+            if (stream.Length - stream.Position != 44L * nodes + 156L * components + 116L * cylinders + 24L * gases + 36L * orifices + 72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 64L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + (version >= 21 ? 40L : 32L) * needleDrivers + 104L * dctControllers + 208L * atControllers + 12L * atRoutes + (version>=27?28L:24L) * liquidFeeds + (version >= 29 ? 48L : 32L) * liquidTanks + 24L * liquidReturns + 24L * inputs + 33L * checks)
                 throw new AssetFormatException("Asset length does not match its declared counts.");
             Quantity Quantity() => new(reader.ReadDouble(), (Unit)reader.ReadInt32());
             var ns = new NodeDefinition[nodes]; var cs = new ComponentDefinition[components];
@@ -660,7 +660,11 @@ public static class AssetCodec
             for(int i=0;i<liquidTanks;++i)
             {
                 int index=reader.ReadInt32();if(index<0||index>=components||cs[index].Kind!=ComponentKind.LiquidFuelTank||cs[index].LiquidFuelTank is not null)throw new AssetFormatException("Tank record must reference a distinct tank component.");
-                cs[index]=cs[index] with{LiquidFuelTank=new(){InjectorComponent=reader.ReadUInt32(),InitialMass=Quantity(),InitialTemperature=Quantity()}};
+                uint injector = reader.ReadUInt32(); var mass = Quantity(); var temperature = Quantity();
+                var capacity = version >= 29 ? Quantity() : default; uint headspace = version >= 29 ? reader.ReadUInt32() : 0;
+                if (headspace == 0 && capacity != default) throw new AssetFormatException("Headspace capacity requires a gas-node owner.");
+                cs[index]=cs[index] with{LiquidFuelTank=new(){InjectorComponent=injector,InitialMass=mass,InitialTemperature=temperature,
+                    Headspace=headspace==0?null:new(){Capacity=capacity,GasNode=headspace}}};
             }
             for(int i=0;i<liquidReturns;++i)
             {

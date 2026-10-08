@@ -2,6 +2,119 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-08: 油箱几何与有限气相空间
+
+规定的串行验证在本地 Windows x64/.NET 10.0.12 上通过。Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 411/411 |
+| standard_checks_on_dotnet | 313/313 |
+| actual_mcp_groups | 48/48 |
+| laboratories | 44 |
+| agent_examples | 43 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| physical_transaction_groups | 6 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| initial_headspace_pressure_pa | 100000 |
+| tank_capacity_m3 | 2e-7 |
+| vent_input | 960 |
+| vent_close_ns | 200000000 |
+| vent_reopen_ns | 400000000 |
+| headspace_interval_volume_fraction | 0.25 |
+| asset_version | power.asset.v29 |
+| agent_api_version | 0.34.0 |
+| audited_documents | 140 |
+| documentation_locales | 10 |
+| v28_fixture_sha256 | 3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57 |
+| verification_log_sha256 | 5e043f1b2638849a1a0ec7d29e59ee98408cf507e92b0fdeba048be5d2980f27 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| acceptance_scope | local_windows_only |
+
+| Identifier | vented-tank-liquid-cylinder | vented-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 58 | 67 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 3e1af7af1d0de7c7 | eed5469fc995ca45 |
+| final_state_hash | f34b39e6adfe540d | 189ed72df2d82b75 |
+| source_sha256 | 033c2ea4594cec4a3e173e16e9ba806f74ae1ff211e524b520b62c212afaa573 | bb25d8f37bbde15acd2f5788b7d877abf37e1200dfbf25e72a77b1ed27442b57 |
+| report_sha256 | 1ededb11489f67f12dbde919c67b61d8fd6b481261c6369026c1e80bc5b3deab | 6e0b0dd64663278e2eb022409706d29e2b621c8bbcb48c6e5948b17eaa5d3904 |
+| max_sampled_energy_j | 9.768825748324161e-10 | 1.2995997167308815e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 8.944667923005412e-18 |
+| max_sampled_fuel_kg | 1.5754812818929986e-18 | 6.274820073259857e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.5617169965001163e-21 | 9.171778631987971e-21 |
+
+示例 `vented-tank-liquid-cylinder` 和 `vented-tank-needle-cylinder` 使用油箱 1513、气相 1520、通气输入 960。资产 v29 保留几何并读取 v1-v28。解析功及导数、独立联立 ODE 细化、完整账本、资产/MCP 回放、回滚和零分配推进检查通过。
+
+- `artifacts/reports/tank-headspace-closure-2026-10-08.log`
+- `artifacts/reports/tank-headspace-evidence-2026-10-08.json`
+- `artifacts/reports/tank-headspace-doc-audit-2026-10-08.json`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/vented-tank-liquid-cylinder.json`
+- `artifacts/reports/vented-tank-needle-cylinder.json`
+- `tests/Power.Tests/Fixtures/recirculating-liquid-cylinder-v28.powerasset`
+
+该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、气液相平衡、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
+
+[TANK_HEADSPACE.zh-CN.md](TANK_HEADSPACE.zh-CN.md)
+
+## 2026-10-08: 完整的实验室与元件发现
+
+规定的串行验证在本地 Windows x64/.NET 10.0.12 上通过。Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 400/400 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 46/46 |
+| laboratories | 42 |
+| agent_examples | 41 |
+| supported_components | 41 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| audited_documents | 50 |
+| documentation_locales | 10 |
+| catalog_schema_matches_cli | true |
+| asset_version | power.asset.v28 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| verification_log_sha256 | 5dbc2ef47f7ba1621f5e3ce09a2290acb770eeab97b090466c3d1c0d7bf20196 |
+| catalog_sha256 | a84748a97884ad9bdfea9f6e74ecd7bcc100d26fd4afb284c67aca2264675db4 |
+| catalog_schema_sha256 | d38c90471e424519c092e35f372834a32e26bccc6fac51ab56468ec8866be69a |
+| acceptance_scope | local_windows_only |
+
+CLI `list-labs`、MCP 示例、Unity 导出和串行验证共用实验室目录。所有源文件均被覆盖，每个声明的示例都通过实际 stdio 验证，声明的元件与完整模型 schema 一致。所有实验室指纹、源哈希和每个采样状态哈希均与基线一致。资产 v28 和先前读取器保持不变。
+
+文档审计覆盖全部十种语言的章节对应、单行语言切换和完整实验室表。目录文件与 CLI 响应符合 `power.laboratory_catalog.v1.schema.json`。
+
+- `artifacts/reports/development-review-baseline-2026-10-08.log`
+- `artifacts/reports/development-review-final-2026-10-08.log`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/development-review-evidence-2026-10-08.json`
+- `artifacts/reports/development-review-catalog-2026-10-08.json`
+
+油箱几何/顶部气体、更完整的发动机行为、ECU/TCU 协调、实测标定和实际 Unity 验收仍待完成。研究参数仍为 `unverified`。
+
 ## 2026-10-05: 可追踪的燃油泄压回流
 
 必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。.NET Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。

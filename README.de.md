@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — Experimente ohne Oberfläche"]
     mcp["Power.Mcp — 12 MCP-Werkzeuge über stdio"]
-    assets["Power.Assets — .powerasset v28"]
+    assets["Power.Assets — .powerasset v29"]
     unity["Unity-6.6-Studio — 3D-Laboratorien"]
 
     model --> core
@@ -119,7 +119,7 @@ Der Dienst stellt zwölf Werkzeuge mit Eingabe- und Ausgabeschemas bereit:
 |---|---|
 | `get_capabilities` | Modelle, Grenzen, Zeit- und Revisionskonventionen entdecken. Hier beginnen. |
 | `get_model_schema` | JSON Schema 2020-12 für `power.model.v1` |
-| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (33 Beispiele) |
+| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (43 Beispiele) |
 | `validate_model` | Modell ohne Ausführung prüfen; strukturierte Reparaturdiagnosen |
 | `run_experiment` | Begrenzter Lauf ohne Oberfläche mit Batch-Replay, KPIs und Herkunft |
 | `export_model_asset` | Ein portables `.powerasset` exportieren |
@@ -147,10 +147,10 @@ Ein Ravigneaux-Forschungsgraph mit vier Bereichen ergänzt zusammengesetzte Plan
 > [!NOTE]
 > Alle Beispielparameter sind `unverified` — Forschungswerte, keine kalibrierten Messungen.
 
-Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v28`, Leser für ältere Assets bleiben erhalten.
+Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v29`, Leser für ältere Assets bleiben erhalten.
 
 <details>
-<summary>Verfügbare Laboratorien (34)</summary>
+<summary>Verfügbare Laboratorien (44)</summary>
 
 | Beispielname (`get_example_model`) | Laboratorium | Was es prüft |
 |---|---|---|
@@ -188,8 +188,24 @@ Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studi
 | `ravigneaux-transmission` | `assets/labs/ravigneaux-transmission.power.json` | zusammengesetzte Planetenschaltungen mit vier Bereichen |
 | `fired-ravigneaux-converter` | `assets/labs/fired-ravigneaux-converter.power.json` | gezündeter Motor, Wandler/Überbrückung und zusammengesetztes Getriebe |
 | `controlled-fired-dual-clutch` | `assets/labs/controlled-fired-dual-clutch.power.json` | gezündeter Motor mit abgetasteter DCT-Regelung und vollem Nachweis |
+| `controlled-hydraulic-ravigneaux` | `assets/labs/controlled-hydraulic-ravigneaux.power.json` | abgetastete Druckregelung und Bestätigung des tatsächlichen Gangs/Lockups |
+| `controlled-fired-hydraulic-ravigneaux` | `assets/labs/controlled-fired-hydraulic-ravigneaux.power.json` | gezündeter Motor mit rückgekoppelten hydraulischen AT-Schaltungen |
+| `pump-fed-liquid-cylinder` | `assets/labs/pump-fed-liquid-cylinder.power.json` | wellengetriebene Rail-Nachfüllung, kalorische Mischung und vollständige Bilanzen |
+| `pump-fed-needle-cylinder` | `assets/labs/pump-fed-needle-cylinder.power.json` | pumpengespeiste Rail mit physischer Nadel und Dosierregelung |
+| `finite-tank-liquid-cylinder` | `assets/labs/finite-tank-liquid-cylinder.power.json` | Entleerung des endlichen Tanks, Trockenpumpen und interner Kraftstofftransport |
+| `finite-tank-needle-cylinder` | `assets/labs/finite-tank-needle-cylinder.power.json` | endliche Versorgung mit physischer Nadel und Verdampfung |
+| `vented-tank-liquid-cylinder` | `assets/labs/vented-tank-liquid-cylinder.power.json` | endlicher Gasraum, interne Druckarbeit und gesteuerte Entlüftung |
+| `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | endlicher Gasraum/Entlüftung mit physischer Nadeldynamik |
+| `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | Druckentlastungsrücklauf mit gleichzeitiger Tank/Rail-Mischung und Verlustwärme |
+| `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | Kraftstoffumlauf mit physischer Nadel und vollständiger Wiedergabe |
 
 </details>
+
+Alle Labore als JSON auflisten:
+
+```sh
+dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll list-labs
+```
 
 `get_example_model` mit einem `name` anfordern oder direkt ausführen:
 
@@ -203,7 +219,7 @@ Der Build exportiert zu jedem Laboratorium ein passendes `.powerasset`. Replay-N
 
 Vollständige Antriebsstränge sind das Ziel, nicht der aktuelle Stand. Noch offen:
 
-- Vollständiges Motorverhalten: Saug-/Auslassmodellierung, Flüssigkeitspumpe/-nachfüllung, verfeinertes magnetisches/elektronisches/Einspritzverhalten, druckabhängiges Phasenverhalten, reichere Thermochemie und Zündungsregelung.
+- Vollständiges Motorverhalten: Schwappen/hydrostatische Form, druckabhängiges Phasengleichgewicht und Kavitation, gemessene Pumpenfüllung/Regelung, verfeinerte Magnetik/Elektronik/Sprühmodelle, Zündregelung, Einlass/Auslassdynamik, mechanische Verluste und reichere Thermochemie.
 - Vollständige DCT-Stellansteuerung, AT-Topologie und Getrieberegelung (ECU/TCU).
 - Gemessene Pumpenverlust- und Regelungskennlinien, gemessene Batteriechemie und BMS, gemessene Ventil-/Akkumulatordynamik.
 - Kalibrierte Antriebsstränge.
@@ -219,7 +235,7 @@ Die OEM-Recherche zu EA211 DJS + DQ200 und PSA EC5 + AT8 bleibt in [assets/sampl
 | Projekt | [Architektur](docs/ARCHITECTURE.de.md) · [Fahrplan](docs/ROADMAP.de.md) · [Entwicklungsstand](docs/DEVELOPMENT_STATUS.de.md) · [Validierungsakte](docs/VALIDATION.de.md) · [Notizen zur Motorfortsetzung](docs/NEXT_ENGINE_STEP.de.md) |
 | Schnittstellen | [Agent-API](docs/AGENT_API.de.md) · [Asset-Format](docs/ASSET_FORMAT.de.md) · [Native Zig-Grenze](docs/NATIVE_ZIG.de.md) |
 | Motor und Gas | [Abgeschlossener Zylinder](docs/SEALED_CYLINDER.de.md) · [Gasnetz](docs/GAS_NETWORK.de.md) · [Gaswechsel](docs/GAS_EXCHANGE.de.md) · [Bewegter Zylinder](docs/MOVING_CYLINDER.de.md) · [Ventilsteuerzeiten](docs/VALVE_TIMING.de.md) · [Vormischverbrennung](docs/PREMIXED_COMBUSTION.de.md) |
-| Kraftstoff und Einspritzung | [Kraftstoffdosierung](docs/FUEL_METERING.de.md) · [Kraftstofffilm](docs/FUEL_FILM.de.md) · [Flüssigeinspritzung](docs/LIQUID_FUEL_INJECTION.de.md) · [Nadelansteuerung](docs/NEEDLE_ACTUATION.de.md) · [Schließvorhersage](docs/CLOSURE_PREDICTION.de.md) |
+| Kraftstoff und Einspritzung | [Kraftstoffdosierung](docs/FUEL_METERING.de.md) · [Kraftstofffilm](docs/FUEL_FILM.de.md) · [Flüssigeinspritzung](docs/LIQUID_FUEL_INJECTION.de.md) · [Nadelansteuerung](docs/NEEDLE_ACTUATION.de.md) · [Schließvorhersage](docs/CLOSURE_PREDICTION.de.md) · [Tankgeometrie und endlicher Gasraum](docs/TANK_HEADSPACE.de.md) |
 | Getriebe | [Kupplungsnetz](docs/CLUTCH_NETWORK.de.md) · [Kupplungsphysik](docs/CLUTCH_PHYSICS.de.md) · [Zahnradnetz](docs/GEAR_NETWORK.de.md) · [Ideale Zahnräder](docs/IDEAL_GEARS.de.md) · [Wandler](docs/CONVERTER_NETWORK.de.md) · [Doppelkupplungsgetriebe](docs/DUAL_CLUTCH_TRANSMISSION.de.md) · [DCT-Regelung](docs/DCT_CONTROL.de.md) · [Ravigneaux-Getriebe](docs/RAVIGNEAUX_TRANSMISSION.de.md) · [Aufgelöste Planeten](docs/RESOLVED_PLANETS.de.md) |
 | Hydraulik | [Hydrauliknetz](docs/HYDRAULIC_NETWORK.de.md) · [Pumpe](docs/HYDRAULIC_PUMP.de.md) · [Kolben](docs/HYDRAULIC_PISTON.de.md) · [Schieber](docs/HYDRAULIC_SPOOL.de.md) · [Gasakkumulator](docs/GAS_PISTON.de.md) · [AT-Ansteuerung](docs/AT_HYDRAULIC_ACTUATION.de.md) |
 

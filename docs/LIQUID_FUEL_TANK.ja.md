@@ -12,11 +12,17 @@
 
 `finite-tank-liquid-cylinder` と `finite-tank-needle-cylinder` はタンク ID 1513 と補給 ID 1511 を使います。`mass`、`temperature`、`internal_energy`、`chemical_energy`、`tank_state` を読み、0 は液あり、1 は空です。乾燥温度は宣言した初期基準を示します。
 
+## タンク形状と有限ヘッドスペース
+
+`liquid_fuel_tank.parameters.headspace` は `m3` または `l` の `capacity` と `gas_node` を指定します。気体ノードは `storage` を省略し、体積は `capacity - liquid_mass / density` です。所有者は一つで体積は正を維持します。有限気体が入口圧力を決めるため、ポンプと戻りの指定リザーバー圧力はゼロです。
+
+[タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md)
+
 ## 証拠と制限
 
-v28 はタンクと補給選択を保存し v1-v27 を読みます。各タンクは既存上限内で 4 状態を追加します。独立湿潤交換、枯渇後の圧力/軸エネルギー解析解、逆流混合、全台帳、rollback、分岐、割り当てなしステップを検査します。
+v29 はタンクと補給選択を保存し v1-v28 を読みます。各タンクは既存上限内で 4 状態を追加します。独立湿潤交換、枯渇後の圧力/軸エネルギー解析解、逆流混合、全台帳、rollback、分岐、割り当てなしステップを検査します。
 
-形状容量、通気/気相空間/揺動、キャビテーション、実測充液/効率/調圧、解像噴霧は未完了です。パラメーターは `unverified` で、実際の Unity Editor/Play/Player/IL2CPP と OEM 校正は未検証です。
+剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、相平衡、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
 
 [VALIDATION.ja.md](VALIDATION.ja.md)
 

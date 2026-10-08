@@ -114,7 +114,7 @@ internal sealed class ConverterSolver : MechanicalSolver
     internal ConverterSolver(CompiledModel model, HydraulicSolver? hydraulics = null)
     {
         _model = model; _coupling = model.ConverterCoupling!; _hydraulics = model.HasCoupledHydraulics ? hydraulics : null;
-        int count = _coupling.Nodes.Length + (model.HasCoupledHydraulics ? model.HydraulicCount : 0);
+        int count = _coupling.Nodes.Length + (model.HasCoupledHydraulics ? hydraulics!.PressureCount : 0);
         _value = new double[count]; _prediction = new double[count]; _force = new double[_coupling.Nodes.Length]; _residual = new double[count];
         _trial = new double[count]; _trialResidual = new double[count]; _correction = new double[count];
         _derivative = new double[_force.Length, count]; _jacobian = new double[count, count]; _factor = new(count);
@@ -214,7 +214,7 @@ internal sealed class ConverterSolver : MechanicalSolver
         {
             var c = _model.Components[_model.PumpComponents[k]];
             int row = _coupling.PumpOffset + k, outlet = mechanical + _model.Nodes[c.B].Index;
-            int inlet = c.C < 0 ? -1 : mechanical + _model.Nodes[c.C].Index;
+            int inletIndex = _hydraulics!.PumpInlet(k), inlet = inletIndex < 0 ? -1 : mechanical + inletIndex;
             _hydraulics!.PumpFlowLaw(k, values[row], out double displacement, out double slope, out _);
             double difference = values[outlet] - (inlet < 0 ? c.P2 : values[inlet]);
             _force[row] = -displacement * difference;
@@ -247,7 +247,11 @@ internal sealed class ConverterSolver : MechanicalSolver
             int index = _coupling.Variables[k];
             _value[k] = _prediction[k] = k < _coupling.Coordinates ? 2 * (midpoint[index] - old[index]) : midpoint[index];
         }
-        if (_hydraulics is not null) Array.Copy(_hydraulicState!.Pressure, 0, _value, mechanical, _model.HydraulicCount);
+        if (_hydraulics is not null)
+        {
+            Array.Copy(_hydraulicState!.Pressure, 0, _value, mechanical, _model.HydraulicCount);
+            _hydraulics.InitialHeadspacePressures(_value, mechanical);
+        }
         for (int iteration = 0; iteration < MaxIterations; ++iteration)
         {
             if (cancellation.IsCancellationRequested) return false;

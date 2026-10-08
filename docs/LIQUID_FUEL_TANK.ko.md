@@ -12,11 +12,17 @@
 
 `finite-tank-liquid-cylinder`와 `finite-tank-needle-cylinder`는 탱크 ID 1513과 공급 ID 1511을 사용합니다. `mass`, `temperature`, `internal_energy`, `chemical_energy`, `tank_state`를 읽으며 0은 액체 있음, 1은 비었음을 뜻합니다. 건조 온도는 선언된 초기 기준을 보고합니다.
 
+## 탱크 형상과 유한 헤드스페이스
+
+`liquid_fuel_tank.parameters.headspace`는 `m3` 또는 `l`의 `capacity`와 `gas_node`를 지정합니다. 기체 노드는 `storage`를 생략하며 체적은 `capacity - liquid_mass / density`입니다. 소유자는 하나이고 체적은 양수여야 합니다. 유한 기체가 입구 압력을 결정하므로 펌프와 반환의 지정 저장소 압력은 0입니다.
+
+[탱크 형상과 유한 헤드스페이스](TANK_HEADSPACE.ko.md)
+
 ## 증거와 한계
 
-v28은 탱크와 공급 선택을 저장하고 v1-v27을 읽습니다. 각 탱크는 기존 상한 안에서 4개 상태를 추가합니다. 독립 습윤 교환, 고갈 압력/축 에너지 해석, 반환 혼합, 전체 원장, rollback, 분기와 무할당 스텝을 검사합니다.
+v29은 탱크와 공급 선택을 저장하고 v1-v28을 읽습니다. 각 탱크는 기존 상한 안에서 4개 상태를 추가합니다. 독립 습윤 교환, 고갈 압력/축 에너지 해석, 반환 혼합, 전체 원장, rollback, 분기와 무할당 스텝을 검사합니다.
 
-기하학적 용량, 통기/기체 공간/슬로싱, 캐비테이션, 실측 충액/효율/조압과 분해 분무는 미완성입니다. 매개변수는 `unverified`이며 실제 Unity Editor/Play/Player/IL2CPP와 OEM 보정은 미검증입니다.
+강체 혼합 탱크, 비압축 액체와 이상기체 모델입니다. 슬로싱/정수압 형상, 상평형, 캐비테이션, 실측 펌프/밸브 맵, OEM 보정과 실제 Unity Editor/Play/Player/IL2CPP는 미완성입니다. 매개변수는 `unverified`입니다.
 
 [VALIDATION.ko.md](VALIDATION.ko.md)
 

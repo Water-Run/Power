@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 无头实验"]
     mcp["Power.Mcp — 12 个 stdio MCP 工具"]
-    assets["Power.Assets — .powerasset v28"]
+    assets["Power.Assets — .powerasset v29"]
     unity["Unity 6.6 工作室 — 3D 实验室"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | 发现模型、限制、时间与修订约定。从这里开始。 |
 | `get_model_schema` | `power.model.v1` 的 JSON Schema 2020-12 |
-| `get_example_model` | 获取可编辑的合成模型与实验(33 个示例) |
+| `get_example_model` | 获取可编辑的合成模型与实验(43 个示例) |
 | `validate_model` | 不运行即校验模型;结构化修复诊断 |
 | `run_experiment` | 有界无头运行,含批量回放、KPI 与溯源 |
 | `export_model_asset` | 导出可移植的 `.powerasset` |
@@ -147,10 +147,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 所有示例参数均为 `unverified`——研究取值,不是标定测量值。
 
-下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v28`,并保留对更早资产的读取。
+下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v29`,并保留对更早资产的读取。
 
 <details>
-<summary>可用实验室(34 个)</summary>
+<summary>可用实验室(44 个)</summary>
 
 | 示例名(`get_example_model`) | 实验室 | 验证内容 |
 |---|---|---|
@@ -188,8 +188,24 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `ravigneaux-transmission` | `assets/labs/ravigneaux-transmission.power.json` | 四挡域复合行星升降挡交接 |
 | `fired-ravigneaux-converter` | `assets/labs/fired-ravigneaux-converter.power.json` | 点火发动机、变矩器/锁止与复合变速器 |
 | `controlled-fired-dual-clutch` | `assets/labs/controlled-fired-dual-clutch.power.json` | 点火发动机、采样 DCT 控制与完整证据 |
+| `controlled-hydraulic-ravigneaux` | `assets/labs/controlled-hydraulic-ravigneaux.power.json` | 采样压力控制与实际挡域/锁止确认 |
+| `controlled-fired-hydraulic-ravigneaux` | `assets/labs/controlled-fired-hydraulic-ravigneaux.power.json` | 点火发动机与反馈控制的液压 AT 换挡 |
+| `pump-fed-liquid-cylinder` | `assets/labs/pump-fed-liquid-cylinder.power.json` | 轴驱动油轨补给、热混合与完整账本 |
+| `pump-fed-needle-cylinder` | `assets/labs/pump-fed-needle-cylinder.power.json` | 泵供油轨、物理针阀与剂量控制 |
+| `finite-tank-liquid-cylinder` | `assets/labs/finite-tank-liquid-cylinder.power.json` | 有限油箱耗尽、干转泵送与内部燃油传递 |
+| `finite-tank-needle-cylinder` | `assets/labs/finite-tank-needle-cylinder.power.json` | 有限供油、物理针阀与蒸发 |
+| `vented-tank-liquid-cylinder` | `assets/labs/vented-tank-liquid-cylinder.power.json` | 有限气相空间、内部压力功与受控通气 |
+| `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | 有限气相及通气与物理针阀动力学 |
+| `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | 泄压回流、油箱/油轨联立混合与损失热 |
+| `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | 循环燃油、物理针阀与完整回放 |
 
 </details>
+
+以 JSON 列出全部实验室：
+
+```sh
+dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll list-labs
+```
 
 向 `get_example_model` 传入 `name`,或直接运行:
 
@@ -203,7 +219,7 @@ dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll assets/labs/<name>.power.
 
 完整动力总成是目标,不是当前状态。仍未完成:
 
-- 完整发动机行为:进/排气建模、液体泵送/加注、更精细的电磁/电子/喷雾行为、压力相关相变、更丰富的热化学与点火控制。
+- 完整发动机行为：油箱晃动/静液压形状、压力相关相平衡与空化、实测泵充液/调压、更精细的电磁/电子/喷雾行为、点火控制、进/排气动力学、机械损失和更丰富的热化学。
 - 完整的 DCT 执行、AT 拓扑与变速器控制(ECU/TCU)。
 - 实测的泵损耗与控制图谱、实测电池化学与 BMS、实测阀门/蓄能器动力学。
 - 标定动力总成。
@@ -219,7 +235,7 @@ EA211 DJS + DQ200 与 PSA EC5 + AT8 的 OEM 研究保留在 [assets/samples](ass
 | 项目 | [架构](docs/ARCHITECTURE.zh-CN.md) · [路线图](docs/ROADMAP.zh-CN.md) · [开发状态](docs/DEVELOPMENT_STATUS.zh-CN.md) · [验证记录](docs/VALIDATION.zh-CN.md) · [发动机恢复笔记](docs/NEXT_ENGINE_STEP.zh-CN.md) |
 | 接口 | [智能体 API](docs/AGENT_API.zh-CN.md) · [资产格式](docs/ASSET_FORMAT.zh-CN.md) · [原生 Zig 边界](docs/NATIVE_ZIG.zh-CN.md) |
 | 发动机与气体 | [封闭气缸](docs/SEALED_CYLINDER.zh-CN.md) · [气体网络](docs/GAS_NETWORK.zh-CN.md) · [换气](docs/GAS_EXCHANGE.zh-CN.md) · [运动气缸](docs/MOVING_CYLINDER.zh-CN.md) · [气门定时](docs/VALVE_TIMING.zh-CN.md) · [预混燃烧](docs/PREMIXED_COMBUSTION.zh-CN.md) |
-| 燃油与喷射 | [燃油计量](docs/FUEL_METERING.zh-CN.md) · [油膜](docs/FUEL_FILM.zh-CN.md) · [低压喷射](docs/LIQUID_FUEL_INJECTION.zh-CN.md) · [针阀驱动](docs/NEEDLE_ACTUATION.zh-CN.md) · [闭合预测](docs/CLOSURE_PREDICTION.zh-CN.md) |
+| 燃油与喷射 | [燃油计量](docs/FUEL_METERING.zh-CN.md) · [油膜](docs/FUEL_FILM.zh-CN.md) · [低压喷射](docs/LIQUID_FUEL_INJECTION.zh-CN.md) · [针阀驱动](docs/NEEDLE_ACTUATION.zh-CN.md) · [闭合预测](docs/CLOSURE_PREDICTION.zh-CN.md) · [油箱几何与有限气相空间](docs/TANK_HEADSPACE.zh-CN.md) |
 | 变速器 | [离合器网络](docs/CLUTCH_NETWORK.zh-CN.md) · [离合器物理](docs/CLUTCH_PHYSICS.zh-CN.md) · [齿轮网络](docs/GEAR_NETWORK.zh-CN.md) · [理想齿轮](docs/IDEAL_GEARS.zh-CN.md) · [变矩器](docs/CONVERTER_NETWORK.zh-CN.md) · [双离合变速器](docs/DUAL_CLUTCH_TRANSMISSION.zh-CN.md) · [DCT 控制](docs/DCT_CONTROL.zh-CN.md) · [Ravigneaux 变速器](docs/RAVIGNEAUX_TRANSMISSION.zh-CN.md) · [分解行星](docs/RESOLVED_PLANETS.zh-CN.md) |
 | 液压 | [液压网络](docs/HYDRAULIC_NETWORK.zh-CN.md) · [泵](docs/HYDRAULIC_PUMP.zh-CN.md) · [活塞](docs/HYDRAULIC_PISTON.zh-CN.md) · [滑阀](docs/HYDRAULIC_SPOOL.zh-CN.md) · [气体蓄能器](docs/GAS_PISTON.zh-CN.md) · [AT 驱动](docs/AT_HYDRAULIC_ACTUATION.zh-CN.md) |
 

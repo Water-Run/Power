@@ -42,7 +42,7 @@ O Windows usa o mesmo comando `dotnet` e um caminho absoluto para a DLL. Uma con
 
 ## Ferramentas e resultados
 
-Na versão 0.33.0 da API de agente, `get_example_model` aceita um `name` opcional: `electrothermal` (padrão), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` ou `fired-hydraulic-ravigneaux`. `get_capabilities` anuncia os níveis de fidelidade suportados, as versões de asset legíveis, os limites do solver e os limites de entrada. As exportações usam `power.asset.v28`; assets v1–v23 continuam legíveis. Canais de saída e suas unidades são retornados pela validação do modelo e pela criação da sessão. KPIs de laboratório aprovados não estabelecem um powertrain completo nem calibrado.
+Na API de agente versão 0.34.0, `get_example_model` aceita um `name` opcional, com padrão `electrothermal`. `get_capabilities.examples` lista os 43 exemplos, incluindo tanque finito e recirculação. CLI `list-labs` retorna os 44 laboratórios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` é exclusivo da CLI por projeto. As capacidades também anunciam componentes, fidelidade, limites do solver e entradas. Exports usam `power.asset.v29`, mantendo leitores v1-v28. Validação e criação de sessão retornam canais e unidades. KPI aprovados não estabelecem um powertrain completo ou calibrado.
 
 | Ferramenta | Finalidade |
 |---|---|
@@ -292,7 +292,7 @@ Os relatórios conservam pressão de linha/câmara, curso, capacidade de contato
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v28 preserva rotas, ganhos e relógios e lê v1-v27.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v29 preserva rotas, ganhos e relógios e lê v1-v28.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -302,9 +302,9 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v28 preserva conexões e temperatura da fonte e lê v1-v27. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v29 preserva conexões e temperatura da fonte e lê v1-v28. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
-Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
+Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, equilíbrio de fases, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
 [PUMP_FED_FUEL.pt-BR.md](PUMP_FED_FUEL.pt-BR.md)
 
@@ -314,7 +314,7 @@ Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, en
 
 Energias térmica e química do tanque entram no armazenamento completo. Transferência interna não adiciona massa ou energia química externa. A pressão de entrada prescrita mantém sua fronteira de trabalho de pressão. Admissão/escape gasoso ainda podem transportar energia química.
 
-Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
+Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, equilíbrio de fases, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
 [LIQUID_FUEL_TANK.pt-BR.md](LIQUID_FUEL_TANK.pt-BR.md)
 
@@ -325,3 +325,11 @@ Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, en
 `fluid_heat_fraction` escolhe explicitamente a fração [0,1] da perda transportada pelo combustível retornado. O restante segue a rota térmica declarada. Mistura simultânea rail/tanque conserva massa, química, trabalho de pressão e calor. Retorno à fonte externa leva massa/energia pela fronteira.
 
 [LIQUID_FUEL_RETURN.pt-BR.md](LIQUID_FUEL_RETURN.pt-BR.md)
+
+## Geometria do tanque e espaço gasoso finito
+
+`liquid_fuel_tank.parameters.headspace` declara `capacity` em `m3` ou `l` e `gas_node`. O gás omite `storage`: volume `capacity - liquid_mass / density`, um proprietário e volume positivo. Bomba e retorno usam pressão prescrita nula: o gás finito determina a pressão de entrada.
+
+O solver acoplado troca trabalho de pressão entre eixo, trilho e gás sem fonte externa. Orifícios gasosos e conexões térmicas fornecem ventilação/calor explícitos. Ler `pressure`, `fill_fraction`, `hydraulic_work` acumulado com sinal e massa, energia, volume do gás. Dose, líquido, evaporação e combustão continuam separados.
+
+[Geometria do tanque e espaço gasoso finito](TANK_HEADSPACE.pt-BR.md)

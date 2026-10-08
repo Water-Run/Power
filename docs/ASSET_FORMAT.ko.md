@@ -14,7 +14,25 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 28
+## 현재 버전 29
+
+`liquid_fuel_tank.parameters.headspace`는 `m3` 또는 `l`의 `capacity`와 `gas_node`를 지정합니다. 기체 노드는 `storage`를 생략하며 체적은 `capacity - liquid_mass / density`입니다. 소유자는 하나이고 체적은 양수여야 합니다. 유한 기체가 입구 압력을 결정하므로 펌프와 반환의 지정 저장소 압력은 0입니다.
+
+`vented-tank-liquid-cylinder`와 `vented-tank-needle-cylinder`는 탱크 1513, 기체 1520, 통기 입력 960을 사용합니다. 자산 v29는 형상을 저장하고 v1-v28을 읽습니다. 해석적 일/미분, 독립 ODE 수렴, 수지, portable/MCP 재현, 롤백과 무할당 단계 검사가 통과했습니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[탱크 형상과 유한 헤드스페이스](TANK_HEADSPACE.ko.md)
+
+## 유지 버전 28
 
 `recirculating-liquid-cylinder`와 `recirculating-needle-cylinder`는 유한 연료, 실제 분사, 증발과 선택적 니들 동역학을 보존합니다. v28은 연결/열 비율을 저장하고 v1-v27을 읽습니다. 각 반환은 기존 상한 내 8개 상태를 추가합니다.
 

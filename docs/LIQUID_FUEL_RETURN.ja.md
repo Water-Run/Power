@@ -12,8 +12,16 @@
 
 ## 証拠と制限
 
-`recirculating-liquid-cylinder` と `recirculating-needle-cylinder` は有限燃料、実噴射、蒸発、任意のニードル動特性を保持します。v28 は接続/熱割合を保存し v1-v27 を読みます。各戻りは既存上限内で 8 状態を追加します。
+`recirculating-liquid-cylinder` と `recirculating-needle-cylinder` は有限燃料、実噴射、蒸発、任意のニードル動特性を保持します。v29 は接続/熱割合を保存し v1-v28 を読みます。各戻りは既存上限内で 8 状態を追加します。
 
-独立リリーフ減衰/仕事、機械/圧力/熱同時細化、熱割合、複数経路、外部境界、replay、rollback、割り当て検査は合格します。沸騰や未解像移送区間は全バッチを失敗させます。タンク形状/通気、実測弁/ポンプ、キャビテーション、噴霧、OEM 校正、実 Unity Editor/Play/Player/IL2CPP は未完了です。
+独立リリーフ減衰/仕事、機械/圧力/熱同時細化、熱割合、複数経路、外部境界、replay、rollback、割り当て検査は合格します。 沸騰や未解像移送区間は全バッチを失敗させます。
+
+剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、相平衡、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
 
 [VALIDATION.ja.md](VALIDATION.ja.md)
+
+## タンク形状と有限ヘッドスペース
+
+`liquid_fuel_tank.parameters.headspace` は `m3` または `l` の `capacity` と `gas_node` を指定します。気体ノードは `storage` を省略し、体積は `capacity - liquid_mass / density` です。所有者は一つで体積は正を維持します。有限気体が入口圧力を決めるため、ポンプと戻りの指定リザーバー圧力はゼロです。
+
+[タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md)

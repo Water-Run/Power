@@ -12,8 +12,16 @@
 
 ## 증거와 한계
 
-`recirculating-liquid-cylinder`와 `recirculating-needle-cylinder`는 유한 연료, 실제 분사, 증발과 선택적 니들 동역학을 보존합니다. v28은 연결/열 비율을 저장하고 v1-v27을 읽습니다. 각 반환은 기존 상한 내 8개 상태를 추가합니다.
+`recirculating-liquid-cylinder`와 `recirculating-needle-cylinder`는 유한 연료, 실제 분사, 증발과 선택적 니들 동역학을 보존합니다. v29은 연결/열 비율을 저장하고 v1-v28을 읽습니다. 각 반환은 기존 상한 내 8개 상태를 추가합니다.
 
-독립 릴리프 감쇠/일, 기계/압력/열 동시 세분화, 열 비율, 다중 경로, 외부 경계, replay, rollback과 할당 검사가 통과합니다. 비등이나 미해상 전달 구간은 전체 배치를 실패시킵니다. 탱크 기하/통기, 실측 밸브/펌프, 캐비테이션, 분무, OEM 보정과 실제 Unity Editor/Play/Player/IL2CPP는 미완성입니다.
+독립 릴리프 감쇠/일, 기계/압력/열 동시 세분화, 열 비율, 다중 경로, 외부 경계, replay, rollback과 할당 검사가 통과합니다. 비등이나 미해상 전달 구간은 전체 배치를 실패시킵니다.
+
+강체 혼합 탱크, 비압축 액체와 이상기체 모델입니다. 슬로싱/정수압 형상, 상평형, 캐비테이션, 실측 펌프/밸브 맵, OEM 보정과 실제 Unity Editor/Play/Player/IL2CPP는 미완성입니다. 매개변수는 `unverified`입니다.
 
 [VALIDATION.ko.md](VALIDATION.ko.md)
+
+## 탱크 형상과 유한 헤드스페이스
+
+`liquid_fuel_tank.parameters.headspace`는 `m3` 또는 `l`의 `capacity`와 `gas_node`를 지정합니다. 기체 노드는 `storage`를 생략하며 체적은 `capacity - liquid_mass / density`입니다. 소유자는 하나이고 체적은 양수여야 합니다. 유한 기체가 입구 압력을 결정하므로 펌프와 반환의 지정 저장소 압력은 0입니다.
+
+[탱크 형상과 유한 헤드스페이스](TANK_HEADSPACE.ko.md)

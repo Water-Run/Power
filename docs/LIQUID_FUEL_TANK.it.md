@@ -12,11 +12,17 @@ Energia termica e chimica del serbatoio entrano nello stoccaggio totale. Il tras
 
 `finite-tank-liquid-cylinder` e `finite-tank-needle-cylinder` usano serbatoio ID 1513 e alimentazione ID 1511. Leggere `mass`, `temperature`, `internal_energy`, `chemical_energy` e `tank_state`; 0 significa liquido e 1 vuoto. La temperatura asciutta riporta il riferimento iniziale dichiarato.
 
+## Geometria del serbatoio e spazio gassoso finito
+
+`liquid_fuel_tank.parameters.headspace` dichiara `capacity` in `m3` o `l` e `gas_node`. Il gas omette `storage`: volume `capacity - liquid_mass / density`, un proprietario e volume positivo. Pompa e ritorno usano pressione prescritta nulla: il gas finito determina la pressione d'ingresso.
+
+[Geometria del serbatoio e spazio gassoso finito](TANK_HEADSPACE.it.md)
+
 ## Evidenze e limiti
 
-v28 conserva serbatoio e selezione e legge v1-v27. Ogni serbatoio aggiunge 4 stati nei limiti invariati. Scambio umido indipendente, pressione/energia d'albero esaurite analitiche, miscela di ritorno, bilanci completi, rollback, rami e passi senza allocazioni sono verificati.
+v29 conserva serbatoio e selezione e legge v1-v28. Ogni serbatoio aggiunge 4 stati nei limiti invariati. Scambio umido indipendente, pressione/energia d'albero esaurite analitiche, miscela di ritorno, bilanci completi, rollback, rami e passi senza allocazioni sono verificati.
 
-Capacità geometrica, ventilazione/spazio gas/oscillazione, cavitazione, riempimento/efficienza/regolazione misurati e spray risolto restano aperti. Parametri `unverified`; Unity Editor/Play/Player/IL2CPP reale e calibrazione OEM non sono verificati.
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, equilibrio di fase, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
 [VALIDATION.it.md](VALIDATION.it.md)
 

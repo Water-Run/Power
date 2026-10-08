@@ -31,7 +31,7 @@ flowchart LR
 | ドキュメント | 内容 |
 |---|---|
 | [エージェント API](AGENT_API.ja.md) | MCP ツール、リビジョン、エラー、操作シーケンス |
-| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v24 と、v1 から v23 までのリーダー |
+| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v29 と、v1 から v28 までのリーダー |
 | [ネイティブ Zig 境界](NATIVE_ZIG.ja.md) | 保管された Zig プロトタイプと、バージョン付き ABI |
 
 ## エンジンと燃料
@@ -49,6 +49,7 @@ flowchart LR
 | [液体噴射](LIQUID_FUEL_INJECTION.ja.md) | フィルムへ供給する、有限で柔軟な液体レール |
 | [ニードル駆動](NEEDLE_ACTUATION.ja.md) | 位置依存ソレノイド、ニードル質量、閉じ遅れ、反発 |
 | [クロージャ予測](CLOSURE_PREDICTION.ja.md) | 電圧除去を計画する、有界なプラントリプレイ |
+| [タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md) | 剛体容量、有限気体の圧力仕事と明示的通気 |
 
 ## トランスミッション
 

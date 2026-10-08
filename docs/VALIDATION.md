@@ -2,6 +2,119 @@
 
 **English** · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-08: Geometric tank and finite headspace
+
+The required serial verification passes locally on Windows x64/.NET 10.0.12. Standard-assembly checks run on .NET 10; actual Unity Editor/Play/Player/IL2CPP remains unverified.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 411/411 |
+| standard_checks_on_dotnet | 313/313 |
+| actual_mcp_groups | 48/48 |
+| laboratories | 44 |
+| agent_examples | 43 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| physical_transaction_groups | 6 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| initial_headspace_pressure_pa | 100000 |
+| tank_capacity_m3 | 2e-7 |
+| vent_input | 960 |
+| vent_close_ns | 200000000 |
+| vent_reopen_ns | 400000000 |
+| headspace_interval_volume_fraction | 0.25 |
+| asset_version | power.asset.v29 |
+| agent_api_version | 0.34.0 |
+| audited_documents | 140 |
+| documentation_locales | 10 |
+| v28_fixture_sha256 | 3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57 |
+| verification_log_sha256 | 5e043f1b2638849a1a0ec7d29e59ee98408cf507e92b0fdeba048be5d2980f27 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| acceptance_scope | local_windows_only |
+
+| Identifier | vented-tank-liquid-cylinder | vented-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 58 | 67 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 3e1af7af1d0de7c7 | eed5469fc995ca45 |
+| final_state_hash | f34b39e6adfe540d | 189ed72df2d82b75 |
+| source_sha256 | 033c2ea4594cec4a3e173e16e9ba806f74ae1ff211e524b520b62c212afaa573 | bb25d8f37bbde15acd2f5788b7d877abf37e1200dfbf25e72a77b1ed27442b57 |
+| report_sha256 | 1ededb11489f67f12dbde919c67b61d8fd6b481261c6369026c1e80bc5b3deab | 6e0b0dd64663278e2eb022409706d29e2b621c8bbcb48c6e5948b17eaa5d3904 |
+| max_sampled_energy_j | 9.768825748324161e-10 | 1.2995997167308815e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 8.944667923005412e-18 |
+| max_sampled_fuel_kg | 1.5754812818929986e-18 | 6.274820073259857e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.5617169965001163e-21 | 9.171778631987971e-21 |
+
+The examples `vented-tank-liquid-cylinder` and `vented-tank-needle-cylinder` use tank 1513, headspace 1520 and vent input 960. Asset v29 stores geometry and reads v1-v28. Analytic work/derivative checks, independent simultaneous ODE refinement, complete ledgers, portable/MCP replay, rollback and allocation-free stepping pass.
+
+- `artifacts/reports/tank-headspace-closure-2026-10-08.log`
+- `artifacts/reports/tank-headspace-evidence-2026-10-08.json`
+- `artifacts/reports/tank-headspace-doc-audit-2026-10-08.json`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/vented-tank-liquid-cylinder.json`
+- `artifacts/reports/vented-tank-needle-cylinder.json`
+- `tests/Power.Tests/Fixtures/recirculating-liquid-cylinder-v28.powerasset`
+
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+
+[TANK_HEADSPACE.md](TANK_HEADSPACE.md)
+
+## 2026-10-08: Complete laboratory and component discovery
+
+The required serial verification passes locally on Windows x64/.NET 10.0.12. Standard-assembly checks run on .NET 10; actual Unity Editor/Play/Player/IL2CPP remains unverified.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 400/400 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 46/46 |
+| laboratories | 42 |
+| agent_examples | 41 |
+| supported_components | 41 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| audited_documents | 50 |
+| documentation_locales | 10 |
+| catalog_schema_matches_cli | true |
+| asset_version | power.asset.v28 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| verification_log_sha256 | 5dbc2ef47f7ba1621f5e3ce09a2290acb770eeab97b090466c3d1c0d7bf20196 |
+| catalog_sha256 | a84748a97884ad9bdfea9f6e74ecd7bcc100d26fd4afb284c67aca2264675db4 |
+| catalog_schema_sha256 | d38c90471e424519c092e35f372834a32e26bccc6fac51ab56468ec8866be69a |
+| acceptance_scope | local_windows_only |
+
+CLI `list-labs`, MCP examples, Unity exports and serial verification share the laboratory catalog. Every source is covered, every advertised example validates through actual stdio, and advertised components match the complete model schema. All laboratory fingerprints, source hashes and every sampled state hash match the baseline. Asset v28 and prior readers are unchanged.
+
+The documentation audit covers matching sections, single language switchers and complete laboratory tables in all ten languages. The catalog file and CLI response match `power.laboratory_catalog.v1.schema.json`.
+
+- `artifacts/reports/development-review-baseline-2026-10-08.log`
+- `artifacts/reports/development-review-final-2026-10-08.log`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/development-review-evidence-2026-10-08.json`
+- `artifacts/reports/development-review-catalog-2026-10-08.json`
+
+Tank geometry/headspace, deeper engine behavior, ECU/TCU coordination, measured calibration and actual Unity acceptance remain open. Research parameters remain `unverified`.
+
 ## 2026-10-05: Tracked fuel relief return
 
 The required serial verification passes locally on Windows x64/.NET 10.0.12. Standard-assembly checks run on .NET 10; actual Unity Editor/Play/Player/IL2CPP remains unverified.

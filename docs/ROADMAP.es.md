@@ -12,12 +12,12 @@ calibración del vehículo y la aceptación de escritorio necesitan cada uno su 
 | Hito | Base disponible | Trabajo que aún falta |
 |---|---|---|
 | Núcleo gestionado | Física sin dependencias y de doble destino, topología, unidades, tiempo entero, repetición y transacciones atómicas | Validación integrada de larga duración del grupo motopropulsor |
-| Interfaz de agente | Herramientas MCP definidas por esquema, diagnósticos estructurados, revisiones, ramas, cancelación e informes compactos | Flujos de modelado y control para el alcance restante del grupo motopropulsor completo |
+| Interfaz de agente | Herramientas MCP definidas por esquema, diagnósticos estructurados, revisiones, ramas, cancelación e informes compactos; `list-labs` / `get_capabilities.examples` | Flujos de modelado y control para el alcance restante del grupo motopropulsor completo |
 | Estudio de Unity | Importación de modelo compartida, reproducción de laboratorio, componentes esquemáticos 3D y pruebas preparadas | Evidencia real de Editor/Play/Player/IL2CPP y empaquetado de escritorio |
-| Banco de modelado | Asset portátil v28, lectores v1-v27 y definiciones compartidas de JSON/CLI/MCP | Edición de grafos, guardado y gráficas de canales seleccionables |
-| Física del motor | Masa y energía de gas independientes, trabajo de biela-manivela, válvulas temporizadas, combustión prescrita, dosificación de combustible gaseoso y líquido, raíles flexibles finitos, evaporación de película y accionamiento físico de la aguja; [Raíl de combustible líquido alimentado por bomba](PUMP_FED_FUEL.es.md) | geometría/ventilación del tanque y llenado/regulación medidos, comportamiento magnético, electrónico y de pulverización refinado, acoplamiento de volumen líquido finito, control de encendido, admisión y escape detallados, pérdidas mecánicas, termoquímica y calibración medida |
+| Banco de modelado | Asset portátil v29, lectores v1-v28 y definiciones compartidas de JSON/CLI/MCP | Edición de grafos, guardado y gráficas de canales seleccionables |
+| Física del motor | Masa y energía de gas independientes, trabajo de biela-manivela, válvulas temporizadas, combustión prescrita, dosificación de combustible gaseoso y líquido, raíles flexibles finitos, evaporación de película y accionamiento físico de la aguja; [Raíl de combustible líquido alimentado por bomba](PUMP_FED_FUEL.es.md); tanques finitos y retornos de alivio conservativos; [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md) | oleaje/forma hidrostática y llenado/regulación medidos, comportamiento magnético, electrónico y de pulverización refinado, acoplamiento de volumen líquido finito, control de encendido, admisión y escape detallados, pérdidas mecánicas, termoquímica y calibración medida |
 | Transmisión | Embragues acoplados, engranajes y planetarios, convertidor y bloqueo mapeados, hidráulica, y caminos DCT de siete marchas adelante y marcha atrás y Ravigneaux de cuatro adelante y marcha atrás, con giro de satélite e inercia orbital resueltos | Flexibilidad, pérdidas y reparto de carga del engrane, actuación DCT, control completo de presión y cambio de la AT y encaminamiento medido, mapas medidos, comportamiento de válvulas, juntas y cavitación, y dinámica de convertidor más rica |
-| Controles e integración eléctrica | PI de presión muestreado, control de cierre de aguja y entrega DCT escalonada confirmada por sensor, voltaje y ciclo de trabajo acotados, propiedad de los actuadores, circuito equivalente de batería y accesorios | Ciclos coordinados de ECU/TCU, sensores y actuadores, solicitudes de par, fallos, BMS y comportamiento térmico y eléctrico medido |
+| Controles e integración eléctrica | PI de presión muestreado, control de cierre de aguja y entrega DCT escalonada confirmada por sensor, voltaje y ciclo de trabajo acotados, propiedad de los actuadores, circuito equivalente de batería y accesorios; [`at_controller`](AT_CONTROL.es.md) | Ciclos coordinados de ECU/TCU, sensores y actuadores, solicitudes de par, fallos, BMS y comportamiento térmico y eléctrico medido |
 | Evidencia de vehículo y publicación | Muestras de investigación con límites y procedencia completos | Dos grupos motopropulsores medidos completos, presupuestos de incertidumbre, estabilidad, aceptación de escritorio y distribución |
 
 Los puntos de control numéricos actuales, los fixtures auténticos de assets y los registros
@@ -28,7 +28,7 @@ su revisión registrada; los cambios locales nuevos necesitan una aceptación de
 
 ## Siguiente trabajo gestionado
 
-Ampliar el tanque finito con capacidad geométrica, dinámica de ventilación/espacio gaseoso, llenado/regulación medidos y actuación magnética/electrónica refinada. Están implementados la masa
+Ampliar equilibrio de fases dependiente de la presión, cavitación, llenado/regulación medidos y actuación magnética/electrónica refinada. Están implementados la masa
 de fuente flexible y finita y la energía de presión, el movimiento real de la aguja, la realimentación de dosis muestreada,
 la reposición de la película y la evaporación. Consulta [el contrato de la aguja](NEEDLE_ACTUATION.es.md) y la [predicción de cierre acotada](CLOSURE_PREDICTION.es.md). El
 receptor sigue exportando trabajo de presión de desplazamiento bajo el límite declarado de volumen
@@ -68,41 +68,3 @@ Sigue separado de la aplicación activa de C#/Unity. La migración nativa no
 completa la migración de funciones gestionadas ni la aceptación del grupo motopropulsor. Introduce
 paralelismo adicional, resolución dispersa o Burst cuando las mediciones lo justifiquen y los contratos
 del núcleo sigan estables.
-
-## Realimentación de AT hidráulica
-
-`at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
-
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v28 conserva rutas, ganancias y relojes y lee v1-v27.
-
-Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
-
-[AT_CONTROL.es.md](AT_CONTROL.es.md)
-
-## Raíl de combustible líquido alimentado por bomba
-
-`liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
-
-v28 conserva enlaces y temperatura de fuente y lee v1-v27. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
-
-Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
-
-[PUMP_FED_FUEL.es.md](PUMP_FED_FUEL.es.md)
-
-## Tanque finito de combustible líquido
-
-`liquid_fuel_tank` guarda masa líquida finita y energía térmica con densidad, referencia térmica de película y poder calorífico del inyector asociado. La alimentación lo elige con `tank_component` y omite `supply_temperature`. Cada tanque pertenece a una alimentación compatible.
-
-Energías térmica y química del tanque forman el almacenamiento completo. La transferencia interna no agrega masa ni suministro químico externos. La presión de entrada prescrita mantiene su frontera de trabajo de presión. Admisión/escape gaseoso aún pueden llevar energía química.
-
-Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
-
-[LIQUID_FUEL_TANK.es.md](LIQUID_FUEL_TANK.es.md)
-
-## Retorno de alivio de combustible trazado
-
-`liquid_rail_return` une una alimentación con un `hydraulic_relief` unidireccional exclusivo. La válvula conecta el raíl a la misma presión de entrada prescrita de la bomba. Registrar toda ruta fluida; puertos incompatibles, propiedad duplicada y rutas no seguidas se rechazan.
-
-`fluid_heat_fraction` elige explícitamente la fracción [0,1] de pérdida transportada por combustible retornado. El resto sigue la ruta térmica declarada. Mezcla simultánea raíl/tanque conserva masa, química, trabajo de presión y calor. El retorno a fuente externa saca masa/energía por la frontera.
-
-[LIQUID_FUEL_RETURN.es.md](LIQUID_FUEL_RETURN.es.md)

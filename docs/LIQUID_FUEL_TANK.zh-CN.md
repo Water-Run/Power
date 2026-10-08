@@ -12,11 +12,17 @@
 
 示例 `finite-tank-liquid-cylinder` 与 `finite-tank-needle-cylinder` 使用油箱 ID 1513 和补给 ID 1511。读取 `mass`、`temperature`、`internal_energy`、`chemical_energy` 与 `tank_state`；0 表示有液体，1 表示空箱。干态温度报告声明的初始参考。
 
+## 油箱几何与有限气相空间
+
+`liquid_fuel_tank.parameters.headspace` 声明单位为 `m3` 或 `l` 的 `capacity` 和 `gas_node`。气体节点省略 `storage`，其体积为 `capacity - liquid_mass / density`，必须有唯一所有者且保持为正。配对泵及泄压回流的设定储液器压力为零，由有限气体决定入口压力。
+
+[油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md)
+
 ## 证据与限制
 
-资产 v28 保留油箱数据和补给选择，并读取 v1-v27。每个油箱在原有边界内增加 4 个报告状态。独立湿态交换、耗尽压力/轴能解析解、回流混合、完整账本、回滚、独立分支与无分配步进均有检查。
+资产 v29 保留油箱数据和补给选择，并读取 v1-v28。每个油箱在原有边界内增加 4 个报告状态。独立湿态交换、耗尽压力/轴能解析解、回流混合、完整账本、回滚、独立分支与无分配步进均有检查。
 
-几何容量、通气/顶部气体/晃动、气蚀、实测泵充液/效率/调压和分解喷雾仍待完成。参数为 `unverified`；实际 Unity Editor/Play/Player/IL2CPP 与 OEM 标定仍未验证。
+该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、气液相平衡、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
 
 [VALIDATION.zh-CN.md](VALIDATION.zh-CN.md)
 

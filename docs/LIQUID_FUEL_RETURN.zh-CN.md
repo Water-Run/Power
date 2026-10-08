@@ -12,8 +12,16 @@
 
 ## 证据与限制
 
-`recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v28 保留回流连接与热比例，并读取 v1-v27。每条回流在原有模型边界内增加 8 个状态。
+`recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v29 保留回流连接与热比例，并读取 v1-v28。每条回流在原有模型边界内增加 8 个状态。
 
-独立泄压衰减/压力功、机械/压力/热联立细化、热比例、多条路径、外部边界、每边界重放、回滚与分配检查均通过。液体沸腾和未充分解析的输运区间会使整批失败。油箱几何/通气动力学、实测阀/泵、气蚀、喷雾、OEM 标定和实际 Unity Editor/Play/Player/IL2CPP 仍待完成。
+独立泄压衰减/压力功、机械/压力/热联立细化、热比例、多条路径、外部边界、每边界重放、回滚与分配检查均通过。 液体沸腾和未充分解析的输运区间会使整批失败。
+
+该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、气液相平衡、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
 
 [VALIDATION.zh-CN.md](VALIDATION.zh-CN.md)
+
+## 油箱几何与有限气相空间
+
+`liquid_fuel_tank.parameters.headspace` 声明单位为 `m3` 或 `l` 的 `capacity` 和 `gas_node`。气体节点省略 `storage`，其体积为 `capacity - liquid_mass / density`，必须有唯一所有者且保持为正。配对泵及泄压回流的设定储液器压力为零，由有限气体决定入口压力。
+
+[油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md)

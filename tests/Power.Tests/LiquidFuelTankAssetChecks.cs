@@ -40,7 +40,7 @@ internal static class LiquidFuelTankAssetChecks
     }
     private static void Corruption()
     {
-        var asset = Asset(); var bytes = AssetCodec.Encode(asset); int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), tank = bytes.Length - 64, feed = tank - 28;
+        var asset = Asset(); var bytes = AssetCodec.Encode(asset); int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name), tank = bytes.Length - 80, feed = tank - 28;
         void Reject(byte[] bad) { SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(bad)); }
         foreach (var change in new[] { (counts + 152, -1), (counts + 152, 0), (counts + 152, 65), (tank, -1), (tank + 4, 10), (tank + 16, (int)Unit.Pascal), (feed + 24, 12) })
         { var bad = bytes.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(change.Item1), change.Item2); Reject(bad); }

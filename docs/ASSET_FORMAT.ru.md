@@ -14,7 +14,25 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 28
+## Текущая версия 29
+
+`liquid_fuel_tank.parameters.headspace` задаёт `capacity` в `m3` или `l` и `gas_node`. Узел газа не задаёт `storage`: объём равен `capacity - liquid_mass / density`, имеет одного владельца и остаётся положительным. Заданное давление насоса и возврата равно нулю: конечный газ определяет давление входа.
+
+Примеры `vented-tank-liquid-cylinder` и `vented-tank-needle-cylinder` используют бак 1513, газ 1520 и вход вентиляции 960. Asset v29 хранит геометрию и читает v1-v28. Проходят аналитические работа/производные, независимая сходимость ODE, балансы, portable/MCP воспроизведение, откат и шаг без аллокаций.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[Геометрия бака и конечное газовое пространство](TANK_HEADSPACE.ru.md)
+
+## Сохранённая версия 28
 
 `recirculating-liquid-cylinder` и `recirculating-needle-cylinder` сохраняют конечное топливо, фактическую инжекцию, испарение и необязательную иглу. v28 хранит связи/долю и читает v1-v27. Каждый возврат добавляет 8 состояний в прежних границах.
 

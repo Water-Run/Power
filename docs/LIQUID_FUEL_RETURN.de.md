@@ -12,8 +12,16 @@
 
 ## Nachweise und Grenzen
 
-`recirculating-liquid-cylinder` und `recirculating-needle-cylinder` behalten endlichen Kraftstoff, tatsächliche Einspritzung, Verdampfung und optionale Nadeldynamik. v28 speichert Verknüpfung/Wärmeanteil und liest v1-v27. Jeder Rücklauf fügt 8 Zustände innerhalb gleicher Grenzen hinzu.
+`recirculating-liquid-cylinder` und `recirculating-needle-cylinder` behalten endlichen Kraftstoff, tatsächliche Einspritzung, Verdampfung und optionale Nadeldynamik. v29 speichert Verknüpfung/Wärmeanteil und liest v1-v28. Jeder Rücklauf fügt 8 Zustände innerhalb gleicher Grenzen hinzu.
 
-Unabhängiger Abfall/Druckarbeit, simultane Mechanik-/Druck-/Wärmeverfeinerung, Anteile, mehrere Pfade, Außengrenzen, replay, rollback und Allokationen bestehen. Sieden oder unaufgelöstes Transportintervall lässt den gesamten Batch scheitern. Tankgeometrie/Belüftung, gemessene Ventile/Pumpen, Kavitation, Spray, OEM-Kalibrierung und tatsächliches Unity Editor/Play/Player/IL2CPP bleiben offen.
+Unabhängiger Abfall/Druckarbeit, simultane Mechanik-/Druck-/Wärmeverfeinerung, Anteile, mehrere Pfade, Außengrenzen, replay, rollback und Allokationen bestehen. Sieden oder unaufgelöstes Transportintervall lässt den gesamten Batch scheitern.
+
+Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Phasengleichgewicht, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
 [VALIDATION.de.md](VALIDATION.de.md)
+
+## Tankgeometrie und endlicher Gasraum
+
+`liquid_fuel_tank.parameters.headspace` deklariert `capacity` in `m3` oder `l` und `gas_node`. Der Gasnode lässt `storage` aus: Volumen `capacity - liquid_mass / density`, ein Eigentümer und positives Volumen. Pumpe und Rücklauf setzen den vorgeschriebenen Reservoirdruck auf null; das endliche Gas bestimmt den Einlassdruck.
+
+[Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md)

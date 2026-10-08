@@ -12,9 +12,9 @@ L'energia di pressione è memorizzata una volta nel nodo idraulico. Portata e re
 
 ## Evidenze e limiti
 
-v28 conserva collegamenti e temperatura sorgente e legge v1-v27. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v29 conserva collegamenti e temperatura sorgente e legge v1-v28. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
-Capacità geometrica, ventilazione/spazio gas/oscillazione, cavitazione, riempimento/efficienza/regolazione misurati e spray risolto restano aperti. Parametri `unverified`; Unity Editor/Play/Player/IL2CPP reale e calibrazione OEM non sono verificati.
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, equilibrio di fase, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
 ## Serbatoio finito di combustibile liquido
 
@@ -22,7 +22,7 @@ Capacità geometrica, ventilazione/spazio gas/oscillazione, cavitazione, riempim
 
 Energia termica e chimica del serbatoio entrano nello stoccaggio totale. Il trasferimento interno non aggiunge massa o energia chimica esterna. La pressione prescritta all'ingresso mantiene il confine di lavoro di pressione. Aspirazione/scarico gas possono ancora trasportare energia chimica.
 
-Capacità geometrica, ventilazione/spazio gas/oscillazione, cavitazione, riempimento/efficienza/regolazione misurati e spray risolto restano aperti. Parametri `unverified`; Unity Editor/Play/Player/IL2CPP reale e calibrazione OEM non sono verificati.
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, equilibrio di fase, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
 [LIQUID_FUEL_TANK.it.md](LIQUID_FUEL_TANK.it.md)
 
@@ -33,3 +33,11 @@ Capacità geometrica, ventilazione/spazio gas/oscillazione, cavitazione, riempim
 `fluid_heat_fraction` sceglie esplicitamente la quota [0,1] delle perdite portata dal carburante di ritorno. Il resto segue il percorso termico dichiarato. Miscelazione simultanea rail/serbatoio conserva massa, chimica, lavoro di pressione e calore. Il ritorno a sorgente esterna porta massa/energia oltre confine.
 
 [LIQUID_FUEL_RETURN.it.md](LIQUID_FUEL_RETURN.it.md)
+
+## Geometria del serbatoio e spazio gassoso finito
+
+`liquid_fuel_tank.parameters.headspace` dichiara `capacity` in `m3` o `l` e `gas_node`. Il gas omette `storage`: volume `capacity - liquid_mass / density`, un proprietario e volume positivo. Pompa e ritorno usano pressione prescritta nulla: il gas finito determina la pressione d'ingresso.
+
+Il solver accoppiato scambia lavoro di pressione fra albero, rail e gas senza fonte esterna. Orifizi gassosi e collegamenti termici forniscono sfiato/calore espliciti. Leggere `pressure`, `fill_fraction`, `hydraulic_work` cumulativo con segno e massa, energia, volume del gas. Dose, liquido, evaporazione e combustione restano separati.
+
+[Geometria del serbatoio e spazio gassoso finito](TANK_HEADSPACE.it.md)
