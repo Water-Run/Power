@@ -20,7 +20,7 @@ The examples `finite-tank-liquid-cylinder` and `finite-tank-needle-cylinder` use
 
 ## Evidence and limits
 
-Asset v29 retains tank data and feed selection and reads v1-v28. Each tank adds 4 reported states within the unchanged bounds. Independent wet exchange, analytic exhausted pressure/shaft energy, reverse mixing, complete ledgers, rollback, forks and allocation-free stepping are checked.
+Asset v30 retains tank data and feed selection and reads v1-v29. Each tank adds 4 reported states within the unchanged bounds. Independent wet exchange, analytic exhausted pressure/shaft energy, reverse mixing, complete ledgers, rollback, forks and allocation-free stepping are checked.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -33,3 +33,11 @@ This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydro
 `fluid_heat_fraction` explicitly selects the fraction in [0,1] of valve loss carried with returned fuel. The remaining heat follows the valve's declared heat path. Simultaneous rail/tank caloric mixing preserves the full mass, chemical, pressure-work and thermal ledgers. External-source returns instead carry mass and energy out through the boundary.
 
 [LIQUID_FUEL_RETURN.md](LIQUID_FUEL_RETURN.md)
+
+## Fuel phase equilibrium and liquid supply limits
+
+Liquid rails, finite tanks and feed inlets expose `saturation_pressure` and `cavitation_margin` in Pa. The margin is local absolute pressure minus saturation pressure at liquid temperature. A negative margin with liquid inventory rejects the whole batch. These checks mark the boundary of the single-phase supply model; tank vapor transfer, bubble dynamics and cavitating pump flow remain open.
+
+The pressure comparison allows only binary64 roundoff: `64 * epsilon * max(p, p_sat)`, with `epsilon = 2^-52`. It doesn't clamp the reported margin. This is a bulk saturation check; local pressure losses and pump NPSH require a resolved flow model. Independent checks also require nondecreasing total entropy for adiabatic flash and finite-wall exchange.
+
+[Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)

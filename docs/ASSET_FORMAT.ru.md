@@ -14,7 +14,27 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 29
+## Текущая версия 30
+
+Необязательный `fuel_film.parameters.phase_equilibrium` задаёт `reference_pressure` в `pa` или `bar`, а `minimum_temperature` / `maximum_temperature` в `k`. `saturation_temperature` обозначает опорную температуру; `latent_internal_energy` — разность удельной внутренней энергии пара и жидкости при ней. Каждый равновесный приёмник имеет одну плёнку. Начальный снимок сохраняется; принятые интервалы уравновешивают газ и жидкость с теплообменом с конечной стенкой.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[Фазовое равновесие топлива и границы жидкой подачи](FUEL_PHASE_EQUILIBRIUM.ru.md)
+
+## Сохранённая версия 29
 
 `liquid_fuel_tank.parameters.headspace` задаёт `capacity` в `m3` или `l` и `gas_node`. Узел газа не задаёт `storage`: объём равен `capacity - liquid_mass / density`, имеет одного владельца и остаётся положительным. Заданное давление насоса и возврата равно нулю: конечный газ определяет давление входа.
 

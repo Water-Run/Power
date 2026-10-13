@@ -12,7 +12,7 @@
 
 ## 证据与限制
 
-`recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v29 保留回流连接与热比例，并读取 v1-v28。每条回流在原有模型边界内增加 8 个状态。
+`recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v30 保留回流连接与热比例，并读取 v1-v29。每条回流在原有模型边界内增加 8 个状态。
 
 独立泄压衰减/压力功、机械/压力/热联立细化、热比例、多条路径、外部边界、每边界重放、回滚与分配检查均通过。 液体沸腾和未充分解析的输运区间会使整批失败。
 
@@ -25,3 +25,11 @@
 `liquid_fuel_tank.parameters.headspace` 声明单位为 `m3` 或 `l` 的 `capacity` 和 `gas_node`。气体节点省略 `storage`，其体积为 `capacity - liquid_mass / density`，必须有唯一所有者且保持为正。配对泵及泄压回流的设定储液器压力为零，由有限气体决定入口压力。
 
 [油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md)
+
+## 燃油相平衡与液体供给边界
+
+液体燃轨、有限油箱和补给入口提供单位为 Pa 的 `saturation_pressure` 与 `cavitation_margin`。裕量是当地绝对压力减去液体温度对应的饱和压力。有液体库存时，负裕量使整批推进失败。这些检查界定单相供给模型的适用范围；油箱蒸气转移、气泡动力学与空化泵流仍待实现。
+
+压力比较仅允许 binary64 舍入量：`64 * epsilon * max(p, p_sat)`，其中 `epsilon = 2^-52`；报告的裕量不作钳制。这是主体液体的饱和检查，局部压降与泵 NPSH 仍需分解流动模型。独立检查还要求绝热闪蒸和有限壁面换热的总熵不减少。
+
+[燃油相平衡与液体供给边界](FUEL_PHASE_EQUILIBRIUM.zh-CN.md)

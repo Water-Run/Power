@@ -12,7 +12,7 @@ Leggere `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_h
 
 ## Evidenze e limiti
 
-`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` conservano combustibile finito, iniezione reale, evaporazione e ago opzionale. v29 salva collegamenti/quota e legge v1-v28. Ogni ritorno aggiunge 8 stati nei limiti invariati.
+`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` conservano combustibile finito, iniezione reale, evaporazione e ago opzionale. v30 salva collegamenti/quota e legge v1-v29. Ogni ritorno aggiunge 8 stati nei limiti invariati.
 
 Decadimento/lavoro indipendenti, raffinamento meccanica/pressione/termica simultaneo, quote, percorsi, confini esterni, replay, rollback e allocazioni passano. Ebollizione o intervallo non risolto fa fallire l'intero lotto.
 
@@ -25,3 +25,11 @@ Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma 
 `liquid_fuel_tank.parameters.headspace` dichiara `capacity` in `m3` o `l` e `gas_node`. Il gas omette `storage`: volume `capacity - liquid_mass / density`, un proprietario e volume positivo. Pompa e ritorno usano pressione prescritta nulla: il gas finito determina la pressione d'ingresso.
 
 [Geometria del serbatoio e spazio gassoso finito](TANK_HEADSPACE.it.md)
+
+## Equilibrio di fase del carburante e limiti di alimentazione
+
+Rail, serbatoi finiti e ingressi espongono `saturation_pressure` e `cavitation_margin` in Pa. Il margine è pressione assoluta locale meno saturazione alla temperatura liquida. Un margine negativo con liquido respinge l'intero lotto. Questo delimita l'alimentazione monofase; trasferimento vapore del serbatoio, bolle e flusso cavitante della pompa restano aperti.
+
+Il confronto ammette solo arrotondamento binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-52`. Il margine riportato non viene limitato. È un controllo di saturazione globale; perdite locali e NPSH della pompa richiedono un modello di flusso risolto. Le verifiche indipendenti richiedono inoltre entropia totale non decrescente nel flash adiabatico e nello scambio con parete finita.
+
+[Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md)

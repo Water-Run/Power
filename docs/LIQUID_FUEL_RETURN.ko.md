@@ -12,7 +12,7 @@
 
 ## 증거와 한계
 
-`recirculating-liquid-cylinder`와 `recirculating-needle-cylinder`는 유한 연료, 실제 분사, 증발과 선택적 니들 동역학을 보존합니다. v29은 연결/열 비율을 저장하고 v1-v28을 읽습니다. 각 반환은 기존 상한 내 8개 상태를 추가합니다.
+`recirculating-liquid-cylinder`와 `recirculating-needle-cylinder`는 유한 연료, 실제 분사, 증발과 선택적 니들 동역학을 보존합니다. v30은 연결/열 비율을 저장하고 v1-v29을 읽습니다. 각 반환은 기존 상한 내 8개 상태를 추가합니다.
 
 독립 릴리프 감쇠/일, 기계/압력/열 동시 세분화, 열 비율, 다중 경로, 외부 경계, replay, rollback과 할당 검사가 통과합니다. 비등이나 미해상 전달 구간은 전체 배치를 실패시킵니다.
 
@@ -25,3 +25,11 @@
 `liquid_fuel_tank.parameters.headspace`는 `m3` 또는 `l`의 `capacity`와 `gas_node`를 지정합니다. 기체 노드는 `storage`를 생략하며 체적은 `capacity - liquid_mass / density`입니다. 소유자는 하나이고 체적은 양수여야 합니다. 유한 기체가 입구 압력을 결정하므로 펌프와 반환의 지정 저장소 압력은 0입니다.
 
 [탱크 형상과 유한 헤드스페이스](TANK_HEADSPACE.ko.md)
+
+## 연료 상평형과 액체 공급 경계
+
+액체 레일, 유한 탱크와 공급 입구는 Pa 단위 `saturation_pressure`와 `cavitation_margin`을 제공합니다. 여유는 국소 절대압에서 액온의 포화압을 뺀 값입니다. 액체가 있고 여유가 음수이면 전체 배치를 거부합니다. 단상 공급 경계를 검사하며 탱크 증기 이동, 기포 동역학과 캐비테이션 펌프 유동은 미완성입니다.
+
+압력 비교는 binary64 반올림 범위 `64 * epsilon * max(p, p_sat)`만 허용하며 `epsilon = 2^-52`입니다. 보고 여유를 클램프하지 않습니다. 벌크 포화 검사이므로 국소 압력 손실과 펌프 NPSH에는 유동을 해상하는 모델이 필요합니다. 독립 검사에서는 단열 플래시와 유한 벽 열교환의 총엔트로피가 감소하지 않을 것도 요구합니다.
+
+[연료 상평형과 액체 공급 경계](FUEL_PHASE_EQUILIBRIUM.ko.md)

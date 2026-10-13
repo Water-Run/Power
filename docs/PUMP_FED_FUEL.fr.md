@@ -12,7 +12,7 @@ L'énergie de pression est stockée une seule fois dans le nœud hydraulique. D�
 
 ## Preuves et limites
 
-Le format v29 conserve les liens et la température source et lit v1-v28. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v30 conserve les liens et la température source et lit v1-v29. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -41,3 +41,11 @@ Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/
 Le solveur couplé échange le travail de pression entre arbre, rampe et gaz sans source externe. Orifices gazeux et liens thermiques fournissent ventilation et chaleur explicites. Lire `pressure`, `fill_fraction`, `hydraulic_work` cumulé signé et masse, énergie, volume du gaz. Dose, liquide livré, évaporation et combustion restent distincts.
 
 [Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)
+
+## Équilibre des phases du carburant et limites d'alimentation
+
+Rails, réservoirs finis et entrées exposent `saturation_pressure` et `cavitation_margin` en Pa. La marge est la pression absolue locale moins la pression de saturation à la température liquide. Une marge négative avec du liquide rejette tout le lot. Ces contrôles bornent l'alimentation monophasique ; transfert vapeur du réservoir, bulles et débit de pompe cavitant restent ouverts.
+
+La comparaison ne tolère que l'arrondi binary64 : `64 * epsilon * max(p, p_sat)`, avec `epsilon = 2^-52`. La marge affichée n'est pas écrêtée. C'est un contrôle de saturation globale ; pertes locales et NPSH de pompe demandent un modèle d'écoulement résolu. Les contrôles indépendants exigent aussi une entropie totale non décroissante pour le flash adiabatique et l'échange avec la paroi finie.
+
+[Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md)

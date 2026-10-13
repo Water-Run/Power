@@ -4,18 +4,18 @@
 
 ## Resume point
 
-Fuel supply includes finite tanks, conserving relief returns, geometric headspace and explicit vent paths. Pump, rail and gas exchange internal pressure work; liquid delivery, evaporation and prescribed reaction remain distinct. Continue from the current contracts and validation evidence.
+The receiver supports reversible fuel phase equilibrium and liquid-supply saturation checks.
 
-[Geometric tank and finite headspace](TANK_HEADSPACE.md)
+[Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)
 
 ## Next increment
 
-Focus the next fuel increment on pressure-dependent phase equilibrium and cavitation with explicit material properties. Keep unknown OEM measurements missing and research parameters unverified. Measured pump/valve filling and regulation, magnetic/electronic actuation and resolved spray remain further work.
+Next, resolve tank vapor transfer and two-phase pump/rail flow with explicit properties and conservative volume/work coupling. Keep missing OEM measurements missing. Continue ignition, intake/exhaust, mechanical losses and ECU/TCU coordination as separate work.
 
 ## Acceptance
 
 Require independent analytic or limiting references, full mass/energy ledgers and step refinement appropriate to the new equations. Preserve batch rollback, cancellation, forks, stable channels, portable replay and prior asset readers. Then continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control.
 
-This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+Parameters remain `unverified`. The model does not supply measured gasoline properties, multicomponent or finite-rate phase kinetics, resolved liquid displacement/spray, or OEM calibration. Actual Unity Editor/Play/Player/IL2CPP acceptance remains pending.
 
 [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) · [ROADMAP.md](ROADMAP.md) · [VALIDATION.md](VALIDATION.md)

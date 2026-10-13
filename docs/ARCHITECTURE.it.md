@@ -250,7 +250,7 @@ L'[assemblaggio di azionamento AT](AT_HYDRAULIC_ACTUATION.it.md) abbassa i bersa
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v29 conserva percorsi, guadagni e clock e legge v1-v28.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v30 conserva percorsi, guadagni e clock e legge v1-v29.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -260,7 +260,7 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v29 conserva collegamenti e temperatura sorgente e legge v1-v28. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v30 conserva collegamenti e temperatura sorgente e legge v1-v29. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, equilibrio di fase, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
@@ -291,3 +291,13 @@ Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma 
 Il solver accoppiato scambia lavoro di pressione fra albero, rail e gas senza fonte esterna. Orifizi gassosi e collegamenti termici forniscono sfiato/calore espliciti. Leggere `pressure`, `fill_fraction`, `hydraulic_work` cumulativo con segno e massa, energia, volume del gas. Dose, liquido, evaporazione e combustione restano separati.
 
 [Geometria del serbatoio e spazio gassoso finito](TANK_HEADSPACE.it.md)
+
+## Equilibrio di fase del carburante e limiti di alimentazione
+
+Il modello usa una pseudospecie ideale, la costante gassosa comune, calori specifici costanti e spostamento liquido trascurabile. L'uguaglianza dei potenziali chimici dà la saturazione seguente. A volume fisso, combustibile totale ed energia interna determinano temperatura e massa di vapore. L'inventario chimico si trasferisce internamente; la reazione consuma solo vapore.
+
+Una soluzione scalare limitata usa l'energia di equilibrio monotona. Il calore della parete usa Euler implicito. Trasporto e lavoro del cilindro mobile hanno evidenza di convergenza del primo ordine. La coesistenza liquida resta nell'intervallo dichiarato. Dopo completa evaporazione al suo interno il gas può surriscaldarsi senza estrapolare la curva.
+
+`mass_flow` è il trasferimento netto con segno del passo fisico completo. `evaporated_fuel_mass` e `condensed_fuel_mass` accumulano masse positive e negative senza contare due volte proiezioni che si annullano. `vapor_partial_pressure` indica la pressione parziale del carburante. I bilanci termici, di massa e chimici includono entrambe le fasi.
+
+[Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md)

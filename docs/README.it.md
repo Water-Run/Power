@@ -31,7 +31,7 @@ flowchart LR
 | Documento | Che cos'è |
 |---|---|
 | [API agente](AGENT_API.it.md) | Strumenti MCP, revisioni, errori e la sequenza delle operazioni |
-| [Formato degli asset](ASSET_FORMAT.it.md) | `.powerasset` v29 e i lettori da v1 a v28 |
+| [Formato degli asset](ASSET_FORMAT.it.md) | `.powerasset` v30 e i lettori da v1 a v29 |
 | [Confine Zig nativo](NATIVE_ZIG.it.md) | I prototipi Zig archiviati e l'ABI versionata |
 
 ## Motore e carburante
@@ -50,6 +50,7 @@ flowchart LR
 | [Azionamento ago](NEEDLE_ACTUATION.it.md) | Solenoide dipendente dalla posizione, massa dell'ago, ritardo di chiusura e rimbalzo |
 | [Predizione di chiusura](CLOSURE_PREDICTION.it.md) | Replay limitato dell'impianto che pianifica la rimozione della tensione |
 | [Geometria del serbatoio e spazio gassoso finito](TANK_HEADSPACE.it.md) | Capacità rigida, lavoro del gas finito e sfiato esplicito |
+| [Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md) | Evaporazione/condensazione reversibili, saturazione e limiti del liquido |
 
 ## Trasmissione
 

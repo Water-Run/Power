@@ -14,12 +14,12 @@ accepted Unity desktop application remain unfinished.
 |---|---|---|
 | Core | Explicit units and stable IDs; immutable compilation; bounded integer time; observable ledgers; replay, cancellation, independent forks and whole-batch rollback | Long-run and complete powertrain evidence |
 | Engine | Sealed/open cylinders, slider-crank pressure work, bidirectional gas flow, crank-timed valves, wall heat and prescribed premixed combustion | Detailed intake/exhaust, ignition, mechanical losses, richer thermochemistry and measured engine behavior |
-| Fuel | Cycle metering, pump-fed compliant rails, finite tanks, conserving relief returns, film evaporation, physical needles and bounded closure prediction; [Geometric tank and finite headspace](TANK_HEADSPACE.md) | slosh/hydrostatic shape and measured pump filling/regulation, nonlinear magnetic/electronic/spray behavior, pressure-dependent phase equilibrium and measured fuel properties |
+| Fuel | Cycle metering, pump-fed compliant rails, finite tanks, conserving relief returns, film evaporation, physical needles and bounded closure prediction; [Geometric tank and finite headspace](TANK_HEADSPACE.md); [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md) | slosh/hydrostatic shape and measured pump filling/regulation, nonlinear magnetic/electronic/spray behavior, tank vapor transfer and measured fuel properties |
 | Transmission | Static/sliding clutches, contact actuation, signed gears/planetaries, mapped converter/lockup and seven-forward/reverse DCT and four-forward/reverse Ravigneaux paths with resolved planet spin/orbital inertia | Mesh compliance/losses and load sharing, DCT actuation, complete AT pressure/shift control and measured routing, coordinated shifts, measured losses and richer converter behavior |
 | Hydraulics | Compliant volumes, restrictions, pumps with explicit leakage/drag, relief, dynamic pistons, metered spools and finite-energy gas accumulators | Measured valve/accumulator/pump maps, seal friction, cavitation and complete transmission hydraulics |
 | Electrical | RL motors, reciprocal variable-inductance solenoids, finite-charge battery, resistance/RC polarization, averaged duty conversion and accessories | Measured chemistry/thermal behavior, BMS, current control and complete supply integration |
 | Controls | Sampled pressure PI, needle dose/closure control, staged DCT handoff and pressure-feedback AT shifts with physical lock confirmation | ECU/TCU torque coordination, sensors, actuators and fault handling |
-| Documents and assets | 44 JSON/CLI laboratories, 43 MCP examples, asset v29 with v1-v28 readers | Workbench editing/saving and calibrated model collections |
+| Documents and assets | 46 JSON/CLI laboratories, 45 MCP examples, asset v30 with v1-v29 readers | Workbench editing/saving and calibrated model collections |
 | Agents | Twelve schema-defined MCP tools; compact evidence, revision checks and actionable diagnostics | Complete workflows for the remaining physical/control scope |
 | Unity | Model import, exact-tick playback, schematic 3D components, controls, reset and prepared lifecycle tests | Actual Editor/Play acceptance, selectable plots, graph editing/saving and Player/IL2CPP |
 | Native archive | Zig 0.15.2 research prototypes, preserved ABI and original source provenance | Historical reference; managed migration remains separate from full functionality |
@@ -43,7 +43,7 @@ CLI `list-labs`, MCP example discovery and serial verification share [one labora
 
 ## Next development sequence
 
-1. Extend pressure-dependent phase equilibrium, cavitation, measured pump filling/regulation and refined magnetic/electronic actuation. Replace the declared
+1. Extend tank vapor transfer and two-phase cavitating flow, measured pump filling/regulation and refined magnetic/electronic actuation. Replace the declared
    exported displacement-work boundary when finite liquid volume and spray
    momentum are resolved. Keep delivered liquid, evaporated fuel and reaction
    separately observable and retain independent references.

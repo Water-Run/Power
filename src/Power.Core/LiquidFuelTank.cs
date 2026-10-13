@@ -66,9 +66,9 @@ public sealed partial class CompiledModel
             Require(c.A == Components[rail.Component].A, DiagnosticCode.Connection, c.Id, "liquid_fuel_tank.node_a", "The tank and paired injector must use the same receiver.");
             double mass = Convert(d.InitialMass, Unit.Kilogram, c.Id, "liquid_fuel_tank.initial_mass");
             double temperature = Convert(d.InitialTemperature, Unit.Kelvin, c.Id, "liquid_fuel_tank.initial_temperature");
-            Require(mass >= 0 && temperature > 0 && temperature <= film.Law.SaturationTemperatureKelvin,
-                DiagnosticCode.Range, c.Id, "liquid_fuel_tank", "Use nonnegative inventory and liquid temperature in (0,saturation_temperature].");
-            double energy = film.Law.CreateState(mass, temperature).ThermalEnergyJoules;
+            Require(mass >= 0 && film.LiquidTemperatureValid(temperature),
+                DiagnosticCode.Range, c.Id, "liquid_fuel_tank", "Use nonnegative inventory and liquid temperature inside the film's declared range.");
+            double energy = film.LiquidState(mass, temperature).ThermalEnergyJoules;
             LiquidTanks[slot] = new(i, injector, mass, temperature, energy, rail.Rail.DensityKilogramsPerCubicMeter, rail.HeatingValue);
             TankByComponent[i] = slot++;
         }

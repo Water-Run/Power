@@ -44,6 +44,8 @@
     { "name": "controlled-fired-dual-clutch", "asset_name": "ControlledFiredDualClutch", "display_name": "Controlled fired DCT laboratory", "agent_example": true },
     { "name": "fired-hydraulic", "asset_name": "FiredHydraulic", "display_name": "Fired hydraulic transmission laboratory", "agent_example": true },
     { "name": "fired-converter", "asset_name": "FiredConverter", "display_name": "Fired torque converter laboratory", "agent_example": true },
-    { "name": "fired-planetary", "asset_name": "FiredPlanetary", "display_name": "Fired planetary transmission laboratory", "agent_example": true }
+    { "name": "fired-planetary", "asset_name": "FiredPlanetary", "display_name": "Fired planetary transmission laboratory", "agent_example": true },
+    {"name": "equilibrium-fuel-cell", "asset_name": "EquilibriumFuelCell", "display_name": "Reversible fuel phase equilibrium laboratory", "agent_example": true},
+    {"name": "equilibrium-injected-cylinder", "asset_name": "EquilibriumInjectedCylinder", "display_name": "Equilibrium fuel injection engine laboratory", "agent_example": true}
   ]
 }

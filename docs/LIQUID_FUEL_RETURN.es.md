@@ -12,7 +12,7 @@ Leer `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_heat
 
 ## Evidencia y límites
 
-`recirculating-liquid-cylinder` y `recirculating-needle-cylinder` conservan combustible finito, inyección real, evaporación y aguja opcional. v29 guarda enlaces/fracción y lee v1-v28. Cada retorno añade 8 estados en los mismos límites.
+`recirculating-liquid-cylinder` y `recirculating-needle-cylinder` conservan combustible finito, inyección real, evaporación y aguja opcional. v30 guarda enlaces/fracción y lee v1-v29. Cada retorno añade 8 estados en los mismos límites.
 
 Pasan decaimiento/trabajo independiente, refinamiento mecánico/presión/térmico simultáneo, fracciones, rutas, fronteras externas, replay, rollback y asignaciones. Ebullición o intervalo sin resolver falla todo el lote.
 
@@ -25,3 +25,11 @@ Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidros
 `liquid_fuel_tank.parameters.headspace` declara `capacity` en `m3` o `l` y `gas_node`. El gas omite `storage`: volumen `capacity - liquid_mass / density`, con un propietario y volumen positivo. Bomba y retorno usan presión prescrita nula: el gas finito determina la presión de entrada.
 
 [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md)
+
+## Equilibrio de fases del combustible y límites de suministro
+
+Rieles, tanques finitos y entradas exponen `saturation_pressure` y `cavitation_margin` en Pa. El margen es presión absoluta local menos saturación a la temperatura líquida. Un margen negativo con líquido rechaza todo el lote. Esto limita el suministro monofásico; transferencia de vapor del tanque, burbujas y flujo cavitante de bomba siguen abiertos.
+
+La comparación solo admite redondeo binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-52`. El margen informado no se recorta. Es una comprobación de saturación global; pérdidas locales y NPSH de bomba requieren un modelo de flujo resuelto. Las comprobaciones independientes también exigen entropía total no decreciente en el flash adiabático y el intercambio con la pared finita.
+
+[Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md)

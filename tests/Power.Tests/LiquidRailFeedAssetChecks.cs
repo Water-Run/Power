@@ -41,7 +41,7 @@ internal static class LiquidRailFeedAssetChecks
     private static void Corruption()
     {
         var asset=Asset();byte[] bytes=AssetCodec.Encode(asset);int counts=78+Encoding.UTF8.GetByteCount(asset.Name);
-        int record=counts+160+44*asset.Nodes.Count+156*asset.Components.Count+24+36+40+64+120+32;
+        int record=FuelPhaseEquilibriumAssetChecks.FilmOffset(asset,bytes)+100+120;
         void Reject(byte[] bad){SHA256.HashData(bad.AsSpan(0,bad.Length-32)).CopyTo(bad,bad.Length-32);Throws<ArgumentException>(()=>AssetCodec.Decode(bad));}
         foreach(var change in new[]{(counts+148,-1),(counts+148,0),(counts+148,65),(record,-1),(record+4,10),(record+8,12),(record+20,(int)Unit.Pascal)})
         {var bad=bytes.ToArray();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(change.Item1),change.Item2);Reject(bad);}

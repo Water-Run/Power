@@ -196,6 +196,12 @@ namespace Power.Studio.Tests
         public IEnumerator FuelFilmImportsAndReplays() => PumpAssemblyReplay("FilmFiredCylinder", "Liquid fuel film 16");
 
         [UnityTest]
+        public IEnumerator EquilibriumFuelCellImportsAndReplays() => PumpAssemblyReplay("EquilibriumFuelCell", "Liquid fuel film 10");
+
+        [UnityTest]
+        public IEnumerator EquilibriumInjectedCylinderImportsAndReplays() => PumpAssemblyReplay("EquilibriumInjectedCylinder", "Liquid fuel film 16");
+
+        [UnityTest]
         public IEnumerator LiquidInjectionImportsAndReplays() => PumpAssemblyReplay("LiquidInjectedCylinder", "Liquid fuel film 16");
 
         [UnityTest]

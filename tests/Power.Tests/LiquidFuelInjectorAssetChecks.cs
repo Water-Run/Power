@@ -52,7 +52,7 @@ internal static class LiquidFuelInjectorAssetChecks
     {
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset);
         int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int record = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64;
+        int record = FuelPhaseEquilibriumAssetChecks.FilmOffset(asset, bytes) + 100;
         void Reject(byte[] bad)
         {
             SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32);

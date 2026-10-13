@@ -14,7 +14,27 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 29
+## Aktuelle Version 30
+
+Optionales `fuel_film.parameters.phase_equilibrium` deklariert `reference_pressure` in `pa` oder `bar` und `minimum_temperature` / `maximum_temperature` in `k`. `saturation_temperature` ist die Referenztemperatur; `latent_internal_energy` die Dampf-minus-Flüssigkeits-Innenenergie dort. Jeder Gleichgewichtsempfänger besitzt einen Film. Der erklärte Anfangssnapshot bleibt erhalten; akzeptierte Intervalle gleichen Gas und Flüssigkeit mit endlicher Wandwärme aus.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)
+
+## Beibehaltene Version 29
 
 `liquid_fuel_tank.parameters.headspace` deklariert `capacity` in `m3` oder `l` und `gas_node`. Der Gasnode lässt `storage` aus: Volumen `capacity - liquid_mass / density`, ein Eigentümer und positives Volumen. Pumpe und Rücklauf setzen den vorgeschriebenen Reservoirdruck auf null; das endliche Gas bestimmt den Einlassdruck.
 

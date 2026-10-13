@@ -8,10 +8,7 @@ evaporado se une a la masa, la energía interna y el constituyente de combustibl
 premmezclada existente solo consume vapor. El inventario líquido es un mojado inicial,
 no combustible inyectado, y sigue formando parte del libro de masa total y de energía química.
 
-Es un modelo de investigación de propiedades constantes, con un volumen de desplazamiento líquido
-despreciable y una temperatura de saturación prescrita. No implementa dinámica de raíl
-líquido, de aguja ni de pulverización, equilibrio de fases dependiente de la presión, condensación,
-propiedades de combustible multicomponente ni un comportamiento de gasolina calibrado.
+El contrato siguiente describe la película de saturación prescrita predeterminada. La opción [Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md) añade evaporación/condensación reversibles y dependencia de la presión con la misma referencia calórica.
 
 ## Energía de fase y fuente de calor finita
 
@@ -109,8 +106,8 @@ Descubre los identificadores y las unidades de salida mediante la validación o 
 de masa, de combustible y de energía química incluyen el inventario de la película. La entrega interna
 de vapor no incrementa la energía de combustible del depósito ni la entalpía externa.
 
-El asset v19 almacena todas las propiedades de fase y conserva los lectores v1-v18. Cada película necesita
-un registro de fase tipado de 64 bytes. Se comprueban longitudes y cuentas acotadas, el resumen, la cobertura completa,
+El asset v30 almacena todas las propiedades de fase y conserva los lectores v1-v29. Cada película necesita
+un registro de fase tipado de 100 bytes. Se comprueban longitudes y cuentas acotadas, el resumen, la cobertura completa,
 los registros duplicados o ausentes, las unidades, la compilación física y la protección contra degradación.
 El fixture auténtico de dosificación de combustible v17 conserva su huella y
 la repetición actualizada en el mismo runtime. Consulta [ASSET_FORMAT.es.md](ASSET_FORMAT.es.md).
@@ -129,3 +126,11 @@ El [inyector líquido](LIQUID_FUEL_INJECTION.es.md) aparte repone ahora las pel�
 una fuente flexible finita. La bomba y el repostaje, la aguja y la pulverización, las propiedades de combustible medidas,
 el encendido y la ECU, el comportamiento completo de admisión y escape, los controles de transmisión y los grupos
 motopropulsores calibrados siguen siendo requisitos aparte.
+
+## Equilibrio de fases del combustible y límites de suministro
+
+`mass_flow` es la transferencia neta con signo del paso físico completo. `evaporated_fuel_mass` y `condensed_fuel_mass` acumulan sus masas positiva y negativa sin duplicar proyecciones que se cancelan. `vapor_partial_pressure` muestra la presión parcial de combustible. Los balances térmico, másico y químico incluyen ambas fases.
+
+Una solución escalar acotada usa la energía de equilibrio monótona. El calor de pared usa Euler implícito. Transporte y trabajo del cilindro móvil tienen evidencia de refinamiento de primer orden. La coexistencia líquida queda en el intervalo declarado. Tras evaporarse completamente dentro de él, el gas puede sobrecalentarse sin extrapolar la curva.
+
+[Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md)

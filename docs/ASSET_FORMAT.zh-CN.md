@@ -14,7 +14,27 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 29
+## 当前版本 30
+
+可选的 `fuel_film.parameters.phase_equilibrium` 声明单位为 `pa` 或 `bar` 的 `reference_pressure`，以及单位为 `k` 的 `minimum_temperature` / `maximum_temperature`。已有 `saturation_temperature` 指参考温度，`latent_internal_energy` 指该温度下蒸气与液体的比内能差。每个平衡接收端由一个油膜拥有。初始快照保留输入状态；接受的推进区间使气液达到平衡，并与有限热容量壁面交换热量。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[燃油相平衡与液体供给边界](FUEL_PHASE_EQUILIBRIUM.zh-CN.md)
+
+## 保留版本 29
 
 `liquid_fuel_tank.parameters.headspace` 声明单位为 `m3` 或 `l` 的 `capacity` 和 `gas_node`。气体节点省略 `storage`，其体积为 `capacity - liquid_mass / density`，必须有唯一所有者且保持为正。配对泵及泄压回流的设定储液器压力为零，由有限气体决定入口压力。
 

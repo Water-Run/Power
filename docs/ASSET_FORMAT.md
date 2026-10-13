@@ -14,7 +14,27 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 29
+## Current version 30
+
+Optional `fuel_film.parameters.phase_equilibrium` declares `reference_pressure` in `pa` or `bar`, and `minimum_temperature` / `maximum_temperature` in `k`. Existing `saturation_temperature` is the reference temperature; `latent_internal_energy` is the vapor-minus-liquid internal energy there. One film owns each equilibrium receiver. The authored initial snapshot is retained; accepted intervals equilibrate gas and liquid and exchange heat with the finite wall.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)
+
+## Retained version 29
 
 `liquid_fuel_tank.parameters.headspace` declares `capacity` in `m3` or `l` and `gas_node`. The gas node omits `storage`: its volume is `capacity - liquid_mass / density`. It must have one owner and remain positive. The paired pump and relief return use zero prescribed reservoir pressure because the finite gas owns inlet pressure.
 

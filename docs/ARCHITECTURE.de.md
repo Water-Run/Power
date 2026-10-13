@@ -250,7 +250,7 @@ Die [Baugruppe der AT-Ansteuerung](AT_HYDRAULIC_ACTUATION.de.md) senkt 1..6 erkl
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v29 speichert Routen, Verstärkungen und Uhren und liest v1-v28.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v30 speichert Routen, Verstärkungen und Uhren und liest v1-v29.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -260,7 +260,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v29 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v28. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v30 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v29. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Phasengleichgewicht, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -291,3 +291,13 @@ Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/
 Die gekoppelte Lösung tauscht Druckarbeit zwischen Welle, Rail und Gas ohne externe Druckquelle. Gasdrosseln und Wärmeverbindungen bilden explizite Entlüftung/Wärmewege. `pressure`, `fill_fraction`, vorzeichenbehaftete kumulierte `hydraulic_work` sowie Gasmasse, Energie und Volumen lesen. Dosis, Flüssigkeit, Verdampfung und Verbrennung bleiben getrennt.
 
 [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md)
+
+## Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen
+
+Das Modell nutzt eine ideale Pseudospezies, die gemeinsame Gaskonstante, konstante Wärmekapazitäten und vernachlässigbare Flüssigkeitsverdrängung. Gleiche chemische Potenziale ergeben die Sättigungsbeziehung unten. Bei festem Volumen bestimmen Gesamtkraftstoff und Innenenergie Temperatur und Dampfmasse. Chemisches Inventar wird intern übertragen; die Reaktion verbraucht nur Dampf.
+
+Eine begrenzte skalare Lösung nutzt die monotone Gleichgewichtsenergie. Endliche Wandwärme verwendet impliziten Euler. Transport- und Zylinderarbeitskopplung besitzen Verfeinerungsnachweise erster Ordnung. Flüssige Koexistenz bleibt im Temperaturintervall. Nach vollständiger Verdampfung darin kann Gas überhitzen, ohne die Sättigungskurve zu extrapolieren.
+
+`mass_flow` ist der vorzeichenbehaftete Nettophasentransfer des vollständigen Physikschritts. `evaporated_fuel_mass` und `condensed_fuel_mass` summieren positive und negative Massen, ohne sich aufhebende Teilprojektionen doppelt zu zählen. `vapor_partial_pressure` zeigt den Kraftstoffpartialdruck. Wärme-, Masse- und Chemiebilanzen enthalten beide Phasen.
+
+[Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)

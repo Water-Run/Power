@@ -45,6 +45,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     {
         ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault, ["lockup_state"] = Field.LockupState,
         ["actuator_integral_a"] = Field.ActuatorIntegralA, ["actuator_integral_b"] = Field.ActuatorIntegralB, ["actuator_integral_c"] = Field.ActuatorIntegralC, ["actuator_integral_d"] = Field.ActuatorIntegralD, ["actuator_integral_e"] = Field.ActuatorIntegralE, ["actuator_integral_f"] = Field.ActuatorIntegralF, ["tank_state"] = Field.TankState, ["fill_fraction"] = Field.FillFraction,
+        ["condensed_fuel_mass"] = Field.CondensedFuelMass, ["vapor_partial_pressure"] = Field.VaporPartialPressure, ["saturation_pressure"] = Field.SaturationPressure, ["cavitation_margin"] = Field.CavitationMargin,
         ["copper_heat"] = Field.CopperHeat, ["predicted_fuel_mass"] = Field.PredictedFuelMass, ["prediction_ticks"] = Field.PredictionTicks, ["driver_state"] = Field.DriverState, ["closing_delay_ticks"] = Field.ClosingDelayTicks,
         ["sampled_pressure"] = Field.SampledPressure, ["pressure_error"] = Field.PressureError,
         ["integral_voltage"] = Field.IntegralVoltage, ["command_voltage"] = Field.CommandVoltage,
@@ -317,7 +318,22 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 };
             }
             if(kind==ComponentKind.FuelFilm)
-            {Object(parameters,["initial_mass","initial_temperature","liquid_specific_heat","saturation_temperature","latent_internal_energy","conductance"]);return result with{Conductance=Quantity(parameters.GetProperty("conductance")),FuelFilm=new(){InitialMass=Quantity(parameters.GetProperty("initial_mass")),InitialTemperature=Quantity(parameters.GetProperty("initial_temperature")),LiquidSpecificHeat=Quantity(parameters.GetProperty("liquid_specific_heat")),SaturationTemperature=Quantity(parameters.GetProperty("saturation_temperature")),LatentInternalEnergy=Quantity(parameters.GetProperty("latent_internal_energy"))}};}
+            {
+                Object(parameters,["initial_mass","initial_temperature","liquid_specific_heat","saturation_temperature","latent_internal_energy","conductance"],["phase_equilibrium"]);
+                FuelPhaseEquilibriumDefinition? phaseEquilibrium = null;
+                if (parameters.TryGetProperty("phase_equilibrium", out var phase))
+                {
+                    Object(phase, ["reference_pressure", "minimum_temperature", "maximum_temperature"]);
+                    phaseEquilibrium = new() { ReferencePressure = Quantity(phase.GetProperty("reference_pressure")),
+                        MinimumTemperature = Quantity(phase.GetProperty("minimum_temperature")), MaximumTemperature = Quantity(phase.GetProperty("maximum_temperature")) };
+                }
+                return result with { Conductance = Quantity(parameters.GetProperty("conductance")), FuelFilm = new()
+                {
+                    InitialMass = Quantity(parameters.GetProperty("initial_mass")), InitialTemperature = Quantity(parameters.GetProperty("initial_temperature")),
+                    LiquidSpecificHeat = Quantity(parameters.GetProperty("liquid_specific_heat")), SaturationTemperature = Quantity(parameters.GetProperty("saturation_temperature")),
+                    LatentInternalEnergy = Quantity(parameters.GetProperty("latent_internal_energy")), PhaseEquilibrium = phaseEquilibrium
+                } };
+            }
             if (kind == ComponentKind.GasFuelInjector)
             {
                 Object(parameters, ["area", "discharge_coefficient", "crank_node", "cycle_angle", "start_angle", "duration_angle", "maximum_dose"]);

@@ -612,7 +612,8 @@ namespace Power.Studio
                     Vector3 center=(a+positions[component.NodeB])*0.5f+Vector3.up*0.4f;
                     Shape("Liquid fuel film "+component.Id,PrimitiveType.Cube,center,new Vector3(0.7f,0.08f,0.6f),copper);
                     Connection("Film heat source "+component.Id,positions[component.NodeB],center,copper,0.05f);
-                    Connection("Fuel vapor admission "+component.Id,center,a,copper,0.06f);
+                    string exchange = component.FuelFilm != null && component.FuelFilm.PhaseEquilibrium != null ? "Fuel phase exchange " : "Fuel vapor admission ";
+                    Connection(exchange+component.Id,center,a,copper,0.06f);
                 }
                 if (component.Kind == ComponentKind.GasFuelInjector)
                 {

@@ -2,6 +2,85 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-13: 연료 상평형과 액체 공급 경계
+
+필수 직렬 검증이 로컬 Windows x64/.NET 10.0.12에서 통과했습니다. Standard 어셈블리 검사는 .NET 10에서 실행하며 실제 Unity Editor/Play/Player/IL2CPP는 미검증 상태입니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 426/426 |
+| standard_checks_on_dotnet | 325/325 |
+| actual_mcp_groups | 50/50 |
+| laboratories | 46 |
+| agent_examples | 45 |
+| json_schema_laboratories | 46 |
+| unchanged_laboratories | 44 |
+| matching_sample_boundaries | 6810 |
+| physical_transaction_groups | 10 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| coupled_convergence_order | 1 |
+| entropy_tolerance_j_k | 1e-10 |
+| pressure_roundoff_relative | 1.4210854715202004e-14 |
+| reported_margin_clamp | false |
+| asset_version | power.asset.v30 |
+| agent_api_version | 0.35.0 |
+| fuel_film_record_bytes | 100 |
+| v29_fixture_sha256 | e7f48291b8c9817af7d2eec61b989854d5200130cd4a0987f42e49c21d36d16d |
+| verification_log_sha256 | 211a53a32d601f06d4d406b08661c86ac3e28d94256d42ebbc9041a285eabdec |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 160 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | ca443cbd218bd678a1de6e579ddfe99826659555 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-cell | equilibrium-injected-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 61 | 65 |
+| states | 12 | 59 |
+| step_ns | 1000000 | 50000 |
+| fingerprint | f72fab4a491d9c86 | 74c05089a700aca4 |
+| final_state_hash | 4bace9fd4482fca9 | 94a0b3f991564b01 |
+| source_sha256 | 5c4a0742ea5c315c2b626e27f8d7ebc3f841d668b4ba4bae5da8daee628d5e98 | c32bc066cecd3783464c2c24d8182ee9897fb20d86325623e3faf8e547d58949 |
+| report_sha256 | 8dbb4841d14e147fea6f7a36a00c5d80e5fcd168a6a20463b53d136add38f1d1 | 6a6c3f8bf270a096bdc698e05b4d3835102e78c4fe60bde61607ada5188238c3 |
+| max_sampled_energy_j | 4.5656634029001e-10 | 1.7261072571272962e-09 |
+| max_sampled_mass_kg | 1.2414114874959026e-17 | 2.5478751053409354e-18 |
+| max_sampled_fuel_kg | 1.021860547567588e-17 | 2.4445370857759108e-18 |
+| final_evaporated_mass_kg | 7.740915788733479e-06 | 2.7999999999999996e-05 |
+| final_condensed_mass_kg | 2.322468550648195e-05 | 0 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| vent_hot | 3.0010550752308518e-05, 1.4974238709442034e-05, 7.4793589965338466e-06, 3.7377392527560005e-06 | 2.004145341518117, 2.002075139912596, 2.0010381920084406 |
+| vent_cold | 4.5548939344257636e-05, 2.2750721204261026e-05, 1.136942354094117e-05, 5.68322752030781e-06 | 2.00208771121184, 2.0010443908907014, 2.0005223264975656 |
+| moving_cylinder | 0.00013129782098744158, 6.581502863305389e-05, 3.2949002559945487e-05, 1.6484868202937264e-05 | 1.9949519693971638, 1.9974816692345656, 1.9987422498212424 |
+
+`equilibrium-fuel-cell`은 응축, 통기 증발과 재응축을 보여 줍니다. `equilibrium-injected-cylinder`는 통기 탱크 엔진에 가역 수용부 상평형과 공급 여유를 추가합니다. 독립 엔트로피 최대화, 해석적 극한, 연립 ODE 수렴, 완전 재현, 롤백과 할당 검사를 수행합니다. 자산 v30은 물성을 보존하고 v1-v29를 읽습니다.
+
+압력 비교는 binary64 반올림 범위 `64 * epsilon * max(p, p_sat)`만 허용하며 `epsilon = 2^-52`입니다. 보고 여유를 클램프하지 않습니다. 벌크 포화 검사이므로 국소 압력 손실과 펌프 NPSH에는 유동을 해상하는 모델이 필요합니다. 독립 검사에서는 단열 플래시와 유한 벽 열교환의 총엔트로피가 감소하지 않을 것도 요구합니다.
+
+- `artifacts/reports/phase-equilibrium-verified-2026-10-13.log`
+- `artifacts/reports/phase-equilibrium-evidence-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-baseline-replays-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-doc-audit-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-schema-audit-2026-10-13.json`
+- `artifacts/reports/equilibrium-fuel-cell.json`
+- `artifacts/reports/equilibrium-injected-cylinder.json`
+- `tests/Power.Tests/Fixtures/vented-tank-liquid-cylinder-v29.powerasset`
+
+매개변수는 `unverified`입니다. 실측 가솔린 물성, 다성분 또는 유한 속도 상변화, 해상된 액체 변위/분무와 OEM 보정은 제공하지 않습니다. 실제 Unity Editor/Play/Player/IL2CPP 수용은 미완성입니다.
+
+[FUEL_PHASE_EQUILIBRIUM.ko.md](FUEL_PHASE_EQUILIBRIUM.ko.md)
+
 ## 2026-10-08: 탱크 형상과 유한 헤드스페이스
 
 필수 직렬 검증이 로컬 Windows x64/.NET 10.0.12에서 통과했습니다. Standard 어셈블리 검사는 .NET 10에서 실행하며 실제 Unity Editor/Play/Player/IL2CPP는 미검증 상태입니다.

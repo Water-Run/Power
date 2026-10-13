@@ -12,7 +12,7 @@ Lire `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_heat
 
 ## Preuves et limites
 
-`recirculating-liquid-cylinder` et `recirculating-needle-cylinder` gardent carburant fini, injection réelle, évaporation et aiguille facultative. v29 conserve liens et fraction et lit v1-v28. Chaque retour ajoute 8 états dans les mêmes bornes.
+`recirculating-liquid-cylinder` et `recirculating-needle-cylinder` gardent carburant fini, injection réelle, évaporation et aiguille facultative. v30 conserve liens et fraction et lit v1-v29. Chaque retour ajoute 8 états dans les mêmes bornes.
 
 Décroissance/travail indépendants, raffinement mécanique/pression/thermique simultané, fractions, voies multiples, frontières externes, replay, rollback et allocations passent. Ébullition ou intervalle de transport non résolu fait échouer tout le lot.
 
@@ -25,3 +25,11 @@ Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/
 `liquid_fuel_tank.parameters.headspace` déclare `capacity` en `m3` ou `l` et `gas_node`. Le gaz omet `storage` : son volume vaut `capacity - liquid_mass / density`, avec un seul propriétaire et un volume positif. Pompe et retour utilisent une pression prescrite nulle car le gaz fini détermine la pression d'entrée.
 
 [Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)
+
+## Équilibre des phases du carburant et limites d'alimentation
+
+Rails, réservoirs finis et entrées exposent `saturation_pressure` et `cavitation_margin` en Pa. La marge est la pression absolue locale moins la pression de saturation à la température liquide. Une marge négative avec du liquide rejette tout le lot. Ces contrôles bornent l'alimentation monophasique ; transfert vapeur du réservoir, bulles et débit de pompe cavitant restent ouverts.
+
+La comparaison ne tolère que l'arrondi binary64 : `64 * epsilon * max(p, p_sat)`, avec `epsilon = 2^-52`. La marge affichée n'est pas écrêtée. C'est un contrôle de saturation globale ; pertes locales et NPSH de pompe demandent un modèle d'écoulement résolu. Les contrôles indépendants exigent aussi une entropie totale non décroissante pour le flash adiabatique et l'échange avec la paroi finie.
+
+[Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md)

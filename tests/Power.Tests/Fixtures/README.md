@@ -268,3 +268,13 @@ the asset format. SHA-256: `3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e565
 Fingerprint: `8c295e86019b787b`. `TankHeadspaceAssetChecks` checks its digest and
 every-boundary old/upgraded replay. Do not regenerate it with the current writer.
 The Power! GPL license and Unity Linking Exception apply.
+
+## Vented tank v29
+
+`vented-tank-liquid-cylinder-v29.powerasset` was retained on 2026-10-13 from the
+unmodified v29 encoder and laboratory at commit `ca443cbd218bd678a1de6e579ddfe99826659555`.
+It preserves headspace geometry and every replay boundary before the v30 film extension.
+Do not regenerate it with the current encoder.
+
+SHA-256: `e7f48291b8c9817af7d2eec61b989854d5200130cd4a0987f42e49c21d36d16d`.
+Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.

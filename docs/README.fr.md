@@ -31,7 +31,7 @@ flowchart LR
 | Document | De quoi il s'agit |
 |---|---|
 | [API agent](AGENT_API.fr.md) | Outils MCP, révisions, erreurs et la séquence d'opérations |
-| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v29 et les lecteurs de v1 à v28 |
+| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v30 et les lecteurs de v1 à v29 |
 | [Frontière Zig native](NATIVE_ZIG.fr.md) | Les prototypes Zig archivés et l'ABI versionnée |
 
 ## Moteur et carburant
@@ -50,6 +50,7 @@ flowchart LR
 | [Actionnement d'aiguille](NEEDLE_ACTUATION.fr.md) | Solénoïde dépendant de la position, masse d'aiguille, retard de fermeture et rebond |
 | [Prédiction de fermeture](CLOSURE_PREDICTION.fr.md) | Rejeu plant borné qui planifie la coupure de tension |
 | [Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md) | Capacité rigide, travail du gaz fini et ventilation explicite |
+| [Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md) | Évaporation/condensation réversibles, saturation et limites d'alimentation liquide |
 
 ## Transmission
 

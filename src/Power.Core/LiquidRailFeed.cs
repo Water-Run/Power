@@ -76,8 +76,8 @@ public sealed partial class CompiledModel
                 DiagnosticCode.Connection,c.Id,"liquid_rail_feed.tank_component","Use one exclusively owned finite tank with matching injector properties.");
             Require(tank<0||d.SupplyTemperature==default,DiagnosticCode.Schema,c.Id,"liquid_rail_feed.supply_temperature","A finite tank owns source temperature; omit the external boundary temperature.");
             double temperature=tank<0?Convert(d.SupplyTemperature,Unit.Kelvin,c.Id,"liquid_rail_feed.supply_temperature"):LiquidTanks[tank].InitialTemperature;var film=FuelFilms[rail.Film];
-            Require(temperature>0&&temperature<=film.Law.SaturationTemperatureKelvin,DiagnosticCode.Range,c.Id,"liquid_rail_feed.supply_temperature","Use liquid supply temperature in (0,saturation_temperature].");
-            LiquidFeeds[slot]=new(i,injector,pump,node.Index,Nodes[p.A].Index,p.P0,rail.Rail.DensityKilogramsPerCubicMeter,temperature,film.Law.CreateState(1,temperature).ThermalEnergyJoules,rail.HeatingValue,tank);
+            Require(film.LiquidTemperatureValid(temperature),DiagnosticCode.Range,c.Id,"liquid_rail_feed.supply_temperature","Use liquid supply temperature inside the film's declared range.");
+            LiquidFeeds[slot]=new(i,injector,pump,node.Index,Nodes[p.A].Index,p.P0,rail.Rail.DensityKilogramsPerCubicMeter,temperature,film.LiquidState(1,temperature).ThermalEnergyJoules,rail.HeatingValue,tank);
             FeedByInjector[injector]=slot;FeedByComponent[i]=slot;LiquidFuelInjectors[injector]=rail with{PressureNode=node.Index};++slot;
         }
         Require(tanks.Count==LiquidTanks.Length,DiagnosticCode.Connection,0,"liquid_fuel_tank","Every tank must belong to exactly one liquid rail feed.");

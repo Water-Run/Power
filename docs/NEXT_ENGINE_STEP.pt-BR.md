@@ -4,18 +4,18 @@
 
 ## Ponto de retomada
 
-O suprimento inclui tanques finitos, retornos conservativos, espaço gasoso geométrico e ventilação explícita. Bomba, trilho e gás trocam trabalho interno; líquido, evaporação e reação prescrita seguem separados. Retomar dos contratos e evidências atuais.
+O receptor suporta equilíbrio reversível e verificações de saturação do suprimento.
 
-[Geometria do tanque e espaço gasoso finito](TANK_HEADSPACE.pt-BR.md)
+[Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md)
 
 ## Próximo incremento
 
-Focar o próximo incremento em equilíbrio de fases por pressão e cavitação com propriedades explícitas. Manter ausentes as medições OEM faltantes e não verificados os parâmetros de pesquisa. Enchimento/regulação medidos de bombas/válvulas, acionamento magnético/eletrônico e spray resolvido seguem pendentes.
+Resolver em seguida transferência de vapor do tanque e fluxo bifásico bomba/trilho com propriedades explícitas e acoplamento conservativo volume/trabalho. Manter ausentes as medições OEM faltantes. Ignição, admissão/escape, perdas mecânicas e coordenação ECU/TCU continuam trabalhos separados.
 
 ## Aceitação
 
 Exigir referências analíticas/limite independentes, balanços completos de massa/energia e refinamento apropriado. Preservar rollback do lote, cancelamento, ramos, canais estáveis, replay portável e leitores antigos. Continuar depois ignição, admissão/escape, perdas mecânicas, transmissão e coordenação ECU/TCU.
 
-Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, equilíbrio de fases, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
+Parâmetros `unverified`. Não são fornecidas propriedades medidas de gasolina, cinética multicomponente ou de velocidade finita, deslocamento líquido/spray resolvidos ou calibração OEM. A aceitação real Unity Editor/Play/Player/IL2CPP continua pendente.
 
 [DEVELOPMENT_STATUS.pt-BR.md](DEVELOPMENT_STATUS.pt-BR.md) · [ROADMAP.pt-BR.md](ROADMAP.pt-BR.md) · [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md)

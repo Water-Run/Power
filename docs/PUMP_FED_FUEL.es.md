@@ -12,7 +12,7 @@ La energía de presión se almacena una sola vez en el nodo hidráulico. Caudal 
 
 ## Evidencia y límites
 
-v29 conserva enlaces y temperatura de fuente y lee v1-v28. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v30 conserva enlaces y temperatura de fuente y lee v1-v29. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
 Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
@@ -41,3 +41,11 @@ Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidros
 El solver acoplado intercambia trabajo de presión entre eje, riel y gas sin fuente externa. Orificios gaseosos y enlaces térmicos dan venteo/calor explícitos. Leer `pressure`, `fill_fraction`, `hydraulic_work` acumulado con signo y masa, energía, volumen del gas. Dosis, líquido, evaporación y combustión permanecen separados.
 
 [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md)
+
+## Equilibrio de fases del combustible y límites de suministro
+
+Rieles, tanques finitos y entradas exponen `saturation_pressure` y `cavitation_margin` en Pa. El margen es presión absoluta local menos saturación a la temperatura líquida. Un margen negativo con líquido rechaza todo el lote. Esto limita el suministro monofásico; transferencia de vapor del tanque, burbujas y flujo cavitante de bomba siguen abiertos.
+
+La comparación solo admite redondeo binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-52`. El margen informado no se recorta. Es una comprobación de saturación global; pérdidas locales y NPSH de bomba requieren un modelo de flujo resuelto. Las comprobaciones independientes también exigen entropía total no decreciente en el flash adiabático y el intercambio con la pared finita.
+
+[Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md)

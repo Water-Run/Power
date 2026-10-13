@@ -766,4 +766,30 @@ foreach (string name in new[] { "vented-tank-liquid-cylinder", "vented-tank-need
     await Call("close_session", new() { ["session_id"] = sessionId, ["expected_revision"] = "0" });
     PassGroup("MCP " + name + " / dynamic headspace vent ownership complete portable replay and independent branches");
 }
+foreach (var (name, vent) in new[] { ("equilibrium-fuel-cell", 1d), ("equilibrium-injected-cylinder", 0d) })
+{
+    var equilibriumDocument = (await Call("get_example_model", new() { ["name"] = name })).GetProperty("data");
+    Require(capabilities.GetProperty("fuel_film").GetProperty("phase_equilibrium").GetProperty("required_parameters").GetArrayLength() == 3, "Phase contract is missing");
+    var equilibriumReport = (await Call("run_experiment", new() { ["document"] = equilibriumDocument, ["include_samples"] = true })).GetProperty("data");
+    Require(equilibriumReport.GetProperty("passed").GetBoolean() && equilibriumReport.GetProperty("model").GetProperty("fidelity").GetString() == "equilibrium_liquid_fuel_powertrain", "Equilibrium experiment failed");
+    var equilibriumExport = (await Call("export_model_asset", new() { ["document"] = equilibriumDocument })).GetProperty("data");
+    var equilibriumAsset = AssetCodec.Decode(Convert.FromBase64String(equilibriumExport.GetProperty("content").GetString()!));
+    Require(equilibriumAsset.Model.HasEquilibriumFuelFilms && equilibriumExport.GetProperty("format").GetString() == AssetCodec.FormatName, "Phase properties were lost in export");
+    var equilibriumPlayback = equilibriumAsset.CreatePlayback(); var equilibriumValues = new Power.Core.Scalar[equilibriumAsset.Model.OutputCount];
+    foreach (var equilibriumSample in equilibriumReport.GetProperty("samples").EnumerateArray())
+    {
+        ulong at = equilibriumSample.GetProperty("time_ns").GetUInt64();
+        while (equilibriumPlayback.TimeNanoseconds < at) Require(equilibriumPlayback.Advance(Math.Min(257 * equilibriumAsset.Model.StepNanoseconds, at - equilibriumPlayback.TimeNanoseconds)) == Power.Core.SimulationStatus.Ok, "Equilibrium playback failed");
+        Require(equilibriumPlayback.ReadSnapshot(equilibriumValues).StateHash.ToString("x16") == equilibriumSample.GetProperty("state_hash").GetString() &&
+            equilibriumValues.All(value => value.Value == equilibriumSample.GetProperty("values").GetProperty(value.Channel.ToString()).GetDouble()), "Equilibrium replay differs");
+    }
+    string equilibriumSession = (await Call("create_session", new() { ["document"] = equilibriumDocument })).GetProperty("data").GetProperty("session_id").GetString()!;
+    string equilibriumChild = (await Call("fork_session", new() { ["session_id"] = equilibriumSession, ["expected_revision"] = "0" })).GetProperty("data").GetProperty("session_id").GetString()!;
+    await Call("set_inputs", new() { ["session_id"] = equilibriumChild, ["expected_revision"] = "0", ["values"] = new[] { new { channel = "960", value = vent } } });
+    await Call("step_session", new() { ["session_id"] = equilibriumChild, ["expected_revision"] = "1", ["delta_ns"] = "10000000" });
+    Require((await Call("read_snapshot", new() { ["session_id"] = equilibriumSession })).GetProperty("data").GetProperty("revision").GetString() == "0", "Equilibrium branch changed its parent");
+    await Call("close_session", new() { ["session_id"] = equilibriumChild, ["expected_revision"] = "2" });
+    await Call("close_session", new() { ["session_id"] = equilibriumSession, ["expected_revision"] = "0" });
+    PassGroup("MCP " + name + " / reversible phase supply margins portable replay and independent branches");
+}
 Console.WriteLine($"{groupsPassed}/{groupsPassed} MCP integration groups passed against an actual child server process.");

@@ -12,7 +12,7 @@
 
 ## 証拠と制限
 
-`recirculating-liquid-cylinder` と `recirculating-needle-cylinder` は有限燃料、実噴射、蒸発、任意のニードル動特性を保持します。v29 は接続/熱割合を保存し v1-v28 を読みます。各戻りは既存上限内で 8 状態を追加します。
+`recirculating-liquid-cylinder` と `recirculating-needle-cylinder` は有限燃料、実噴射、蒸発、任意のニードル動特性を保持します。v30 は接続/熱割合を保存し v1-v29 を読みます。各戻りは既存上限内で 8 状態を追加します。
 
 独立リリーフ減衰/仕事、機械/圧力/熱同時細化、熱割合、複数経路、外部境界、replay、rollback、割り当て検査は合格します。 沸騰や未解像移送区間は全バッチを失敗させます。
 
@@ -25,3 +25,11 @@
 `liquid_fuel_tank.parameters.headspace` は `m3` または `l` の `capacity` と `gas_node` を指定します。気体ノードは `storage` を省略し、体積は `capacity - liquid_mass / density` です。所有者は一つで体積は正を維持します。有限気体が入口圧力を決めるため、ポンプと戻りの指定リザーバー圧力はゼロです。
 
 [タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md)
+
+## 燃料の相平衡と液体供給の境界
+
+液体レール、有限タンクと供給入口は Pa の `saturation_pressure` と `cavitation_margin` を公開します。余裕は液温の飽和圧力を局所絶対圧力から引いた値です。液体があり余裕が負なら全バッチを拒否します。単相供給の境界を検査するもので、タンク蒸気移動、気泡動特性とキャビテーションポンプ流れは未実装です。
+
+圧力比較は binary64 の丸め幅 `64 * epsilon * max(p, p_sat)` のみを許容し、`epsilon = 2^-52` です。表示余裕はクランプしません。これはバルクの飽和検査で、局所圧力損失とポンプ NPSH には流れを解くモデルが必要です。独立検査では断熱フラッシュと有限壁熱交換の総エントロピーが減少しないことも求めます。
+
+[燃料の相平衡と液体供給の境界](FUEL_PHASE_EQUILIBRIUM.ja.md)

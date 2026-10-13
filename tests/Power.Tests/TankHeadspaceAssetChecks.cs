@@ -32,7 +32,7 @@ internal static class TankHeadspaceAssetChecks
     private static void Replay()
     {
         var asset = Asset(); var bytes = AssetCodec.Encode(asset); var decoded = AssetCodec.Decode(bytes);
-        Require(decoded.Model.HasTankHeadspaces && BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == 29);
+        Require(decoded.Model.HasTankHeadspaces && BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) == AssetCodec.FormatVersion);
         Require(bytes.SequenceEqual(AssetCodec.Encode(decoded))); Compare(asset, decoded);
         var fixture = File.ReadAllBytes(Path.Combine(AppContext.BaseDirectory, "Fixtures", "recirculating-liquid-cylinder-v28.powerasset"));
         Require(BinaryPrimitives.ReadInt32LittleEndian(fixture.AsSpan(8)) == 28 &&
@@ -46,7 +46,8 @@ internal static class TankHeadspaceAssetChecks
         foreach (var change in new[] { (tank + 40, (int)Unit.Pascal), (tank + 44, 0), (tank + 44, 2) })
         { var bad = bytes.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(change.Item1), change.Item2); Reject(bad); }
         var full = bytes.ToArray(); BinaryPrimitives.WriteDoubleLittleEndian(full.AsSpan(tank + 32), 1e-12); Reject(full);
-        var downgraded = bytes.Take(tank + 32).Concat(bytes.Skip(tank + 48)).ToArray();
+        var version29 = FuelPhaseEquilibriumAssetChecks.Version29(Asset(), bytes); int oldTank = version29.Length - 80;
+        var downgraded = version29.Take(oldTank + 32).Concat(version29.Skip(oldTank + 48)).ToArray();
         BinaryPrimitives.WriteInt32LittleEndian(downgraded.AsSpan(8), 28); Reject(downgraded);
     }
 }

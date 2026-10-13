@@ -249,7 +249,7 @@ L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibl
 
 `at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
 
-Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v29 conserve routes, gains et horloges et lit v1-v28.
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v30 conserve routes, gains et horloges et lit v1-v29.
 
 Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
 
@@ -259,7 +259,7 @@ Ces commandes sont expérimentales et les paramètres restent `unverified`. Coor
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v29 conserve les liens et la température source et lit v1-v28. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v30 conserve les liens et la température source et lit v1-v29. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -290,3 +290,13 @@ Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/
 Le solveur couplé échange le travail de pression entre arbre, rampe et gaz sans source externe. Orifices gazeux et liens thermiques fournissent ventilation et chaleur explicites. Lire `pressure`, `fill_fraction`, `hydraulic_work` cumulé signé et masse, énergie, volume du gaz. Dose, liquide livré, évaporation et combustion restent distincts.
 
 [Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)
+
+## Équilibre des phases du carburant et limites d'alimentation
+
+Le modèle utilise une pseudo-espèce idéale, la constante gazeuse commune du récepteur, des capacités thermiques constantes et un déplacement liquide négligeable. L'égalité des potentiels chimiques donne la relation de saturation ci-dessous. À volume fixé, carburant total et énergie interne déterminent température et masse de vapeur. Le transfert chimique reste interne ; la réaction consomme uniquement la vapeur.
+
+Un solveur scalaire borné utilise l'énergie d'équilibre monotone. La chaleur de paroi suit Euler implicite. Le couplage au transport et au travail du cylindre présente une convergence du premier ordre. La coexistence liquide reste dans l'intervalle déclaré. Le gaz peut surchauffer après évaporation complète dans cet intervalle, sans extrapoler la courbe de saturation.
+
+`mass_flow` est le transfert net signé sur le pas physique complet. `evaporated_fuel_mass` et `condensed_fuel_mass` cumulent ses masses positive et négative, sans compter deux fois les projections qui s'annulent. `vapor_partial_pressure` donne la pression partielle du carburant. Les bilans thermiques, massiques et chimiques comprennent les deux phases.
+
+[Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md)

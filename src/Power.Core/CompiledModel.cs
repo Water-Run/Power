@@ -19,9 +19,9 @@ public sealed partial class CompiledModel
     public ulong Fingerprint { get; }
     public int NodeCount => Nodes.Length;
     public int ComponentCount => Components.Length;
-    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length;
+    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length;
     public int OutputCount => Outputs.Length;
-    public string Fidelity => HasTankHeadspaces ? "geometric_tank_liquid_fuel_powertrain" : HasLiquidReturns ? "recirculating_liquid_fuel_powertrain" : HasLiquidTanks ? "finite_tank_liquid_fuel_powertrain" : HasLiquidFeeds ? "pump_fed_liquid_fuel_powertrain" : AtControllers.Length != 0 ? "sampled_hydraulic_at_control" : DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
+    public string Fidelity => HasEquilibriumFuelFilms ? "equilibrium_liquid_fuel_powertrain" : HasTankHeadspaces ? "geometric_tank_liquid_fuel_powertrain" : HasLiquidReturns ? "recirculating_liquid_fuel_powertrain" : HasLiquidTanks ? "finite_tank_liquid_fuel_powertrain" : HasLiquidFeeds ? "pump_fed_liquid_fuel_powertrain" : AtControllers.Length != 0 ? "sampled_hydraulic_at_control" : DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
         : HasPremixedGas ? "premixed_gas_transport"
         : HasValveTiming ? "crank_timed_gas_exchange"
         : GasCylinders.Any(c => c is not null) ? "moving_cylinder_gas_exchange"
@@ -50,6 +50,8 @@ public sealed partial class CompiledModel
     internal CompiledFuelFilm[] FuelFilms { get; }
     internal int[] FilmByComponent { get; }
     public bool HasFuelFilms => FuelFilms.Length != 0;
+    public int EquilibriumFilmCount { get; }
+    public bool HasEquilibriumFuelFilms => EquilibriumFilmCount != 0;
     internal CompiledLiquidInjector[] LiquidFuelInjectors { get; }
     internal int[] LiquidInjectorByComponent { get; }
     public bool HasLiquidFuelInjectors => LiquidFuelInjectors.Length != 0;
@@ -734,7 +736,24 @@ public sealed partial class CompiledModel
                     Require(NodeMixtures[a] is not null,DiagnosticCode.Connection,c.Id,"node_a","A film requires a tracked gas receiver with explicit heating value.");
                     var filmDefinition=c.FuelFilm!;double filmMass=Convert(filmDefinition.InitialMass,Unit.Kilogram,c.Id,"fuel_film.initial_mass"),filmTemperature=Convert(filmDefinition.InitialTemperature,Unit.Kelvin,c.Id,"fuel_film.initial_temperature"),filmSpecificHeat=Convert(filmDefinition.LiquidSpecificHeat,Unit.JoulePerKilogramKelvin,c.Id,"fuel_film.liquid_specific_heat"),filmSaturation=Convert(filmDefinition.SaturationTemperature,Unit.Kelvin,c.Id,"fuel_film.saturation_temperature"),filmLatent=Convert(filmDefinition.LatentInternalEnergy,Unit.JoulePerKilogram,c.Id,"fuel_film.latent_internal_energy");
                     p0=Convert(c.Conductance,Unit.WattPerKelvin,c.Id,"conductance");int filmSlot=Array.IndexOf(filmComponents,i);
-                    try { var law=new EquilibriumFuelFilm(filmSpecificHeat,NodeGases[a]!.IsochoricHeatCapacityJoulePerKilogramKelvin,filmSaturation,filmLatent,p0);FuelFilms[filmSlot]=new(i,Nodes[a].Index,Nodes[b].Index,Nodes[b].Storage,NodeMixtures[a]!.Lhv,filmMass,law.CreateState(filmMass,filmTemperature),law); }
+                    FuelPhaseEquilibrium? phase = null;
+                    double referencePressure = 0, minimumTemperature = 0, maximumTemperature = 0;
+                    if (filmDefinition.PhaseEquilibrium is { } equilibrium)
+                    {
+                        referencePressure = Convert(equilibrium.ReferencePressure, Unit.Pascal, c.Id, "fuel_film.phase_equilibrium.reference_pressure");
+                        minimumTemperature = Convert(equilibrium.MinimumTemperature, Unit.Kelvin, c.Id, "fuel_film.phase_equilibrium.minimum_temperature");
+                        maximumTemperature = Convert(equilibrium.MaximumTemperature, Unit.Kelvin, c.Id, "fuel_film.phase_equilibrium.maximum_temperature");
+                        Require(cs.Count(x => x.Kind == ComponentKind.FuelFilm && x.NodeA == c.NodeA) == 1,
+                            DiagnosticCode.Connection, c.Id, "fuel_film.phase_equilibrium", "An equilibrium receiver has one liquid film and one set of phase properties.");
+                    }
+                    try
+                    {
+                        var law = new EquilibriumFuelFilm(filmSpecificHeat, NodeGases[a]!.IsochoricHeatCapacityJoulePerKilogramKelvin, filmSaturation, filmLatent, p0);
+                        if (filmDefinition.PhaseEquilibrium is not null)
+                            phase = new(law, NodeGases[a]!.GasConstantJoulePerKilogramKelvin, referencePressure, minimumTemperature, maximumTemperature);
+                        FuelFilms[filmSlot] = new(i, Nodes[a].Index, Nodes[b].Index, Nodes[b].Storage, NodeMixtures[a]!.Lhv, filmMass,
+                            phase is null ? law.CreateState(filmMass, filmTemperature) : phase.CreateLiquidState(filmMass, filmTemperature), law, phase);
+                    }
                     catch(ArgumentException error){throw new ModelCompileException(DiagnosticCode.Range,c.Id,"fuel_film",error.Message);}
                     Require(c.Ratio==1&&c.Area==default&&c.Stiffness==default&&c.Damping==default&&c.RestAngle==default&&c.Resistance==default&&c.Inductance==default&&c.Coupling==default&&c.InitialCurrent==default&&c.ReservoirPressure==default&&c.AmbientTemperature==default,DiagnosticCode.Schema,c.Id,"parameters","A film accepts only phase properties, finite wall and receiver and conductance.");
                     FilmByComponent[i]=filmSlot;
@@ -767,12 +786,14 @@ public sealed partial class CompiledModel
             var targetFilm = FuelFilms[FilmByComponent[target]];
             double temperature = Convert(railDefinition.SupplyTemperature, Unit.Kelvin, id, "liquid_fuel_injector.supply_temperature");
             double maximum = Convert(railDefinition.MaximumDose, Unit.Kilogram, id, "liquid_fuel_injector.maximum_dose");
-            Require(temperature > 0 && temperature <= targetFilm.Law.SaturationTemperatureKelvin,
-                DiagnosticCode.Range, id, "liquid_fuel_injector.supply_temperature", "Supply liquid must be in (0,saturation_temperature].");
+            Require(targetFilm.LiquidTemperatureValid(temperature),
+                DiagnosticCode.Range, id, "liquid_fuel_injector.supply_temperature", "Supply liquid must be inside the film's declared liquid temperature range.");
             Require(component.InitialInput >= 0 && component.InitialInput <= maximum,
                 DiagnosticCode.Range, id, "initial_input", "Requested dose must be in [0,maximum_dose] kg.");
             double mass = Convert(railDefinition.InitialMass, Unit.Kilogram, id, "liquid_fuel_injector.initial_mass");
             double pressure = Convert(railDefinition.InitialPressure, Unit.Pascal, id, "liquid_fuel_injector.initial_pressure");
+            Require(targetFilm.Phase is null || mass == 0 || targetFilm.Phase.TrySaturationPressure(temperature, out double saturation) && FuelPhaseEquilibrium.PressureAllowsLiquid(pressure, saturation),
+                DiagnosticCode.Range, id, "liquid_fuel_injector.initial_pressure", "Liquid rail pressure must be at least its saturation pressure; raise pressure or lower supply temperature.");
             double density = Convert(railDefinition.LiquidDensity, Unit.KilogramPerCubicMeter, id, "liquid_fuel_injector.liquid_density");
             double compliance = Convert(railDefinition.PressureCompliance, Unit.CubicMeterPerPascal, id, "liquid_fuel_injector.pressure_compliance");
             try
@@ -781,7 +802,7 @@ public sealed partial class CompiledModel
                     Convert(railDefinition.StartAngle, Unit.Radian, id, "liquid_fuel_injector.start_angle"),
                     Convert(railDefinition.DurationAngle, Unit.Radian, id, "liquid_fuel_injector.duration_angle"), maximum);
                 var rail = new CompliantLiquidRail(mass, pressure, density, compliance, component.P0, component.P1);
-                double specificEnergy = targetFilm.Law.CreateState(1, temperature).ThermalEnergyJoules;
+                double specificEnergy = targetFilm.LiquidState(1, temperature).ThermalEnergyJoules;
                 LiquidFuelInjectors[k] = new(index, FilmByComponent[target], new(index, Nodes[crank].Index, profile),
                     rail, temperature, specificEnergy, targetFilm.HeatingValue);
                 if (railDefinition.Needle is { } needle)
@@ -878,7 +899,9 @@ public sealed partial class CompiledModel
         CompileLiquidFeeds(cs);
         CompileLiquidReturns(cs);
         CompileTankHeadspaceRoutes(cs);
-        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
+        EquilibriumFilmCount = FuelFilms.Count(film => film.Phase is not null);
+        ValidateLiquidPhaseSources();
+        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
         HasValveTiming = Valves.Any(v => v is not null);
         DynamicCount = dynamics; ThermalCount = thermal;
         CoordinateStates = new bool[dynamics];
@@ -994,6 +1017,12 @@ public sealed partial class CompiledModel
                 Output(c.Id,Field.InternalEnergy,i,Unit.Joule,"tank_caloric_energy",true);
                 Output(c.Id,Field.ChemicalEnergy,i,Unit.Joule,"tank_chemical_energy",true);
                 Output(c.Id,Field.TankState,i,Unit.StateCode,"tank_state_wet_zero_empty_one",true);
+                if (FuelFilms[LiquidFuelInjectors[LiquidTanks[TankByComponent[i]].Injector].Film].Phase is not null)
+                {
+                    Output(c.Id, Field.SaturationPressure, i, Unit.Pascal, "liquid_saturation_pressure", true);
+                    Output(c.Id, Field.CavitationMargin, i, Unit.Pascal, "liquid_inlet_pressure_minus_saturation", true);
+                    if (HeadspaceByTank[TankByComponent[i]] < 0) Output(c.Id, Field.Pressure, i, Unit.Pascal, "liquid_inlet_absolute_pressure", true);
+                }
                 if (HeadspaceByTank[TankByComponent[i]] >= 0)
                 {
                     Output(c.Id, Field.Pressure, i, Unit.Pascal, "tank_headspace_absolute_pressure", true);
@@ -1007,6 +1036,12 @@ public sealed partial class CompiledModel
                 Output(c.Id,Field.ReservoirEnthalpy,i,Unit.Joule,"net_boundary_caloric_energy",true);
                 Output(c.Id,Field.FuelEnergyIn,i,Unit.Joule,"net_boundary_chemical_energy",true);
                 Output(c.Id,Field.MassFlow,i,Unit.KilogramPerSecond,"last_tick_mean_liquid_supply_flow",true);
+                if (FuelFilms[LiquidFuelInjectors[LiquidFeeds[FeedByComponent[i]].Injector].Film].Phase is not null)
+                {
+                    Output(c.Id, Field.Pressure, i, Unit.Pascal, "liquid_inlet_absolute_pressure", true);
+                    Output(c.Id, Field.SaturationPressure, i, Unit.Pascal, "liquid_saturation_pressure", true);
+                    Output(c.Id, Field.CavitationMargin, i, Unit.Pascal, "liquid_inlet_pressure_minus_saturation", true);
+                }
             }
             else if (c.Kind == ComponentKind.HydraulicAtController)
             {
@@ -1165,14 +1200,24 @@ public sealed partial class CompiledModel
             {
                 Output(c.Id,Field.Mass,i,Unit.Kilogram,"remaining_liquid_fuel",true);Output(c.Id,Field.Temperature,i,Unit.Kelvin,"film_temperature",true);
                 Output(c.Id,Field.InternalEnergy,i,Unit.Joule,"liquid_phase_thermal_energy",true);Output(c.Id,Field.ChemicalEnergy,i,Unit.Joule,"liquid_chemical_energy",true);
-                Output(c.Id,Field.EvaporatedFuelMass,i,Unit.Kilogram,"total_evaporated_fuel",true);Output(c.Id,Field.MassFlow,i,Unit.KilogramPerSecond,"last_tick_mean_vaporized_fuel_flow",true);
+                Output(c.Id,Field.EvaporatedFuelMass,i,Unit.Kilogram,"total_evaporated_fuel",true);Output(c.Id,Field.MassFlow,i,Unit.KilogramPerSecond,FuelFilms[FilmByComponent[i]].Phase is null ? "last_tick_mean_vaporized_fuel_flow" : "last_tick_mean_net_evaporated_fuel_flow",true);
                 Output(c.Id,Field.FilmWallHeat,i,Unit.Joule,"heat_from_wall",true);Output(c.Id,Field.HeatFlow,i,Unit.Watt,"instantaneous_wall_heat_draw",true);
+                if (FuelFilms[FilmByComponent[i]].Phase is not null)
+                {
+                    Output(c.Id, Field.CondensedFuelMass, i, Unit.Kilogram, "total_condensed_fuel", true);
+                    Output(c.Id, Field.VaporPartialPressure, i, Unit.Pascal, "fuel_vapor_partial_pressure", true);
+                }
             }
             else if (c.Kind == ComponentKind.LiquidFuelInjector)
             {
                 channels.Add(new(c.InputChannel, c.Id, true, Unit.Kilogram, "liquid_fuel_dose_per_cycle"));
                 Output(c.Id, Field.Mass, i, Unit.Kilogram, "remaining_rail_liquid", true);
                 Output(c.Id, Field.Pressure, i, Unit.Pascal, "liquid_rail_pressure", true);
+                if (FuelFilms[LiquidFuelInjectors[LiquidInjectorByComponent[i]].Film].Phase is not null)
+                {
+                    Output(c.Id, Field.SaturationPressure, i, Unit.Pascal, "liquid_saturation_pressure", true);
+                    Output(c.Id, Field.CavitationMargin, i, Unit.Pascal, "rail_pressure_minus_saturation", true);
+                }
                 Output(c.Id, Field.Temperature, i, Unit.Kelvin, "liquid_supply_temperature", true);
                 Output(c.Id, Field.InternalEnergy, i, Unit.Joule, "liquid_rail_thermal_and_pressure_energy", true);
                 Output(c.Id, Field.ChemicalEnergy, i, Unit.Joule, "liquid_rail_chemical_energy", true);
@@ -1304,6 +1349,7 @@ public sealed partial class CompiledModel
         if (HasLiquidFeeds) h = Numeric.Hash(h,30UL);
         if (HasLiquidTanks) h = Numeric.Hash(h,31UL);
         if (HasTankHeadspaces) h = Numeric.Hash(h, 33UL);
+        if (HasEquilibriumFuelFilms) h = Numeric.Hash(h, 34UL);
         if (HasLiquidReturns) h = Numeric.Hash(h,32UL);
         if (AtControllers.Length != 0) h = Numeric.Hash(h, 29UL);
         if (DctControllers.Length != 0) h = Numeric.Hash(h, 26UL);
@@ -1335,6 +1381,8 @@ public sealed partial class CompiledModel
             if (cylinder is not null)
                 foreach (double parameter in cylinder.Parameters) h = Numeric.Hash(h, parameter);
         foreach(var film in FuelFilms){h=Numeric.Hash(h,film.InitialMass);h=Numeric.Hash(h,film.Initial.ThermalEnergyJoules);h=Numeric.Hash(h,film.Law.LiquidSpecificHeatJoulesPerKilogramKelvin);h=Numeric.Hash(h,film.Law.SaturationTemperatureKelvin);h=Numeric.Hash(h,film.Law.LatentInternalEnergyJoulesPerKilogram);}
+        foreach (var film in FuelFilms) if (film.Phase is { } phase)
+        { h=Numeric.Hash(h,(ulong)Components[film.Component].Id);h=Numeric.Hash(h,phase.ReferencePressurePascals);h=Numeric.Hash(h,phase.MinimumTemperatureKelvin);h=Numeric.Hash(h,phase.MaximumTemperatureKelvin); }
         foreach (var injector in LiquidFuelInjectors)
         {
             h = Numeric.Hash(h, (ulong)Components[FuelFilms[injector.Film].Component].Id);

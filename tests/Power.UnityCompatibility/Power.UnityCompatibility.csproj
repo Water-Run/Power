@@ -67,6 +67,8 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Compile Include="../Power.Tests/SolenoidChecks.cs" Link="SolenoidChecks.cs" />
     <Compile Include="../Power.Tests/LiquidFuelInjectorChecks.cs" Link="LiquidFuelInjectorChecks.cs" />
     <Compile Include="../Power.Tests/FuelFilmChecks.cs" Link="FuelFilmChecks.cs" />
+    <Compile Include="../Power.Tests/FuelPhaseEquilibriumChecks.cs" Link="FuelPhaseEquilibriumChecks.cs" />
+    <Compile Include="../Power.Tests/FuelPhaseEquilibriumAssetChecks.cs" Link="FuelPhaseEquilibriumAssetChecks.cs" />
     <Compile Include="../Power.Tests/FuelFilmAssetChecks.cs" Link="FuelFilmAssetChecks.cs" />
     <Compile Include="../Power.Tests/FuelInjectorAssetChecks.cs" Link="FuelInjectorAssetChecks.cs" />
     <Compile Include="../Power.Tests/CombustionAssetChecks.cs" Link="CombustionAssetChecks.cs" />

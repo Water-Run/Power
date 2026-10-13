@@ -493,7 +493,7 @@ siguen separados de la realimentación y el control de la AT, y de la aceptació
 
 `at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
 
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v29 conserva rutas, ganancias y relojes y lee v1-v28.
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v30 conserva rutas, ganancias y relojes y lee v1-v29.
 
 Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
 
@@ -503,7 +503,7 @@ Son controles de investigación y los parámetros siguen `unverified`. Coordinac
 
 `liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
 
-v29 conserva enlaces y temperatura de fuente y lee v1-v28. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v30 conserva enlaces y temperatura de fuente y lee v1-v29. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
 Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
@@ -534,3 +534,13 @@ Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidros
 El solver acoplado intercambia trabajo de presión entre eje, riel y gas sin fuente externa. Orificios gaseosos y enlaces térmicos dan venteo/calor explícitos. Leer `pressure`, `fill_fraction`, `hydraulic_work` acumulado con signo y masa, energía, volumen del gas. Dosis, líquido, evaporación y combustión permanecen separados.
 
 [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md)
+
+## Equilibrio de fases del combustible y límites de suministro
+
+El modelo usa una pseudoespecie ideal, la constante gaseosa común del receptor, capacidades constantes y desplazamiento líquido despreciable. La igualdad de potenciales químicos da la saturación siguiente. A volumen fijo, combustible total y energía interna determinan temperatura y masa de vapor. El inventario químico se transfiere internamente; la reacción solo consume vapor.
+
+Una solución escalar acotada usa la energía de equilibrio monótona. El calor de pared usa Euler implícito. Transporte y trabajo del cilindro móvil tienen evidencia de refinamiento de primer orden. La coexistencia líquida queda en el intervalo declarado. Tras evaporarse completamente dentro de él, el gas puede sobrecalentarse sin extrapolar la curva.
+
+`mass_flow` es la transferencia neta con signo del paso físico completo. `evaporated_fuel_mass` y `condensed_fuel_mass` acumulan sus masas positiva y negativa sin duplicar proyecciones que se cancelan. `vapor_partial_pressure` muestra la presión parcial de combustible. Los balances térmico, másico y químico incluyen ambas fases.
+
+[Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md)

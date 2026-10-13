@@ -4,18 +4,18 @@
 
 ## Point de reprise
 
-L’alimentation comprend réservoirs finis, retours conservatifs, espace gazeux géométrique et ventilation explicite. Pompe, rampe et gaz échangent le travail interne ; livraison liquide, évaporation et réaction prescrite restent distinctes. Reprendre depuis les contrats et preuves actuels.
+Le récepteur prend en charge l'équilibre réversible et les contrôles de saturation de l'alimentation.
 
-[Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)
+[Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md)
 
 ## Prochaine étape
 
-Cibler ensuite l’équilibre de phase dépendant de la pression et la cavitation avec propriétés matérielles explicites. Garder les mesures OEM manquantes et les paramètres de recherche non vérifiés. Remplissage/régulation pompe/vanne mesurés, actionnement magnétique/électronique et pulvérisation résolue restent à développer.
+Résoudre ensuite transfert vapeur du réservoir et écoulement diphasique pompe/rail avec propriétés explicites et couplage volume/travail conservatif. Garder les mesures OEM manquantes. Allumage, admission/échappement, pertes mécaniques et coordination ECU/TCU restent des travaux distincts.
 
 ## Acceptation
 
 Exiger références analytiques ou limites indépendantes, bilans complets masse/énergie et raffinement du pas adapté. Préserver retour arrière complet, annulation, branches, canaux stables, rejeu portable et anciens lecteurs. Continuer ensuite allumage, admission/échappement, pertes mécaniques, transmission et coordination ECU/TCU.
 
-Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
+Paramètres `unverified`. Propriétés d'essence mesurées, cinétique multiphase multicomposant ou à vitesse finie, déplacement liquide/pulvérisation résolus et calibration OEM ne sont pas fournis. L'acceptation réelle Unity Editor/Play/Player/IL2CPP reste en attente.
 
 [DEVELOPMENT_STATUS.fr.md](DEVELOPMENT_STATUS.fr.md) · [ROADMAP.fr.md](ROADMAP.fr.md) · [VALIDATION.fr.md](VALIDATION.fr.md)

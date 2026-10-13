@@ -53,7 +53,7 @@ internal static class SolenoidAssetChecks
             Throws<ArgumentException>(() => AssetCodec.Decode(bad));
         }
         var asset = Asset(); byte[] bytes = AssetCodec.Encode(asset); int counts = 78 + Encoding.UTF8.GetByteCount(asset.Name);
-        int coil = counts + 160 + 44 * asset.Nodes.Count + 156 * asset.Components.Count + 24 + 36 + 40 + 64 + 120;
+        int coil = FuelPhaseEquilibriumAssetChecks.FilmOffset(asset, bytes) + 100 + 120;
         int stop = coil + 28, needle = stop + 40, driver = needle + 32;
         foreach (int field in new[] { 120, 124, 128, 132 })
         {
@@ -74,7 +74,7 @@ internal static class SolenoidAssetChecks
         var baseModel = SolenoidChecks.Model(); var two = Asset(baseModel with { Components = [..baseModel.Components,
             ComponentDefinition.SolenoidCoil(12, 1, 2, 101, 4, .002, 8)] });
         var pair = AssetCodec.Encode(two); int pairCounts = 78 + Encoding.UTF8.GetByteCount(two.Name);
-        int first = pairCounts + 140 + 44 * two.Nodes.Count + 156 * two.Components.Count;
-        var duplicate = pair.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(first + 28), 1); Reject(duplicate);
+        int first = pairCounts + 160 + 44 * two.Nodes.Count + 156 * two.Components.Count;
+        var duplicate = pair.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(first + 28), BinaryPrimitives.ReadInt32LittleEndian(pair.AsSpan(first))); Reject(duplicate);
     }
 }

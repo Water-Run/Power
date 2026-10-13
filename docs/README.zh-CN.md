@@ -31,7 +31,7 @@ flowchart LR
 | 文档 | 内容 |
 |---|---|
 | [智能体 API](AGENT_API.zh-CN.md) | MCP 工具、修订号、错误与操作序列 |
-| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v29,以及 v1 至 v28 的读取器 |
+| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v30,以及 v1 至 v29 的读取器 |
 | [原生 Zig 边界](NATIVE_ZIG.zh-CN.md) | 归档的 Zig 原型与带版本的 ABI |
 
 ## 发动机与燃油
@@ -50,6 +50,7 @@ flowchart LR
 | [针阀驱动](NEEDLE_ACTUATION.zh-CN.md) | 位置相关电磁铁、针阀质量、关闭延迟与回弹 |
 | [闭合预测](CLOSURE_PREDICTION.zh-CN.md) | 安排断电时刻的有界对象回放 |
 | [油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md) | 刚性油箱容量、有限气体压力功与显式通气 |
+| [燃油相平衡与液体供给边界](FUEL_PHASE_EQUILIBRIUM.zh-CN.md) | 可逆蒸发/冷凝、饱和压力与液体供给边界 |
 
 ## 变速器
 

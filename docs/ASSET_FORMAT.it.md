@@ -14,7 +14,27 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione attuale 29
+## Versione attuale 30
+
+L'opzione `fuel_film.parameters.phase_equilibrium` dichiara `reference_pressure` in `pa` o `bar` e `minimum_temperature` / `maximum_temperature` in `k`. `saturation_temperature` è la temperatura di riferimento; `latent_internal_energy` la differenza di energia interna vapore-liquido a tale temperatura. Ogni ricevitore in equilibrio ha un film. Lo snapshot iniziale resta dichiarato; gli intervalli accettati equilibrano gas e liquido con scambio verso la parete finita.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md)
+
+## Versione conservata 29
 
 `liquid_fuel_tank.parameters.headspace` dichiara `capacity` in `m3` o `l` e `gas_node`. Il gas omette `storage`: volume `capacity - liquid_mass / density`, un proprietario e volume positivo. Pompa e ritorno usano pressione prescritta nulla: il gas finito determina la pressione d'ingresso.
 

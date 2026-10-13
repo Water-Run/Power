@@ -42,7 +42,7 @@ Windows utilise la même commande `dotnet` et un chemin absolu vers la DLL. Une 
 
 ## Outils et résultats
 
-Dans l'API agent version 0.34.0, `get_example_model` accepte un `name` optionnel, avec `electrothermal` par défaut. `get_capabilities.examples` liste les 43 exemples disponibles, dont les modèles à réservoir fini et recirculation. CLI `list-labs` retourne les 44 laboratoires en JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) ; `thermal-network` est réservé au CLI par conception. Les capacités annoncent aussi composants, fidélité, limites du solveur et bornes d'entrée. Les exports utilisent `power.asset.v29`, avec lecteurs v1-v28 conservés. Validation et création de session retournent les canaux et unités. Des KPI de laboratoire réussis ne constituent pas un groupe motopropulseur complet ou calibré.
+Dans l'API agent version 0.35.0, `get_example_model` accepte un `name` optionnel, avec `electrothermal` par défaut. `get_capabilities.examples` liste les 45 exemples disponibles, dont les modèles à réservoir fini et recirculation. CLI `list-labs` retourne les 46 laboratoires en JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) ; `thermal-network` est réservé au CLI par conception. Les capacités annoncent aussi composants, fidélité, limites du solveur et bornes d'entrée. Les exports utilisent `power.asset.v30`, avec lecteurs v1-v29 conservés. Validation et création de session retournent les canaux et unités. Des KPI de laboratoire réussis ne constituent pas un groupe motopropulseur complet ou calibré.
 
 | Outil | Rôle |
 |---|---|
@@ -292,7 +292,7 @@ Les rapports conservent la pression de ligne/chambre, la course, la capacité de
 
 `at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
 
-Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v29 conserve routes, gains et horloges et lit v1-v28.
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v30 conserve routes, gains et horloges et lit v1-v29.
 
 Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
 
@@ -302,7 +302,7 @@ Ces commandes sont expérimentales et les paramètres restent `unverified`. Coor
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v29 conserve les liens et la température source et lit v1-v28. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v30 conserve les liens et la température source et lit v1-v29. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -333,3 +333,15 @@ Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/
 Le solveur couplé échange le travail de pression entre arbre, rampe et gaz sans source externe. Orifices gazeux et liens thermiques fournissent ventilation et chaleur explicites. Lire `pressure`, `fill_fraction`, `hydraulic_work` cumulé signé et masse, énergie, volume du gaz. Dose, liquide livré, évaporation et combustion restent distincts.
 
 [Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)
+
+## Équilibre des phases du carburant et limites d'alimentation
+
+L'option `fuel_film.parameters.phase_equilibrium` déclare `reference_pressure` en `pa` ou `bar` et `minimum_temperature` / `maximum_temperature` en `k`. `saturation_temperature` est la température de référence ; `latent_internal_energy` est la différence d'énergie interne vapeur-liquide à cette température. Un film possède chaque récepteur en équilibre. L'état initial déclaré est conservé ; les intervalles acceptés équilibrent gaz et liquide avec échange thermique vers la paroi finie.
+
+`mass_flow` est le transfert net signé sur le pas physique complet. `evaporated_fuel_mass` et `condensed_fuel_mass` cumulent ses masses positive et négative, sans compter deux fois les projections qui s'annulent. `vapor_partial_pressure` donne la pression partielle du carburant. Les bilans thermiques, massiques et chimiques comprennent les deux phases.
+
+Rails, réservoirs finis et entrées exposent `saturation_pressure` et `cavitation_margin` en Pa. La marge est la pression absolue locale moins la pression de saturation à la température liquide. Une marge négative avec du liquide rejette tout le lot. Ces contrôles bornent l'alimentation monophasique ; transfert vapeur du réservoir, bulles et débit de pompe cavitant restent ouverts.
+
+La comparaison ne tolère que l'arrondi binary64 : `64 * epsilon * max(p, p_sat)`, avec `epsilon = 2^-52`. La marge affichée n'est pas écrêtée. C'est un contrôle de saturation globale ; pertes locales et NPSH de pompe demandent un modèle d'écoulement résolu. Les contrôles indépendants exigent aussi une entropie totale non décroissante pour le flash adiabatique et l'échange avec la paroi finie.
+
+[Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md)

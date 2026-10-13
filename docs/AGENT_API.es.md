@@ -76,7 +76,7 @@ Windows usa el mismo comando `dotnet` y una ruta absoluta a la DLL. Una conexió
 
 ## Herramientas y resultados
 
-En la API de agente versión 0.34.0, `get_example_model` acepta un `name` opcional, por defecto `electrothermal`. `get_capabilities.examples` enumera los 43 ejemplos, incluidos tanque finito y recirculación. CLI `list-labs` devuelve los 44 laboratorios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` es exclusivo de CLI por diseño. Las capacidades también anuncian componentes, fidelidad, límites del solver y entradas. Los exports usan `power.asset.v29`, conservando lectores v1-v28. La validación y creación de sesión devuelven canales y unidades. Los KPI aprobados no establecen un tren motriz completo o calibrado.
+En la API de agente versión 0.35.0, `get_example_model` acepta un `name` opcional, por defecto `electrothermal`. `get_capabilities.examples` enumera los 45 ejemplos, incluidos tanque finito y recirculación. CLI `list-labs` devuelve los 46 laboratorios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` es exclusivo de CLI por diseño. Las capacidades también anuncian componentes, fidelidad, límites del solver y entradas. Los exports usan `power.asset.v30`, conservando lectores v1-v29. La validación y creación de sesión devuelven canales y unidades. Los KPI aprobados no establecen un tren motriz completo o calibrado.
 
 | Herramienta | Finalidad |
 |---|---|
@@ -610,7 +610,7 @@ nuevo. Consulta [AT_HYDRAULIC_ACTUATION.es.md](AT_HYDRAULIC_ACTUATION.es.md).
 
 `at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
 
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v29 conserva rutas, ganancias y relojes y lee v1-v28.
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v30 conserva rutas, ganancias y relojes y lee v1-v29.
 
 Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
 
@@ -620,7 +620,7 @@ Son controles de investigación y los parámetros siguen `unverified`. Coordinac
 
 `liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
 
-v29 conserva enlaces y temperatura de fuente y lee v1-v28. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v30 conserva enlaces y temperatura de fuente y lee v1-v29. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
 Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
@@ -651,3 +651,15 @@ Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidros
 El solver acoplado intercambia trabajo de presión entre eje, riel y gas sin fuente externa. Orificios gaseosos y enlaces térmicos dan venteo/calor explícitos. Leer `pressure`, `fill_fraction`, `hydraulic_work` acumulado con signo y masa, energía, volumen del gas. Dosis, líquido, evaporación y combustión permanecen separados.
 
 [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md)
+
+## Equilibrio de fases del combustible y límites de suministro
+
+La opción `fuel_film.parameters.phase_equilibrium` declara `reference_pressure` en `pa` o `bar`, y `minimum_temperature` / `maximum_temperature` en `k`. `saturation_temperature` es la temperatura de referencia; `latent_internal_energy` es la diferencia de energía interna vapor-líquido allí. Cada receptor en equilibrio tiene una película. La instantánea inicial se conserva; los intervalos aceptados equilibran gas y líquido e intercambian calor con la pared finita.
+
+`mass_flow` es la transferencia neta con signo del paso físico completo. `evaporated_fuel_mass` y `condensed_fuel_mass` acumulan sus masas positiva y negativa sin duplicar proyecciones que se cancelan. `vapor_partial_pressure` muestra la presión parcial de combustible. Los balances térmico, másico y químico incluyen ambas fases.
+
+Rieles, tanques finitos y entradas exponen `saturation_pressure` y `cavitation_margin` en Pa. El margen es presión absoluta local menos saturación a la temperatura líquida. Un margen negativo con líquido rechaza todo el lote. Esto limita el suministro monofásico; transferencia de vapor del tanque, burbujas y flujo cavitante de bomba siguen abiertos.
+
+La comparación solo admite redondeo binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-52`. El margen informado no se recorta. Es una comprobación de saturación global; pérdidas locales y NPSH de bomba requieren un modelo de flujo resuelto. Las comprobaciones independientes también exigen entropía total no decreciente en el flash adiabático y el intercambio con la pared finita.
+
+[Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md)

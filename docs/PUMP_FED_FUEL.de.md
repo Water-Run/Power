@@ -12,7 +12,7 @@ Druckenergie wird nur einmal im Hydraulikknoten gespeichert. Volumenstrom und We
 
 ## Nachweise und Grenzen
 
-v29 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v28. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v30 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v29. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Phasengleichgewicht, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -41,3 +41,11 @@ Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/
 Die gekoppelte Lösung tauscht Druckarbeit zwischen Welle, Rail und Gas ohne externe Druckquelle. Gasdrosseln und Wärmeverbindungen bilden explizite Entlüftung/Wärmewege. `pressure`, `fill_fraction`, vorzeichenbehaftete kumulierte `hydraulic_work` sowie Gasmasse, Energie und Volumen lesen. Dosis, Flüssigkeit, Verdampfung und Verbrennung bleiben getrennt.
 
 [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md)
+
+## Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen
+
+Rails, endliche Tanks und Zuläufe liefern `saturation_pressure` und `cavitation_margin` in Pa. Die Reserve ist lokaler Absolutdruck minus Sättigungsdruck bei Flüssigkeitstemperatur. Negative Reserve bei Flüssigkeitsinventar verwirft den ganzen Batch. Das begrenzt das einphasige Versorgungsmodell; Tankdampftransfer, Blasen und kavitierende Pumpenströmung bleiben offen.
+
+Der Druckvergleich erlaubt nur binary64-Rundung: `64 * epsilon * max(p, p_sat)` mit `epsilon = 2^-52`. Die ausgegebene Reserve wird nicht geklemmt. Es ist eine Bulk-Sättigungsprüfung; lokale Druckverluste und Pumpen-NPSH benötigen ein aufgelöstes Strömungsmodell. Unabhängige Prüfungen fordern außerdem nicht abnehmende Gesamtentropie bei adiabatischem Flash und endlichem Wandwärmeaustausch.
+
+[Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)

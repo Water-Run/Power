@@ -12,7 +12,7 @@
 
 ## Nachweise und Grenzen
 
-`recirculating-liquid-cylinder` und `recirculating-needle-cylinder` behalten endlichen Kraftstoff, tatsächliche Einspritzung, Verdampfung und optionale Nadeldynamik. v29 speichert Verknüpfung/Wärmeanteil und liest v1-v28. Jeder Rücklauf fügt 8 Zustände innerhalb gleicher Grenzen hinzu.
+`recirculating-liquid-cylinder` und `recirculating-needle-cylinder` behalten endlichen Kraftstoff, tatsächliche Einspritzung, Verdampfung und optionale Nadeldynamik. v30 speichert Verknüpfung/Wärmeanteil und liest v1-v29. Jeder Rücklauf fügt 8 Zustände innerhalb gleicher Grenzen hinzu.
 
 Unabhängiger Abfall/Druckarbeit, simultane Mechanik-/Druck-/Wärmeverfeinerung, Anteile, mehrere Pfade, Außengrenzen, replay, rollback und Allokationen bestehen. Sieden oder unaufgelöstes Transportintervall lässt den gesamten Batch scheitern.
 
@@ -25,3 +25,11 @@ Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/
 `liquid_fuel_tank.parameters.headspace` deklariert `capacity` in `m3` oder `l` und `gas_node`. Der Gasnode lässt `storage` aus: Volumen `capacity - liquid_mass / density`, ein Eigentümer und positives Volumen. Pumpe und Rücklauf setzen den vorgeschriebenen Reservoirdruck auf null; das endliche Gas bestimmt den Einlassdruck.
 
 [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md)
+
+## Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen
+
+Rails, endliche Tanks und Zuläufe liefern `saturation_pressure` und `cavitation_margin` in Pa. Die Reserve ist lokaler Absolutdruck minus Sättigungsdruck bei Flüssigkeitstemperatur. Negative Reserve bei Flüssigkeitsinventar verwirft den ganzen Batch. Das begrenzt das einphasige Versorgungsmodell; Tankdampftransfer, Blasen und kavitierende Pumpenströmung bleiben offen.
+
+Der Druckvergleich erlaubt nur binary64-Rundung: `64 * epsilon * max(p, p_sat)` mit `epsilon = 2^-52`. Die ausgegebene Reserve wird nicht geklemmt. Es ist eine Bulk-Sättigungsprüfung; lokale Druckverluste und Pumpen-NPSH benötigen ein aufgelöstes Strömungsmodell. Unabhängige Prüfungen fordern außerdem nicht abnehmende Gesamtentropie bei adiabatischem Flash und endlichem Wandwärmeaustausch.
+
+[Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)

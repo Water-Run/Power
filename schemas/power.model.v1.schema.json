@@ -917,7 +917,11 @@
             "actuator_integral_e",
             "actuator_integral_f",
             "tank_state",
-            "fill_fraction"
+            "fill_fraction",
+            "condensed_fuel_mass",
+            "vapor_partial_pressure",
+            "saturation_pressure",
+            "cavitation_margin"
           ]
         },
         "min": {
@@ -4920,6 +4924,75 @@
                   "enum": [
                     "w_k"
                   ]
+                }
+              }
+            },
+            "phase_equilibrium": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "reference_pressure",
+                "minimum_temperature",
+                "maximum_temperature"
+              ],
+              "properties": {
+                "reference_pressure": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "pa",
+                        "bar"
+                      ]
+                    }
+                  }
+                },
+                "minimum_temperature": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "k"
+                      ]
+                    }
+                  }
+                },
+                "maximum_temperature": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "k"
+                      ]
+                    }
+                  }
                 }
               }
             }

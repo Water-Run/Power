@@ -14,7 +14,27 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現在のバージョン 29
+## 現在のバージョン 30
+
+任意の `fuel_film.parameters.phase_equilibrium` は `pa` または `bar` の `reference_pressure` と、`k` の `minimum_temperature` / `maximum_temperature` を指定します。既存の `saturation_temperature` は基準温度、`latent_internal_energy` はそこでの蒸気と液体の比内部エネルギー差です。平衡受け側は一つの膜が所有します。初期スナップショットを保持し、受理した区間で気液平衡と有限壁の熱交換を計算します。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[燃料の相平衡と液体供給の境界](FUEL_PHASE_EQUILIBRIUM.ja.md)
+
+## 保持バージョン 29
 
 `liquid_fuel_tank.parameters.headspace` は `m3` または `l` の `capacity` と `gas_node` を指定します。気体ノードは `storage` を省略し、体積は `capacity - liquid_mass / density` です。所有者は一つで体積は正を維持します。有限気体が入口圧力を決めるため、ポンプと戻りの指定リザーバー圧力はゼロです。
 

@@ -2,6 +2,85 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-13: 燃料の相平衡と液体供給の境界
+
+必須の直列検証はローカルの Windows x64/.NET 10.0.12 で合格しました。Standard アセンブリ検証は .NET 10 上で実行しており、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 426/426 |
+| standard_checks_on_dotnet | 325/325 |
+| actual_mcp_groups | 50/50 |
+| laboratories | 46 |
+| agent_examples | 45 |
+| json_schema_laboratories | 46 |
+| unchanged_laboratories | 44 |
+| matching_sample_boundaries | 6810 |
+| physical_transaction_groups | 10 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| coupled_convergence_order | 1 |
+| entropy_tolerance_j_k | 1e-10 |
+| pressure_roundoff_relative | 1.4210854715202004e-14 |
+| reported_margin_clamp | false |
+| asset_version | power.asset.v30 |
+| agent_api_version | 0.35.0 |
+| fuel_film_record_bytes | 100 |
+| v29_fixture_sha256 | e7f48291b8c9817af7d2eec61b989854d5200130cd4a0987f42e49c21d36d16d |
+| verification_log_sha256 | 211a53a32d601f06d4d406b08661c86ac3e28d94256d42ebbc9041a285eabdec |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 160 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | ca443cbd218bd678a1de6e579ddfe99826659555 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-cell | equilibrium-injected-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 61 | 65 |
+| states | 12 | 59 |
+| step_ns | 1000000 | 50000 |
+| fingerprint | f72fab4a491d9c86 | 74c05089a700aca4 |
+| final_state_hash | 4bace9fd4482fca9 | 94a0b3f991564b01 |
+| source_sha256 | 5c4a0742ea5c315c2b626e27f8d7ebc3f841d668b4ba4bae5da8daee628d5e98 | c32bc066cecd3783464c2c24d8182ee9897fb20d86325623e3faf8e547d58949 |
+| report_sha256 | 8dbb4841d14e147fea6f7a36a00c5d80e5fcd168a6a20463b53d136add38f1d1 | 6a6c3f8bf270a096bdc698e05b4d3835102e78c4fe60bde61607ada5188238c3 |
+| max_sampled_energy_j | 4.5656634029001e-10 | 1.7261072571272962e-09 |
+| max_sampled_mass_kg | 1.2414114874959026e-17 | 2.5478751053409354e-18 |
+| max_sampled_fuel_kg | 1.021860547567588e-17 | 2.4445370857759108e-18 |
+| final_evaporated_mass_kg | 7.740915788733479e-06 | 2.7999999999999996e-05 |
+| final_condensed_mass_kg | 2.322468550648195e-05 | 0 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| vent_hot | 3.0010550752308518e-05, 1.4974238709442034e-05, 7.4793589965338466e-06, 3.7377392527560005e-06 | 2.004145341518117, 2.002075139912596, 2.0010381920084406 |
+| vent_cold | 4.5548939344257636e-05, 2.2750721204261026e-05, 1.136942354094117e-05, 5.68322752030781e-06 | 2.00208771121184, 2.0010443908907014, 2.0005223264975656 |
+| moving_cylinder | 0.00013129782098744158, 6.581502863305389e-05, 3.2949002559945487e-05, 1.6484868202937264e-05 | 1.9949519693971638, 1.9974816692345656, 1.9987422498212424 |
+
+`equilibrium-fuel-cell` は凝縮、通気による蒸発、再凝縮を示します。`equilibrium-injected-cylinder` は通気タンクエンジンに可逆相平衡と供給余裕を加えます。独立したエントロピー最大化、解析的極限、連立 ODE 収束、完全再生、ロールバックと割当を検証します。アセット v30 は物性を保持し v1-v29 を読みます。
+
+圧力比較は binary64 の丸め幅 `64 * epsilon * max(p, p_sat)` のみを許容し、`epsilon = 2^-52` です。表示余裕はクランプしません。これはバルクの飽和検査で、局所圧力損失とポンプ NPSH には流れを解くモデルが必要です。独立検査では断熱フラッシュと有限壁熱交換の総エントロピーが減少しないことも求めます。
+
+- `artifacts/reports/phase-equilibrium-verified-2026-10-13.log`
+- `artifacts/reports/phase-equilibrium-evidence-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-baseline-replays-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-doc-audit-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-schema-audit-2026-10-13.json`
+- `artifacts/reports/equilibrium-fuel-cell.json`
+- `artifacts/reports/equilibrium-injected-cylinder.json`
+- `tests/Power.Tests/Fixtures/vented-tank-liquid-cylinder-v29.powerasset`
+
+パラメーターは `unverified` です。実測ガソリン物性、多成分または有限速度の相変化、分解液体押しのけ/噴霧、OEM 較正は提供しません。実際の Unity Editor/Play/Player/IL2CPP 受け入れは未完了です。
+
+[FUEL_PHASE_EQUILIBRIUM.ja.md](FUEL_PHASE_EQUILIBRIUM.ja.md)
+
 ## 2026-10-08: タンク形状と有限ヘッドスペース
 
 必須の直列検証はローカルの Windows x64/.NET 10.0.12 で合格しました。Standard アセンブリ検証は .NET 10 上で実行しており、実際の Unity Editor/Play/Player/IL2CPP は未検証です。

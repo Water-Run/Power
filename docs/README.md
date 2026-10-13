@@ -31,7 +31,7 @@ flowchart LR
 | Document | What it is |
 |---|---|
 | [Agent API](AGENT_API.md) | MCP tools, revisions, errors and the operation sequence |
-| [Asset format](ASSET_FORMAT.md) | `.powerasset` v29 and the readers for v1 through v28 |
+| [Asset format](ASSET_FORMAT.md) | `.powerasset` v30 and the readers for v1 through v29 |
 | [Native Zig boundary](NATIVE_ZIG.md) | The archived Zig prototypes and the versioned ABI |
 
 ## Engine and fuel
@@ -50,6 +50,7 @@ flowchart LR
 | [Needle actuation](NEEDLE_ACTUATION.md) | Position-dependent solenoid, needle mass, closing delay and rebound |
 | [Closure prediction](CLOSURE_PREDICTION.md) | Bounded plant replay that schedules voltage removal |
 | [Geometric tank and finite headspace](TANK_HEADSPACE.md) | Rigid tank capacity, finite gas pressure work and explicit venting |
+| [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md) | Reversible evaporation/condensation, saturation pressure and liquid supply boundaries |
 
 ## Transmission
 

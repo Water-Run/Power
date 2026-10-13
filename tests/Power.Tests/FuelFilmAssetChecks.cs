@@ -32,8 +32,8 @@ internal static class FuelFilmAssetChecks
   void Reject(byte[] data){SHA256.HashData(data.AsSpan(0,data.Length-32)).CopyTo(data,data.Length-32);Throws<ArgumentException>(()=>AssetCodec.Decode(data));}
   foreach(int count in new[]{-1,65,int.MaxValue}){var bad=source.ToArray();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(counts+112),count);Reject(bad);}
   foreach(var change in new[]{(0,1),(12,(int)Unit.Joule),(60,(int)Unit.Kelvin)}){var bad=source.ToArray();BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(record+change.Item1),change.Item2);Reject(bad);}
-  var duplicate=source.Take(record+64).Concat(source.Skip(record).Take(64)).Concat(source.Skip(record+64)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts+112),2);Reject(duplicate);
-  var missing=source.Take(record).Concat(source.Skip(record+64)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts+112),0);Reject(missing);
-  var old=source.Take(counts+112).Concat(source.Skip(counts+160).Take(record-counts-160)).Concat(source.Skip(record+64)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(old.AsSpan(8),17);Reject(old);
+  var duplicate=source.Take(record+100).Concat(source.Skip(record).Take(100)).Concat(source.Skip(record+100)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(duplicate.AsSpan(counts+112),2);Reject(duplicate);
+  var missing=source.Take(record).Concat(source.Skip(record+100)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(missing.AsSpan(counts+112),0);Reject(missing);
+  var old=source.Take(counts+112).Concat(source.Skip(counts+160).Take(record-counts-160)).Concat(source.Skip(record+100)).ToArray();BinaryPrimitives.WriteInt32LittleEndian(old.AsSpan(8),17);Reject(old);
  }
 }

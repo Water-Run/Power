@@ -14,7 +14,27 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 29
+## 현재 버전 30
+
+선택 항목 `fuel_film.parameters.phase_equilibrium`은 `pa` 또는 `bar`의 `reference_pressure`와 `k`의 `minimum_temperature` / `maximum_temperature`를 지정합니다. 기존 `saturation_temperature`는 기준 온도이고 `latent_internal_energy`는 그 온도에서 증기와 액체의 비내부에너지 차이입니다. 평형 수용부마다 하나의 막을 사용합니다. 초기 스냅샷을 보존하고 수용된 구간에서 기액 평형과 유한 벽 열교환을 계산합니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[연료 상평형과 액체 공급 경계](FUEL_PHASE_EQUILIBRIUM.ko.md)
+
+## 유지 버전 29
 
 `liquid_fuel_tank.parameters.headspace`는 `m3` 또는 `l`의 `capacity`와 `gas_node`를 지정합니다. 기체 노드는 `storage`를 생략하며 체적은 `capacity - liquid_mass / density`입니다. 소유자는 하나이고 체적은 양수여야 합니다. 유한 기체가 입구 압력을 결정하므로 펌프와 반환의 지정 저장소 압력은 0입니다.
 

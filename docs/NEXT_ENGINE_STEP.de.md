@@ -4,18 +4,18 @@
 
 ## Fortsetzungspunkt
 
-Die Kraftstoffversorgung umfasst endliche Tanks, erhaltende Rückläufe, geometrischen Gasraum und explizite Entlüftung. Pumpe, Rail und Gas tauschen interne Arbeit; Flüssigkeitslieferung, Verdampfung und vorgeschriebene Reaktion bleiben getrennt. Von aktuellen Verträgen und Nachweisen fortsetzen.
+Der Empfänger unterstützt reversibles Phasengleichgewicht und Sättigungsprüfungen der Versorgung.
 
-[Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md)
+[Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)
 
 ## Nächster Schritt
 
-Als nächsten Kraftstoffschritt druckabhängiges Phasengleichgewicht und Kavitation mit expliziten Stoffdaten bearbeiten. Fehlende OEM-Messungen fehlen weiter; Forschungsparameter bleiben ungeprüft. Gemessene Pumpen/Ventilfüllung und Regelung, magnetische/elektronische Ansteuerung und aufgelöster Spray bleiben weitere Aufgaben.
+Als Nächstes Tankdampftransfer und zweiphasige Pumpen/Rail-Strömung mit expliziten Eigenschaften und erhaltender Volumen/Arbeitskopplung auflösen. Fehlende OEM-Messungen fehlen weiter. Zündung, Einlass/Auslass, mechanische Verluste und ECU/TCU-Koordination separat fortsetzen.
 
 ## Abnahme
 
 Unabhängige analytische/Grenzreferenzen, vollständige Masse/Energie und passende Schrittverfeinerung verlangen. Batch-Rollback, Abbruch, Zweige, stabile Kanäle, portables Replay und alte Leser erhalten. Danach Zündung, Einlass/Auslass, mechanische Verluste, Getriebeaktuation und ECU/TCU-Koordination fortsetzen.
 
-Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Phasengleichgewicht, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
+Parameter bleiben `unverified`. Gemessene Benzineigenschaften, Mehrkomponenten- oder endliche Phasenkinetik, aufgelöste Flüssigkeitsverdrängung/Spray und OEM-Kalibrierung werden nicht geliefert. Echte Unity Editor/Play/Player/IL2CPP-Abnahme bleibt ausstehend.
 
 [DEVELOPMENT_STATUS.de.md](DEVELOPMENT_STATUS.de.md) · [ROADMAP.de.md](ROADMAP.de.md) · [VALIDATION.de.md](VALIDATION.de.md)
