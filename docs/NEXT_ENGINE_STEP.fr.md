@@ -4,22 +4,18 @@
 
 ## Point de reprise
 
-Le réservoir résout le transfert vapeur à volume fini avec potentiels corrigés et aspiration liquide séparée.
+Les récipients du domaine carburant échangent les mélanges liquide/vapeur par restrictions dissipatives conservatives et liens thermiques finis. Remplissage de pompe, arbre et décharge d'injecteur restent à raccorder.
 
-[Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md)
-
-La fermeture du récipient déformable de carburant pur résout liquide, vapeur et coexistence avec stockage élastique. Cette référence constitutive locale attend encore son intégration au transport par pompe et buse du graphe.
-
-[Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md)
+[Réseau de transport de carburant en équilibre](EQUILIBRIUM_FUEL_NETWORK.fr.md)
 
 ## Prochaine étape
 
-Relier cette fermeture au transport conservatif diphasique par pompe et rampe, puis résoudre pertes locales d'entrée, quantité de mouvement du mélange et décharge de buse. Garder propriétés explicites et couplage complet volume/travail. Les mesures OEM absentes restent absentes. Poursuivre séparément allumage, admission/échappement, pertes mécaniques et coordination ECU/TCU.
+Raccorder les volumes carburant au remplissage de pompe entraînée par arbre et à la décharge d'injecteur physique, avec matière, quantité de mouvement et travail conservatifs. Résoudre inertie locale d'entrée et blocage sonique par références indépendantes. Continuer allumage, admission/échappement, pertes, actionnement de transmission et ECU/TCU sans assimiler ce réseau au groupe motopropulseur complet.
 
 ## Acceptation
 
 Exiger références analytiques ou limites indépendantes, bilans complets masse/énergie et raffinement du pas adapté. Préserver retour arrière complet, annulation, branches, canaux stables, rejeu portable et anciens lecteurs. Continuer ensuite allumage, admission/échappement, pertes mécaniques, transmission et coordination ECU/TCU.
 
-Les exemples couplés pompe/chaleur/évent montrent un raffinement du premier ordre. Les deux phases sources restent dans l'intervalle thermique déclaré et sous la densité liquide avec marge d'arrondi binary64. Densité et propriétés gazeuses constantes, équilibre instantané et interface plane sont des approximations de recherche. Mélanges réels, tension superficielle, ballottement, cinétique finie, calibration mesurée et Unity Editor/Play/Player/IL2CPP réel restent non vérifiés.
+Les limites de matière et de déformation représentable de la fermeture restent applicables. Les paramètres restent `unverified`. Remplissage de pompe et travail d'arbre, raccordement d'injecteur, inertie locale, blocage sonique, retard de nucléation, glissement et mesures de mélanges réels restent à réaliser. Les rails d'injecteur alimentés par pompe gardent leur chemin liquide séparé en attendant ces couplages.
 
 [DEVELOPMENT_STATUS.fr.md](DEVELOPMENT_STATUS.fr.md) · [ROADMAP.fr.md](ROADMAP.fr.md) · [VALIDATION.fr.md](VALIDATION.fr.md)

@@ -106,7 +106,7 @@ Descubra IDs e unidades de saída pela validação ou pela criação da sessão.
 de massa, de combustível e de energia química incluem o inventário do filme. A entrega interna
 de vapor não incrementa a energia de combustível de reservatório nem a entalpia externa.
 
-O asset v31 guarda todas as propriedades de fase e conserva os leitores v1-v30. Cada filme precisa
+O asset v32 guarda todas as propriedades de fase e conserva os leitores v1-v31. Cada filme precisa
 de um registro de fase tipado de 100 bytes. Comprimentos e contagens limitados, digest, cobertura completa,
 registros duplicados ou ausentes, unidades, compilação física e proteção contra rebaixamento
 são verificados. O fixture autêntico de medição de combustível v17 conserva a impressão digital e

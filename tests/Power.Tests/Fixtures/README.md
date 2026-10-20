@@ -288,3 +288,13 @@ the finite-volume tank phase flag. Keep these authentic bytes when extending the
 
 SHA-256: `c246723026ac3cbdd69b3e0015b29a161d15c85865e94f3054507cd9c7bc2335`.
 Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.
+
+## Equilibrium tank supply v31
+
+`equilibrium-tank-supply-v31.powerasset` was retained on 2026-10-20 from the
+unmodified v31 encoder and laboratory at commit `d36f416c882925474dbfb2d25f81e39bd70e0211`.
+It preserves the finite-volume tank phase state before the fuel-network extension.
+Keep these authentic bytes when extending the writer.
+
+SHA-256: `8042d65c3171a71cd79eaa0b49ba733a232a805bd4ed429d23a93e5821016349`.
+Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.

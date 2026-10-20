@@ -15,7 +15,7 @@ Power! a un cœur de simulation managé, des documents de modèle partagés et d
 | Hydraulique | Volumes souples, restrictions, pompes avec fuites/traînée explicites, décharge, pistons dynamiques, coulisseaux dosés et accumulateurs à gaz à énergie finie | Cartes mesurées de vanne/accumulateur/pompe, frottement de joint, cavitation et hydraulique de transmission complète |
 | Électrique | Moteurs RL, solénoïdes à inductance variable réciproques, batterie à charge finie, polarisation résistance/RC, conversion de rapport cyclique moyennée et accessoires | Comportement chimique/thermique mesuré, BMS, contrôle de courant et intégration complète de l'alimentation |
 | Contrôles | PI de pression échantillonné, dosage/fermeture d'aiguille, transfert DCT étagé et changements AT par retour de pression avec confirmation physique du verrouillage | Coordination de couple ECU/TCU, capteurs, actionneurs et traitement des défauts |
-| Documents et assets | 48 laboratoires JSON/CLI, 47 exemples MCP, asset v31 et lecteurs v1-v30 | Édition/enregistrement et collections de modèles calibrés |
+| Documents et assets | 50 laboratoires JSON/CLI, 49 exemples MCP, asset v32 et lecteurs v1-v31 | Édition/enregistrement et collections de modèles calibrés |
 | Agents | Douze outils MCP définis par schéma ; preuves compactes, contrôles de révision et diagnostics actionnables | Flux complets pour le périmètre physique/contrôle restant |
 | Unity | Import de modèle, rejeu à tick exact, composants 3D schématiques, contrôles, réinitialisation et tests de cycle de vie préparés | Acceptation réelle Editor/Play, tracés sélectionnables, édition/enregistrement de graphe et Player/IL2CPP |
 | Archive native | Prototypes de recherche Zig 0.15.2, ABI préservée et provenance des sources d'origine | Référence historique ; la migration managée reste séparée de la fonctionnalité complète |
@@ -34,7 +34,7 @@ Tous les paramètres restent `unverified`. EA211 DJS + DQ200 et PSA EC5 + AT8 co
 
 CLI `list-labs`, la découverte des exemples MCP et la vérification série partagent [un catalogue de laboratoires](../assets/labs/catalog.json). La vérification contrôle qu'il couvre chaque source de laboratoire.
 
-La fermeture du récipient déformable de carburant pur résout liquide, vapeur et coexistence avec stockage élastique. Cette référence constitutive locale attend encore son intégration au transport par pompe et buse du graphe. [Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md)
+Les récipients du domaine carburant échangent les mélanges liquide/vapeur par restrictions dissipatives conservatives et liens thermiques finis. Remplissage de pompe, arbre et décharge d'injecteur restent à raccorder. [Réseau de transport de carburant en équilibre](EQUILIBRIUM_FUEL_NETWORK.fr.md)
 
 ## Prochaine séquence de développement
 

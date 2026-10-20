@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — headless experiments"]
     mcp["Power.Mcp — 12 stdio MCP tools"]
-    assets["Power.Assets — .powerasset v31"]
+    assets["Power.Assets — .powerasset v32"]
     unity["Unity 6.6 studio — 3D laboratories"]
 
     model --> core
@@ -119,7 +119,7 @@ The service exposes twelve tools with input and output schemas:
 |---|---|
 | `get_capabilities` | Discover models, limits, time and revision conventions. Start here. |
 | `get_model_schema` | JSON Schema 2020-12 for `power.model.v1` |
-| `get_example_model` | Get an editable synthetic model and experiment (47 examples) |
+| `get_example_model` | Get an editable synthetic model and experiment (49 examples) |
 | `validate_model` | Validate a model without running it; structured repair diagnostics |
 | `run_experiment` | Bounded headless run with batch replay, KPIs, and provenance |
 | `export_model_asset` | Export a portable `.powerasset` |
@@ -147,10 +147,12 @@ A four-range Ravigneaux research graph adds compound planetary paths and a conve
 > [!NOTE]
 > All sample parameters are `unverified` — research values, not calibrated measurements.
 
-The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v31`, with readers for earlier assets retained.
+The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v32`, with readers for earlier assets retained.
+
+Fuel-domain vessels now exchange liquid/vapor mixtures through conservative dissipative restrictions and finite-wall heat links. Pump filling, shaft coupling and injector discharge remain to be connected. [Equilibrium fuel transport network](docs/EQUILIBRIUM_FUEL_NETWORK.md)
 
 <details>
-<summary>Available laboratories (48)</summary>
+<summary>Available laboratories (50)</summary>
 
 | Example name (`get_example_model`) | Laboratory | What it exercises |
 |---|---|---|
@@ -202,6 +204,8 @@ The laboratories below share definitions across JSON, CLI, MCP, and Studio impor
 | `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | finite gas headspace and venting with physical needle dynamics |
 | `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | relief return with simultaneous tank/rail mixing and loss heat |
 | `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | recirculating fuel with physical needle and complete replay |
+| `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | liquid discharge into coexistence, valve events and finite-wall heat |
+| `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | reverse mixture transport and heat coupling to an electromechanical laboratory |
 
 </details>
 

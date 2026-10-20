@@ -4,22 +4,18 @@
 
 ## Fortsetzungspunkt
 
-Der Tank löst endlichen Dampftransfer mit druckkorrigierten Potenzialen und getrennter Flüssigkeitsansaugung.
+Kraftstoffbehälter tauschen Flüssigkeit/Dampf-Gemische über konservative dissipative Widerstände und endliche Wärmepfade. Pumpenfüllung, Wellenkopplung und Injektoraustrag müssen noch angebunden werden.
 
-[Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md)
-
-Der Abschluss des nachgiebigen Behälters für reinen Kraftstoff löst Flüssigkeit, Dampf und Koexistenz mit elastischem Speicher. Er ist eine lokale konstitutive Referenz; Pumpen- und Düsentransport im Graphen müssen noch integriert werden.
-
-[Referenz für ein nachgiebiges Kraftstoffvolumen](COMPLIANT_FUEL_VOLUME.de.md)
+[Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md)
 
 ## Nächster Schritt
 
-Diesen Abschluss an konservativen Zweiphasentransport in Pumpe und Rail anbinden, dann lokale Einlassverluste, Gemischimpuls und Düsenaustritt auflösen. Explizite Stoffdaten und vollständige Volumen-/Arbeitskopplung beibehalten. Fehlende OEM-Messungen bleiben fehlend. Zündung, Ansaugung/Abgas, mechanische Verluste und ECU/TCU-Koordination separat fortsetzen.
+Kraftstoffvolumen mit wellengetriebener Pumpenfüllung und physischem Injektoraustrag konservativ in Stoff, Impuls und Arbeit verbinden. Lokale Einlassträgheit und kritische Strömung mit unabhängigen Referenzen auflösen. Zündung, Ansaugung/Abgas, Verluste, Getriebeaktuation und ECU/TCU fortsetzen; dieses Netz ist kein vollständiger Antriebsstrang.
 
 ## Abnahme
 
 Unabhängige analytische/Grenzreferenzen, vollständige Masse/Energie und passende Schrittverfeinerung verlangen. Batch-Rollback, Abbruch, Zweige, stabile Kanäle, portables Replay und alte Leser erhalten. Danach Zündung, Einlass/Auslass, mechanische Verluste, Getriebeaktuation und ECU/TCU-Koordination fortsetzen.
 
-Gekoppelte Pumpen-, Wärme- und Entlüftungsfälle zeigen erste Ordnung. Beide Quellphasen bleiben im Stofftemperaturintervall, die Gesamtdichte mit binary64-Rundungsreserve unter der Flüssigkeitsdichte. Konstante Dichte/Gaseigenschaften, sofortiges Gleichgewicht und ebene Grenzfläche sind Forschungsnäherungen. Reale Gemische, Oberflächenspannung, Schwappen, endliche Kinetik, Messkalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben ungeprüft.
+Stoff- und darstellbare Wandverformungsgrenzen des Abschlusses gelten weiter. Parameter bleiben `unverified`. Pumpenfüllung und Wellenarbeit, Injektoranbindung, lokale Trägheit, kritische Strömung, Keimbildungsverzug, Phasenschlupf und reale Gemischmessungen bleiben eigene Aufgaben. Bestehende pumpengespeiste Injektorrails behalten ihren getrennten Flüssigkeitspfad bis zur Anbindung.
 
 [DEVELOPMENT_STATUS.de.md](DEVELOPMENT_STATUS.de.md) · [ROADMAP.de.md](ROADMAP.de.md) · [VALIDATION.de.md](VALIDATION.de.md)

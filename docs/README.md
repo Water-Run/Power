@@ -31,7 +31,7 @@ flowchart LR
 | Document | What it is |
 |---|---|
 | [Agent API](AGENT_API.md) | MCP tools, revisions, errors and the operation sequence |
-| [Asset format](ASSET_FORMAT.md) | `.powerasset` v31 and the readers for v1 through v30 |
+| [Asset format](ASSET_FORMAT.md) | `.powerasset` v32 and the readers for v1 through v31 |
 | [Native Zig boundary](NATIVE_ZIG.md) | The archived Zig prototypes and the versioned ABI |
 
 ## Engine and fuel
@@ -53,6 +53,7 @@ flowchart LR
 | [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md) | Reversible evaporation/condensation, saturation pressure and liquid supply boundaries |
 | [Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md) | Finite liquid displacement, pressure-corrected evaporation/condensation and vapor-bearing vents |
 | [Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md) | Liquid/vapor equilibrium, elastic storage and conservative finite-bath heat |
+| [Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md) | Homogeneous two-phase enthalpy transport, finite-wall heat and complete ledgers |
 
 ## Transmission
 

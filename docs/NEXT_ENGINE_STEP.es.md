@@ -4,22 +4,18 @@
 
 ## Punto de continuación
 
-El tanque resuelve vapor de volumen finito con potenciales corregidos y toma de líquido separado.
+Los recipientes de combustible intercambian mezclas líquido/vapor por restricciones disipativas conservativas y enlaces térmicos finitos. Faltan llenado de bomba, eje y descarga del inyector.
 
-[Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md)
-
-El cierre del recipiente flexible de combustible puro resuelve líquido, vapor y coexistencia con almacenamiento elástico. Es una referencia constitutiva local; falta integrar el transporte de bomba y boquilla en el grafo.
-
-[Referencia de volumen de combustible flexible](COMPLIANT_FUEL_VOLUME.es.md)
+[Red de transporte de combustible en equilibrio](EQUILIBRIUM_FUEL_NETWORK.es.md)
 
 ## Próximo incremento
 
-Conectar este cierre al transporte bifásico conservativo de bomba y riel y resolver pérdidas locales de entrada, cantidad de movimiento de mezcla y descarga de boquilla. Mantener propiedades explícitas y acoplamiento completo volumen/trabajo. No suplir mediciones OEM ausentes. Continuar por separado encendido, admisión/escape, pérdidas mecánicas y coordinación ECU/TCU.
+Conectar volúmenes de combustible a llenado de bomba por eje y descarga física del inyector con acoplamiento conservativo de materia, cantidad de movimiento y trabajo. Resolver inercia local de entrada y flujo crítico con referencias independientes. Continuar encendido, admisión/escape, pérdidas, accionamiento de transmisión y ECU/TCU sin considerar esta red un tren motriz completo.
 
 ## Aceptación
 
 Exigir referencias analíticas o límite independientes, balances completos de masa/energía y refinamiento adecuado. Preservar rollback de lote, cancelación, ramas, canales estables, replay portable y lectores anteriores. Continuar luego encendido, admisión/escape, pérdidas mecánicas, transmisión y coordinación ECU/TCU.
 
-Casos acoplados de bomba, calor y venteo demuestran primer orden. Ambas fases fuente permanecen en el intervalo declarado; la densidad total queda bajo la líquida con margen binary64. Densidad/propiedades constantes, equilibrio instantáneo e interfaz plana son aproximaciones de investigación. Mezclas reales, tensión superficial, oleaje, cinética finita, calibración medida y Unity Editor/Play/Player/IL2CPP real siguen sin verificar.
+Siguen vigentes los límites de material y deformación representable del cierre. Los parámetros siguen `unverified`. Llenado de bomba y trabajo del eje, conexión de inyector, inercia local, flujo crítico, retraso de nucleación, deslizamiento y medidas de mezclas reales siguen pendientes. Los rieles de inyector alimentados por bomba conservan su ruta de líquido separado hasta integrarlos.
 
 [DEVELOPMENT_STATUS.es.md](DEVELOPMENT_STATUS.es.md) · [ROADMAP.es.md](ROADMAP.es.md) · [VALIDATION.es.md](VALIDATION.es.md)

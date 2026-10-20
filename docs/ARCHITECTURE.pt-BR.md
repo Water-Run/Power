@@ -248,7 +248,7 @@ A [montagem de acionamento da AT](AT_HYDRAULIC_ACTUATION.pt-BR.md) reduz 1..6 al
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v31 preserva rotas, ganhos e relógios e lê v1-v30.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v32 preserva rotas, ganhos e relógios e lê v1-v31.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -258,7 +258,7 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v31 preserva conexões e temperatura da fonte e lê v1-v30. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v32 preserva conexões e temperatura da fonte e lê v1-v31. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
@@ -310,6 +310,12 @@ Um flash limitado a U,V constantes conserva combustível e energia térmica. Ori
 
 ## Referência de volume de combustível complacente
 
-`CompliantFuelVolume` é uma referência constitutiva imutável do Core para combustível puro em um recipiente elástico. Resolve líquido, vapor e coexistência em equilíbrio por massa total e temperatura ou energia armazenada. Fornece o fechamento para o futuro solver bifásico do rail; os rails do grafo ainda transportam líquido separado.
+`CompliantFuelVolume` fornece o fechamento constitutivo da rede de combustível em equilíbrio. Resolve líquido, vapor e coexistência com armazenamento elástico por massa total e temperatura ou energia. O caminho de injetor alimentado por bomba ainda exige ampliar o acoplamento. [Rede de transporte de combustível em equilíbrio](EQUILIBRIUM_FUEL_NETWORK.pt-BR.md)
 
 [Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md)
+
+## Rede de transporte de combustível em equilíbrio
+
+O domínio `fuel` transporta líquido puro e vapor juntos em recipientes elásticos finitos. Cada recipiente mantém massa total e energia calórica mais elástica independentes; o flash determina temperatura, pressão e frações de vapor. `fuel_restriction` troca fluido doador homogêneo e `fuel_heat_link` troca calor com um nó térmico finito. A energia química do poder calorífico mantém um balanço separado.
+
+[Rede de transporte de combustível em equilíbrio](EQUILIBRIUM_FUEL_NETWORK.pt-BR.md)

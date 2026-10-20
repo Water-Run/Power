@@ -13,8 +13,8 @@ public enum Unit
     Liter, SquareMeter, SquareMillimeter, KilogramPerSecond, Watt, Fraction, JoulePerKilogram, StateCode, NewtonMeterSecondSquaredPerRadianSquared, CubicMeterPerPascal, CubicMeterPerSecondPascal, CubicMeterPerSecondSqrtPascal, CubicMeterPerSecond, Newton, CubicMeterPerRadian, VoltPerPascal, VoltPerPascalSecond, Coulomb, Farad, AmpereHour, FractionPerPascal, FractionPerPascalSecond, MeterPerSecond, NewtonPerMeter, NewtonSecondPerMeter, KilogramPerCubicMeter, HenryPerMeter
 }
 
-public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn }
+public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6, Fuel = 7 }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn, FuelRestriction, FuelHeatLink }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
@@ -23,7 +23,7 @@ public enum Field
     SourceWork = 16, HeatRejected, StoredEnergyChange, EnergyResidual,
     ReservoirEnthalpy = 20, MassResidual = 21,
     FuelMass = 22, FreshAirMass, ProductMass, ChemicalEnergy, FuelBurned, HeatReleased,
-    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower, SampledPressure, PressureError, IntegralVoltage, CommandVoltage, StateOfCharge, Charge, TerminalVoltage, PolarizationVoltage, BatteryCurrent, IntegralDuty, CommandDuty, Displacement, LinearSpeed, Force, RequestedFuelDose, DeliveredFuelDose, TotalFuelDelivered, EvaporatedFuelMass, FilmWallHeat, CopperHeat, PredictedFuelMass, PredictionTicks, DriverState, ClosingDelayTicks, RequestedGear, ActualGear, SelectedOddGear, SelectedEvenGear, ShiftPhase, SyncError, ControlFault, LockupState, ActuatorIntegralA, ActuatorIntegralB, ActuatorIntegralC, ActuatorIntegralD, ActuatorIntegralE, ActuatorIntegralF, TankState, FillFraction, CondensedFuelMass, VaporPartialPressure, SaturationPressure, CavitationMargin
+    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower, SampledPressure, PressureError, IntegralVoltage, CommandVoltage, StateOfCharge, Charge, TerminalVoltage, PolarizationVoltage, BatteryCurrent, IntegralDuty, CommandDuty, Displacement, LinearSpeed, Force, RequestedFuelDose, DeliveredFuelDose, TotalFuelDelivered, EvaporatedFuelMass, FilmWallHeat, CopperHeat, PredictedFuelMass, PredictionTicks, DriverState, ClosingDelayTicks, RequestedGear, ActualGear, SelectedOddGear, SelectedEvenGear, ShiftPhase, SyncError, ControlFault, LockupState, ActuatorIntegralA, ActuatorIntegralB, ActuatorIntegralC, ActuatorIntegralD, ActuatorIntegralE, ActuatorIntegralF, TankState, FillFraction, CondensedFuelMass, VaporPartialPressure, SaturationPressure, CavitationMargin, VaporMass, VaporMassFraction, VaporVolumeFraction, ElasticEnergy, Entropy, SpecificEnthalpy, TransportEnergy, EntropyProduced
 }
 public enum SimulationStatus { Ok, InvalidTimeStep, InvalidInput, UnknownChannel, NumericalFailure, Busy, Cancelled, ControlledInput }
 public enum DiagnosticCode { Schema, Capacity, Id, Unit, Range, Connection, Channel, Solver }
@@ -74,6 +74,11 @@ public sealed record NodeDefinition(uint Id, Domain Domain, Quantity Storage, Qu
     /// <summary>Required for, and only for, <see cref="Domain.Gas"/> nodes.</summary>
     public GasDefinition? Gas { get; init; }
     public BatteryDefinition? Battery { get; init; }
+    public EquilibriumFuelDefinition? Fuel { get; init; }
+
+    /// <summary>Pure fuel: storage is reference vessel volume, initial is temperature, position is total mass.</summary>
+    public static NodeDefinition FuelVolume(uint id, double referenceVolume, double mass, double temperature, EquilibriumFuelDefinition material) =>
+        new(id, Domain.Fuel, new(referenceVolume, Unit.CubicMeter), new(temperature, Unit.Kelvin), new(mass, Unit.Kilogram)) { Fuel = material };
 
     public static NodeDefinition Rotor(uint id, double inertia, double speed = 0, double angle = 0) =>
         new(id, Domain.Rotational, new(inertia, Unit.KilogramMeterSquared),
@@ -392,6 +397,14 @@ public sealed record ComponentDefinition
         ReservoirPressure = new(pressure, Unit.Pascal), AmbientTemperature = new(temperature, Unit.Kelvin),
         InitialInput = new(opening, Unit.Fraction)
     };
+    public static ComponentDefinition FuelRestriction(uint id, uint a, uint b, double conductance, ulong channel = 0, double opening = 1) => new()
+    {
+        Id = id, Kind = ComponentKind.FuelRestriction, NodeA = a, NodeB = b,
+        Conductance = new(conductance, Unit.CubicMeterPerSecondPascal), InputChannel = channel, InitialInput = new(opening, Unit.Fraction)
+    };
+    public static ComponentDefinition FuelHeatLink(uint id, uint fuel, uint wall, double conductance) => new()
+    { Id = id, Kind = ComponentKind.FuelHeatLink, NodeA = fuel, NodeB = wall, Conductance = new(conductance, Unit.WattPerKelvin) };
+
     /// <summary>Conductive heat exchange between a finite gas volume and a thermal node.</summary>
     public static ComponentDefinition GasHeatLink(uint id, uint gas, uint wall, double conductance) => new()
     {

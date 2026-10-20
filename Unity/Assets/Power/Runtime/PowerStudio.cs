@@ -429,6 +429,14 @@ namespace Power.Studio
                     Shape("Hydraulic chamber " + node.Id, PrimitiveType.Cylinder, position, new Vector3(1.0f, 0.65f, 1.0f), blue);
                     Shape("Hydraulic compliance marker " + node.Id, PrimitiveType.Cube, position + Vector3.up * 0.7f, new Vector3(0.7f, 0.08f, 0.7f), steel);
                 }
+                else if (node.Domain == Domain.Fuel)
+                {
+                    position.y = 1.0f;
+                    var surface = Surface(new Color(0.15f, 0.48f, 0.35f));
+                    _thermalMaterials.Add(node.Id, surface);
+                    Shape("Fuel vessel " + node.Id, PrimitiveType.Cylinder, position, new Vector3(1.3f, 0.8f, 1.3f), surface);
+                    Shape("Fuel vessel lid " + node.Id, PrimitiveType.Cylinder, position + Vector3.up * 0.85f, new Vector3(1.4f, 0.05f, 1.4f), steel);
+                }
                 else if (node.Domain == Domain.Gas)
                 {
                     position.y = 1.0f;
@@ -472,6 +480,9 @@ namespace Power.Studio
                 if (component.Kind == ComponentKind.Shaft || component.Kind == ComponentKind.ThermalLink)
                     Connection("Component " + component.Id, a, component.NodeB == 0 ? new Vector3(a.x, 0.05f, a.z + 1) : positions[component.NodeB],
                         component.Kind == ComponentKind.Shaft ? steel : copper, component.Kind == ComponentKind.Shaft ? 0.15f : 0.07f);
+                if (component.Kind == ComponentKind.FuelRestriction || component.Kind == ComponentKind.FuelHeatLink)
+                    Connection((component.Kind == ComponentKind.FuelRestriction ? "Fuel restriction " : "Fuel heat link ") + component.Id,
+                        a, positions[component.NodeB], component.Kind == ComponentKind.FuelRestriction ? blue : copper, 0.08f);
                 if (component.Kind == ComponentKind.GasOrifice)
                 {
                     Vector3 b = component.NodeB == 0 ? a + new Vector3(0, 0, 1.5f) : positions[component.NodeB];

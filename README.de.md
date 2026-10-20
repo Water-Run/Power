@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — Experimente ohne Oberfläche"]
     mcp["Power.Mcp — 12 MCP-Werkzeuge über stdio"]
-    assets["Power.Assets — .powerasset v31"]
+    assets["Power.Assets — .powerasset v32"]
     unity["Unity-6.6-Studio — 3D-Laboratorien"]
 
     model --> core
@@ -119,7 +119,7 @@ Der Dienst stellt zwölf Werkzeuge mit Eingabe- und Ausgabeschemas bereit:
 |---|---|
 | `get_capabilities` | Modelle, Grenzen, Zeit- und Revisionskonventionen entdecken. Hier beginnen. |
 | `get_model_schema` | JSON Schema 2020-12 für `power.model.v1` |
-| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (47 Beispiele) |
+| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (49 Beispiele) |
 | `validate_model` | Modell ohne Ausführung prüfen; strukturierte Reparaturdiagnosen |
 | `run_experiment` | Begrenzter Lauf ohne Oberfläche mit Batch-Replay, KPIs und Herkunft |
 | `export_model_asset` | Ein portables `.powerasset` exportieren |
@@ -147,10 +147,12 @@ Ein Ravigneaux-Forschungsgraph mit vier Bereichen ergänzt zusammengesetzte Plan
 > [!NOTE]
 > Alle Beispielparameter sind `unverified` — Forschungswerte, keine kalibrierten Messungen.
 
-Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v31`, Leser für ältere Assets bleiben erhalten.
+Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v32`, Leser für ältere Assets bleiben erhalten.
+
+Kraftstoffbehälter tauschen Flüssigkeit/Dampf-Gemische über konservative dissipative Widerstände und endliche Wärmepfade. Pumpenfüllung, Wellenkopplung und Injektoraustrag müssen noch angebunden werden. [Transportnetz für Kraftstoff im Gleichgewicht](docs/EQUILIBRIUM_FUEL_NETWORK.de.md)
 
 <details>
-<summary>Verfügbare Laboratorien (48)</summary>
+<summary>Verfügbare Laboratorien (50)</summary>
 
 | Beispielname (`get_example_model`) | Laboratorium | Was es prüft |
 |---|---|---|
@@ -202,6 +204,8 @@ Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studi
 | `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | endlicher Gasraum/Entlüftung mit physischer Nadeldynamik |
 | `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | Druckentlastungsrücklauf mit gleichzeitiger Tank/Rail-Mischung und Verlustwärme |
 | `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | Kraftstoffumlauf mit physischer Nadel und vollständiger Wiedergabe |
+| `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | Flüssigkeitsaustrag in Koexistenz, Ventilereignisse und endliche Wandwärme |
+| `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | Rücktransport des Gemischs und Wärmekopplung mit einem elektromechanischen Labor |
 
 </details>
 

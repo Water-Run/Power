@@ -31,7 +31,7 @@ flowchart LR
 | 文档 | 内容 |
 |---|---|
 | [智能体 API](AGENT_API.zh-CN.md) | MCP 工具、修订号、错误与操作序列 |
-| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v31,以及 v1 至 v30 的读取器 |
+| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v32,以及 v1 至 v31 的读取器 |
 | [原生 Zig 边界](NATIVE_ZIG.zh-CN.md) | 归档的 Zig 原型与带版本的 ABI |
 
 ## 发动机与燃油
@@ -53,6 +53,7 @@ flowchart LR
 | [燃油相平衡与液体供给边界](FUEL_PHASE_EQUILIBRIUM.zh-CN.md) | 可逆蒸发/冷凝、饱和压力与液体供给边界 |
 | [有限体积油箱相平衡](TANK_PHASE_EQUILIBRIUM.zh-CN.md) | 有限液体位移、压力修正蒸发/冷凝与含蒸气通气 |
 | [柔性燃料容积参考模型](COMPLIANT_FUEL_VOLUME.zh-CN.md) | 液/汽相平衡、弹性储能与守恒有限热浴传热 |
+| [相平衡燃料输运网络](EQUILIBRIUM_FUEL_NETWORK.zh-CN.md) | 均匀两相焓输运、有限壁传热与完整账本 |
 
 ## 变速器
 

@@ -4,7 +4,7 @@
 
 ## Constitutive scope
 
-`CompliantFuelVolume` is an immutable Core constitutive reference for pure fuel in an elastic vessel. It resolves liquid, vapor and equilibrium coexistence from total mass and temperature or stored energy. It supplies the closure for a future two-phase rail solver; existing graph rails still transport separated liquid.
+`CompliantFuelVolume` supplies the constitutive closure used by the equilibrium fuel network. It resolves liquid, vapor and coexistence with elastic storage from total mass and temperature or stored energy. The pump-fed injector path remains separate until its coupling is extended. [Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md)
 
 ## Thermodynamics
 
@@ -32,7 +32,7 @@ Coexistence selects the low-density vapor root. Its latent enthalpy is `L_u + R 
 
 Declare positive reference volume, compliance, liquid density and maximum wall pressure. The pressure limit covers the entire coexistence curve and stays below `rho_l R T_min`. The minimum-temperature coexistence wall expansion must be at least `128 * epsilon` of the reference volume, where `epsilon = 2^-52`. This excludes unresolved wall deformation and the dense-vapor branch outside the declared model; it does not predict a critical point.
 
-Use the material temperature interval and `0 < M <= rho_l (V_0 + C p_max)`. Vacuum, carrier gas, real mixtures, thermal expansion, finite wall inertia, surface tension and finite-rate phase kinetics are outside this reference. Material and wall parameters remain `unverified`. Pump filling, local inlet losses, mixture momentum, choking and graph-level two-phase transport require separate implementation and evidence.
+Use the material temperature interval and `0 < M <= rho_l (V_0 + C p_max)`. Vacuum, carrier gas, real mixtures, thermal expansion, finite wall inertia, surface tension and finite-rate phase kinetics are outside this reference. Material and wall parameters remain `unverified`. Shaft-driven pump filling, injector handoff, resolved momentum and choking require further coupling and independent evidence.
 
 ## Independent evidence
 

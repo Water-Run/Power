@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — experimentos sem interface"]
     mcp["Power.Mcp — 12 ferramentas MCP via stdio"]
-    assets["Power.Assets — .powerasset v31"]
+    assets["Power.Assets — .powerasset v32"]
     unity["Estúdio Unity 6.6 — laboratórios 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ O serviço expõe doze ferramentas com esquemas de entrada e saída:
 |---|---|
 | `get_capabilities` | Descobrir modelos, limites e convenções de tempo e revisão. Comece aqui. |
 | `get_model_schema` | JSON Schema 2020-12 para `power.model.v1` |
-| `get_example_model` | Obter um modelo sintético editável e seu experimento (47 exemplos) |
+| `get_example_model` | Obter um modelo sintético editável e seu experimento (49 exemplos) |
 | `validate_model` | Validar um modelo sem executá-lo; diagnósticos estruturados de reparo |
 | `run_experiment` | Execução sem interface e limitada, com replay em lote, KPIs e procedência |
 | `export_model_asset` | Exportar um `.powerasset` portátil |
@@ -147,10 +147,12 @@ Um grafo de pesquisa Ravigneaux de quatro faixas adiciona caminhos planetários 
 > [!NOTE]
 > Todos os parâmetros de exemplo são `unverified` — valores de pesquisa, não medidas calibradas.
 
-Os laboratórios abaixo compartilham definições entre importações JSON, CLI, MCP e Studio. As exportações usam `power.asset.v31`, mantendo leitores para assets anteriores.
+Os laboratórios abaixo compartilham definições entre importações JSON, CLI, MCP e Studio. As exportações usam `power.asset.v32`, mantendo leitores para assets anteriores.
+
+Recipientes de combustível trocam misturas líquido/vapor por restrições dissipativas conservativas e elos térmicos finitos. Enchimento de bomba, eixo e descarga de injetor ainda precisam de conexão. [Rede de transporte de combustível em equilíbrio](docs/EQUILIBRIUM_FUEL_NETWORK.pt-BR.md)
 
 <details>
-<summary>Laboratórios disponíveis (48)</summary>
+<summary>Laboratórios disponíveis (50)</summary>
 
 | Nome do exemplo (`get_example_model`) | Laboratório | O que exercita |
 |---|---|---|
@@ -202,6 +204,8 @@ Os laboratórios abaixo compartilham definições entre importações JSON, CLI,
 | `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | espaço gasoso/ventilação com dinâmica física da agulha |
 | `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | retorno de alívio, mistura simultânea tanque/trilho e calor de perdas |
 | `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | combustível recirculado com agulha física e reprodução completa |
+| `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | descarga líquida em coexistência, eventos de válvula e calor de parede finita |
+| `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | transporte reverso de mistura e calor compartilhado com um laboratório eletromecânico |
 
 </details>
 

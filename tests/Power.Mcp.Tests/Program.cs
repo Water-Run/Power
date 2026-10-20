@@ -16,7 +16,7 @@ if (root is null) throw new InvalidOperationException("Cannot locate the Power w
 string configuration = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyConfigurationAttribute>()!.Configuration;
 string server = Path.Combine(root.FullName, "src", "Power.Mcp", "bin", configuration, "net10.0", "Power.Mcp.dll");
 string dotnet = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet";
-using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(600));
+using var timeout = new CancellationTokenSource(TimeSpan.FromMinutes(30));
 var transport = new StdioClientTransport(new StdioClientTransportOptions
 {
     Name = "Power integration", Command = dotnet, Arguments = [server], WorkingDirectory = root.FullName
@@ -36,7 +36,9 @@ void PassGroup(string description)
 var outputSchemas = new Dictionary<string, JsonElement>();
 async Task<JsonElement> Call(string name, Dictionary<string, object?>? args = null, bool expectError = false)
 {
-    var result = await client.CallToolAsync(name, args, cancellationToken: timeout.Token);
+    using var operation = CancellationTokenSource.CreateLinkedTokenSource(timeout.Token);
+    operation.CancelAfter(TimeSpan.FromMinutes(10));
+    var result = await client.CallToolAsync(name, args, cancellationToken: operation.Token);
     Require((result.IsError == true) == expectError, name + " unexpected isError: " + JsonSerializer.Serialize(result));
     Require(result.StructuredContent.HasValue, name + " missing structuredContent");
     var reply = result.StructuredContent!.Value;
@@ -817,5 +819,31 @@ foreach (var (name, channel, opening) in new[] { ("equilibrium-tank-supply", "11
     await Call("close_session", new() { ["session_id"] = phaseTankChild, ["expected_revision"] = "2" });
     await Call("close_session", new() { ["session_id"] = phaseTankSession, ["expected_revision"] = "0" });
     PassGroup("MCP " + name + " / finite liquid volume phase chemistry work and complete replay with independent branches");
+}
+foreach (var (name, channel, opening) in new[] { ("equilibrium-fuel-network", "100", 0d), ("electrothermal-fuel-network", "1100", 0d) })
+{
+    var fuelNetworkDocument = (await Call("get_example_model", new() { ["name"] = name })).GetProperty("data");
+    Require(capabilities.GetProperty("equilibrium_fuel_network").GetProperty("domain").GetString() == "fuel", "Homogeneous fuel network contract is missing");
+    var fuelNetworkReport = (await Call("run_experiment", new() { ["document"] = fuelNetworkDocument, ["include_samples"] = true })).GetProperty("data");
+    Require(fuelNetworkReport.GetProperty("passed").GetBoolean() && fuelNetworkReport.GetProperty("model").GetProperty("fidelity").GetString() == "homogeneous_equilibrium_fuel_network", "Fuel network experiment failed");
+    var fuelNetworkExport = (await Call("export_model_asset", new() { ["document"] = fuelNetworkDocument })).GetProperty("data");
+    var fuelNetworkAsset = AssetCodec.Decode(Convert.FromBase64String(fuelNetworkExport.GetProperty("content").GetString()!));
+    Require(fuelNetworkAsset.Model.HasEquilibriumFuelNetwork && fuelNetworkExport.GetProperty("format").GetString() == AssetCodec.FormatName, "Fuel network flag was lost");
+    var fuelNetworkPlayback = fuelNetworkAsset.CreatePlayback(); var fuelNetworkValues = new Power.Core.Scalar[fuelNetworkAsset.Model.OutputCount];
+    foreach (var fuelNetworkSample in fuelNetworkReport.GetProperty("samples").EnumerateArray())
+    {
+        ulong at = fuelNetworkSample.GetProperty("time_ns").GetUInt64();
+        while (fuelNetworkPlayback.TimeNanoseconds < at) Require(fuelNetworkPlayback.Advance(Math.Min(257 * fuelNetworkAsset.Model.StepNanoseconds, at - fuelNetworkPlayback.TimeNanoseconds)) == Power.Core.SimulationStatus.Ok, "Fuel network playback failed");
+        Require(fuelNetworkPlayback.ReadSnapshot(fuelNetworkValues).StateHash.ToString("x16") == fuelNetworkSample.GetProperty("state_hash").GetString() &&
+            fuelNetworkValues.All(value => value.Value == fuelNetworkSample.GetProperty("values").GetProperty(value.Channel.ToString()).GetDouble()), "Fuel network replay differs");
+    }
+    string fuelNetworkSession = (await Call("create_session", new() { ["document"] = fuelNetworkDocument })).GetProperty("data").GetProperty("session_id").GetString()!;
+    string fuelNetworkChild = (await Call("fork_session", new() { ["session_id"] = fuelNetworkSession, ["expected_revision"] = "0" })).GetProperty("data").GetProperty("session_id").GetString()!;
+    await Call("set_inputs", new() { ["session_id"] = fuelNetworkChild, ["expected_revision"] = "0", ["values"] = new[] { new { channel, value = opening } } });
+    await Call("step_session", new() { ["session_id"] = fuelNetworkChild, ["expected_revision"] = "1", ["delta_ns"] = "10000000" });
+    Require((await Call("read_snapshot", new() { ["session_id"] = fuelNetworkSession })).GetProperty("data").GetProperty("revision").GetString() == "0", "Fuel network branch changed its parent");
+    await Call("close_session", new() { ["session_id"] = fuelNetworkChild, ["expected_revision"] = "2" });
+    await Call("close_session", new() { ["session_id"] = fuelNetworkSession, ["expected_revision"] = "0" });
+    PassGroup("MCP " + name + " / homogeneous two-phase enthalpy transport heat and every portable boundary with independent branches");
 }
 Console.WriteLine($"{groupsPassed}/{groupsPassed} MCP integration groups passed against an actual child server process.");

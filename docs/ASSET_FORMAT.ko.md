@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 31
+## 현재 버전 32
+
+`fuel` 도메인은 유한 탄성 용기에서 순수 연료 액체와 증기를 함께 수송합니다. 각 용기는 총질량과 열량·탄성 총에너지를 독립적으로 유지하며 상평형 플래시가 온도, 압력, 증기 비율을 결정합니다. `fuel_restriction`은 균질 공급 유체를 교환하고 `fuel_heat_link`는 유한 열 노드와 열을 교환합니다. 발열량에 해당하는 화학 에너지는 별도 장부입니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 36 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_domain | 7 |
+| fuel_restriction_kind | 42 |
+| fuel_heat_link_kind | 43 |
+| fuel_material_record_bytes | 148 |
+| fuel_material_quantity_fields | 12 |
+| fuel_material_count | count(node.domain == fuel) |
+| fuel_table_order | liquid_returns -> fuel_material -> inputs |
+| fuel_quantity_order | compliance, liquid_density, maximum_pressure, gas_constant, vapor_specific_heat, liquid_specific_heat, reference_temperature, latent_internal_energy, reference_pressure, minimum_temperature, maximum_temperature, lower_heating_value |
+| additional_states_per_fuel_node | 2 |
+| additional_states_per_fuel_link | 5 |
+
+[상평형 연료 수송 네트워크](EQUILIBRIUM_FUEL_NETWORK.ko.md)
+
+
+## 유지 버전 31
 
 `liquid_fuel_tank.parameters.headspace.phase_equilibrium`을 `true`로 설정하면 탱크 증발과 응축을 풉니다. 연결 막이 명시적 `phase_equilibrium` 물성을 제공하며 추적 기체 공간은 R, cv, 발열량과 화학량론비를 공유합니다. 젖은 탱크는 공통 초기 온도와 포화 연료 분압, 마른 탱크는 포화 이하 분압을 선언합니다. 총밀도는 액체 밀도보다 낮습니다.
 

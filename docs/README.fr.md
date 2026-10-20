@@ -31,7 +31,7 @@ flowchart LR
 | Document | De quoi il s'agit |
 |---|---|
 | [API agent](AGENT_API.fr.md) | Outils MCP, révisions, erreurs et la séquence d'opérations |
-| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v31 et les lecteurs de v1 à v30 |
+| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v32 et les lecteurs de v1 à v31 |
 | [Frontière Zig native](NATIVE_ZIG.fr.md) | Les prototypes Zig archivés et l'ABI versionnée |
 
 ## Moteur et carburant
@@ -53,6 +53,7 @@ flowchart LR
 | [Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md) | Évaporation/condensation réversibles, saturation et limites d'alimentation liquide |
 | [Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md) | Déplacement liquide fini, phases corrigées en pression et évent avec vapeur |
 | [Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md) | Équilibre liquide/vapeur, stockage élastique et échange conservatif avec bain fini |
+| [Réseau de transport de carburant en équilibre](EQUILIBRIUM_FUEL_NETWORK.fr.md) | Transport diphasique homogène d’enthalpie, chaleur de paroi finie et bilans complets |
 
 ## Transmission
 

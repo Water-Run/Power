@@ -4,22 +4,18 @@
 
 ## Resume point
 
-The tank resolves finite-volume vapor transfer with pressure-corrected chemical potentials and separated-liquid pickup.
+Fuel-domain vessels now exchange liquid/vapor mixtures through conservative dissipative restrictions and finite-wall heat links. Pump filling, shaft coupling and injector discharge remain to be connected.
 
-[Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)
-
-The pure-fuel compliant-vessel closure resolves liquid, vapor and coexistence with elastic storage. It is a local constitutive reference; graph-level pump and nozzle transport still require integration.
-
-[Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md)
+[Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md)
 
 ## Next increment
 
-Connect this closure to conservative two-phase pump and rail transport, then resolve local inlet losses, mixture momentum and nozzle discharge. Keep explicit material properties and full volume/work coupling. Missing OEM measurements remain missing. Continue ignition, intake/exhaust, mechanical losses and ECU/TCU coordination separately.
+Connect fuel-domain volumes to shaft-driven pump filling and physical injector discharge, with conservative material, momentum and work coupling. Resolve local inlet inertia and choking with independent references. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and ECU/TCU coordination without treating this network as a complete powertrain.
 
 ## Acceptance
 
 Require independent analytic or limiting references, full mass/energy ledgers and step refinement appropriate to the new equations. Preserve batch rollback, cancellation, forks, stable channels, portable replay and prior asset readers. Then continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control.
 
-Coupled pump, heat and vent examples demonstrate first-order refinement. Both source phases remain inside the declared material temperature interval; total density stays below liquid density with a binary64 roundoff margin. Constant density/common gas properties, instantaneous equilibrium and a flat interface are research approximations. Real mixtures, surface tension, slosh, finite-rate kinetics, measured calibration and actual Unity Editor/Play/Player/IL2CPP remain unverified.
+The material and representable wall-deformation limits of the constitutive closure still apply. Parameters remain `unverified`. Resolved pump filling and shaft work, injector handoff, local fluid inertia, sonic choking, nucleation delay, phase slip and real-mixture measurements remain separate work. Existing pump-fed injector rails retain their separated-liquid path until those couplings are implemented.
 
 [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) · [ROADMAP.md](ROADMAP.md) · [VALIDATION.md](VALIDATION.md)

@@ -2,6 +2,98 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: 상평형 연료 수송 네트워크
+
+필수 직렬 검증이 로컬 Windows x64/.NET 10.0.12에서 통과했습니다. 새 연료 네트워크 검사는 두 어셈블리 대상을 모두 다룹니다. Standard 검사는 .NET 10에서 호스팅되며 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 462/462 |
+| standard_checks_on_dotnet | 356/356 |
+| actual_mcp_groups | 54/54 |
+| laboratories | 50 |
+| agent_examples | 49 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| all_sample_boundaries | 7085 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_convergence_order | 1 |
+| asset_version | power.asset.v32 |
+| agent_api_version | 0.37.0 |
+| mcp_suite_timeout_seconds | 1800 |
+| mcp_operation_timeout_seconds | 600 |
+| fuel_domain | 7 |
+| fuel_restriction_kind | 42 |
+| fuel_heat_link_kind | 43 |
+| fingerprint_tag | 36 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| fuel_material_quantity_fields | 12 |
+| additional_states_per_fuel_node | 2 |
+| additional_states_per_fuel_link | 5 |
+| accepted_near_capacity_states | 124 |
+| rejected_capacity_states | 129 |
+| nonfinite_normalized_flow | NumericalFailure / complete rollback |
+| v31_fixture_sha256 | 8042d65c3171a71cd79eaa0b49ba733a232a805bd4ed429d23a93e5821016349 |
+| verification_log_sha256 | f1ad1804f19f54932590bced69e4c7d319ae3bc045b4acece7a718e9aa3ffd89 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 50 |
+| audited_documents | 190 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | d36f416c882925474dbfb2d25f81e39bd70e0211 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-network | electrothermal-fuel-network |
+|---|---|---|
+| boundaries | 22 | 21 |
+| state_count | 15 | 21 |
+| fingerprint | e27805e1a2c808d1 | e07bad65ca9c3215 |
+| source_sha256 | d9c4b378d6a5080fb456bac71569cd2c0e564ddcf8fd03bcd15bfd594e857ef7 | 9af1e5d35e821ba314c512eab452b325d4f3652787dab8f23365f5f3b2ec1090 |
+| report_sha256 | 34c3bde1599613b896ccc4e054d19b854369b791a72137b524a329dd98bef44f | 0558728552240dc70a69a3a4c46417012df1cfdc2e662341c09ddc403ba872ca |
+| final_state_hash | 61b040af166ad9c7 | 675bb21a911fc936 |
+| max_sampled_energy_residual_j | 1.0913936421275139e-10 | 6.9003007752144185e-09 |
+| max_sampled_mass_residual_kg | 5.421010862427522e-20 | 5.421010862427522e-20 |
+| max_sampled_fuel_residual_kg | 5.421010862427522e-20 | 5.421010862427522e-20 |
+| final_donor_vapor_kg | 6.354078034825645e-08 | 6.85091337500224e-08 |
+| final_link_entropy_j_k | 0.004268953263094927 | 0.005100906194149379 |
+| final_heat_entropy_j_k | 0.008489760659647926 | 5.323274810960101e-05 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| liquid | 0.00035614510680141416, 0.00017889748238547338, 8.965668828815983e-05, 4.488054760116941e-05 | 1.9907776345003132, 1.9953612586100706, 1.9976736711167877 |
+| two_phase_wall | 0.00016997336466461097, 8.49514500003881e-05, 4.263682568381033e-05, 2.134770042729958e-05 | 2.0008294698187545, 1.9924431201885908, 1.9972561367446433 |
+
+실험은 공존 상태로 이동하는 액체 배출, 역류, 개도 변경, 유한 벽/전기기계 열 결합을 다룹니다. 독립 액체 압력 지수해, 동시 2상 질량/엔탈피/열 ODE, 열 구동 역류, 클러치 시험 포착으로 정확도와 조합을 검사합니다. 자산과 실제 MCP가 모든 샘플 값과 해시를 유지합니다. 자산 v32는 물성을 저장하고 v1-v31을 읽습니다. 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
+
+구성 관계의 물성 및 분해 가능한 벽 변형 한계가 계속 적용됩니다. 매개변수는 `unverified`입니다. 펌프 충전과 축 일, 인젝터 연결, 국소 관성, 초킹, 핵생성 지연, 상간 미끄럼 및 실제 혼합물 측정은 별도 작업입니다. 기존 펌프 공급 인젝터 레일은 연결 구현까지 분리 액체 경로를 유지합니다.
+
+- `artifacts/reports/fuel-network-final-2026-10-20.log`
+- `artifacts/reports/fuel-network-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-network-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-network-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-doc-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-overflow-before-2026-10-20.log`
+- `artifacts/reports/fuel-network-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-overflow-after-2026-10-20.log`
+- `tests/Power.Tests/Fixtures/equilibrium-tank-supply-v31.powerasset`
+- `artifacts/reports/equilibrium-fuel-network.json`
+- `artifacts/reports/electrothermal-fuel-network.json`
+
+[상평형 연료 수송 네트워크](EQUILIBRIUM_FUEL_NETWORK.ko.md)
+
+
 ## 2026-10-20: 탄성 연료 체적 참조 모델
 
 필수 직렬 검증이 로컬 Windows x64/.NET 10.0.12에서 통과했습니다. 새 구성 관계 검사는 두 어셈블리 대상을 모두 다룹니다. Standard 검사는 .NET 10에서 호스팅되며 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.

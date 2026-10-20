@@ -12,7 +12,7 @@
 
 ## Nachweise und Grenzen
 
-`recirculating-liquid-cylinder` und `recirculating-needle-cylinder` behalten endlichen Kraftstoff, tatsächliche Einspritzung, Verdampfung und optionale Nadeldynamik. v31 speichert Verknüpfung/Wärmeanteil und liest v1-v30. Jeder Rücklauf fügt 8 Zustände innerhalb gleicher Grenzen hinzu.
+`recirculating-liquid-cylinder` und `recirculating-needle-cylinder` behalten endlichen Kraftstoff, tatsächliche Einspritzung, Verdampfung und optionale Nadeldynamik. v32 speichert Verknüpfung/Wärmeanteil und liest v1-v31. Jeder Rücklauf fügt 8 Zustände innerhalb gleicher Grenzen hinzu.
 
 Unabhängiger Abfall/Druckarbeit, simultane Mechanik-/Druck-/Wärmeverfeinerung, Anteile, mehrere Pfade, Außengrenzen, replay, rollback und Allokationen bestehen. Sieden oder unaufgelöstes Transportintervall lässt den gesamten Batch scheitern.
 

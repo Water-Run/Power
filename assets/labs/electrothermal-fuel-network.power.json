@@ -1,0 +1,404 @@
+{
+  "schema": "power.model.v1",
+  "description": "Unverified electrothermal and homogeneous pure-fuel research network. A motor wall exchanges finite heat with phase-resolving fuel vessels; reverse enthalpy flow shares full mass and energy ledgers. No direct fuel-to-motor torque, injector or cavitating pump coupling is inferred. All parameters are unverified.",
+  "step_ns": 100000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.2,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rpm"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 2,
+      "domain": "rotational",
+      "storage": {
+        "value": 1,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 100,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 4,
+      "domain": "thermal",
+      "storage": {
+        "value": 200,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 1001,
+      "domain": "fuel",
+      "storage": {
+        "value": 8e-07,
+        "unit": "m3"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      },
+      "position": {
+        "value": 0.0003,
+        "unit": "kg"
+      },
+      "fuel": {
+        "compliance": {
+          "value": 5e-13,
+          "unit": "m3_pa"
+        },
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        }
+      }
+    },
+    {
+      "id": 1002,
+      "domain": "fuel",
+      "storage": {
+        "value": 8e-07,
+        "unit": "m3"
+      },
+      "initial": {
+        "value": 400,
+        "unit": "k"
+      },
+      "position": {
+        "value": 0.00065,
+        "unit": "kg"
+      },
+      "fuel": {
+        "compliance": {
+          "value": 5e-13,
+          "unit": "m3_pa"
+        },
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        }
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "dc_motor",
+      "node_a": 1,
+      "heat_node": 3,
+      "input_channel": 100,
+      "initial_input": {
+        "value": 24,
+        "unit": "v"
+      },
+      "parameters": {
+        "resistance": {
+          "value": 0.5,
+          "unit": "ohm"
+        },
+        "inductance": {
+          "value": 0.02,
+          "unit": "h"
+        },
+        "coupling": {
+          "value": 0.8,
+          "unit": "nm_a"
+        },
+        "initial_current": {
+          "value": 0,
+          "unit": "a"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "kind": "shaft",
+      "node_a": 1,
+      "node_b": 2,
+      "heat_node": 4,
+      "parameters": {
+        "stiffness": {
+          "value": 100,
+          "unit": "nm_rad"
+        },
+        "damping": {
+          "value": 1,
+          "unit": "nm_s_rad"
+        },
+        "rest_angle": {
+          "value": 0,
+          "unit": "rad"
+        },
+        "ratio": 3
+      }
+    },
+    {
+      "id": 12,
+      "kind": "shaft",
+      "node_a": 2,
+      "parameters": {
+        "stiffness": {
+          "value": 0,
+          "unit": "nm_rad"
+        },
+        "damping": {
+          "value": 0.1,
+          "unit": "nm_s_rad"
+        },
+        "rest_angle": {
+          "value": 0,
+          "unit": "rad"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 13,
+      "kind": "thermal_link",
+      "node_a": 3,
+      "node_b": 4,
+      "parameters": {
+        "conductance": {
+          "value": 5,
+          "unit": "w_k"
+        }
+      }
+    },
+    {
+      "id": 14,
+      "kind": "thermal_link",
+      "node_a": 4,
+      "parameters": {
+        "conductance": {
+          "value": 2,
+          "unit": "w_k"
+        },
+        "ambient_temperature": {
+          "value": 300,
+          "unit": "k"
+        }
+      }
+    },
+    {
+      "id": 1010,
+      "kind": "fuel_restriction",
+      "node_a": 1001,
+      "node_b": 1002,
+      "input_channel": 1100,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "conductance": {
+          "value": 1e-11,
+          "unit": "m3_s_pa"
+        }
+      }
+    },
+    {
+      "id": 1011,
+      "kind": "fuel_heat_link",
+      "node_a": 1001,
+      "node_b": 3,
+      "parameters": {
+        "conductance": {
+          "value": 0.2,
+          "unit": "w_k"
+        }
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 200000000,
+    "sample_every_ns": 10000000,
+    "events": [
+      {
+        "time_ns": 50000000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 60000000,
+        "values": [
+          {
+            "channel": 1100,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 120000000,
+        "values": [
+          {
+            "channel": 1100,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 150000000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 24
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 2e-07
+      },
+      {
+        "object_id": 0,
+        "field": "mass_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "fuel_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 1002,
+        "field": "vapor_mass",
+        "min": 1e-10
+      },
+      {
+        "object_id": 1010,
+        "field": "total_fuel_delivered",
+        "max": -1e-05
+      },
+      {
+        "object_id": 1010,
+        "field": "entropy_produced",
+        "min": 0
+      },
+      {
+        "object_id": 3,
+        "field": "temperature",
+        "min": 300,
+        "max": 320
+      }
+    ]
+  }
+}

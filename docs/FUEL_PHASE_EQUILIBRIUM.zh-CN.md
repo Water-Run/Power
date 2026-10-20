@@ -33,7 +33,7 @@ U_eq(T) = (M_c + m_v) cv T + (M_f - m_v) u_l(T)
 
 ## 证据
 
-`equilibrium-fuel-cell` 展示冷凝、通气引起的蒸发及再次冷凝。`equilibrium-injected-cylinder` 在通气油箱发动机中加入接收端可逆相变与供给裕量。验证涵盖独立熵最大化、解析饱和及传热极限、联立 ODE 细化、完整回放、回滚和分配检查。资产 v31 保留这些属性，并读取 v1-v30。
+`equilibrium-fuel-cell` 展示冷凝、通气引起的蒸发及再次冷凝。`equilibrium-injected-cylinder` 在通气油箱发动机中加入接收端可逆相变与供给裕量。验证涵盖独立熵最大化、解析饱和及传热极限、联立 ODE 细化、完整回放、回滚和分配检查。资产 v32 保留这些属性，并读取 v1-v31。
 
 参数仍为 `unverified`。模型未提供实测汽油属性、多组分或有限速率相变动力学、分解液体位移/喷雾及 OEM 标定。实际 Unity Editor/Play/Player/IL2CPP 验收仍待完成。
 

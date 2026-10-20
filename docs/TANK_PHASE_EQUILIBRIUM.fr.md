@@ -27,7 +27,7 @@ Un flash borné à U,V constants conserve carburant total et énergie thermique.
 
 ## Preuves et limites
 
-`equilibrium-tank-supply` exerce inversion de pompe, évent avec carburant et paroi chauffée finie. `equilibrium-tank-fired-cylinder` relie cette source au moteur à combustion. Maximisation indépendante d'entropie, potentiels chimiques, dérivées caloriques, raffinement ODE, bilans, rejeu, retour arrière et allocations sont vérifiés. Asset v31 conserve le drapeau et lit v1-v30.
+`equilibrium-tank-supply` exerce inversion de pompe, évent avec carburant et paroi chauffée finie. `equilibrium-tank-fired-cylinder` relie cette source au moteur à combustion. Maximisation indépendante d'entropie, potentiels chimiques, dérivées caloriques, raffinement ODE, bilans, rejeu, retour arrière et allocations sont vérifiés. Asset v32 conserve le drapeau et lit v1-v31.
 
 Les exemples couplés pompe/chaleur/évent montrent un raffinement du premier ordre. Les deux phases sources restent dans l'intervalle thermique déclaré et sous la densité liquide avec marge d'arrondi binary64. Densité et propriétés gazeuses constantes, équilibre instantané et interface plane sont des approximations de recherche. Mélanges réels, tension superficielle, ballottement, cinétique finie, calibration mesurée et Unity Editor/Play/Player/IL2CPP réel restent non vérifiés.
 

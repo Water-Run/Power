@@ -4,7 +4,7 @@
 
 ## Alcance constitutivo
 
-`CompliantFuelVolume` es una referencia constitutiva inmutable del Core para combustible puro en un recipiente elástico. Resuelve líquido, vapor y coexistencia en equilibrio a partir de masa total y temperatura o energía almacenada. Proporciona el cierre para un futuro solver bifásico del riel; los rieles del grafo aún transportan líquido separado.
+`CompliantFuelVolume` aporta el cierre constitutivo de la red de combustible en equilibrio. Resuelve líquido, vapor y coexistencia con almacenamiento elástico desde masa total y temperatura o energía. La ruta de inyector por bomba mantiene pendiente ampliar su acoplamiento. [Red de transporte de combustible en equilibrio](EQUILIBRIUM_FUEL_NETWORK.es.md)
 
 ## Termodinámica
 
@@ -32,7 +32,7 @@ La coexistencia selecciona la raíz de vapor de baja densidad. Su entalpía late
 
 Declarar volumen de referencia, flexibilidad, densidad líquida y presión máxima positivos. El límite de presión cubre toda la curva de coexistencia y está por debajo de `rho_l R T_min`. La expansión de coexistencia a temperatura mínima debe ser al menos `128 * epsilon` del volumen de referencia, con `epsilon = 2^-52`. Excluye deformación no resuelta y la rama de vapor denso fuera del modelo declarado; no predice un punto crítico.
 
-Respetar el intervalo térmico del material y `0 < M <= rho_l (V_0 + C p_max)`. Vacío, gas portador, mezclas reales, expansión térmica, inercia de pared, tensión superficial y cinética de fase finita quedan fuera. Los parámetros siguen `unverified`. Llenado de bomba, pérdidas locales de entrada, cantidad de movimiento, estrangulamiento crítico y transporte bifásico en el grafo necesitan implementación y evidencia propias.
+Respetar el intervalo térmico del material y `0 < M <= rho_l (V_0 + C p_max)`. Vacío, gas portador, mezclas reales, expansión térmica, inercia de pared, tensión superficial y cinética de fase finita quedan fuera. Los parámetros siguen `unverified`. Llenado de bomba por eje, conexión de inyector, cantidad de movimiento y flujo crítico requieren más acoplamiento y evidencia independiente.
 
 ## Evidencia independiente
 

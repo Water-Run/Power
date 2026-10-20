@@ -15,7 +15,7 @@ O Power! tem um núcleo de simulação gerenciado, documentos de modelo comparti
 | Hidráulica | Volumes flexíveis, restrições, bombas com vazamento/arrasto explícitos, alívio, pistões dinâmicos, carretéis dosados e acumuladores de gás de energia finita | Mapas medidos de válvula/acumulador/bomba, atrito de vedação, cavitação e hidráulica completa da transmissão |
 | Elétrica | Motores RL, solenoides recíprocos de indutância variável, bateria de carga finita, polarização por resistência/RC, conversão de duty médio e acessórios | Comportamento químico/térmico medido, BMS, controle de corrente e integração completa da alimentação |
 | Controles | PI de pressão amostrado, dose/fechamento da agulha, transição DCT escalonada e trocas AT por realimentação de pressão com confirmação física da trava | Coordenação de torque ECU/TCU, sensores, atuadores e tratamento de falhas |
-| Documentos e assets | 48 laboratórios JSON/CLI, 47 exemplos MCP, asset v31 e leitores v1-v30 | Edição/salvamento e coleções de modelos calibrados |
+| Documentos e assets | 50 laboratórios JSON/CLI, 49 exemplos MCP, asset v32 e leitores v1-v31 | Edição/salvamento e coleções de modelos calibrados |
 | Agentes | Doze ferramentas MCP definidas por esquema; evidência compacta, verificações de revisão e diagnósticos acionáveis | Fluxos de trabalho completos para o escopo físico/de controle restante |
 | Unity | Importação de modelo, reprodução em ticks exatos, componentes 3D esquemáticos, controles, reinício e testes de ciclo de vida preparados | Aceitação real de Editor/Play, gráficos selecionáveis, edição/gravação de grafo e Player/IL2CPP |
 | Acervo nativo | Protótipos de pesquisa Zig 0.15.2, ABI preservado e procedência original das fontes | Referência histórica; a migração gerenciada continua separada da funcionalidade completa |
@@ -34,7 +34,7 @@ Todos os parâmetros permanecem `unverified`. EA211 DJS + DQ200 e PSA EC5 + AT8 
 
 CLI `list-labs`, descoberta de exemplos MCP e verificação serial compartilham [um catálogo de laboratórios](../assets/labs/catalog.json). A verificação exige a cobertura de cada fonte de laboratório.
 
-O fechamento do recipiente complacente de combustível puro resolve líquido, vapor e coexistência com armazenamento elástico. É uma referência constitutiva local; o transporte de bomba e bocal no grafo ainda precisa de integração. [Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md)
+Recipientes de combustível trocam misturas líquido/vapor por restrições dissipativas conservativas e elos térmicos finitos. Enchimento de bomba, eixo e descarga de injetor ainda precisam de conexão. [Rede de transporte de combustível em equilíbrio](EQUILIBRIUM_FUEL_NETWORK.pt-BR.md)
 
 ## Próxima sequência de desenvolvimento
 

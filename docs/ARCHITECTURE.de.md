@@ -250,7 +250,7 @@ Die [Baugruppe der AT-Ansteuerung](AT_HYDRAULIC_ACTUATION.de.md) senkt 1..6 erkl
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v31 speichert Routen, Verstärkungen und Uhren und liest v1-v30.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v32 speichert Routen, Verstärkungen und Uhren und liest v1-v31.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -260,7 +260,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v31 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v30. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v32 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v31. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -312,6 +312,12 @@ Ein begrenzter Flash bei konstantem U,V erhält Kraftstoff und Wärmeenergie. Ex
 
 ## Referenz für ein nachgiebiges Kraftstoffvolumen
 
-`CompliantFuelVolume` ist eine unveränderliche konstitutive Core-Referenz für reinen Kraftstoff in einem elastischen Behälter. Sie bestimmt Flüssigkeit, Dampf und Gleichgewichtskoexistenz aus Gesamtmasse und Temperatur oder gespeicherter Energie. Sie liefert den Abschluss für einen künftigen Zweiphasen-Railsolver; bestehende Graph-Rails transportieren weiterhin getrennte Flüssigkeit.
+`CompliantFuelVolume` liefert den konstitutiven Abschluss des Gleichgewichts-Kraftstoffnetzes. Er löst Flüssigkeit, Dampf und Koexistenz mit elastischem Speicher aus Gesamtmasse und Temperatur oder Energie. Die pumpengespeiste Injektoranbindung bleibt zu erweitern. [Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md)
 
 [Referenz für ein nachgiebiges Kraftstoffvolumen](COMPLIANT_FUEL_VOLUME.de.md)
+
+## Transportnetz für Kraftstoff im Gleichgewicht
+
+Die Domäne `fuel` transportiert reine Flüssigkeit und Dampf gemeinsam in endlichen elastischen Behältern. Jeder Behälter hält Gesamtmasse und kalorische plus elastische Energie unabhängig; der Phasenflash bestimmt Temperatur, Druck und Dampfanteile. `fuel_restriction` tauscht homogenes Spenderfluid aus, `fuel_heat_link` tauscht Wärme mit einem endlichen thermischen Knoten. Chemische Heizwertenergie bleibt separat bilanziert.
+
+[Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md)

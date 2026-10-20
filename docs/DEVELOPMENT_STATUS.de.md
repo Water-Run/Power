@@ -19,7 +19,7 @@ abgenommene Unity-Desktop-Anwendung bleiben unfertig.
 | Hydraulik | Nachgiebige Volumina, Drosseln, Pumpen mit expliziter Leckage und Schlepp, Druckbegrenzung, dynamische Kolben, dosierte Schieber und Gasakkumulatoren endlicher Energie | Gemessene Ventil-, Akkumulator- und Pumpenkennfelder, Dichtungsreibung, Kavitation und vollständige Getriebehydraulik |
 | Elektrik | RL-Motoren, reziproke Solenoide variabler Induktivität, Batterie endlicher Ladung, Widerstands- und RC-Polarisation, gemittelte Wandlung des Tastverhältnisses und Zusatzverbraucher | Gemessenes chemisches und thermisches Verhalten, BMS, Stromregelung und vollständige Versorgungsintegration |
 | Regelungen | Abgetasteter Druck-PI, Nadeldosierung/Schließregelung, gestufte DCT-Übergabe und AT-Druckrückkopplung mit physischer Verriegelungsbestätigung | ECU-/TCU-Momentenabstimmung, Sensoren, Stellglieder und Fehlerbehandlung |
-| Dokumente und Assets | 48 JSON/CLI-Labore, 47 MCP-Beispiele, Asset v31 und Leser für v1-v30 | Workbench-Bearbeitung/Speicherung und kalibrierte Modellsammlungen |
+| Dokumente und Assets | 50 JSON/CLI-Labore, 49 MCP-Beispiele, Asset v32 und Leser für v1-v31 | Workbench-Bearbeitung/Speicherung und kalibrierte Modellsammlungen |
 | Agenten | Zwölf schema-definierte MCP-Werkzeuge; kompakte Nachweise, Revisionsprüfungen und handlungsfähige Diagnosen | Vollständige Abläufe für den verbleibenden physikalischen und Regelumfang |
 | Unity | Modellimport, Wiedergabe auf exakten Ticks, schematische 3D-Komponenten, Steuerungen, Zurücksetzen und vorbereitete Lebenszyklustests | Tatsächliche Editor-/Play-Abnahme, wählbare Diagramme, Graphbearbeitung und -Speichern sowie Player/IL2CPP |
 | Natives Archiv | Forschungsprototypen in Zig 0.15.2, erhaltenes ABI und ursprüngliche Quellenherkunft | Historische Referenz; die verwaltete Migration bleibt von der vollen Funktionalität getrennt |
@@ -41,7 +41,7 @@ Alle Parameter bleiben `unverified`. EA211 DJS + DQ200 und PSA EC5 + AT8 bewahre
 
 CLI `list-labs`, MCP-Beispieldiscovery und serielle Prüfung nutzen [einen Laborkatalog](../assets/labs/catalog.json). Die Prüfung verlangt die Abdeckung jeder Laborquelldatei.
 
-Der Abschluss des nachgiebigen Behälters für reinen Kraftstoff löst Flüssigkeit, Dampf und Koexistenz mit elastischem Speicher. Er ist eine lokale konstitutive Referenz; Pumpen- und Düsentransport im Graphen müssen noch integriert werden. [Referenz für ein nachgiebiges Kraftstoffvolumen](COMPLIANT_FUEL_VOLUME.de.md)
+Kraftstoffbehälter tauschen Flüssigkeit/Dampf-Gemische über konservative dissipative Widerstände und endliche Wärmepfade. Pumpenfüllung, Wellenkopplung und Injektoraustrag müssen noch angebunden werden. [Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md)
 
 ## Nächste Entwicklungsfolge
 

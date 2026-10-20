@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — ヘッドレス実験"]
     mcp["Power.Mcp — 12 個の stdio MCP ツール"]
-    assets["Power.Assets — .powerasset v31"]
+    assets["Power.Assets — .powerasset v32"]
     unity["Unity 6.6 スタジオ — 3D ラボラトリー"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | モデル・制限・時間とリビジョンの規約を検索。ここから始めてください。 |
 | `get_model_schema` | `power.model.v1` の JSON Schema 2020-12 |
-| `get_example_model` | 編集可能な合成モデルと実験を取得(47 例) |
+| `get_example_model` | 編集可能な合成モデルと実験を取得(49 例) |
 | `validate_model` | 実行せずにモデルを検証。構造化された修復診断 |
 | `run_experiment` | 境界付きヘッドレス実行。バッチリプレイ・KPI・来歴付き |
 | `export_model_asset` | 移植可能な `.powerasset` をエクスポート |
@@ -147,10 +147,12 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > すべてのサンプルパラメーターは `unverified` です。研究値であり、キャリブレーション測定ではありません。
 
-以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v31` を使い、旧アセットのリーダーは保持されます。
+以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v32` を使い、旧アセットのリーダーは保持されます。
+
+燃料ドメイン容器は保存的な散逸抵抗と有限壁熱リンクを通じ液体・蒸気混合物を交換します。ポンプ充填、軸結合、噴射器排出の接続が残ります。 [相平衡燃料輸送ネットワーク](docs/EQUILIBRIUM_FUEL_NETWORK.ja.md)
 
 <details>
-<summary>利用可能なラボラトリー(48)</summary>
+<summary>利用可能なラボラトリー(50)</summary>
 
 | 例名(`get_example_model`) | ラボラトリー | 検証内容 |
 |---|---|---|
@@ -202,6 +204,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | 有限ヘッドスペースと通気、物理ニードル動特性 |
 | `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | リリーフ戻り、タンク/レール同時混合と損失熱 |
 | `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | 燃料循環、物理ニードルと完全な再生 |
+| `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | 共存へ移る液体排出、弁イベント、有限壁熱交換 |
+| `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | 逆方向混合物輸送と機電実験との熱結合 |
 
 </details>
 

@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 31
+## Текущая версия 32
+
+Домен `fuel` переносит чистую жидкость и пар вместе в конечных упругих сосудах. Каждый сосуд независимо хранит полную массу и калорическую плюс упругую энергию; фазовый flash определяет температуру, давление и доли пара. `fuel_restriction` обменивает однородную среду донора, `fuel_heat_link` обменивается теплом с конечным тепловым узлом. Химическая энергия теплоты сгорания учитывается отдельно.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 36 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_domain | 7 |
+| fuel_restriction_kind | 42 |
+| fuel_heat_link_kind | 43 |
+| fuel_material_record_bytes | 148 |
+| fuel_material_quantity_fields | 12 |
+| fuel_material_count | count(node.domain == fuel) |
+| fuel_table_order | liquid_returns -> fuel_material -> inputs |
+| fuel_quantity_order | compliance, liquid_density, maximum_pressure, gas_constant, vapor_specific_heat, liquid_specific_heat, reference_temperature, latent_internal_energy, reference_pressure, minimum_temperature, maximum_temperature, lower_heating_value |
+| additional_states_per_fuel_node | 2 |
+| additional_states_per_fuel_link | 5 |
+
+[Сеть переноса равновесного топлива](EQUILIBRIUM_FUEL_NETWORK.ru.md)
+
+
+## Сохранённая версия 31
 
 Задать `liquid_fuel_tank.parameters.headspace.phase_equilibrium` как `true` для испарения и конденсации в баке. Связанная плёнка задаёт свойства `phase_equilibrium`; отслеживаемый газ имеет те же R, cv, теплоту сгорания и стехиометрию. Для влажного бака задаются общая начальная температура и насыщенное парциальное давление; сухой бак начинается не выше насыщения. Общая плотность ниже плотности жидкости.
 

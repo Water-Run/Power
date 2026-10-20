@@ -4,7 +4,7 @@
 
 ## Escopo constitutivo
 
-`CompliantFuelVolume` é uma referência constitutiva imutável do Core para combustível puro em um recipiente elástico. Resolve líquido, vapor e coexistência em equilíbrio por massa total e temperatura ou energia armazenada. Fornece o fechamento para o futuro solver bifásico do rail; os rails do grafo ainda transportam líquido separado.
+`CompliantFuelVolume` fornece o fechamento constitutivo da rede de combustível em equilíbrio. Resolve líquido, vapor e coexistência com armazenamento elástico por massa total e temperatura ou energia. O caminho de injetor alimentado por bomba ainda exige ampliar o acoplamento. [Rede de transporte de combustível em equilíbrio](EQUILIBRIUM_FUEL_NETWORK.pt-BR.md)
 
 ## Termodinâmica
 
@@ -32,7 +32,7 @@ A coexistência seleciona a raiz de vapor de baixa densidade. Sua entalpia laten
 
 Declarar volume de referência, complacência, densidade líquida e pressão máxima positivos. O limite cobre toda a curva de coexistência e fica abaixo de `rho_l R T_min`. A expansão de coexistência na temperatura mínima deve ser ao menos `128 * epsilon` do volume de referência, com `epsilon = 2^-52`. Exclui deformação não resolvida e o ramo de vapor denso fora do modelo declarado; não prevê um ponto crítico.
 
-Respeitar o intervalo térmico material e `0 < M <= rho_l (V_0 + C p_max)`. Vácuo, gás portador, misturas reais, expansão térmica, inércia da parede, tensão superficial e cinética de fase finita ficam fora. Parâmetros permanecem `unverified`. Enchimento da bomba, perdas locais de entrada, quantidade de movimento, escoamento crítico e transporte bifásico no grafo precisam de implementação e evidências próprias.
+Respeitar o intervalo térmico material e `0 < M <= rho_l (V_0 + C p_max)`. Vácuo, gás portador, misturas reais, expansão térmica, inércia da parede, tensão superficial e cinética de fase finita ficam fora. Parâmetros permanecem `unverified`. Enchimento de bomba por eixo, conexão de injetor, quantidade de movimento e escoamento crítico exigem mais acoplamento e evidências independentes.
 
 ## Evidências independentes
 

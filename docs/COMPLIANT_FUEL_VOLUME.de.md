@@ -4,7 +4,7 @@
 
 ## Konstitutiver Umfang
 
-`CompliantFuelVolume` ist eine unveränderliche konstitutive Core-Referenz für reinen Kraftstoff in einem elastischen Behälter. Sie bestimmt Flüssigkeit, Dampf und Gleichgewichtskoexistenz aus Gesamtmasse und Temperatur oder gespeicherter Energie. Sie liefert den Abschluss für einen künftigen Zweiphasen-Railsolver; bestehende Graph-Rails transportieren weiterhin getrennte Flüssigkeit.
+`CompliantFuelVolume` liefert den konstitutiven Abschluss des Gleichgewichts-Kraftstoffnetzes. Er löst Flüssigkeit, Dampf und Koexistenz mit elastischem Speicher aus Gesamtmasse und Temperatur oder Energie. Die pumpengespeiste Injektoranbindung bleibt zu erweitern. [Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md)
 
 ## Thermodynamik
 
@@ -32,7 +32,7 @@ Koexistenz wählt die Dampfwurzel niedriger Dichte. Die Verdampfungsenthalpie is
 
 Positives Referenzvolumen, positive Nachgiebigkeit, Flüssigkeitsdichte und maximalen Wanddruck erklären. Die Druckgrenze umfasst die gesamte Koexistenzkurve und bleibt unter `rho_l R T_min`. Die Koexistenz-Wandausdehnung bei Minimaltemperatur muss mindestens `128 * epsilon` des Referenzvolumens betragen, mit `epsilon = 2^-52`. Das schließt unaufgelöste Wandverformung und den dichten Dampfzweig außerhalb des erklärten Modells aus; ein kritischer Punkt wird nicht vorhergesagt.
 
-Stofftemperaturintervall und `0 < M <= rho_l (V_0 + C p_max)` einhalten. Vakuum, Trägergas, reale Gemische, Wärmeausdehnung, Wandträgheit, Oberflächenspannung und endliche Phasenkinetik liegen außerhalb. Stoff- und Wandparameter bleiben `unverified`. Pumpenfüllung, lokale Einlassverluste, Gemischimpuls, kritische Strömung und Zweiphasentransport im Graphen erfordern gesonderte Umsetzung und Nachweise.
+Stofftemperaturintervall und `0 < M <= rho_l (V_0 + C p_max)` einhalten. Vakuum, Trägergas, reale Gemische, Wärmeausdehnung, Wandträgheit, Oberflächenspannung und endliche Phasenkinetik liegen außerhalb. Stoff- und Wandparameter bleiben `unverified`. Wellengetriebene Pumpenfüllung, Injektoranbindung, aufgelöster Impuls und kritische Strömung brauchen weitere Kopplung und unabhängige Nachweise.
 
 ## Unabhängige Nachweise
 

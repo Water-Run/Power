@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — эксперименты без интерфейса"]
     mcp["Power.Mcp — 12 инструментов MCP через stdio"]
-    assets["Power.Assets — .powerasset v31"]
+    assets["Power.Assets — .powerasset v32"]
     unity["Студия Unity 6.6 — 3D-лаборатории"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | Узнать модели, ограничения, соглашения о времени и ревизиях. Начните отсюда. |
 | `get_model_schema` | JSON Schema 2020-12 для `power.model.v1` |
-| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (47 примера) |
+| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (49 примера) |
 | `validate_model` | Проверить модель без запуска; структурированная диагностика исправлений |
 | `run_experiment` | Ограниченный запуск без интерфейса с пакетным повтором, KPI и происхождением |
 | `export_model_asset` | Экспортировать переносимый `.powerasset` |
@@ -147,10 +147,12 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > Все параметры образцов — `unverified`: исследовательские значения, а не калиброванные измерения.
 
-Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v31`, читатели прежних активов сохранены.
+Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v32`, читатели прежних активов сохранены.
+
+Топливные сосуды обменивают смесь жидкости и пара через консервативные диссипативные сопротивления и конечные тепловые связи. Наполнение насоса, связь вала и форсунка ещё не подключены. [Сеть переноса равновесного топлива](docs/EQUILIBRIUM_FUEL_NETWORK.ru.md)
 
 <details>
-<summary>Доступные лаборатории (48)</summary>
+<summary>Доступные лаборатории (50)</summary>
 
 | Имя образца (`get_example_model`) | Лаборатория | Что проверяет |
 |---|---|---|
@@ -202,6 +204,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | конечный газ и вентиляция с физической динамикой иглы |
 | `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | возврат через клапан, совместное смешение бака/рампы и тепло потерь |
 | `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | рециркуляция с физической иглой и полным воспроизведением |
+| `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | выход жидкости в сосуществование, события клапана и конечный теплообмен |
+| `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | обратный перенос смеси и теплообмен с электромеханической лабораторией |
 
 </details>
 

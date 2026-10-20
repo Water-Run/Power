@@ -4,22 +4,18 @@
 
 ## Punto di ripresa
 
-Il serbatoio risolve vapore a volume finito con potenziali corretti e aspirazione liquida separata.
+I recipienti carburante scambiano miscele liquido/vapore attraverso restrizioni dissipative conservative e collegamenti termici finiti. Riempimento pompa, albero e scarico iniettore restano da collegare.
 
-[Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)
-
-La chiusura del recipiente cedevole per carburante puro risolve liquido, vapore e coesistenza con accumulo elastico. È un riferimento costitutivo locale; il trasporto di pompa e ugello nel grafo richiede ancora integrazione.
-
-[Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md)
+[Rete di trasporto del carburante in equilibrio](EQUILIBRIUM_FUEL_NETWORK.it.md)
 
 ## Prossimo incremento
 
-Collegare la chiusura al trasporto bifase conservativo di pompa e rail, poi risolvere perdite locali d’ingresso, quantità di moto della miscela e scarico dell’ugello. Mantenere proprietà esplicite e pieno accoppiamento volume/lavoro. Le misure OEM mancanti restano mancanti. Proseguire separatamente accensione, aspirazione/scarico, perdite meccaniche e coordinamento ECU/TCU.
+Collegare i volumi carburante a riempimento pompa da albero e scarico fisico iniettore con materia, quantità di moto e lavoro conservativi. Risolvere inerzia locale d’ingresso e flusso critico con riferimenti indipendenti. Proseguire accensione, aspirazione/scarico, perdite, attuazione trasmissione ed ECU/TCU senza considerare questa rete un gruppo motopropulsore completo.
 
 ## Accettazione
 
 Richiedere riferimenti analitici/limite indipendenti, bilanci completi massa/energia e raffinamento appropriato. Conservare rollback del lotto, annullamento, rami, canali stabili, replay portabile e vecchi lettori. Continuare poi accensione, aspirazione/scarico, perdite meccaniche, trasmissione e coordinamento ECU/TCU.
 
-Casi accoppiati pompa/calore/sfiato mostrano il primo ordine. Entrambe le fasi sorgente restano nell'intervallo dichiarato e la densità totale sotto quella liquida con margine binary64. Densità/proprietà costanti, equilibrio istantaneo e interfaccia piana sono approssimazioni di ricerca. Miscele reali, tensione superficiale, sloshing, cinetica finita, calibrazione misurata e Unity Editor/Play/Player/IL2CPP reale restano non verificati.
+Restano i limiti del materiale e della deformazione rappresentabile della chiusura. I parametri restano `unverified`. Riempimento pompa e lavoro d’albero, collegamento iniettore, inerzia locale, flusso critico, ritardo di nucleazione, scorrimento e misure di miscele reali rimangono separati. I rail iniettore alimentati da pompa mantengono il percorso liquido separato fino all’accoppiamento.
 
 [DEVELOPMENT_STATUS.it.md](DEVELOPMENT_STATUS.it.md) · [ROADMAP.it.md](ROADMAP.it.md) · [VALIDATION.it.md](VALIDATION.it.md)

@@ -4,7 +4,7 @@
 
 ## Portée constitutive
 
-`CompliantFuelVolume` est une référence constitutive immuable du Core pour un carburant pur dans un récipient élastique. Elle résout liquide, vapeur et coexistence à partir de la masse totale et de la température ou de l'énergie stockée. Elle prépare la fermeture du futur solveur de rampe diphasique ; les rampes du graphe transportent encore du liquide séparé.
+`CompliantFuelVolume` fournit la fermeture constitutive du réseau de carburant en équilibre. Elle résout liquide, vapeur et coexistence avec stockage élastique depuis masse totale et température ou énergie. Le chemin d'injecteur alimenté par pompe attend son couplage étendu. [Réseau de transport de carburant en équilibre](EQUILIBRIUM_FUEL_NETWORK.fr.md)
 
 ## Thermodynamique
 
@@ -32,7 +32,7 @@ La coexistence sélectionne la racine de vapeur à faible densité. Son enthalpi
 
 Déclarer volume de référence, compliance, densité liquide et pression maximale positifs. La limite de pression couvre toute la courbe de coexistence et reste sous `rho_l R T_min`. À la température minimale, la dilatation de coexistence doit atteindre au moins `128 * epsilon` du volume de référence, avec `epsilon = 2^-52`. Cela exclut la déformation non résolue et la branche de vapeur dense hors du modèle déclaré ; aucun point critique n'est prédit.
 
-Respecter l'intervalle thermique du matériau et `0 < M <= rho_l (V_0 + C p_max)`. Vide, gaz porteur, mélanges réels, dilatation thermique, inertie de paroi, tension superficielle et cinétique de phase finie sont hors portée. Les paramètres restent `unverified`. Remplissage de pompe, pertes locales d'entrée, quantité de mouvement, blocage sonique et transport diphasique dans le graphe nécessitent encore leur implémentation et leurs preuves.
+Respecter l'intervalle thermique du matériau et `0 < M <= rho_l (V_0 + C p_max)`. Vide, gaz porteur, mélanges réels, dilatation thermique, inertie de paroi, tension superficielle et cinétique de phase finie sont hors portée. Les paramètres restent `unverified`. Remplissage de pompe entraînée par arbre, raccordement d'injecteur, quantité de mouvement et blocage sonique demandent encore couplage et preuves indépendantes.
 
 ## Preuves indépendantes
 

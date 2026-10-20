@@ -15,7 +15,7 @@ Power! ha un nucleo di simulazione gestito, documenti di modello condivisi e ass
 | Idraulica | Volumi cedevoli, restrizioni, pompe con trafilamento/trascinamento espliciti, scarico, stantuffi dinamici, cursori dosati e accumulatori a gas a energia finita | Mappe misurate di valvole/accumulatori/pompe, attrito delle tenute, cavitazione e idraulica completa della trasmissione |
 | Elettrica | Motori RL, solenoidi a induttanza variabile reciproca, batteria a carica finita, polarizzazione resistiva/RC, conversione di duty mediata e accessori | Comportamento chimico/termico misurato, BMS, controllo di corrente e integrazione completa dell'alimentazione |
 | Controlli | PI di pressione campionato, dosaggio/chiusura dell'ago, passaggio DCT a stadi e cambi AT con retroazione di pressione e conferma fisica del blocco | Coordinamento di coppia ECU/TCU, sensori, attuatori e gestione dei guasti |
-| Documenti e asset | 48 laboratori JSON/CLI, 47 esempi MCP, asset v31 e lettori v1-v30 | Modifica/salvataggio e raccolte di modelli calibrati |
+| Documenti e asset | 50 laboratori JSON/CLI, 49 esempi MCP, asset v32 e lettori v1-v31 | Modifica/salvataggio e raccolte di modelli calibrati |
 | Agenti | Dodici strumenti MCP definiti da schema; evidenza compatta, controlli di revisione e diagnostica azionabile | Flussi completi per l'ambito fisico/di controllo restante |
 | Unity | Importazione dei modelli, riproduzione a tick esatti, componenti schematici 3D, controlli, reset e test del ciclo di vita preparati | Accettazione reale di Editor/Play, grafici selezionabili, modifica/salvataggio del grafo e Player/IL2CPP |
 | Archivio nativo | Prototipi di ricerca Zig 0.15.2, ABI conservata e provenienza dei sorgenti originali | Riferimento storico; la migrazione gestita resta separata dalla funzionalità completa |
@@ -34,7 +34,7 @@ Tutti i parametri restano `unverified`. EA211 DJS + DQ200 e PSA EC5 + AT8 conser
 
 CLI `list-labs`, scoperta degli esempi MCP e verifica seriale condividono [un catalogo dei laboratori](../assets/labs/catalog.json). La verifica controlla che copra ogni sorgente di laboratorio.
 
-La chiusura del recipiente cedevole per carburante puro risolve liquido, vapore e coesistenza con accumulo elastico. È un riferimento costitutivo locale; il trasporto di pompa e ugello nel grafo richiede ancora integrazione. [Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md)
+I recipienti carburante scambiano miscele liquido/vapore attraverso restrizioni dissipative conservative e collegamenti termici finiti. Riempimento pompa, albero e scarico iniettore restano da collegare. [Rete di trasporto del carburante in equilibrio](EQUILIBRIUM_FUEL_NETWORK.it.md)
 
 ## Prossima sequenza di sviluppo
 

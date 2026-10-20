@@ -493,7 +493,7 @@ remain separate from AT feedback/control and measured valve-body acceptance.
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v31 retains routes, gains and clocks and reads v1-v30.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v32 retains routes, gains and clocks and reads v1-v31.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -503,7 +503,7 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v31 retains feed links and source temperature and reads v1-v30. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v32 retains feed links and source temperature and reads v1-v31. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -555,6 +555,12 @@ A bounded constant-U,V flash conserves total fuel and thermal energy. Explicit g
 
 ## Compliant fuel volume reference
 
-`CompliantFuelVolume` is an immutable Core constitutive reference for pure fuel in an elastic vessel. It resolves liquid, vapor and equilibrium coexistence from total mass and temperature or stored energy. It supplies the closure for a future two-phase rail solver; existing graph rails still transport separated liquid.
+`CompliantFuelVolume` supplies the constitutive closure used by the equilibrium fuel network. It resolves liquid, vapor and coexistence with elastic storage from total mass and temperature or stored energy. The pump-fed injector path remains separate until its coupling is extended. [Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md)
 
 [Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md)
+
+## Equilibrium fuel transport network
+
+The `fuel` domain carries pure liquid and vapor together in finite elastic vessels. Each vessel owns independent total mass and caloric-plus-elastic energy; its phase flash determines temperature, pressure and vapor fractions. `fuel_restriction` exchanges homogeneous donor fluid and `fuel_heat_link` exchanges heat with a finite thermal node. Chemical heating-value energy stays in a separate ledger.
+
+[Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md)

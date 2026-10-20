@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — esperimenti senza interfaccia"]
     mcp["Power.Mcp — 12 strumenti MCP via stdio"]
-    assets["Power.Assets — .powerasset v31"]
+    assets["Power.Assets — .powerasset v32"]
     unity["Studio Unity 6.6 — laboratori 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Il servizio espone dodici strumenti con schemi di input e output:
 |---|---|
 | `get_capabilities` | Scopre modelli, limiti e convenzioni di tempo e revisione. Inizia qui. |
 | `get_model_schema` | JSON Schema 2020-12 per `power.model.v1` |
-| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (47 esempi) |
+| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (49 esempi) |
 | `validate_model` | Valida un modello senza eseguirlo; diagnostica di riparazione strutturata |
 | `run_experiment` | Esecuzione senza interfaccia e limitata, con replay batch, KPI e provenienza |
 | `export_model_asset` | Esporta un `.powerasset` portabile |
@@ -147,10 +147,12 @@ Un grafo di ricerca Ravigneaux a quattro gamme aggiunge percorsi planetari compo
 > [!NOTE]
 > Tutti i parametri di esempio sono `unverified`: valori di ricerca, non misure calibrate.
 
-I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v31`, mantenendo i lettori per gli asset precedenti.
+I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v32`, mantenendo i lettori per gli asset precedenti.
+
+I recipienti carburante scambiano miscele liquido/vapore attraverso restrizioni dissipative conservative e collegamenti termici finiti. Riempimento pompa, albero e scarico iniettore restano da collegare. [Rete di trasporto del carburante in equilibrio](docs/EQUILIBRIUM_FUEL_NETWORK.it.md)
 
 <details>
-<summary>Laboratori disponibili (48)</summary>
+<summary>Laboratori disponibili (50)</summary>
 
 | Nome esempio (`get_example_model`) | Laboratorio | Cosa esercita |
 |---|---|---|
@@ -202,6 +204,8 @@ I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Stu
 | `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | spazio gassoso/sfiato con dinamica fisica dell’ago |
 | `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | ritorno di scarico, miscela simultanea serbatoio/rail e calore delle perdite |
 | `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | carburante ricircolato con ago fisico e replay completo |
+| `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | scarico liquido in coesistenza, eventi valvola e calore di parete finita |
+| `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | trasporto inverso della miscela e calore condiviso con un laboratorio elettromeccanico |
 
 </details>
 

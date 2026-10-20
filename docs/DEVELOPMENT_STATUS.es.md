@@ -19,7 +19,7 @@ aplicación de escritorio de Unity aceptada.
 | Hidráulica | Volúmenes flexibles, restricciones, bombas con fugas y arrastre explícitos, alivio, pistones dinámicos, correderas dosificadas y acumuladores de gas de energía finita | Mapas medidos de válvulas, acumuladores y bombas, fricción de juntas, cavitación e hidráulica completa de transmisión |
 | Eléctrica | Motores RL, solenoides recíprocos de inductancia variable, batería de carga finita, polarización por resistencia y RC, conversión de ciclo de trabajo promediada y accesorios | Comportamiento químico y térmico medido, BMS, control de corriente e integración completa de la alimentación |
 | Controles | PI de presión muestreado, dosis/cierre de aguja, relevo DCT escalonado y cambios AT por realimentación de presión con confirmación física de bloqueo | Coordinación de par de ECU/TCU, sensores, actuadores y tratamiento de fallos |
-| Documentos y assets | 48 laboratorios JSON/CLI, 47 ejemplos MCP, asset v31 y lectores v1-v30 | Edición/guardado y colecciones de modelos calibrados |
+| Documentos y assets | 50 laboratorios JSON/CLI, 49 ejemplos MCP, asset v32 y lectores v1-v31 | Edición/guardado y colecciones de modelos calibrados |
 | Agentes | Doce herramientas MCP definidas por esquema; evidencia compacta, comprobaciones de revisión y diagnósticos accionables | Flujos completos para el alcance físico y de control restante |
 | Unity | Importación de modelos, reproducción en ticks exactos, componentes 3D esquemáticos, controles, reinicio y pruebas de ciclo de vida preparadas | Aceptación real de Editor/Play, gráficas seleccionables, edición y guardado de grafos, y Player/IL2CPP |
 | Archivo nativo | Prototipos de investigación en Zig 0.15.2, ABI conservado y procedencia original de las fuentes | Referencia histórica; la migración gestionada sigue separada de la funcionalidad completa |
@@ -41,7 +41,7 @@ Todos los parámetros siguen `unverified`. EA211 DJS + DQ200 y PSA EC5 + AT8 con
 
 CLI `list-labs`, el descubrimiento de ejemplos MCP y la verificación serie comparten [un catálogo de laboratorios](../assets/labs/catalog.json). La verificación comprueba que cubra cada fuente de laboratorio.
 
-El cierre del recipiente flexible de combustible puro resuelve líquido, vapor y coexistencia con almacenamiento elástico. Es una referencia constitutiva local; falta integrar el transporte de bomba y boquilla en el grafo. [Referencia de volumen de combustible flexible](COMPLIANT_FUEL_VOLUME.es.md)
+Los recipientes de combustible intercambian mezclas líquido/vapor por restricciones disipativas conservativas y enlaces térmicos finitos. Faltan llenado de bomba, eje y descarga del inyector. [Red de transporte de combustible en equilibrio](EQUILIBRIUM_FUEL_NETWORK.es.md)
 
 ## Siguiente secuencia de desarrollo
 

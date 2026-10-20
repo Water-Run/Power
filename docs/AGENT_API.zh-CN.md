@@ -42,7 +42,7 @@ Windows 使用同一条 `dotnet` 命令,以及指向 DLL 的绝对路径。生�
 
 ## 工具与结果
 
-智能体 API 版本 0.36.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 47 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 48 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v31`，并保留 v1-v30 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
+智能体 API 版本 0.36.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 49 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 50 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v32`，并保留 v1-v31 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
 
 | 工具 | 作用 |
 |---|---|
@@ -292,7 +292,7 @@ flowchart TD
 
 `at_controller` 接受 [-1,4] 范围内的整数目标挡位；零表示空挡。它管理五组充油/泄压阀以及可选的变矩器锁止支路。支路顺序为行星架输入、小太阳轮输入、大太阳轮输入、行星架制动、大太阳轮制动，最后是锁止。
 
-示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v31 保留支路、增益和时钟，并可读取 v1-v30。
+示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v32 保留支路、增益和时钟，并可读取 v1-v31。
 
 这是研究控制，参数仍为 `unverified`。协调 ECU 扭矩融合、详细传感器/阀模型、完整车辆故障及 OEM 标定仍待完成。托管和 Standard 检查不能证明实际 Unity Editor/Play/Player/IL2CPP 验收。
 
@@ -302,7 +302,7 @@ flowchart TD
 
 `liquid_rail_feed` 将液体喷射器与现有排量泵及显式质量/热边界配对。液压出口节点必须与燃轨的顺应性和初始绝对压力一致。配对泵和喷射器管理该压力节点；其他未计入的流体路径会被拒绝。
 
-资产 v31 保留补给连接和源温度，并读取 v1-v30。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
+资产 v32 保留补给连接和源温度，并读取 v1-v31。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
 
 该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、真实流体混合物热力学、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
 
@@ -353,3 +353,11 @@ flowchart TD
 油箱 `evaporated_fuel_mass`、`condensed_fuel_mass` 和带符号 `mass_flow` 按完整物理时间步的净相变量累计。结合读取 `vapor_partial_pressure`、压力修正后的 `saturation_pressure`、液体库存及气体体积。泵只吸取已分离的液体；两相泵/燃轨输运、夹带与局部 NPSH 仍待实现。
 
 [有限体积油箱相平衡](TANK_PHASE_EQUILIBRIUM.zh-CN.md)
+
+## 相平衡燃料输运网络
+
+通过 MCP 请求 `equilibrium-fuel-network` 或 `electrothermal-fuel-network`，也可用 CLI 运行同一 JSON。读取各容器的 `mass`、`internal_energy`、`elastic_energy`、`vapor_mass`、`vapor_mass_fraction`、`vapor_volume_fraction`、`entropy` 和 `specific_enthalpy`。这里 `internal_energy` 包含弹性壁储能，化学能单独报告。链接公开有符号质量/体积流、累计转移质量、`transport_energy` 和成对熵变化。
+
+有界后向 Euler 求解为两个容器确定同一组已接受质量 q 与焓 H。链接按稳定组件 ID 顺序推进，有限热浴换热使用另一守恒子步。耦合方法为一阶。质量、温度或压力越界及求解失败均拒绝整批，包括输入、补偿历史和离合器试探区间。
+
+[相平衡燃料输运网络](EQUILIBRIUM_FUEL_NETWORK.zh-CN.md)

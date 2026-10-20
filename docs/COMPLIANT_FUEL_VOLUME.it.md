@@ -4,7 +4,7 @@
 
 ## Ambito costitutivo
 
-`CompliantFuelVolume` è un riferimento costitutivo immutabile del Core per carburante puro in un recipiente elastico. Risolve liquido, vapore e coesistenza in equilibrio da massa totale e temperatura o energia accumulata. Fornisce la chiusura per il futuro solver bifase del rail; i rail del grafo trasportano ancora liquido separato.
+`CompliantFuelVolume` fornisce la chiusura costitutiva della rete di carburante in equilibrio. Risolve liquido, vapore e coesistenza con accumulo elastico da massa totale e temperatura o energia. Il percorso iniettore alimentato da pompa richiede ancora l’estensione dell’accoppiamento. [Rete di trasporto del carburante in equilibrio](EQUILIBRIUM_FUEL_NETWORK.it.md)
 
 ## Termodinamica
 
@@ -32,7 +32,7 @@ La coesistenza sceglie la radice del vapore a bassa densità. L’entalpia laten
 
 Dichiarare volume di riferimento, cedevolezza, densità liquida e pressione massima positivi. Il limite copre tutta la curva di coesistenza e resta sotto `rho_l R T_min`. L’espansione di coesistenza alla temperatura minima deve essere almeno `128 * epsilon` del volume di riferimento, con `epsilon = 2^-52`. Esclude deformazioni irrisolte e il ramo di vapore denso fuori dal modello dichiarato; non predice un punto critico.
 
-Rispettare l’intervallo termico materiale e `0 < M <= rho_l (V_0 + C p_max)`. Vuoto, gas portante, miscele reali, dilatazione termica, inerzia della parete, tensione superficiale e cinetica di fase finita sono esclusi. I parametri restano `unverified`. Riempimento della pompa, perdite locali d’ingresso, quantità di moto, flusso critico e trasporto bifase nel grafo richiedono realizzazione ed evidenze dedicate.
+Rispettare l’intervallo termico materiale e `0 < M <= rho_l (V_0 + C p_max)`. Vuoto, gas portante, miscele reali, dilatazione termica, inerzia della parete, tensione superficiale e cinetica di fase finita sono esclusi. I parametri restano `unverified`. Riempimento pompa da albero, collegamento iniettore, quantità di moto e flusso critico richiedono ulteriore accoppiamento ed evidenze indipendenti.
 
 ## Evidenze indipendenti
 

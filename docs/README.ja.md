@@ -31,7 +31,7 @@ flowchart LR
 | ドキュメント | 内容 |
 |---|---|
 | [エージェント API](AGENT_API.ja.md) | MCP ツール、リビジョン、エラー、操作シーケンス |
-| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v31 と、v1 から v30 までのリーダー |
+| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v32 と、v1 から v31 までのリーダー |
 | [ネイティブ Zig 境界](NATIVE_ZIG.ja.md) | 保管された Zig プロトタイプと、バージョン付き ABI |
 
 ## エンジンと燃料
@@ -53,6 +53,7 @@ flowchart LR
 | [燃料の相平衡と液体供給の境界](FUEL_PHASE_EQUILIBRIUM.ja.md) | 可逆蒸発/凝縮、飽和圧力と液体供給の境界 |
 | [有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md) | 有限液体押しのけ、圧力補正蒸発/凝縮と蒸気通気 |
 | [弾性燃料容積の参照モデル](COMPLIANT_FUEL_VOLUME.ja.md) | 液体・蒸気平衡、弾性蓄積、保存的な有限熱浴との熱交換 |
+| [相平衡燃料輸送ネットワーク](EQUILIBRIUM_FUEL_NETWORK.ja.md) | 均質二相エンタルピー輸送、有限壁熱交換、完全な台帳 |
 
 ## トランスミッション
 

@@ -19,7 +19,7 @@ accepted Unity desktop application remain unfinished.
 | Hydraulics | Compliant volumes, restrictions, pumps with explicit leakage/drag, relief, dynamic pistons, metered spools and finite-energy gas accumulators | Measured valve/accumulator/pump maps, seal friction, cavitation and complete transmission hydraulics |
 | Electrical | RL motors, reciprocal variable-inductance solenoids, finite-charge battery, resistance/RC polarization, averaged duty conversion and accessories | Measured chemistry/thermal behavior, BMS, current control and complete supply integration |
 | Controls | Sampled pressure PI, needle dose/closure control, staged DCT handoff and pressure-feedback AT shifts with physical lock confirmation | ECU/TCU torque coordination, sensors, actuators and fault handling |
-| Documents and assets | 48 JSON/CLI laboratories, 47 MCP examples, asset v31 with v1-v30 readers | Workbench editing/saving and calibrated model collections |
+| Documents and assets | 50 JSON/CLI laboratories, 49 MCP examples, asset v32 with v1-v31 readers | Workbench editing/saving and calibrated model collections |
 | Agents | Twelve schema-defined MCP tools; compact evidence, revision checks and actionable diagnostics | Complete workflows for the remaining physical/control scope |
 | Unity | Model import, exact-tick playback, schematic 3D components, controls, reset and prepared lifecycle tests | Actual Editor/Play acceptance, selectable plots, graph editing/saving and Player/IL2CPP |
 | Native archive | Zig 0.15.2 research prototypes, preserved ABI and original source provenance | Historical reference; managed migration remains separate from full functionality |
@@ -41,7 +41,7 @@ All parameters remain `unverified`. EA211 DJS + DQ200 and PSA EC5 + AT8 retain c
 
 CLI `list-labs`, MCP example discovery and serial verification share [one laboratory catalog](../assets/labs/catalog.json). Verification checks that it covers every laboratory source.
 
-The pure-fuel compliant-vessel closure resolves liquid, vapor and coexistence with elastic storage. It is a local constitutive reference; graph-level pump and nozzle transport still require integration. [Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md)
+Fuel-domain vessels now exchange liquid/vapor mixtures through conservative dissipative restrictions and finite-wall heat links. Pump filling, shaft coupling and injector discharge remain to be connected. [Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md)
 
 ## Next development sequence
 
