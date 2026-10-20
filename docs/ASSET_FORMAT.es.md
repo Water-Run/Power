@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, comprobar la huella]
 ```
 
-## Versión actual 30
+## Versión actual 31
+
+Activar `liquid_fuel_tank.parameters.headspace.phase_equilibrium` con `true` para resolver evaporación y condensación del tanque. La película asociada aporta propiedades `phase_equilibrium`; el gas seguido comparte R, cv, poder calorífico y estequiometría. Declarar temperatura inicial común y presión parcial saturada para tanque húmedo; un tanque seco comienza como máximo en saturación. La densidad total es menor que la líquida.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md)
+
+## Versión conservada 30
 
 La opción `fuel_film.parameters.phase_equilibrium` declara `reference_pressure` en `pa` o `bar`, y `minimum_temperature` / `maximum_temperature` en `k`. `saturation_temperature` es la temperatura de referencia; `latent_internal_energy` es la diferencia de energía interna vapor-líquido allí. Cada receptor en equilibrio tiene una película. La instantánea inicial se conserva; los intervalos aceptados equilibran gas y líquido e intercambian calor con la pared finita.
 

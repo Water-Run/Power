@@ -27,14 +27,22 @@ U_eq(T) = (M_c + m_v) cv T + (M_f - m_v) u_l(T)
 
 Una soluzione scalare limitata usa l'energia di equilibrio monotona. Il calore della parete usa Euler implicito. Trasporto e lavoro del cilindro mobile hanno evidenza di convergenza del primo ordine. La coesistenza liquida resta nell'intervallo dichiarato. Dopo completa evaporazione al suo interno il gas può surriscaldarsi senza estrapolare la curva.
 
-Rail, serbatoi finiti e ingressi espongono `saturation_pressure` e `cavitation_margin` in Pa. Il margine è pressione assoluta locale meno saturazione alla temperatura liquida. Un margine negativo con liquido respinge l'intero lotto. Questo delimita l'alimentazione monofase; trasferimento vapore del serbatoio, bolle e flusso cavitante della pompa restano aperti.
+L'alimentazione predefinita respinge liquido sotto saturazione. Il serbatoio finito opzionale risolve il vapore sorgente con potenziali corretti. Rail e aspirazione trasportano ancora liquido separato; bolle e flusso cavitante richiedono altra fisica.
 
 Il confronto ammette solo arrotondamento binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-52`. Il margine riportato non viene limitato. È un controllo di saturazione globale; perdite locali e NPSH della pompa richiedono un modello di flusso risolto. Le verifiche indipendenti richiedono inoltre entropia totale non decrescente nel flash adiabatico e nello scambio con parete finita.
 
 ## Evidenza
 
-`equilibrium-fuel-cell` mostra condensazione, evaporazione da sfiato e nuova condensazione. `equilibrium-injected-cylinder` aggiunge equilibrio reversibile del ricevitore e margini al motore con serbatoio ventilato. Si verificano massimo d'entropia indipendente, limiti analitici, raffinamento ODE simultaneo, replay completo, rollback e allocazioni. Asset v30 conserva le proprietà e legge v1-v29.
+`equilibrium-fuel-cell` mostra condensazione, evaporazione da sfiato e nuova condensazione. `equilibrium-injected-cylinder` aggiunge equilibrio reversibile del ricevitore e margini al motore con serbatoio ventilato. Si verificano massimo d'entropia indipendente, limiti analitici, raffinamento ODE simultaneo, replay completo, rollback e allocazioni. Asset v31 conserva le proprietà e legge v1-v30.
 
 Parametri `unverified`. Non sono fornite proprietà misurate della benzina, cinetica multicomponente o a velocità finita, spostamento liquido/spray risolti o calibrazione OEM. L'accettazione reale Unity Editor/Play/Player/IL2CPP resta in attesa.
 
 [Cantera: species thermodynamics](https://www.cantera.org/stable/reference/thermo/species-thermo.html) · [Cantera: equilibrium](https://www.cantera.org/stable/python/thermo.html) · [VALIDATION.it.md](VALIDATION.it.md)
+
+## Equilibrio del serbatoio con volume liquido finito
+
+Impostare `liquid_fuel_tank.parameters.headspace.phase_equilibrium` a `true` per evaporazione e condensazione del serbatoio. Il film abbinato fornisce proprietà `phase_equilibrium`; il gas tracciato condivide R, cv, potere calorifico e stechiometria. Un serbatoio bagnato dichiara temperatura iniziale comune e pressione parziale satura, uno asciutto parte al massimo a saturazione. La densità totale resta inferiore a quella liquida.
+
+`evaporated_fuel_mass`, `condensed_fuel_mass` e `mass_flow` con segno contano il trasferimento netto per passo fisico. Leggere insieme `vapor_partial_pressure`, `saturation_pressure` corretta, inventario liquido e volume gas. La pompa aspira liquido separato; trasporto bifase, trascinamento di bolle e NPSH locale restano aperti.
+
+[Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)

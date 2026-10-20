@@ -98,7 +98,7 @@ public sealed partial class Simulation
                 DctControllers = model.DctControllers.Length != 0 ? new(model.DctControllers.Length) : null,
                 AtControllers = model.AtControllers.Length != 0 ? new(model.AtControllers.Length) : null,
                 LiquidFeeds = model.HasLiquidFeeds ? new(model.LiquidFeeds.Length,model.LiquidFuelInjectors.Length) : null,
-                LiquidTanks = model.HasLiquidTanks ? new(model.LiquidTanks.Length, model.HasTankHeadspaces) : null,
+                LiquidTanks = model.HasLiquidTanks ? new(model.LiquidTanks.Length, model.HasTankHeadspaces, model.HasEquilibriumTanks ? model : null) : null,
                 LiquidReturns = model.HasLiquidReturns ? new(model.LiquidReturns.Length) : null,
                 PositionCorrection = model.DctControllers.Length != 0 || model.Components.Any(c => c.Kind is ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear)
                     ? new double[model.DynamicCount] : null };
@@ -378,7 +378,7 @@ public sealed partial class Simulation
             s.Inputs[controller.Motor] = result.CommandVoltage;
         }
         Array.Clear(s.GearTorque, 0, s.GearTorque.Length);
-        s.Films?.BeginTick();s.Injectors?.BeginTick(); s.Converters?.BeginTick(); s.Hydraulic?.BeginTick();
+        s.LiquidTanks?.BeginTick();s.Films?.BeginTick();s.Injectors?.BeginTick(); s.Converters?.BeginTick(); s.Hydraulic?.BeginTick();
         s.LiquidInjectors?.Quota.BeginTick();
         s.Solenoids?.BeginTick();
         if (_clutches is null)
@@ -426,6 +426,7 @@ public sealed partial class Simulation
         if (s.Hydraulic is not null && !s.Hydraulic.EndTick(_model.Dt)) return false;
         if (s.Injectors is not null && !s.Injectors.EndTick(_model.Dt)) return false;
         if(s.Films is not null&&!s.Films.EndTick(_model.Dt))return false;
+        if(s.LiquidTanks is not null&&!s.LiquidTanks.EndTick(_model.Dt))return false;
         if (s.LiquidInjectors is not null && !s.LiquidInjectors.Quota.EndTick(_model.Dt)) return false;
         if (s.Solenoids is not null && !s.Solenoids.EndTick(_model.Dt)) return false;
         s.Time += _model.StepNanoseconds;
@@ -444,6 +445,7 @@ public sealed partial class Simulation
             if (_gears is not null && !_gears.Prepare(dt, dynamics, true)) return false;
             if (_mechanicalSolver is not null && !_mechanicalSolver.SetInterval(dt, dynamics, _gears)) return false;
         }
+        if (_model.HasEquilibriumTanks && !EquilibrateTanks(s)) return false;
         if (_model.HasLiquidTanks) _hydraulics!.PrepareLiquidSupply(s.LiquidTanks!,dt);
         if (_model.HasCoupledHydraulics) _converters!.PrepareHydraulics(s.Hydraulic!, s.Inputs, dt);
         if (_model.HasSolenoids) _converters!.PrepareSolenoids(s.Solenoids!, s.Inputs, dt);
@@ -460,6 +462,8 @@ public sealed partial class Simulation
             if (!_films.Advance(s.Films!, s.Mass, s.Energy, s.Mixture!, dt / 2, s.X, s.LiquidTanks)) return false;
         }
         if (splitGas && !_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture, s.Injectors, s.LiquidTanks)) return false;
+        if (_model.HasEquilibriumTanks)
+        { if (!EquilibrateTanks(s)) return false; _hydraulics!.PrepareLiquidSupply(s.LiquidTanks!, dt); }
         var force = _electrical?.Force ?? _model.ConstantForce;
         for (int i = 0; i < _mid.Length; ++i) _mid[i] = s.X[i] + 0.5 * dt * force[i];
         for (int i = 0; i < _model.ComponentCount; ++i)
@@ -523,6 +527,7 @@ public sealed partial class Simulation
                 }
             }
         if (_model.HasTankHeadspaces && !_hydraulics!.CommitHeadspaces(s.LiquidTanks!, s.Energy)) return false;
+        if (_model.HasEquilibriumTanks && !EquilibrateTanks(s)) return false;
         if (_model.HasEquilibriumFuelFilms && !LiquidPhasesValid(s)) return false;
         if (_gears is not null)
         {
@@ -644,6 +649,7 @@ public sealed partial class Simulation
             for (int w = 0; w < _temperature.Length; ++w) _temperature[w] += _gasSolver.WallHeat[w];
             intake += _gasSolver.ReservoirMass; enthalpy += _gasSolver.ReservoirEnthalpy;
         }
+        if (_model.HasEquilibriumTanks && !EquilibrateTanks(s)) return false;
         // Reverse the first half's operators, including films that share a finite wall.
         if (_films is not null && !_films.Advance(s.Films!, s.Mass, s.Energy, s.Mixture!, dt / 2, s.X, s.LiquidTanks, reverse: true)) return false;
         if (_liquidInjectors is not null)
@@ -1016,9 +1022,12 @@ public sealed partial class Simulation
                         Field.Pressure => LiquidSourcePressure(_state, _model.FeedByInjector[tank.Injector]),
                         Field.SaturationPressure => LiquidSourceSaturation(_state, _model.FeedByInjector[tank.Injector]),
                         Field.CavitationMargin => LiquidSourcePressure(_state, _model.FeedByInjector[tank.Injector]) - LiquidSourceSaturation(_state, _model.FeedByInjector[tank.Injector]),
+                        Field.EvaporatedFuelMass => state.Vaporized![tankSlot], Field.CondensedFuelMass => state.Condensed![tankSlot], Field.MassFlow => state.TickPhase![tankSlot],
+                        Field.VaporPartialPressure => GasPressure(_state, _model.TankHeadspaces[_model.HeadspaceByTank[tankSlot]].Gas) *
+                            _state.Mixture!.Fuel[_model.TankHeadspaces[_model.HeadspaceByTank[tankSlot]].Gas] / _state.Mass[_model.TankHeadspaces[_model.HeadspaceByTank[tankSlot]].Gas],
                         Field.HydraulicWork => state.HeadspaceWork![tankSlot],
                         Field.FillFraction => mass / tank.Density / _model.TankHeadspaces[_model.HeadspaceByTank[tankSlot]].Geometry.CapacityCubicMeters,
-                        Field.TankState=>mass==0?1:0,Field.Temperature=>mass==0?tank.InitialTemperature:_model.FuelFilms[_model.LiquidFuelInjectors[tank.Injector].Film].Law.Temperature(new(mass,state.Energy[tankSlot])),_=>double.NaN };
+                        Field.TankState=>mass==0?1:0,Field.Temperature=>LiquidSourceTemperature(_state, _model.FeedByInjector[tank.Injector]),_=>double.NaN };
                     destination[i]=new(Channels.Output(b.ObjectId,b.Field),value);continue;
                 }
                 int feedSlot=b.IsComponent?_model.FeedByComponent[b.Index]:-1;

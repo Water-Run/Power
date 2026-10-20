@@ -31,7 +31,7 @@ flowchart LR
 | Dokument | Worum es geht |
 |---|---|
 | [Agent-API](AGENT_API.de.md) | MCP-Werkzeuge, Revisionen, Fehler und die Operationsfolge |
-| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v30 und die Leser für v1 bis v29 |
+| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v31 und die Leser für v1 bis v30 |
 | [Native Zig-Grenze](NATIVE_ZIG.de.md) | Die archivierten Zig-Prototypen und das versionierte ABI |
 
 ## Motor und Kraftstoff
@@ -51,6 +51,7 @@ flowchart LR
 | [Schließvorhersage](CLOSURE_PREDICTION.de.md) | Begrenztes Strecken-Replay, das die Spannungsabschaltung plant |
 | [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md) | Starre Kapazität, endliche Gasdruckarbeit und explizite Entlüftung |
 | [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md) | Reversible Verdampfung/Kondensation, Sättigung und Flüssigkeitsgrenzen |
+| [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md) | Endliche Flüssigkeitsverdrängung, Druckkorrektur und dampfführende Entlüftung |
 
 ## Getriebe
 

@@ -241,8 +241,14 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 LiquidTankHeadspaceDefinition? headspace = null;
                 if (parameters.TryGetProperty("headspace", out var geometry))
                 {
-                    Object(geometry, ["capacity", "gas_node"]);
-                    headspace = new() { Capacity = Quantity(geometry.GetProperty("capacity")), GasNode = Id(geometry, "gas_node") };
+                    Object(geometry, ["capacity", "gas_node"], "phase_equilibrium");
+                    bool equilibrium = false;
+                    if (geometry.TryGetProperty("phase_equilibrium", out var flag))
+                    {
+                        if (flag.ValueKind is not (JsonValueKind.True or JsonValueKind.False)) throw new ArgumentException("headspace.phase_equilibrium must be a JSON boolean.");
+                        equilibrium = flag.GetBoolean();
+                    }
+                    headspace = new() { Capacity = Quantity(geometry.GetProperty("capacity")), GasNode = Id(geometry, "gas_node"), PhaseEquilibrium = equilibrium };
                 }
                 return result with{LiquidFuelTank=new(){InjectorComponent=Id(parameters,"injector_component"),InitialMass=Quantity(parameters.GetProperty("initial_mass")),InitialTemperature=Quantity(parameters.GetProperty("initial_temperature")),Headspace=headspace}};
             }

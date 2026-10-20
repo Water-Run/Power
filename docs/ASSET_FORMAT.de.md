@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 30
+## Aktuelle Version 31
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium` auf `true` setzen, um Tankverdampfung und -kondensation aufzulösen. Der gekoppelte Film liefert explizite `phase_equilibrium`-Stoffwerte; der verfolgte Gasraum teilt R, cv, Heizwert und Stöchiometrie. Ein nasser Tank startet mit gemeinsamer Temperatur und gesättigtem Kraftstoffpartialdruck, ein trockener höchstens bei Sättigung. Die Gesamtdichte liegt unter der Flüssigkeitsdichte.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md)
+
+## Beibehaltene Version 30
 
 Optionales `fuel_film.parameters.phase_equilibrium` deklariert `reference_pressure` in `pa` oder `bar` und `minimum_temperature` / `maximum_temperature` in `k`. `saturation_temperature` ist die Referenztemperatur; `latent_internal_energy` die Dampf-minus-Flüssigkeits-Innenenergie dort. Jeder Gleichgewichtsempfänger besitzt einen Film. Der erklärte Anfangssnapshot bleibt erhalten; akzeptierte Intervalle gleichen Gas und Flüssigkeit mit endlicher Wandwärme aus.
 

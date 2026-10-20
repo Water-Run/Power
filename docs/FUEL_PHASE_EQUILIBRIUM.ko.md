@@ -27,14 +27,22 @@ U_eq(T) = (M_c + m_v) cv T + (M_f - m_v) u_l(T)
 
 유계 스칼라 풀이가 단조 평형 에너지를 사용합니다. 유한 벽 열전달은 후진 Euler입니다. 수송 및 이동 실린더 일과의 연성에 1차 수렴 증거가 있습니다. 액체 공존은 지정 온도 구간 안에 있어야 합니다. 구간 안에서 완전히 증발한 기체는 과열될 수 있으며 포화 곡선을 외삽하지 않습니다.
 
-액체 레일, 유한 탱크와 공급 입구는 Pa 단위 `saturation_pressure`와 `cavitation_margin`을 제공합니다. 여유는 국소 절대압에서 액온의 포화압을 뺀 값입니다. 액체가 있고 여유가 음수이면 전체 배치를 거부합니다. 단상 공급 경계를 검사하며 탱크 증기 이동, 기포 동역학과 캐비테이션 펌프 유동은 미완성입니다.
+기본 액체 공급은 포화 이하 젖은 상태를 거부합니다. 선택 유한 탱크 평형은 압력 보정 화학 퍼텐셜로 공급 증기 이동을 풉니다. 레일과 흡입구는 여전히 분리 액체이며 기포 동반과 캐비테이션 수송은 추가 물리가 필요합니다.
 
 압력 비교는 binary64 반올림 범위 `64 * epsilon * max(p, p_sat)`만 허용하며 `epsilon = 2^-52`입니다. 보고 여유를 클램프하지 않습니다. 벌크 포화 검사이므로 국소 압력 손실과 펌프 NPSH에는 유동을 해상하는 모델이 필요합니다. 독립 검사에서는 단열 플래시와 유한 벽 열교환의 총엔트로피가 감소하지 않을 것도 요구합니다.
 
 ## 증거
 
-`equilibrium-fuel-cell`은 응축, 통기 증발과 재응축을 보여 줍니다. `equilibrium-injected-cylinder`는 통기 탱크 엔진에 가역 수용부 상평형과 공급 여유를 추가합니다. 독립 엔트로피 최대화, 해석적 극한, 연립 ODE 수렴, 완전 재현, 롤백과 할당 검사를 수행합니다. 자산 v30은 물성을 보존하고 v1-v29를 읽습니다.
+`equilibrium-fuel-cell`은 응축, 통기 증발과 재응축을 보여 줍니다. `equilibrium-injected-cylinder`는 통기 탱크 엔진에 가역 수용부 상평형과 공급 여유를 추가합니다. 독립 엔트로피 최대화, 해석적 극한, 연립 ODE 수렴, 완전 재현, 롤백과 할당 검사를 수행합니다. 자산 v31은 물성을 보존하고 v1-v30를 읽습니다.
 
 매개변수는 `unverified`입니다. 실측 가솔린 물성, 다성분 또는 유한 속도 상변화, 해상된 액체 변위/분무와 OEM 보정은 제공하지 않습니다. 실제 Unity Editor/Play/Player/IL2CPP 수용은 미완성입니다.
 
 [Cantera: species thermodynamics](https://www.cantera.org/stable/reference/thermo/species-thermo.html) · [Cantera: equilibrium](https://www.cantera.org/stable/python/thermo.html) · [VALIDATION.ko.md](VALIDATION.ko.md)
+
+## 유한 체적 연료 탱크 상평형
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium`을 `true`로 설정하면 탱크 증발과 응축을 풉니다. 연결 막이 명시적 `phase_equilibrium` 물성을 제공하며 추적 기체 공간은 R, cv, 발열량과 화학량론비를 공유합니다. 젖은 탱크는 공통 초기 온도와 포화 연료 분압, 마른 탱크는 포화 이하 분압을 선언합니다. 총밀도는 액체 밀도보다 낮습니다.
+
+탱크 `evaporated_fuel_mass`, `condensed_fuel_mass`와 부호 있는 `mass_flow`는 완전 물리 단계의 순 상이동을 누적합니다. `vapor_partial_pressure`, 보정 `saturation_pressure`, 액체 재고와 기체 체적을 함께 읽습니다. 펌프는 분리 액체만 흡입하며 2상 펌프/레일 수송, 기포 동반과 국소 NPSH는 미완성입니다.
+
+[유한 체적 연료 탱크 상평형](TANK_PHASE_EQUILIBRIUM.ko.md)

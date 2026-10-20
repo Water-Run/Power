@@ -278,3 +278,13 @@ Do not regenerate it with the current encoder.
 
 SHA-256: `e7f48291b8c9817af7d2eec61b989854d5200130cd4a0987f42e49c21d36d16d`.
 Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.
+
+## Equilibrium injected cylinder v30
+
+`equilibrium-injected-cylinder-v30.powerasset` was retained on 2026-10-20 from the
+unmodified v30 encoder and laboratory at commit `b91662388d1f09d72455531097bd88844c89f138`.
+It preserves receiver phase equilibrium and single-phase liquid-supply checks before
+the finite-volume tank phase flag. Keep these authentic bytes when extending the writer.
+
+SHA-256: `c246723026ac3cbdd69b3e0015b29a161d15c85865e94f3054507cd9c7bc2335`.
+Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.

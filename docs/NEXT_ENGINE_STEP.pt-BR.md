@@ -4,18 +4,18 @@
 
 ## Ponto de retomada
 
-O receptor suporta equilíbrio reversível e verificações de saturação do suprimento.
+O tanque resolve vapor de volume finito com potenciais corrigidos e captação líquida separada.
 
-[Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md)
+[Equilíbrio do tanque com volume líquido finito](TANK_PHASE_EQUILIBRIUM.pt-BR.md)
 
 ## Próximo incremento
 
-Resolver em seguida transferência de vapor do tanque e fluxo bifásico bomba/trilho com propriedades explícitas e acoplamento conservativo volume/trabalho. Manter ausentes as medições OEM faltantes. Ignição, admissão/escape, perdas mecânicas e coordenação ECU/TCU continuam trabalhos separados.
+Resolver depois fluxo bifásico e perdas locais com propriedades explícitas e acoplamento conservativo de volume, momento e trabalho. Manter ausentes as medições OEM faltantes. Continuar separadamente ignição, admissão/escape, perdas mecânicas e ECU/TCU.
 
 ## Aceitação
 
 Exigir referências analíticas/limite independentes, balanços completos de massa/energia e refinamento apropriado. Preservar rollback do lote, cancelamento, ramos, canais estáveis, replay portável e leitores antigos. Continuar depois ignição, admissão/escape, perdas mecânicas, transmissão e coordenação ECU/TCU.
 
-Parâmetros `unverified`. Não são fornecidas propriedades medidas de gasolina, cinética multicomponente ou de velocidade finita, deslocamento líquido/spray resolvidos ou calibração OEM. A aceitação real Unity Editor/Play/Player/IL2CPP continua pendente.
+Casos acoplados de bomba, calor e ventilação demonstram primeira ordem. As duas fases da fonte ficam no intervalo declarado; densidade total abaixo da líquida com margem binary64. Densidade/propriedades constantes, equilíbrio instantâneo e interface plana são aproximações de pesquisa. Misturas reais, tensão superficial, sloshing, cinética finita, calibração medida e Unity Editor/Play/Player/IL2CPP real seguem não verificados.
 
 [DEVELOPMENT_STATUS.pt-BR.md](DEVELOPMENT_STATUS.pt-BR.md) · [ROADMAP.pt-BR.md](ROADMAP.pt-BR.md) · [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md)

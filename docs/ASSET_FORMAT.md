@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 30
+## Current version 31
+
+Set `liquid_fuel_tank.parameters.headspace.phase_equilibrium` to `true` to resolve tank evaporation and condensation. The paired film supplies explicit `phase_equilibrium` material properties; the tracked headspace shares its R, cv, heating value and stoichiometric ratio. Declare a common initial gas/liquid temperature and saturated fuel partial pressure for a wet tank; a dry tank starts at or below saturation. Its total inventory density stays below liquid density.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)
+
+## Retained version 30
 
 Optional `fuel_film.parameters.phase_equilibrium` declares `reference_pressure` in `pa` or `bar`, and `minimum_temperature` / `maximum_temperature` in `k`. Existing `saturation_temperature` is the reference temperature; `latent_internal_energy` is the vapor-minus-liquid internal energy there. One film owns each equilibrium receiver. The authored initial snapshot is retained; accepted intervals equilibrate gas and liquid and exchange heat with the finite wall.
 

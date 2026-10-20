@@ -493,7 +493,7 @@ remain separate from AT feedback/control and measured valve-body acceptance.
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v30 retains routes, gains and clocks and reads v1-v29.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v31 retains routes, gains and clocks and reads v1-v30.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -503,9 +503,9 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v30 retains feed links and source temperature and reads v1-v29. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v31 retains feed links and source temperature and reads v1-v30. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
-This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
 [PUMP_FED_FUEL.md](PUMP_FED_FUEL.md)
 
@@ -515,7 +515,7 @@ This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydro
 
 Tank caloric and chemical energy enter the complete stored-energy ledger. Tank-to-rail transfer adds no external mass or chemical supply. The explicit prescribed pump inlet pressure retains its pressure-work boundary. Gas inlet/exhaust can still carry chemical boundary energy.
 
-This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
 [LIQUID_FUEL_TANK.md](LIQUID_FUEL_TANK.md)
 
@@ -544,3 +544,11 @@ A bounded scalar solve uses the monotone equilibrium energy relation. Finite-wal
 `mass_flow` is the signed net phase transfer over the complete physical tick. `evaporated_fuel_mass` and `condensed_fuel_mass` accumulate its positive and negative mass amounts, so canceling split-operator projections are not counted twice. `vapor_partial_pressure` reports the receiver fuel partial pressure. Thermal, mass and chemical ledgers include both phases.
 
 [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)
+
+## Finite-volume fuel tank equilibrium
+
+The rigid vessel contains incompressible liquid and an ideal pseudo-species/carrier gas. Liquid volume changes the gas volume. The liquid chemical potential includes `p/rho`, so the receiver's negligible-displacement saturation reference `p_0(T)` receives a pressure correction. `reference_pressure` retains that material-reference meaning; it is not silently reinterpreted as the finite-density pure-fluid saturation pressure.
+
+A bounded constant-U,V flash conserves total fuel and thermal energy. Explicit gas orifices carry vapor, carrier gas and chemical energy; gas heat links exchange heat with finite thermal nodes. The pump/return solve exchanges displacement work with the gas, then phase equilibration redistributes internal energy. Its `hydraulic_work` channel records pump-displacement work, excluding internal phase-change work.
+
+[Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)

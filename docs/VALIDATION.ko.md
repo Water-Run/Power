@@ -2,6 +2,85 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: 유한 체적 연료 탱크 상평형
+
+필수 직렬 검증이 로컬 Windows x64/.NET 10.0.12에서 통과했습니다. Standard 어셈블리 검사는 .NET 10에서 실행하며 실제 Unity Editor/Play/Player/IL2CPP는 미검증 상태입니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 440/440 |
+| standard_checks_on_dotnet | 336/336 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 46 |
+| matching_sample_boundaries | 6936 |
+| physical_transaction_groups | 9 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| coupled_convergence_order | 1 |
+| entropy_tolerance_j_k | 1e-10 |
+| density_roundoff_relative | 1.4210854715202004e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+| v30_fixture_sha256 | c246723026ac3cbdd69b3e0015b29a161d15c85865e94f3054507cd9c7bc2335 |
+| verification_log_sha256 | 6196f11e31d3c548f283d29d418511d894c33f8d87acaa006eb3e43f3b497526 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| json_schema_laboratories | 48 |
+| audited_documents | 170 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | b91662388d1f09d72455531097bd88844c89f138 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-tank-supply | equilibrium-tank-fired-cylinder |
+|---|---|---|
+| duration_s | 0.2 | 0.6 |
+| boundaries | 41 | 65 |
+| states | 53 | 66 |
+| step_ns | 50000 | 50000 |
+| fingerprint | 6b0e2b783c7a15f0 | 728ba5f64eee747d |
+| final_state_hash | ac64c4b2775b90be | 5091b6a989d113d0 |
+| source_sha256 | 2af17736879d3aa414fb9c8b315395ecbc10705ca7824d00757f1bd1f1e53a0c | a326896a2961c136cd8a768761654eae929798f02bbbd65792d3853fe097be5d |
+| report_sha256 | a77fea120565de9e1c3cd91201197722bd5fd31c8635b6042abb0faafd2931b3 | bb1e7fa5174d155e910b93098036e1f789f6278efbd1f6076dba3286bb6962d2 |
+| max_sampled_energy_j | 6.318146006378811e-11 | 1.5166961020440795e-09 |
+| max_sampled_mass_kg | 1.5459798853462949e-18 | 1.6805133673525319e-18 |
+| max_sampled_fuel_kg | 1.5458351287390981e-18 | 1.7957098481791167e-18 |
+| max_sampled_hydraulic_volume_m3 | 2.2515856273693413e-21 | 1.885971796620903e-21 |
+| final_evaporated_mass_kg | 4.117877458589608e-09 | 1.1639868253621372e-08 |
+| final_condensed_mass_kg | 3.838295431368862e-09 | 9.507104670266502e-09 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| pump | 1.184041877877462e-08, 5.923758976678073e-09, 2.9627648245877937e-09, 1.4816043858445482e-09 | 1.9988015760584663, 1.9994023580667557, 1.9997003605648416 |
+| vent_wall | 9.169745130691354e-05, 5.2209148699944306e-05, 2.6098838144434922e-05, 1.304798024250431e-05 | 1.7563483333910663, 2.000439575547807, 2.00022054443468 |
+
+`equilibrium-tank-supply`는 역회전, 연료 통기와 유한 가열 벽을 검사합니다. `equilibrium-tank-fired-cylinder`는 같은 공급을 연소 엔진에 연결합니다. 독립 엔트로피 최대화, 화학 퍼텐셜/열용량 미분, 연립 ODE 수렴, 완전 수지, 재현, 롤백과 할당을 검증합니다. 자산 v31은 플래그를 보존하고 v1-v30을 읽습니다.
+
+- `artifacts/reports/tank-phase-verified-2026-10-20.log`
+- `artifacts/reports/tank-phase-evidence-2026-10-20.json`
+- `artifacts/reports/tank-phase-baseline-replays-2026-10-20.json`
+- `artifacts/reports/tank-phase-schema-audit-2026-10-20.json`
+- `artifacts/reports/tank-phase-doc-audit-2026-10-20.json`
+- `artifacts/reports/equilibrium-tank-supply.json`
+- `artifacts/reports/equilibrium-tank-fired-cylinder.json`
+- `tests/Power.Tests/Fixtures/equilibrium-injected-cylinder-v30.powerasset`
+
+펌프·열·통기 연성 예는 1차 수렴을 보입니다. 공급의 두 상은 지정 물성 온도 구간 안에 있고 총밀도는 binary64 반올림 여유를 두고 액체보다 낮습니다. 일정 밀도/공통 기체 물성, 순간 평형과 평면 계면은 연구 근사입니다. 실제 혼합물, 표면장력, 슬로싱, 유한 속도, 실측 보정과 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
+
+[TANK_PHASE_EQUILIBRIUM.ko.md](TANK_PHASE_EQUILIBRIUM.ko.md)
+
 ## 2026-10-13: 연료 상평형과 액체 공급 경계
 
 필수 직렬 검증이 로컬 Windows x64/.NET 10.0.12에서 통과했습니다. Standard 어셈블리 검사는 .NET 10에서 실행하며 실제 Unity Editor/Play/Player/IL2CPP는 미검증 상태입니다.

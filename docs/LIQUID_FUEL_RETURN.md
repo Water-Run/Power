@@ -12,11 +12,11 @@ Read `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_heat
 
 ## Evidence and limits
 
-`recirculating-liquid-cylinder` and `recirculating-needle-cylinder` retain finite fuel, actual injection, evaporation and optional needle dynamics. Asset v30 retains return links and heat fraction and reads v1-v29. Each return adds 8 states within the unchanged model bounds.
+`recirculating-liquid-cylinder` and `recirculating-needle-cylinder` retain finite fuel, actual injection, evaporation and optional needle dynamics. Asset v31 retains return links and heat fraction and reads v1-v30. Each return adds 8 states within the unchanged model bounds.
 
 Independent relief decay/pressure work and simultaneous mechanical, pressure and thermal refinement, heat fractions, multiple routes, external boundaries, every-boundary replay, rollback and allocation checks pass. Liquid boiling and unresolved transport intervals fail the entire batch.
 
-This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, vapor-phase equilibrium, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
 [VALIDATION.md](VALIDATION.md)
 
@@ -28,8 +28,16 @@ This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydro
 
 ## Fuel phase equilibrium and liquid supply limits
 
-Liquid rails, finite tanks and feed inlets expose `saturation_pressure` and `cavitation_margin` in Pa. The margin is local absolute pressure minus saturation pressure at liquid temperature. A negative margin with liquid inventory rejects the whole batch. These checks mark the boundary of the single-phase supply model; tank vapor transfer, bubble dynamics and cavitating pump flow remain open.
+The default liquid-supply model rejects wet states below saturation. Optional finite-volume tank equilibrium instead resolves source vapor transfer with pressure-corrected chemical potentials. The rail and pump pickup still carry separated liquid; bubble entrainment and cavitating pump/rail flow require further physics.
 
 The pressure comparison allows only binary64 roundoff: `64 * epsilon * max(p, p_sat)`, with `epsilon = 2^-52`. It doesn't clamp the reported margin. This is a bulk saturation check; local pressure losses and pump NPSH require a resolved flow model. Independent checks also require nondecreasing total entropy for adiabatic flash and finite-wall exchange.
 
 [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)
+
+## Finite-volume fuel tank equilibrium
+
+Set `liquid_fuel_tank.parameters.headspace.phase_equilibrium` to `true` to resolve tank evaporation and condensation. The paired film supplies explicit `phase_equilibrium` material properties; the tracked headspace shares its R, cv, heating value and stoichiometric ratio. Declare a common initial gas/liquid temperature and saturated fuel partial pressure for a wet tank; a dry tank starts at or below saturation. Its total inventory density stays below liquid density.
+
+Tank `evaporated_fuel_mass`, `condensed_fuel_mass` and signed `mass_flow` count net phase transfer per complete physical tick. Read `vapor_partial_pressure`, pressure-corrected `saturation_pressure`, liquid inventory and gas volume together. The pump picks up separated liquid only; two-phase pump/rail transport, entrainment and local NPSH remain open.
+
+[Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)

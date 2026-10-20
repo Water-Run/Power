@@ -6494,6 +6494,9 @@
                   "type": "integer",
                   "minimum": 1,
                   "maximum": 4294967295
+                },
+                "phase_equilibrium": {
+                  "type": "boolean"
                 }
               }
             }

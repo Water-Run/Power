@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione attuale 30
+## Versione attuale 31
+
+Impostare `liquid_fuel_tank.parameters.headspace.phase_equilibrium` a `true` per evaporazione e condensazione del serbatoio. Il film abbinato fornisce proprietà `phase_equilibrium`; il gas tracciato condivide R, cv, potere calorifico e stechiometria. Un serbatoio bagnato dichiara temperatura iniziale comune e pressione parziale satura, uno asciutto parte al massimo a saturazione. La densità totale resta inferiore a quella liquida.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)
+
+## Versione conservata 30
 
 L'opzione `fuel_film.parameters.phase_equilibrium` dichiara `reference_pressure` in `pa` o `bar` e `minimum_temperature` / `maximum_temperature` in `k`. `saturation_temperature` è la temperatura di riferimento; `latent_internal_energy` la differenza di energia interna vapore-liquido a tale temperatura. Ogni ricevitore in equilibrio ha un film. Lo snapshot iniziale resta dichiarato; gli intervalli accettati equilibrano gas e liquido con scambio verso la parete finita.
 

@@ -42,7 +42,7 @@ O Windows usa o mesmo comando `dotnet` e um caminho absoluto para a DLL. Uma con
 
 ## Ferramentas e resultados
 
-Na API de agente versão 0.35.0, `get_example_model` aceita um `name` opcional, com padrão `electrothermal`. `get_capabilities.examples` lista os 45 exemplos, incluindo tanque finito e recirculação. CLI `list-labs` retorna os 46 laboratórios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` é exclusivo da CLI por projeto. As capacidades também anunciam componentes, fidelidade, limites do solver e entradas. Exports usam `power.asset.v30`, mantendo leitores v1-v29. Validação e criação de sessão retornam canais e unidades. KPI aprovados não estabelecem um powertrain completo ou calibrado.
+Na API de agente versão 0.36.0, `get_example_model` aceita um `name` opcional, com padrão `electrothermal`. `get_capabilities.examples` lista os 47 exemplos, incluindo tanque finito e recirculação. CLI `list-labs` retorna os 48 laboratórios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` é exclusivo da CLI por projeto. As capacidades também anunciam componentes, fidelidade, limites do solver e entradas. Exports usam `power.asset.v31`, mantendo leitores v1-v30. Validação e criação de sessão retornam canais e unidades. KPI aprovados não estabelecem um powertrain completo ou calibrado.
 
 | Ferramenta | Finalidade |
 |---|---|
@@ -292,7 +292,7 @@ Os relatórios conservam pressão de linha/câmara, curso, capacidade de contato
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v30 preserva rotas, ganhos e relógios e lê v1-v29.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v31 preserva rotas, ganhos e relógios e lê v1-v30.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -302,9 +302,9 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v30 preserva conexões e temperatura da fonte e lê v1-v29. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v31 preserva conexões e temperatura da fonte e lê v1-v30. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
-Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, equilíbrio de fases, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
+Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
 [PUMP_FED_FUEL.pt-BR.md](PUMP_FED_FUEL.pt-BR.md)
 
@@ -314,7 +314,7 @@ Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hid
 
 Energias térmica e química do tanque entram no armazenamento completo. Transferência interna não adiciona massa ou energia química externa. A pressão de entrada prescrita mantém sua fronteira de trabalho de pressão. Admissão/escape gasoso ainda podem transportar energia química.
 
-Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, equilíbrio de fases, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
+Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
 [LIQUID_FUEL_TANK.pt-BR.md](LIQUID_FUEL_TANK.pt-BR.md)
 
@@ -340,8 +340,16 @@ A opção `fuel_film.parameters.phase_equilibrium` declara `reference_pressure` 
 
 `mass_flow` é a transferência líquida com sinal do passo físico completo. `evaporated_fuel_mass` e `condensed_fuel_mass` acumulam suas massas positiva e negativa sem duplicar projeções que se cancelam. `vapor_partial_pressure` mostra a pressão parcial do combustível. Balanços térmicos, de massa e químicos incluem ambas as fases.
 
-Trilhos, tanques finitos e entradas expõem `saturation_pressure` e `cavitation_margin` em Pa. A margem é pressão absoluta local menos saturação na temperatura líquida. Margem negativa com líquido rejeita todo o lote. Isso delimita o suprimento monofásico; transferência de vapor do tanque, bolhas e fluxo cavitante da bomba continuam abertos.
+O suprimento padrão rejeita líquido sob saturação. O tanque finito opcional resolve vapor da fonte com potenciais corrigidos por pressão. Trilho e captação ainda levam líquido separado; bolhas e fluxo cavitante precisam de mais física.
 
 A comparação só admite arredondamento binary64: `64 * epsilon * max(p, p_sat)`, com `epsilon = 2^-52`. A margem informada não é limitada. É uma verificação de saturação global; perdas locais e NPSH da bomba exigem modelo de fluxo resolvido. As verificações independentes também exigem entropia total não decrescente no flash adiabático e na troca com parede finita.
 
 [Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md)
+
+## Equilíbrio do tanque com volume líquido finito
+
+Definir `liquid_fuel_tank.parameters.headspace.phase_equilibrium` como `true` para resolver evaporação e condensação do tanque. O filme pareado fornece propriedades `phase_equilibrium`; o gás rastreado compartilha R, cv, poder calorífico e estequiometria. Tanque molhado declara temperatura inicial comum e pressão parcial saturada; tanque seco começa no máximo em saturação. A densidade total fica abaixo da líquida.
+
+`evaporated_fuel_mass`, `condensed_fuel_mass` e `mass_flow` com sinal contam transferência líquida de fase por passo físico. Ler juntos `vapor_partial_pressure`, `saturation_pressure` corrigida, inventário líquido e volume gasoso. A bomba capta líquido separado; transporte bifásico, arraste de bolhas e NPSH local seguem abertos.
+
+[Equilíbrio do tanque com volume líquido finito](TANK_PHASE_EQUILIBRIUM.pt-BR.md)

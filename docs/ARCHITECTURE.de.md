@@ -250,7 +250,7 @@ Die [Baugruppe der AT-Ansteuerung](AT_HYDRAULIC_ACTUATION.de.md) senkt 1..6 erkl
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v30 speichert Routen, Verstärkungen und Uhren und liest v1-v29.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v31 speichert Routen, Verstärkungen und Uhren und liest v1-v30.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -260,9 +260,9 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v30 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v29. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v31 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v30. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
-Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Phasengleichgewicht, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
+Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
 [PUMP_FED_FUEL.de.md](PUMP_FED_FUEL.de.md)
 
@@ -272,7 +272,7 @@ Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/
 
 Kalorische und chemische Tankenergie gehören zur gesamten Speicherung. Interner Transfer fügt keine äußere Masse oder chemische Versorgung hinzu. Der erklärte Einlassdruck behält seine Druckarbeitsgrenze. Gaseinlass/-auslass kann weiterhin chemische Grenzenergie tragen.
 
-Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Phasengleichgewicht, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
+Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
 [LIQUID_FUEL_TANK.de.md](LIQUID_FUEL_TANK.de.md)
 
@@ -301,3 +301,11 @@ Eine begrenzte skalare Lösung nutzt die monotone Gleichgewichtsenergie. Endlich
 `mass_flow` ist der vorzeichenbehaftete Nettophasentransfer des vollständigen Physikschritts. `evaporated_fuel_mass` und `condensed_fuel_mass` summieren positive und negative Massen, ohne sich aufhebende Teilprojektionen doppelt zu zählen. `vapor_partial_pressure` zeigt den Kraftstoffpartialdruck. Wärme-, Masse- und Chemiebilanzen enthalten beide Phasen.
 
 [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)
+
+## Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen
+
+Der starre Behälter enthält inkompressible Flüssigkeit und ideales Pseudospezies/Trägergas. Flüssigkeitsvolumen ändert Gasvolumen. Das chemische Flüssigkeitspotenzial enthält `p/rho`; die Empfängerreferenz `p_0(T)` für vernachlässigbare Verdrängung wird druckkorrigiert. `reference_pressure` behält diese Stoffreferenz und wird nicht still als reale Sättigung des endlichen Reinstoffs umgedeutet.
+
+Ein begrenzter Flash bei konstantem U,V erhält Kraftstoff und Wärmeenergie. Explizite Gasdrosseln transportieren Dampf, Träger und chemische Energie; Wärmewege koppeln endliche Knoten. Pumpe/Rücklauf tauschen Verdrängungsarbeit mit dem Gas, danach verteilt das Gleichgewicht Innenenergie. `hydraulic_work` zählt Pumpenverdrängung ohne interne Phasenarbeit.
+
+[Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md)

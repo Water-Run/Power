@@ -4,18 +4,18 @@
 
 ## Point de reprise
 
-Le récepteur prend en charge l'équilibre réversible et les contrôles de saturation de l'alimentation.
+Le réservoir résout le transfert vapeur à volume fini avec potentiels corrigés et aspiration liquide séparée.
 
-[Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md)
+[Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md)
 
 ## Prochaine étape
 
-Résoudre ensuite transfert vapeur du réservoir et écoulement diphasique pompe/rail avec propriétés explicites et couplage volume/travail conservatif. Garder les mesures OEM manquantes. Allumage, admission/échappement, pertes mécaniques et coordination ECU/TCU restent des travaux distincts.
+Résoudre ensuite le débit diphasique pompe/rail et les pertes d'entrée avec propriétés explicites et couplage conservatif volume, quantité de mouvement et travail. Garder les mesures OEM manquantes. Continuer séparément allumage, admission/échappement, pertes mécaniques et ECU/TCU.
 
 ## Acceptation
 
 Exiger références analytiques ou limites indépendantes, bilans complets masse/énergie et raffinement du pas adapté. Préserver retour arrière complet, annulation, branches, canaux stables, rejeu portable et anciens lecteurs. Continuer ensuite allumage, admission/échappement, pertes mécaniques, transmission et coordination ECU/TCU.
 
-Paramètres `unverified`. Propriétés d'essence mesurées, cinétique multiphase multicomposant ou à vitesse finie, déplacement liquide/pulvérisation résolus et calibration OEM ne sont pas fournis. L'acceptation réelle Unity Editor/Play/Player/IL2CPP reste en attente.
+Les exemples couplés pompe/chaleur/évent montrent un raffinement du premier ordre. Les deux phases sources restent dans l'intervalle thermique déclaré et sous la densité liquide avec marge d'arrondi binary64. Densité et propriétés gazeuses constantes, équilibre instantané et interface plane sont des approximations de recherche. Mélanges réels, tension superficielle, ballottement, cinétique finie, calibration mesurée et Unity Editor/Play/Player/IL2CPP réel restent non vérifiés.
 
 [DEVELOPMENT_STATUS.fr.md](DEVELOPMENT_STATUS.fr.md) · [ROADMAP.fr.md](ROADMAP.fr.md) · [VALIDATION.fr.md](VALIDATION.fr.md)

@@ -46,6 +46,8 @@
     { "name": "fired-converter", "asset_name": "FiredConverter", "display_name": "Fired torque converter laboratory", "agent_example": true },
     { "name": "fired-planetary", "asset_name": "FiredPlanetary", "display_name": "Fired planetary transmission laboratory", "agent_example": true },
     {"name": "equilibrium-fuel-cell", "asset_name": "EquilibriumFuelCell", "display_name": "Reversible fuel phase equilibrium laboratory", "agent_example": true},
-    {"name": "equilibrium-injected-cylinder", "asset_name": "EquilibriumInjectedCylinder", "display_name": "Equilibrium fuel injection engine laboratory", "agent_example": true}
+    {"name": "equilibrium-injected-cylinder", "asset_name": "EquilibriumInjectedCylinder", "display_name": "Equilibrium fuel injection engine laboratory", "agent_example": true},
+    {"name": "equilibrium-tank-supply", "asset_name": "EquilibriumTankSupply", "display_name": "Finite-volume equilibrium tank supply laboratory", "agent_example": true},
+    {"name": "equilibrium-tank-fired-cylinder", "asset_name": "EquilibriumTankFiredCylinder", "display_name": "Finite-volume equilibrium tank engine laboratory", "agent_example": true}
   ]
 }

@@ -20,9 +20,9 @@ Kalorische und chemische Tankenergie gehören zur gesamten Speicherung. Interner
 
 ## Nachweise und Grenzen
 
-v30 speichert Tank und Speisewahl und liest v1-v29. Jeder Tank fügt 4 Zustände innerhalb gleicher Grenzen hinzu. Unabhängiger Nass-Austausch, analytischer Leerdruck/Wellenenergie, Rückmischung, vollständige Bilanzen, rollback, Zweige und allokationsfreie Schritte sind geprüft.
+v31 speichert Tank und Speisewahl und liest v1-v30. Jeder Tank fügt 4 Zustände innerhalb gleicher Grenzen hinzu. Unabhängiger Nass-Austausch, analytischer Leerdruck/Wellenenergie, Rückmischung, vollständige Bilanzen, rollback, Zweige und allokationsfreie Schritte sind geprüft.
 
-Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Phasengleichgewicht, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
+Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
 [VALIDATION.de.md](VALIDATION.de.md)
 
@@ -36,8 +36,16 @@ Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/
 
 ## Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen
 
-Rails, endliche Tanks und Zuläufe liefern `saturation_pressure` und `cavitation_margin` in Pa. Die Reserve ist lokaler Absolutdruck minus Sättigungsdruck bei Flüssigkeitstemperatur. Negative Reserve bei Flüssigkeitsinventar verwirft den ganzen Batch. Das begrenzt das einphasige Versorgungsmodell; Tankdampftransfer, Blasen und kavitierende Pumpenströmung bleiben offen.
+Die Standardversorgung verwirft Flüssigkeit unter Sättigung. Optionales endliches Tankgleichgewicht löst Quellendampftransfer mit druckkorrigierten Potenzialen. Rail und Ansaugung führen weiter getrennte Flüssigkeit; Blasenmitnahme und kavitierende Strömung benötigen weitere Physik.
 
 Der Druckvergleich erlaubt nur binary64-Rundung: `64 * epsilon * max(p, p_sat)` mit `epsilon = 2^-52`. Die ausgegebene Reserve wird nicht geklemmt. Es ist eine Bulk-Sättigungsprüfung; lokale Druckverluste und Pumpen-NPSH benötigen ein aufgelöstes Strömungsmodell. Unabhängige Prüfungen fordern außerdem nicht abnehmende Gesamtentropie bei adiabatischem Flash und endlichem Wandwärmeaustausch.
 
 [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)
+
+## Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium` auf `true` setzen, um Tankverdampfung und -kondensation aufzulösen. Der gekoppelte Film liefert explizite `phase_equilibrium`-Stoffwerte; der verfolgte Gasraum teilt R, cv, Heizwert und Stöchiometrie. Ein nasser Tank startet mit gemeinsamer Temperatur und gesättigtem Kraftstoffpartialdruck, ein trockener höchstens bei Sättigung. Die Gesamtdichte liegt unter der Flüssigkeitsdichte.
+
+Tank-`evaporated_fuel_mass`, `condensed_fuel_mass` und vorzeichenbehafteter `mass_flow` zählen Nettophasentransfer pro vollständigem Physikschritt. `vapor_partial_pressure`, korrigierten `saturation_pressure`, Flüssigkeitsinventar und Gasvolumen zusammen lesen. Die Pumpe saugt getrennte Flüssigkeit; zweiphasiger Transport, Blasenmitnahme und lokaler NPSH bleiben offen.
+
+[Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md)

@@ -16,18 +16,35 @@ public sealed record LiquidFuelTankDefinition
 internal sealed record CompiledLiquidTank(int Component, int Injector, double InitialMass,
     double InitialTemperature, double InitialEnergy, double Density, double HeatingValue);
 
-internal sealed class LiquidTankState(int count, bool headspaces = false)
+internal sealed class LiquidTankState(int count, bool headspaces = false, CompiledModel? equilibriumModel = null)
 {
     internal readonly double[] Mass = new double[count], MassCorrection = new double[count];
     internal readonly double[] Energy = new double[count], EnergyCorrection = new double[count];
     internal readonly double[]? HeadspaceWork = headspaces ? new double[count] : null;
     internal readonly double[]? WorkCorrection = headspaces ? new double[count] : null;
+    internal readonly double[]? Vaporized = equilibriumModel is null ? null : new double[count], VaporCorrection = equilibriumModel is null ? null : new double[count];
+    internal readonly double[]? Condensed = equilibriumModel is null ? null : new double[count], CondensedCorrection = equilibriumModel is null ? null : new double[count];
+    internal readonly double[]? TickPhase = equilibriumModel is null ? null : new double[count];
+    internal void BeginTick() { if (TickPhase is not null) Array.Clear(TickPhase, 0, count); }
+    internal bool EndTick(double duration)
+    {
+        if (TickPhase is not null)
+            for (int i = 0; i < count; ++i)
+            {
+                if (TickPhase[i] >= 0) Numeric.Accumulate(TickPhase[i], ref Vaporized![i], ref VaporCorrection![i]);
+                else Numeric.Accumulate(-TickPhase[i], ref Condensed![i], ref CondensedCorrection![i]);
+                TickPhase[i] /= duration;
+            }
+        return Finite();
+    }
     internal void CopyFrom(LiquidTankState other)
     {
         Array.Copy(other.Mass, Mass, Mass.Length); Array.Copy(other.MassCorrection, MassCorrection, Mass.Length);
         Array.Copy(other.Energy, Energy, Mass.Length); Array.Copy(other.EnergyCorrection, EnergyCorrection, Mass.Length);
         if (HeadspaceWork is not null)
         { Array.Copy(other.HeadspaceWork!, HeadspaceWork, Mass.Length); Array.Copy(other.WorkCorrection!, WorkCorrection!, Mass.Length); }
+        if (TickPhase is not null)
+        { Array.Copy(other.TickPhase!, TickPhase, count); Array.Copy(other.Vaporized!, Vaporized!, count); Array.Copy(other.VaporCorrection!, VaporCorrection!, count); Array.Copy(other.Condensed!, Condensed!, count); Array.Copy(other.CondensedCorrection!, CondensedCorrection!, count); }
     }
     internal ulong Hash(ulong hash)
     {
@@ -36,6 +53,7 @@ internal sealed class LiquidTankState(int count, bool headspaces = false)
             hash = Numeric.Hash(hash, Mass[i]); hash = Numeric.Hash(hash, MassCorrection[i]);
             hash = Numeric.Hash(hash, Energy[i]); hash = Numeric.Hash(hash, EnergyCorrection[i]);
             if (HeadspaceWork is not null) { hash = Numeric.Hash(hash, HeadspaceWork[i]); hash = Numeric.Hash(hash, WorkCorrection![i]); }
+            if (TickPhase is not null) { hash=Numeric.Hash(hash,TickPhase[i]);hash=Numeric.Hash(hash,Vaporized![i]);hash=Numeric.Hash(hash,VaporCorrection![i]);hash=Numeric.Hash(hash,Condensed![i]);hash=Numeric.Hash(hash,CondensedCorrection![i]); }
         }
         return hash;
     }
@@ -44,6 +62,8 @@ internal sealed class LiquidTankState(int count, bool headspaces = false)
         for (int i = 0; i < Mass.Length; ++i)
             if (!GearReference.Finite(Mass[i], MassCorrection[i], Energy[i], EnergyCorrection[i]) || Mass[i] < 0 || Mass[i] == 0 && Energy[i] != 0 ||
                 HeadspaceWork is not null && (!Numeric.Finite(HeadspaceWork[i]) || !Numeric.Finite(WorkCorrection![i]))) return false;
+        if (TickPhase is not null)
+            for (int i=0;i<count;++i) if (!GearReference.Finite(TickPhase[i],Vaporized![i],VaporCorrection![i],Condensed![i]) || !Numeric.Finite(CondensedCorrection![i]) || Vaporized[i]<0 || Condensed[i]<0) return false;
         return true;
     }
 }

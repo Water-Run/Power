@@ -12,11 +12,11 @@ Leggere `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_h
 
 ## Evidenze e limiti
 
-`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` conservano combustibile finito, iniezione reale, evaporazione e ago opzionale. v30 salva collegamenti/quota e legge v1-v29. Ogni ritorno aggiunge 8 stati nei limiti invariati.
+`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` conservano combustibile finito, iniezione reale, evaporazione e ago opzionale. v31 salva collegamenti/quota e legge v1-v30. Ogni ritorno aggiunge 8 stati nei limiti invariati.
 
 Decadimento/lavoro indipendenti, raffinamento meccanica/pressione/termica simultaneo, quote, percorsi, confini esterni, replay, rollback e allocazioni passano. Ebollizione o intervallo non risolto fa fallire l'intero lotto.
 
-Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, equilibrio di fase, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
 [VALIDATION.it.md](VALIDATION.it.md)
 
@@ -28,8 +28,16 @@ Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma 
 
 ## Equilibrio di fase del carburante e limiti di alimentazione
 
-Rail, serbatoi finiti e ingressi espongono `saturation_pressure` e `cavitation_margin` in Pa. Il margine è pressione assoluta locale meno saturazione alla temperatura liquida. Un margine negativo con liquido respinge l'intero lotto. Questo delimita l'alimentazione monofase; trasferimento vapore del serbatoio, bolle e flusso cavitante della pompa restano aperti.
+L'alimentazione predefinita respinge liquido sotto saturazione. Il serbatoio finito opzionale risolve il vapore sorgente con potenziali corretti. Rail e aspirazione trasportano ancora liquido separato; bolle e flusso cavitante richiedono altra fisica.
 
 Il confronto ammette solo arrotondamento binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-52`. Il margine riportato non viene limitato. È un controllo di saturazione globale; perdite locali e NPSH della pompa richiedono un modello di flusso risolto. Le verifiche indipendenti richiedono inoltre entropia totale non decrescente nel flash adiabatico e nello scambio con parete finita.
 
 [Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md)
+
+## Equilibrio del serbatoio con volume liquido finito
+
+Impostare `liquid_fuel_tank.parameters.headspace.phase_equilibrium` a `true` per evaporazione e condensazione del serbatoio. Il film abbinato fornisce proprietà `phase_equilibrium`; il gas tracciato condivide R, cv, potere calorifico e stechiometria. Un serbatoio bagnato dichiara temperatura iniziale comune e pressione parziale satura, uno asciutto parte al massimo a saturazione. La densità totale resta inferiore a quella liquida.
+
+`evaporated_fuel_mass`, `condensed_fuel_mass` e `mass_flow` con segno contano il trasferimento netto per passo fisico. Leggere insieme `vapor_partial_pressure`, `saturation_pressure` corretta, inventario liquido e volume gas. La pompa aspira liquido separato; trasporto bifase, trascinamento di bolle e NPSH locale restano aperti.
+
+[Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)

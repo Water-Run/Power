@@ -4,18 +4,18 @@
 
 ## Punto di ripresa
 
-Il ricevitore supporta equilibrio reversibile e controlli di saturazione dell'alimentazione.
+Il serbatoio risolve vapore a volume finito con potenziali corretti e aspirazione liquida separata.
 
-[Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md)
+[Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)
 
 ## Prossimo incremento
 
-Risolvere poi trasferimento vapore del serbatoio e flusso bifase pompa/rail con proprietà esplicite e accoppiamento volume/lavoro conservativo. Conservare mancanti le misure OEM assenti. Accensione, aspirazione/scarico, perdite meccaniche e coordinamento ECU/TCU restano lavori distinti.
+Risolvere poi flusso bifase e perdite locali con proprietà esplicite e accoppiamento conservativo di volume, quantità di moto e lavoro. Conservare mancanti le misure OEM assenti. Continuare separatamente accensione, aspirazione/scarico, perdite meccaniche e ECU/TCU.
 
 ## Accettazione
 
 Richiedere riferimenti analitici/limite indipendenti, bilanci completi massa/energia e raffinamento appropriato. Conservare rollback del lotto, annullamento, rami, canali stabili, replay portabile e vecchi lettori. Continuare poi accensione, aspirazione/scarico, perdite meccaniche, trasmissione e coordinamento ECU/TCU.
 
-Parametri `unverified`. Non sono fornite proprietà misurate della benzina, cinetica multicomponente o a velocità finita, spostamento liquido/spray risolti o calibrazione OEM. L'accettazione reale Unity Editor/Play/Player/IL2CPP resta in attesa.
+Casi accoppiati pompa/calore/sfiato mostrano il primo ordine. Entrambe le fasi sorgente restano nell'intervallo dichiarato e la densità totale sotto quella liquida con margine binary64. Densità/proprietà costanti, equilibrio istantaneo e interfaccia piana sono approssimazioni di ricerca. Miscele reali, tensione superficiale, sloshing, cinetica finita, calibrazione misurata e Unity Editor/Play/Player/IL2CPP reale restano non verificati.
 
 [DEVELOPMENT_STATUS.it.md](DEVELOPMENT_STATUS.it.md) · [ROADMAP.it.md](ROADMAP.it.md) · [VALIDATION.it.md](VALIDATION.it.md)

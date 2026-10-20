@@ -566,7 +566,10 @@ namespace Power.Studio
                 }
                 if (component.Kind == ComponentKind.LiquidFuelTank)
                 {
-                    Shape("Liquid fuel tank " + component.Id, PrimitiveType.Cylinder, a + Vector3.right * 1.2f + Vector3.up * 0.7f, new Vector3(0.55f, 0.4f, 0.55f), blue);
+                    Vector3 tankCenter = a + Vector3.right * 1.2f + Vector3.up * 0.7f;
+                    Shape("Liquid fuel tank " + component.Id, PrimitiveType.Cylinder, tankCenter, new Vector3(0.55f, 0.4f, 0.55f), blue);
+                    if (component.LiquidFuelTank != null && component.LiquidFuelTank.Headspace != null && component.LiquidFuelTank.Headspace.PhaseEquilibrium)
+                        Connection("Tank phase exchange " + component.Id, tankCenter, positions[component.LiquidFuelTank.Headspace.GasNode], copper, 0.05f);
                     continue;
                 }
                 if (component.Kind == ComponentKind.LiquidRailReturn)

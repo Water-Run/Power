@@ -8,6 +8,7 @@ public sealed record LiquidTankHeadspaceDefinition
 {
     public Quantity Capacity { get; init; }
     public uint GasNode { get; init; }
+    public bool PhaseEquilibrium { get; init; }
 }
 
 public readonly record struct HeadspacePressureWork(double MeanPressurePascals,
@@ -66,7 +67,7 @@ public sealed class LiquidTankHeadspace
     }
 }
 
-internal sealed record CompiledTankHeadspace(int Tank, int Gas, LiquidTankHeadspace Geometry, int Feed, int Pump);
+internal sealed record CompiledTankHeadspace(int Tank, int Gas, LiquidTankHeadspace Geometry, int Feed, int Pump, FiniteTankFuelEquilibrium? Equilibrium = null);
 
 public sealed partial class CompiledModel
 {
@@ -76,6 +77,8 @@ public sealed partial class CompiledModel
     internal int[] HeadspaceByRestriction { get; }
     internal int[] HeadspaceByTank { get; }
     public bool HasTankHeadspaces => TankHeadspaces.Length != 0;
+    public int EquilibriumTankCount { get; private set; }
+    public bool HasEquilibriumTanks => EquilibriumTankCount != 0;
 
     private double[] PrepareTankHeadspaces(NodeDefinition[] nodes, ComponentDefinition[] components)
     {
@@ -117,7 +120,32 @@ public sealed partial class CompiledModel
             int pump = Components[LiquidFeeds[feed].Pump].Index;
             Require(Components[LiquidFeeds[feed].Pump].P2 == 0 && ReturnsByFeed[feed].All(route => Components[LiquidReturns[route].Valve].P2 == 0),
                 DiagnosticCode.Schema, Components[tank.Component].Id, "liquid_fuel_tank.headspace", "A headspace owns inlet pressure; set paired pump and return reservoir pressure to zero.");
-            TankHeadspaces[slot] = new(i, Nodes[node].Index, new(capacity, tank.Density), feed, pump);
+            FiniteTankFuelEquilibrium? equilibrium = null;
+            if (definition.PhaseEquilibrium)
+            {
+                var receiver = FuelFilms[LiquidFuelInjectors[tank.Injector].Film];
+                var gas = NodeGases[node]!; var mixture = NodeMixtures[node]; var n = Nodes[node];
+                Require(receiver.Phase is not null && mixture is not null && mixture.Compatible(NodeMixtures[Components[receiver.Component].A]) &&
+                    gas.GasConstantJoulePerKilogramKelvin == receiver.Phase.GasConstantJoulesPerKilogramKelvin &&
+                    gas.IsochoricHeatCapacityJoulePerKilogramKelvin == receiver.Law.VaporSpecificHeatJoulesPerKilogramKelvin,
+                    DiagnosticCode.Connection, Components[tank.Component].Id, "liquid_fuel_tank.headspace.phase_equilibrium",
+                    "Use the paired film's phase_equilibrium material and a tracked headspace with matching R, gamma, heating value and stoichiometric ratio.");
+                try { equilibrium = new(receiver.Phase!, capacity, tank.Density); }
+                catch (ArgumentException error) { throw new ModelCompileException(DiagnosticCode.Range, Components[tank.Component].Id, "liquid_fuel_tank.headspace.phase_equilibrium", error.Message); }
+                double mass = n.Position * n.Storage / gas.GasConstantJoulePerKilogramKelvin / n.Initial;
+                Require(tank.InitialMass + mass < capacity * tank.Density * (1 - 64 * GearReference.Epsilon),
+                    DiagnosticCode.Range, Components[tank.Component].Id, "liquid_fuel_tank.headspace.capacity", "Total liquid, vapor and carrier inventory must have lower mean density than the liquid.");
+                Require(Math.Abs(n.Initial - tank.InitialTemperature) <= 64 * GearReference.Epsilon * Math.Max(1, tank.InitialTemperature),
+                    DiagnosticCode.Range, Components[tank.Component].Id, "liquid_fuel_tank.headspace.initial_temperature", "An equilibrium tank starts at one gas/liquid temperature.");
+                Require(equilibrium.TrySaturationPressure(tank.InitialTemperature, n.Position, out double saturation),
+                    DiagnosticCode.Range, Components[tank.Component].Id, "liquid_fuel_tank.headspace.phase_equilibrium", "Initial temperature and pressure must be inside the finite-density phase domain.");
+                double partial = n.Position * mixture!.Initial.Fuel, tolerance = 128 * GearReference.Epsilon * Math.Max(partial, saturation);
+                Require(tank.InitialMass == 0 ? partial - saturation <= tolerance : Math.Abs(partial - saturation) <= tolerance,
+                    DiagnosticCode.Range, Components[tank.Component].Id, "liquid_fuel_tank.headspace.initial_fractions",
+                    "Start a wet tank at pressure-corrected vapor saturation, or a dry tank at or below saturation; declare the headspace fuel fraction explicitly.");
+                ++EquilibriumTankCount;
+            }
+            TankHeadspaces[slot] = new(i, Nodes[node].Index, new(capacity, tank.Density), feed, pump, equilibrium);
             HeadspaceByTank[i] = slot;
             HeadspaceByPump[Components[LiquidFeeds[feed].Pump].Index] = slot;
             foreach (int route in ReturnsByFeed[feed]) HeadspaceByRestriction[Components[LiquidReturns[route].Valve].Index] = slot;

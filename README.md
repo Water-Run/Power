@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — headless experiments"]
     mcp["Power.Mcp — 12 stdio MCP tools"]
-    assets["Power.Assets — .powerasset v30"]
+    assets["Power.Assets — .powerasset v31"]
     unity["Unity 6.6 studio — 3D laboratories"]
 
     model --> core
@@ -119,7 +119,7 @@ The service exposes twelve tools with input and output schemas:
 |---|---|
 | `get_capabilities` | Discover models, limits, time and revision conventions. Start here. |
 | `get_model_schema` | JSON Schema 2020-12 for `power.model.v1` |
-| `get_example_model` | Get an editable synthetic model and experiment (45 examples) |
+| `get_example_model` | Get an editable synthetic model and experiment (47 examples) |
 | `validate_model` | Validate a model without running it; structured repair diagnostics |
 | `run_experiment` | Bounded headless run with batch replay, KPIs, and provenance |
 | `export_model_asset` | Export a portable `.powerasset` |
@@ -147,10 +147,10 @@ A four-range Ravigneaux research graph adds compound planetary paths and a conve
 > [!NOTE]
 > All sample parameters are `unverified` — research values, not calibrated measurements.
 
-The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v30`, with readers for earlier assets retained.
+The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v31`, with readers for earlier assets retained.
 
 <details>
-<summary>Available laboratories (46)</summary>
+<summary>Available laboratories (48)</summary>
 
 | Example name (`get_example_model`) | Laboratory | What it exercises |
 |---|---|---|
@@ -194,6 +194,8 @@ The laboratories below share definitions across JSON, CLI, MCP, and Studio impor
 | `pump-fed-needle-cylinder` | `assets/labs/pump-fed-needle-cylinder.power.json` | pump-fed rail with physical needle and dose control |
 | `finite-tank-liquid-cylinder` | `assets/labs/finite-tank-liquid-cylinder.power.json` | finite tank exhaustion, dry pumping and internal fuel transfer |
 | `finite-tank-needle-cylinder` | `assets/labs/finite-tank-needle-cylinder.power.json` | finite supply with physical needle and evaporation |
+| `equilibrium-tank-supply` | `assets/labs/equilibrium-tank-supply.power.json` | pump reversal, finite-density phase exchange, heated source and fuel-bearing vent |
+| `equilibrium-tank-fired-cylinder` | `assets/labs/equilibrium-tank-fired-cylinder.power.json` | fired engine with finite-volume tank equilibrium and conserving liquid pickup |
 | `equilibrium-fuel-cell` | `assets/labs/equilibrium-fuel-cell.power.json` | finite-wall condensation, vent-driven evaporation and complete phase ledgers |
 | `equilibrium-injected-cylinder` | `assets/labs/equilibrium-injected-cylinder.power.json` | equilibrium fuel delivery, vapor-only burn and observable inlet/rail margins |
 | `vented-tank-liquid-cylinder` | `assets/labs/vented-tank-liquid-cylinder.power.json` | finite gas headspace, internal pressure work and controlled venting |
@@ -221,7 +223,7 @@ The build exports a matching `.powerasset` for each laboratory. Replay evidence 
 
 Complete powertrains are the goal, not the current state. Still open:
 
-- Complete engine behavior: slosh/hydrostatic shape, tank vapor transfer and cavitation, measured pump filling/regulation, refined magnetic/electronic/spray behavior, ignition control, intake/exhaust dynamics, mechanical losses and richer thermochemistry.
+- Complete engine behavior: slosh/hydrostatic shape, two-phase pump/rail transport and cavitation, measured pump filling/regulation, refined magnetic/electronic/spray behavior, ignition control, intake/exhaust dynamics, mechanical losses and richer thermochemistry.
 - Complete DCT actuation, AT topology, and transmission controls (ECU/TCU).
 - Measured pump loss and control maps, measured battery chemistry and BMS, and measured valve/accumulator dynamics.
 - Calibrated powertrains.
@@ -237,7 +239,7 @@ OEM research for EA211 DJS + DQ200 and PSA EC5 + AT8 stays in [assets/samples](a
 | Project | [Architecture](docs/ARCHITECTURE.md) · [Roadmap](docs/ROADMAP.md) · [Development status](docs/DEVELOPMENT_STATUS.md) · [Validation record](docs/VALIDATION.md) · [Engine resume notes](docs/NEXT_ENGINE_STEP.md) |
 | Interfaces | [Agent API](docs/AGENT_API.md) · [Asset format](docs/ASSET_FORMAT.md) · [Native Zig boundary](docs/NATIVE_ZIG.md) |
 | Engine and gas | [Sealed cylinder](docs/SEALED_CYLINDER.md) · [Gas network](docs/GAS_NETWORK.md) · [Gas exchange](docs/GAS_EXCHANGE.md) · [Moving cylinder](docs/MOVING_CYLINDER.md) · [Valve timing](docs/VALVE_TIMING.md) · [Premixed combustion](docs/PREMIXED_COMBUSTION.md) |
-| Fuel and injection | [Fuel metering](docs/FUEL_METERING.md) · [Fuel film](docs/FUEL_FILM.md) · [Liquid injection](docs/LIQUID_FUEL_INJECTION.md) · [Needle actuation](docs/NEEDLE_ACTUATION.md) · [Closure prediction](docs/CLOSURE_PREDICTION.md) · [Geometric tank and finite headspace](docs/TANK_HEADSPACE.md) · [Fuel phase equilibrium and liquid supply limits](docs/FUEL_PHASE_EQUILIBRIUM.md) |
+| Fuel and injection | [Fuel metering](docs/FUEL_METERING.md) · [Fuel film](docs/FUEL_FILM.md) · [Liquid injection](docs/LIQUID_FUEL_INJECTION.md) · [Needle actuation](docs/NEEDLE_ACTUATION.md) · [Closure prediction](docs/CLOSURE_PREDICTION.md) · [Geometric tank and finite headspace](docs/TANK_HEADSPACE.md) · [Fuel phase equilibrium and liquid supply limits](docs/FUEL_PHASE_EQUILIBRIUM.md) · [Finite-volume fuel tank equilibrium](docs/TANK_PHASE_EQUILIBRIUM.md) |
 | Transmission | [Clutch network](docs/CLUTCH_NETWORK.md) · [Clutch physics](docs/CLUTCH_PHYSICS.md) · [Gear network](docs/GEAR_NETWORK.md) · [Ideal gears](docs/IDEAL_GEARS.md) · [Converter](docs/CONVERTER_NETWORK.md) · [Dual-clutch transmission](docs/DUAL_CLUTCH_TRANSMISSION.md) · [DCT control](docs/DCT_CONTROL.md) · [Ravigneaux transmission](docs/RAVIGNEAUX_TRANSMISSION.md) · [Resolved planets](docs/RESOLVED_PLANETS.md) |
 | Hydraulics | [Hydraulic network](docs/HYDRAULIC_NETWORK.md) · [Pump](docs/HYDRAULIC_PUMP.md) · [Piston](docs/HYDRAULIC_PISTON.md) · [Spool](docs/HYDRAULIC_SPOOL.md) · [Gas accumulator](docs/GAS_PISTON.md) · [AT actuation](docs/AT_HYDRAULIC_ACTUATION.md) |
 

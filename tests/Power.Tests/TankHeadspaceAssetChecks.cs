@@ -41,7 +41,7 @@ internal static class TankHeadspaceAssetChecks
     }
     private static void Corruption()
     {
-        var bytes = AssetCodec.Encode(Asset()); int tank = bytes.Length - 80;
+        var bytes = AssetCodec.Encode(Asset()); int tank = bytes.Length - 84;
         void Reject(byte[] bad) { SHA256.HashData(bad.AsSpan(0, bad.Length - 32)).CopyTo(bad, bad.Length - 32); Throws<ArgumentException>(() => AssetCodec.Decode(bad)); }
         foreach (var change in new[] { (tank + 40, (int)Unit.Pascal), (tank + 44, 0), (tank + 44, 2) })
         { var bad = bytes.ToArray(); BinaryPrimitives.WriteInt32LittleEndian(bad.AsSpan(change.Item1), change.Item2); Reject(bad); }

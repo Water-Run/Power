@@ -28,6 +28,7 @@ internal static class FuelPhaseEquilibriumAssetChecks
     }
     internal static byte[] Version29(PowerAsset asset, byte[] bytes)
     {
+        if (BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(8)) >= 31) bytes = TankPhaseAssetChecks.Version30(asset, bytes);
         int count = asset.Components.Count(c => c.FuelFilm is not null), start = FilmOffset(asset, bytes);
         var result = new List<byte>(bytes.Take(start));
         for (int i = 0; i < count; ++i) result.AddRange(bytes.Skip(start + 100 * i).Take(64));

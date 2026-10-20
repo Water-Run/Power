@@ -493,7 +493,7 @@ siguen separados de la realimentación y el control de la AT, y de la aceptació
 
 `at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
 
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v30 conserva rutas, ganancias y relojes y lee v1-v29.
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v31 conserva rutas, ganancias y relojes y lee v1-v30.
 
 Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
 
@@ -503,9 +503,9 @@ Son controles de investigación y los parámetros siguen `unverified`. Coordinac
 
 `liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
 
-v30 conserva enlaces y temperatura de fuente y lee v1-v29. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v31 conserva enlaces y temperatura de fuente y lee v1-v30. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
-Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
+Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
 [PUMP_FED_FUEL.es.md](PUMP_FED_FUEL.es.md)
 
@@ -515,7 +515,7 @@ Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidros
 
 Energías térmica y química del tanque forman el almacenamiento completo. La transferencia interna no agrega masa ni suministro químico externos. La presión de entrada prescrita mantiene su frontera de trabajo de presión. Admisión/escape gaseoso aún pueden llevar energía química.
 
-Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
+Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
 [LIQUID_FUEL_TANK.es.md](LIQUID_FUEL_TANK.es.md)
 
@@ -544,3 +544,11 @@ Una solución escalar acotada usa la energía de equilibrio monótona. El calor 
 `mass_flow` es la transferencia neta con signo del paso físico completo. `evaporated_fuel_mass` y `condensed_fuel_mass` acumulan sus masas positiva y negativa sin duplicar proyecciones que se cancelan. `vapor_partial_pressure` muestra la presión parcial de combustible. Los balances térmico, másico y químico incluyen ambas fases.
 
 [Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md)
+
+## Equilibrio del tanque con volumen líquido finito
+
+El recipiente rígido contiene líquido incompresible y gas ideal de pseudoespecie/portador. El líquido desplaza volumen gaseoso. Su potencial químico incluye `p/rho`, por lo que se corrige la referencia `p_0(T)` de desplazamiento despreciable. `reference_pressure` mantiene ese significado y no se reinterpreta como saturación real del fluido puro de densidad finita.
+
+Un flash acotado a U,V constantes conserva combustible y energía térmica. Orificios explícitos transportan vapor, portador y energía química; enlaces térmicos intercambian con nodos finitos. Bomba/retorno intercambian trabajo de desplazamiento con el gas y luego el equilibrio redistribuye energía. `hydraulic_work` cuenta desplazamiento de bomba, excluyendo trabajo interno de fase.
+
+[Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md)

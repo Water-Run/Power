@@ -31,7 +31,7 @@ flowchart LR
 | 문서 | 내용 |
 |---|---|
 | [에이전트 API](AGENT_API.ko.md) | MCP 도구, 개정, 오류, 작업 순서 |
-| [자산 형식](ASSET_FORMAT.ko.md) | `.powerasset` v30와 v1부터 v29까지의 판독기 |
+| [자산 형식](ASSET_FORMAT.ko.md) | `.powerasset` v31와 v1부터 v30까지의 판독기 |
 | [네이티브 Zig 경계](NATIVE_ZIG.ko.md) | 보관된 Zig 프로토타입과 버전이 있는 ABI |
 
 ## 엔진과 연료
@@ -51,6 +51,7 @@ flowchart LR
 | [폐쇄 예측](CLOSURE_PREDICTION.ko.md) | 전압 제거를 계획하는 유계 플랜트 리플레이 |
 | [탱크 형상과 유한 헤드스페이스](TANK_HEADSPACE.ko.md) | 강체 용량, 유한 기체 압력 일과 명시적 통기 |
 | [연료 상평형과 액체 공급 경계](FUEL_PHASE_EQUILIBRIUM.ko.md) | 가역 증발/응축, 포화압과 액체 공급 경계 |
+| [유한 체적 연료 탱크 상평형](TANK_PHASE_EQUILIBRIUM.ko.md) | 유한 액체 변위, 압력 보정 증발/응축과 증기 통기 |
 
 ## 변속기
 

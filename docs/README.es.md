@@ -31,7 +31,7 @@ flowchart LR
 | Documento | Qué es |
 |---|---|
 | [API de agente](AGENT_API.es.md) | Herramientas MCP, revisiones, errores y la secuencia de operación |
-| [Formato de asset](ASSET_FORMAT.es.md) | `.powerasset` v30 y los lectores de v1 a v29 |
+| [Formato de asset](ASSET_FORMAT.es.md) | `.powerasset` v31 y los lectores de v1 a v30 |
 | [Frontera Zig nativa](NATIVE_ZIG.es.md) | Los prototipos Zig archivados y el ABI versionado |
 
 ## Motor y combustible
@@ -51,6 +51,7 @@ flowchart LR
 | [Predicción de cierre](CLOSURE_PREDICTION.es.md) | Repetición acotada de la planta que planifica la retirada de voltaje |
 | [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md) | Capacidad rígida, trabajo del gas finito y venteo explícito |
 | [Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md) | Evaporación/condensación reversibles, saturación y límites de suministro líquido |
+| [Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md) | Desplazamiento líquido finito, corrección de presión y venteo con vapor |
 
 ## Transmisión
 

@@ -27,14 +27,22 @@ U_eq(T) = (M_c + m_v) cv T + (M_f - m_v) u_l(T)
 
 A bounded scalar solve uses the monotone equilibrium energy relation. Finite-wall heat uses backward Euler. Coupling to transport and moving-cylinder work has first-order refinement evidence. Liquid coexistence stays within the declared temperature interval. Completely evaporated gas can superheat after dryout within that interval; the saturation curve is not extrapolated.
 
-Liquid rails, finite tanks and feed inlets expose `saturation_pressure` and `cavitation_margin` in Pa. The margin is local absolute pressure minus saturation pressure at liquid temperature. A negative margin with liquid inventory rejects the whole batch. These checks mark the boundary of the single-phase supply model; tank vapor transfer, bubble dynamics and cavitating pump flow remain open.
+The default liquid-supply model rejects wet states below saturation. Optional finite-volume tank equilibrium instead resolves source vapor transfer with pressure-corrected chemical potentials. The rail and pump pickup still carry separated liquid; bubble entrainment and cavitating pump/rail flow require further physics.
 
 The pressure comparison allows only binary64 roundoff: `64 * epsilon * max(p, p_sat)`, with `epsilon = 2^-52`. It doesn't clamp the reported margin. This is a bulk saturation check; local pressure losses and pump NPSH require a resolved flow model. Independent checks also require nondecreasing total entropy for adiabatic flash and finite-wall exchange.
 
 ## Evidence
 
-`equilibrium-fuel-cell` demonstrates condensation, vent-driven evaporation and renewed condensation. `equilibrium-injected-cylinder` adds reversible receiver phase behavior and observable supply margins to the vented-tank engine. Independent entropy maximization, analytic saturation/heat limits, simultaneous ODE refinement, complete replay, rollback and allocation checks cover the implementation. Asset v30 retains these properties and reads v1-v29.
+`equilibrium-fuel-cell` demonstrates condensation, vent-driven evaporation and renewed condensation. `equilibrium-injected-cylinder` adds reversible receiver phase behavior and observable supply margins to the vented-tank engine. Independent entropy maximization, analytic saturation/heat limits, simultaneous ODE refinement, complete replay, rollback and allocation checks cover the implementation. Asset v31 retains these properties and reads v1-v30.
 
 Parameters remain `unverified`. The model does not supply measured gasoline properties, multicomponent or finite-rate phase kinetics, resolved liquid displacement/spray, or OEM calibration. Actual Unity Editor/Play/Player/IL2CPP acceptance remains pending.
 
 [Cantera: species thermodynamics](https://www.cantera.org/stable/reference/thermo/species-thermo.html) · [Cantera: equilibrium](https://www.cantera.org/stable/python/thermo.html) · [VALIDATION.md](VALIDATION.md)
+
+## Finite-volume fuel tank equilibrium
+
+Set `liquid_fuel_tank.parameters.headspace.phase_equilibrium` to `true` to resolve tank evaporation and condensation. The paired film supplies explicit `phase_equilibrium` material properties; the tracked headspace shares its R, cv, heating value and stoichiometric ratio. Declare a common initial gas/liquid temperature and saturated fuel partial pressure for a wet tank; a dry tank starts at or below saturation. Its total inventory density stays below liquid density.
+
+Tank `evaporated_fuel_mass`, `condensed_fuel_mass` and signed `mass_flow` count net phase transfer per complete physical tick. Read `vapor_partial_pressure`, pressure-corrected `saturation_pressure`, liquid inventory and gas volume together. The pump picks up separated liquid only; two-phase pump/rail transport, entrainment and local NPSH remain open.
+
+[Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)

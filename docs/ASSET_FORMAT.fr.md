@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version actuelle 30
+## Version actuelle 31
+
+Activer `liquid_fuel_tank.parameters.headspace.phase_equilibrium` avec `true` pour résoudre évaporation et condensation du réservoir. Le film associé fournit les propriétés `phase_equilibrium` ; l'espace gazeux suivi partage R, cv, pouvoir calorifique et rapport stœchiométrique. Déclarer une température initiale commune et une pression partielle saturée pour un réservoir humide ; un réservoir sec commence au plus à saturation. La densité totale reste inférieure à celle du liquide.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md)
+
+## Version conservée 30
 
 L'option `fuel_film.parameters.phase_equilibrium` déclare `reference_pressure` en `pa` ou `bar` et `minimum_temperature` / `maximum_temperature` en `k`. `saturation_temperature` est la température de référence ; `latent_internal_energy` est la différence d'énergie interne vapeur-liquide à cette température. Un film possède chaque récepteur en équilibre. L'état initial déclaré est conservé ; les intervalles acceptés équilibrent gaz et liquide avec échange thermique vers la paroi finie.
 

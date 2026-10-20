@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 30
+## 当前版本 31
+
+将 `liquid_fuel_tank.parameters.headspace.phase_equilibrium` 设为 `true`，以求解油箱蒸发与冷凝。配对油膜提供显式 `phase_equilibrium` 物性，受追踪的气相空间使用相同的 R、cv、热值和化学计量比。湿油箱声明共同气液初温和饱和燃料分压；干油箱初始分压不高于饱和。总库存平均密度须低于液体密度。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[有限体积油箱相平衡](TANK_PHASE_EQUILIBRIUM.zh-CN.md)
+
+## 保留版本 30
 
 可选的 `fuel_film.parameters.phase_equilibrium` 声明单位为 `pa` 或 `bar` 的 `reference_pressure`，以及单位为 `k` 的 `minimum_temperature` / `maximum_temperature`。已有 `saturation_temperature` 指参考温度，`latent_internal_energy` 指该温度下蒸气与液体的比内能差。每个平衡接收端由一个油膜拥有。初始快照保留输入状态；接受的推进区间使气液达到平衡，并与有限热容量壁面交换热量。
 

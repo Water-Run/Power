@@ -10,8 +10,16 @@
 
 ## 証拠と制限
 
-`vented-tank-liquid-cylinder` と `vented-tank-needle-cylinder` はタンク 1513、気体 1520、通気入力 960 を使います。アセット v30 は形状を保存し v1-v29 を読みます。解析仕事/導関数、独立 ODE 収束、収支、portable/MCP 再生、ロールバックとゼロ割当ステップに合格しました。
+`vented-tank-liquid-cylinder` と `vented-tank-needle-cylinder` はタンク 1513、気体 1520、通気入力 960 を使います。アセット v31 は形状を保存し v1-v30 を読みます。解析仕事/導関数、独立 ODE 収束、収支、portable/MCP 再生、ロールバックとゼロ割当ステップに合格しました。
 
-剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、相平衡、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
+剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、実混合物の熱力学、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
 
 [NASA](https://www.grc.nasa.gov/www/k-12/airplane/isentrop.html) · [Cantera](https://www.cantera.org/stable/reference/reactors/interactions.html) · [VALIDATION.md](VALIDATION.ja.md)
+
+## 有限体積燃料タンクの相平衡
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium` を `true` にするとタンク内の蒸発と凝縮を解きます。対応する膜が `phase_equilibrium` 物性を与え、追跡ヘッドスペースは R、cv、発熱量と化学量論比を共有します。湿潤タンクは共通初期温度と飽和燃料分圧を、乾燥タンクは飽和以下の分圧を宣言します。総密度は液体密度未満です。
+
+タンクの `evaporated_fuel_mass`、`condensed_fuel_mass` と符号付き `mass_flow` は完全刻みの正味相移動を累積します。`vapor_partial_pressure`、補正 `saturation_pressure`、液量と気体容積を併読します。ポンプは分離液体だけを吸い、二相ポンプ/レール輸送、気泡巻込みと局所 NPSH は未完成です。
+
+[有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md)

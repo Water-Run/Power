@@ -4,18 +4,18 @@
 
 ## Resume point
 
-The receiver supports reversible fuel phase equilibrium and liquid-supply saturation checks.
+The tank resolves finite-volume vapor transfer with pressure-corrected chemical potentials and separated-liquid pickup.
 
-[Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)
+[Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)
 
 ## Next increment
 
-Next, resolve tank vapor transfer and two-phase pump/rail flow with explicit properties and conservative volume/work coupling. Keep missing OEM measurements missing. Continue ignition, intake/exhaust, mechanical losses and ECU/TCU coordination as separate work.
+Next, resolve two-phase pump/rail flow and local inlet losses with explicit material properties and conservative volume, momentum and work coupling. Missing OEM measurements remain missing. Continue ignition, intake/exhaust, mechanical losses and ECU/TCU coordination separately.
 
 ## Acceptance
 
 Require independent analytic or limiting references, full mass/energy ledgers and step refinement appropriate to the new equations. Preserve batch rollback, cancellation, forks, stable channels, portable replay and prior asset readers. Then continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control.
 
-Parameters remain `unverified`. The model does not supply measured gasoline properties, multicomponent or finite-rate phase kinetics, resolved liquid displacement/spray, or OEM calibration. Actual Unity Editor/Play/Player/IL2CPP acceptance remains pending.
+Coupled pump, heat and vent examples demonstrate first-order refinement. Both source phases remain inside the declared material temperature interval; total density stays below liquid density with a binary64 roundoff margin. Constant density/common gas properties, instantaneous equilibrium and a flat interface are research approximations. Real mixtures, surface tension, slosh, finite-rate kinetics, measured calibration and actual Unity Editor/Play/Player/IL2CPP remain unverified.
 
 [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) · [ROADMAP.md](ROADMAP.md) · [VALIDATION.md](VALIDATION.md)

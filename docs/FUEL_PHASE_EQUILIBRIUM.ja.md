@@ -27,14 +27,22 @@ U_eq(T) = (M_c + m_v) cv T + (M_f - m_v) u_l(T)
 
 有界スカラー解法は単調な平衡エネルギーを使います。有限壁の伝熱は後退 Euler です。輸送と移動シリンダー仕事との連成には一次収束の証拠があります。液体共存は指定温度区間内に限り、その区間で完全蒸発した気体は過熱できます。飽和曲線は外挿しません。
 
-液体レール、有限タンクと供給入口は Pa の `saturation_pressure` と `cavitation_margin` を公開します。余裕は液温の飽和圧力を局所絶対圧力から引いた値です。液体があり余裕が負なら全バッチを拒否します。単相供給の境界を検査するもので、タンク蒸気移動、気泡動特性とキャビテーションポンプ流れは未実装です。
+既定の液体供給は飽和未満の湿潤状態を拒否します。任意の有限タンク平衡は補正化学ポテンシャルで供給蒸気移動を解きます。レールと吸入口は分離液体のままで、気泡巻込みとキャビテーション輸送には追加物理が必要です。
 
 圧力比較は binary64 の丸め幅 `64 * epsilon * max(p, p_sat)` のみを許容し、`epsilon = 2^-52` です。表示余裕はクランプしません。これはバルクの飽和検査で、局所圧力損失とポンプ NPSH には流れを解くモデルが必要です。独立検査では断熱フラッシュと有限壁熱交換の総エントロピーが減少しないことも求めます。
 
 ## 証拠
 
-`equilibrium-fuel-cell` は凝縮、通気による蒸発、再凝縮を示します。`equilibrium-injected-cylinder` は通気タンクエンジンに可逆相平衡と供給余裕を加えます。独立したエントロピー最大化、解析的極限、連立 ODE 収束、完全再生、ロールバックと割当を検証します。アセット v30 は物性を保持し v1-v29 を読みます。
+`equilibrium-fuel-cell` は凝縮、通気による蒸発、再凝縮を示します。`equilibrium-injected-cylinder` は通気タンクエンジンに可逆相平衡と供給余裕を加えます。独立したエントロピー最大化、解析的極限、連立 ODE 収束、完全再生、ロールバックと割当を検証します。アセット v31 は物性を保持し v1-v30 を読みます。
 
 パラメーターは `unverified` です。実測ガソリン物性、多成分または有限速度の相変化、分解液体押しのけ/噴霧、OEM 較正は提供しません。実際の Unity Editor/Play/Player/IL2CPP 受け入れは未完了です。
 
 [Cantera: species thermodynamics](https://www.cantera.org/stable/reference/thermo/species-thermo.html) · [Cantera: equilibrium](https://www.cantera.org/stable/python/thermo.html) · [VALIDATION.ja.md](VALIDATION.ja.md)
+
+## 有限体積燃料タンクの相平衡
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium` を `true` にするとタンク内の蒸発と凝縮を解きます。対応する膜が `phase_equilibrium` 物性を与え、追跡ヘッドスペースは R、cv、発熱量と化学量論比を共有します。湿潤タンクは共通初期温度と飽和燃料分圧を、乾燥タンクは飽和以下の分圧を宣言します。総密度は液体密度未満です。
+
+タンクの `evaporated_fuel_mass`、`condensed_fuel_mass` と符号付き `mass_flow` は完全刻みの正味相移動を累積します。`vapor_partial_pressure`、補正 `saturation_pressure`、液量と気体容積を併読します。ポンプは分離液体だけを吸い、二相ポンプ/レール輸送、気泡巻込みと局所 NPSH は未完成です。
+
+[有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md)

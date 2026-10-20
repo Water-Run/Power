@@ -106,7 +106,7 @@ Découvrez les identifiants et les unités de sortie par la validation ou la cr�
 globaux de masse, de carburant et d'énergie chimique incluent l'inventaire du film. La livraison interne
 de vapeur n'incrémente ni l'énergie de carburant du réservoir ni l'enthalpie externe.
 
-L'asset v30 stocke toutes les propriétés de phase et conserve les lecteurs v1-v29. Chaque film exige
+L'asset v31 stocke toutes les propriétés de phase et conserve les lecteurs v1-v30. Chaque film exige
 un enregistrement de phase typé de 100 octets. Les longueurs et comptes bornés, le condensé, la couverture complète,
 les enregistrements dupliqués ou manquants, les unités, la compilation physique et la protection contre la rétrogradation
 sont contrôlés. La fixture authentique de dosage v17 conserve son empreinte et

@@ -42,7 +42,7 @@ Windows も同じ `dotnet` コマンドと、DLL への絶対パスを使いま�
 
 ## ツールと結果
 
-エージェント API バージョン 0.35.0 の `get_example_model` は任意の `name` を受け取り、既定値は `electrothermal` です。`get_capabilities.examples` は有限タンクと循環燃料モデルを含む全 45 サンプルを列挙します。CLI `list-labs` は全 46 ラボを [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON で返します。`thermal-network` は設計上 CLI 専用です。機能には対応コンポーネント、忠実度、ソルバー制限と入力範囲も含まれます。出力は `power.asset.v30` を使い、v1-v29 の読み込みを保持します。検証とセッション作成は出力チャネルと単位を返します。ラボ KPI の合格は完全または較正済みのパワートレインを示しません。
+エージェント API バージョン 0.36.0 の `get_example_model` は任意の `name` を受け取り、既定値は `electrothermal` です。`get_capabilities.examples` は有限タンクと循環燃料モデルを含む全 47 サンプルを列挙します。CLI `list-labs` は全 48 ラボを [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON で返します。`thermal-network` は設計上 CLI 専用です。機能には対応コンポーネント、忠実度、ソルバー制限と入力範囲も含まれます。出力は `power.asset.v31` を使い、v1-v30 の読み込みを保持します。検証とセッション作成は出力チャネルと単位を返します。ラボ KPI の合格は完全または較正済みのパワートレインを示しません。
 
 | ツール | 役割 |
 |---|---|
@@ -292,7 +292,7 @@ KPI とリプレイのエビデンスを評価するには `run_experiment` を�
 
 `at_controller` は [-1,4] の整数目標段を受け取り、ゼロはニュートラルです。五組の充填/排油弁と任意のトルクコンバーターのロックアップを管理します。経路の順序はキャリア入力、小サン入力、大サン入力、キャリアブレーキ、大サンブレーキ、最後にロックアップです。
 
-例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v30 は経路、ゲイン、時計を保存し、v1-v29 を読みます。
+例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v31 は経路、ゲイン、時計を保存し、v1-v30 を読みます。
 
 研究用の制御であり、パラメーターは `unverified` のままです。ECU トルク協調、詳細なセンサー/弁、包括的な車両故障、OEM 校正は未完成です。managed と Standard の検査は実際の Unity Editor/Play/Player/IL2CPP の受入を証明しません。
 
@@ -302,9 +302,9 @@ KPI とリプレイのエビデンスを評価するには `run_experiment` を�
 
 `liquid_rail_feed` は液体噴射器を既存の容積ポンプと明示的な物質/熱境界に結びます。油圧出口ノードはレールのコンプライアンスと初期絶対圧に一致する必要があります。ポンプと噴射器がこの圧力ノードを所有し、未追跡の他の流体経路は拒否されます。
 
-v30 は補給接続と源温度を保存し v1-v29 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
+v31 は補給接続と源温度を保存し v1-v30 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
 
-剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、相平衡、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
+剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、実混合物の熱力学、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
 
 [PUMP_FED_FUEL.ja.md](PUMP_FED_FUEL.ja.md)
 
@@ -314,7 +314,7 @@ v30 は補給接続と源温度を保存し v1-v29 を読みます。軸/圧力�
 
 タンクの熱/化学エネルギーは全貯蔵台帳に入ります。内部移送は外部質量や化学供給を追加しません。明示したポンプ入口規定圧は圧力仕事境界を保持します。ガス吸排気は化学境界エネルギーを運ぶ場合があります。
 
-剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、相平衡、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
+剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、実混合物の熱力学、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
 
 [LIQUID_FUEL_TANK.ja.md](LIQUID_FUEL_TANK.ja.md)
 
@@ -340,8 +340,16 @@ v30 は補給接続と源温度を保存し v1-v29 を読みます。軸/圧力�
 
 `mass_flow` は完全な物理刻みの符号付き正味相移動です。`evaporated_fuel_mass` と `condensed_fuel_mass` は正負の質量を別々に累積し、相殺する分割演算を二重計上しません。`vapor_partial_pressure` は受け側の燃料分圧です。熱・質量・化学エネルギー収支は両相を含みます。
 
-液体レール、有限タンクと供給入口は Pa の `saturation_pressure` と `cavitation_margin` を公開します。余裕は液温の飽和圧力を局所絶対圧力から引いた値です。液体があり余裕が負なら全バッチを拒否します。単相供給の境界を検査するもので、タンク蒸気移動、気泡動特性とキャビテーションポンプ流れは未実装です。
+既定の液体供給は飽和未満の湿潤状態を拒否します。任意の有限タンク平衡は補正化学ポテンシャルで供給蒸気移動を解きます。レールと吸入口は分離液体のままで、気泡巻込みとキャビテーション輸送には追加物理が必要です。
 
 圧力比較は binary64 の丸め幅 `64 * epsilon * max(p, p_sat)` のみを許容し、`epsilon = 2^-52` です。表示余裕はクランプしません。これはバルクの飽和検査で、局所圧力損失とポンプ NPSH には流れを解くモデルが必要です。独立検査では断熱フラッシュと有限壁熱交換の総エントロピーが減少しないことも求めます。
 
 [燃料の相平衡と液体供給の境界](FUEL_PHASE_EQUILIBRIUM.ja.md)
+
+## 有限体積燃料タンクの相平衡
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium` を `true` にするとタンク内の蒸発と凝縮を解きます。対応する膜が `phase_equilibrium` 物性を与え、追跡ヘッドスペースは R、cv、発熱量と化学量論比を共有します。湿潤タンクは共通初期温度と飽和燃料分圧を、乾燥タンクは飽和以下の分圧を宣言します。総密度は液体密度未満です。
+
+タンクの `evaporated_fuel_mass`、`condensed_fuel_mass` と符号付き `mass_flow` は完全刻みの正味相移動を累積します。`vapor_partial_pressure`、補正 `saturation_pressure`、液量と気体容積を併読します。ポンプは分離液体だけを吸い、二相ポンプ/レール輸送、気泡巻込みと局所 NPSH は未完成です。
+
+[有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md)

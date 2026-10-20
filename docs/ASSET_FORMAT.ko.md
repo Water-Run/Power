@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 30
+## 현재 버전 31
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium`을 `true`로 설정하면 탱크 증발과 응축을 풉니다. 연결 막이 명시적 `phase_equilibrium` 물성을 제공하며 추적 기체 공간은 R, cv, 발열량과 화학량론비를 공유합니다. 젖은 탱크는 공통 초기 온도와 포화 연료 분압, 마른 탱크는 포화 이하 분압을 선언합니다. 총밀도는 액체 밀도보다 낮습니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[유한 체적 연료 탱크 상평형](TANK_PHASE_EQUILIBRIUM.ko.md)
+
+## 유지 버전 30
 
 선택 항목 `fuel_film.parameters.phase_equilibrium`은 `pa` 또는 `bar`의 `reference_pressure`와 `k`의 `minimum_temperature` / `maximum_temperature`를 지정합니다. 기존 `saturation_temperature`는 기준 온도이고 `latent_internal_energy`는 그 온도에서 증기와 액체의 비내부에너지 차이입니다. 평형 수용부마다 하나의 막을 사용합니다. 초기 스냅샷을 보존하고 수용된 구간에서 기액 평형과 유한 벽 열교환을 계산합니다.
 

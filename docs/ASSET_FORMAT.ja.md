@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現在のバージョン 30
+## 現在のバージョン 31
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium` を `true` にするとタンク内の蒸発と凝縮を解きます。対応する膜が `phase_equilibrium` 物性を与え、追跡ヘッドスペースは R、cv、発熱量と化学量論比を共有します。湿潤タンクは共通初期温度と飽和燃料分圧を、乾燥タンクは飽和以下の分圧を宣言します。総密度は液体密度未満です。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md)
+
+## 保持バージョン 30
 
 任意の `fuel_film.parameters.phase_equilibrium` は `pa` または `bar` の `reference_pressure` と、`k` の `minimum_temperature` / `maximum_temperature` を指定します。既存の `saturation_temperature` は基準温度、`latent_internal_energy` はそこでの蒸気と液体の比内部エネルギー差です。平衡受け側は一つの膜が所有します。初期スナップショットを保持し、受理した区間で気液平衡と有限壁の熱交換を計算します。
 

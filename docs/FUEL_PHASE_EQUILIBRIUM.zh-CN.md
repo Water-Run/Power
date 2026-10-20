@@ -27,14 +27,22 @@ U_eq(T) = (M_c + m_v) cv T + (M_f - m_v) u_l(T)
 
 有界标量求解利用单调的平衡能量关系。有限壁面传热采用后向欧拉。与输运、运动气缸功耦合的一阶细化检查通过。液体共存状态保持在声明的温度区间内；在区间内完全蒸发后，干燥气体可以继续过热，饱和曲线不作外推。
 
-液体燃轨、有限油箱和补给入口提供单位为 Pa 的 `saturation_pressure` 与 `cavitation_margin`。裕量是当地绝对压力减去液体温度对应的饱和压力。有液体库存时，负裕量使整批推进失败。这些检查界定单相供给模型的适用范围；油箱蒸气转移、气泡动力学与空化泵流仍待实现。
+默认液体供给模型拒绝低于饱和压力的湿状态。可选有限体积油箱相平衡使用压力修正化学势求解供给端蒸气转移。燃轨和泵吸口仍只输送已分离液体；气泡夹带与空化泵/燃轨流动还需要后续物理模型。
 
 压力比较仅允许 binary64 舍入量：`64 * epsilon * max(p, p_sat)`，其中 `epsilon = 2^-52`；报告的裕量不作钳制。这是主体液体的饱和检查，局部压降与泵 NPSH 仍需分解流动模型。独立检查还要求绝热闪蒸和有限壁面换热的总熵不减少。
 
 ## 证据
 
-`equilibrium-fuel-cell` 展示冷凝、通气引起的蒸发及再次冷凝。`equilibrium-injected-cylinder` 在通气油箱发动机中加入接收端可逆相变与供给裕量。验证涵盖独立熵最大化、解析饱和及传热极限、联立 ODE 细化、完整回放、回滚和分配检查。资产 v30 保留这些属性，并读取 v1-v29。
+`equilibrium-fuel-cell` 展示冷凝、通气引起的蒸发及再次冷凝。`equilibrium-injected-cylinder` 在通气油箱发动机中加入接收端可逆相变与供给裕量。验证涵盖独立熵最大化、解析饱和及传热极限、联立 ODE 细化、完整回放、回滚和分配检查。资产 v31 保留这些属性，并读取 v1-v30。
 
 参数仍为 `unverified`。模型未提供实测汽油属性、多组分或有限速率相变动力学、分解液体位移/喷雾及 OEM 标定。实际 Unity Editor/Play/Player/IL2CPP 验收仍待完成。
 
 [Cantera: species thermodynamics](https://www.cantera.org/stable/reference/thermo/species-thermo.html) · [Cantera: equilibrium](https://www.cantera.org/stable/python/thermo.html) · [VALIDATION.zh-CN.md](VALIDATION.zh-CN.md)
+
+## 有限体积油箱相平衡
+
+将 `liquid_fuel_tank.parameters.headspace.phase_equilibrium` 设为 `true`，以求解油箱蒸发与冷凝。配对油膜提供显式 `phase_equilibrium` 物性，受追踪的气相空间使用相同的 R、cv、热值和化学计量比。湿油箱声明共同气液初温和饱和燃料分压；干油箱初始分压不高于饱和。总库存平均密度须低于液体密度。
+
+油箱 `evaporated_fuel_mass`、`condensed_fuel_mass` 和带符号 `mass_flow` 按完整物理时间步的净相变量累计。结合读取 `vapor_partial_pressure`、压力修正后的 `saturation_pressure`、液体库存及气体体积。泵只吸取已分离的液体；两相泵/燃轨输运、夹带与局部 NPSH 仍待实现。
+
+[有限体积油箱相平衡](TANK_PHASE_EQUILIBRIUM.zh-CN.md)

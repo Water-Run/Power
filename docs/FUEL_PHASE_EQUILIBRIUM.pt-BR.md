@@ -27,14 +27,22 @@ U_eq(T) = (M_c + m_v) cv T + (M_f - m_v) u_l(T)
 
 Uma solução escalar limitada usa energia de equilíbrio monótona. Calor da parede usa Euler implícito. Transporte e trabalho do cilindro móvel têm evidência de refinamento de primeira ordem. A coexistência líquida fica no intervalo declarado. Após evaporação completa dentro dele, o gás pode superaquecer sem extrapolar a curva.
 
-Trilhos, tanques finitos e entradas expõem `saturation_pressure` e `cavitation_margin` em Pa. A margem é pressão absoluta local menos saturação na temperatura líquida. Margem negativa com líquido rejeita todo o lote. Isso delimita o suprimento monofásico; transferência de vapor do tanque, bolhas e fluxo cavitante da bomba continuam abertos.
+O suprimento padrão rejeita líquido sob saturação. O tanque finito opcional resolve vapor da fonte com potenciais corrigidos por pressão. Trilho e captação ainda levam líquido separado; bolhas e fluxo cavitante precisam de mais física.
 
 A comparação só admite arredondamento binary64: `64 * epsilon * max(p, p_sat)`, com `epsilon = 2^-52`. A margem informada não é limitada. É uma verificação de saturação global; perdas locais e NPSH da bomba exigem modelo de fluxo resolvido. As verificações independentes também exigem entropia total não decrescente no flash adiabático e na troca com parede finita.
 
 ## Evidência
 
-`equilibrium-fuel-cell` mostra condensação, evaporação por ventilação e nova condensação. `equilibrium-injected-cylinder` acrescenta equilíbrio reversível do receptor e margens ao motor com tanque ventilado. Verificam-se máximo independente de entropia, limites analíticos, refinamento ODE simultâneo, replay completo, rollback e alocações. Asset v30 preserva propriedades e lê v1-v29.
+`equilibrium-fuel-cell` mostra condensação, evaporação por ventilação e nova condensação. `equilibrium-injected-cylinder` acrescenta equilíbrio reversível do receptor e margens ao motor com tanque ventilado. Verificam-se máximo independente de entropia, limites analíticos, refinamento ODE simultâneo, replay completo, rollback e alocações. Asset v31 preserva propriedades e lê v1-v30.
 
 Parâmetros `unverified`. Não são fornecidas propriedades medidas de gasolina, cinética multicomponente ou de velocidade finita, deslocamento líquido/spray resolvidos ou calibração OEM. A aceitação real Unity Editor/Play/Player/IL2CPP continua pendente.
 
 [Cantera: species thermodynamics](https://www.cantera.org/stable/reference/thermo/species-thermo.html) · [Cantera: equilibrium](https://www.cantera.org/stable/python/thermo.html) · [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md)
+
+## Equilíbrio do tanque com volume líquido finito
+
+Definir `liquid_fuel_tank.parameters.headspace.phase_equilibrium` como `true` para resolver evaporação e condensação do tanque. O filme pareado fornece propriedades `phase_equilibrium`; o gás rastreado compartilha R, cv, poder calorífico e estequiometria. Tanque molhado declara temperatura inicial comum e pressão parcial saturada; tanque seco começa no máximo em saturação. A densidade total fica abaixo da líquida.
+
+`evaporated_fuel_mass`, `condensed_fuel_mass` e `mass_flow` com sinal contam transferência líquida de fase por passo físico. Ler juntos `vapor_partial_pressure`, `saturation_pressure` corrigida, inventário líquido e volume gasoso. A bomba capta líquido separado; transporte bifásico, arraste de bolhas e NPSH local seguem abertos.
+
+[Equilíbrio do tanque com volume líquido finito](TANK_PHASE_EQUILIBRIUM.pt-BR.md)

@@ -167,7 +167,7 @@ internal sealed class LiquidFuelInjectorSolver(CompiledModel model, FuelFilmSolv
             {
                 double temperature = injector.PressureNode < 0 ? injector.SupplyTemperature :
                     film.Law.Temperature(new(rail.MassKilograms, feedState!.RailEnergy[i]));
-                if (!phase.TrySaturationPressure(temperature, out double saturation) || !FuelPhaseEquilibrium.PressureAllowsLiquid(transfer.Rail.PressurePascals, saturation)) return false;
+                if (!model.TryLiquidSaturation(i, temperature, transfer.Rail.PressurePascals, out double saturation) || !FuelPhaseEquilibrium.PressureAllowsLiquid(transfer.Rail.PressurePascals, saturation)) return false;
             }
             double mass = transfer.DeliveredMassKilograms;
             if (!state.Quota.Accept(i, mass, enforceQuota: injector.Needle is null)) return false;

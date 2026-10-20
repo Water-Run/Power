@@ -10,8 +10,16 @@
 
 ## 증거와 제한
 
-`vented-tank-liquid-cylinder`와 `vented-tank-needle-cylinder`는 탱크 1513, 기체 1520, 통기 입력 960을 사용합니다. 자산 v30는 형상을 저장하고 v1-v29을 읽습니다. 해석적 일/미분, 독립 ODE 수렴, 수지, portable/MCP 재현, 롤백과 무할당 단계 검사가 통과했습니다.
+`vented-tank-liquid-cylinder`와 `vented-tank-needle-cylinder`는 탱크 1513, 기체 1520, 통기 입력 960을 사용합니다. 자산 v31는 형상을 저장하고 v1-v30을 읽습니다. 해석적 일/미분, 독립 ODE 수렴, 수지, portable/MCP 재현, 롤백과 무할당 단계 검사가 통과했습니다.
 
-강체 혼합 탱크, 비압축 액체와 이상기체 모델입니다. 슬로싱/정수압 형상, 상평형, 캐비테이션, 실측 펌프/밸브 맵, OEM 보정과 실제 Unity Editor/Play/Player/IL2CPP는 미완성입니다. 매개변수는 `unverified`입니다.
+강체 혼합 탱크, 비압축 액체와 이상기체 모델입니다. 슬로싱/정수압 형상, 실제 혼합물 열역학, 캐비테이션, 실측 펌프/밸브 맵, OEM 보정과 실제 Unity Editor/Play/Player/IL2CPP는 미완성입니다. 매개변수는 `unverified`입니다.
 
 [NASA](https://www.grc.nasa.gov/www/k-12/airplane/isentrop.html) · [Cantera](https://www.cantera.org/stable/reference/reactors/interactions.html) · [VALIDATION.md](VALIDATION.ko.md)
+
+## 유한 체적 연료 탱크 상평형
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium`을 `true`로 설정하면 탱크 증발과 응축을 풉니다. 연결 막이 명시적 `phase_equilibrium` 물성을 제공하며 추적 기체 공간은 R, cv, 발열량과 화학량론비를 공유합니다. 젖은 탱크는 공통 초기 온도와 포화 연료 분압, 마른 탱크는 포화 이하 분압을 선언합니다. 총밀도는 액체 밀도보다 낮습니다.
+
+탱크 `evaporated_fuel_mass`, `condensed_fuel_mass`와 부호 있는 `mass_flow`는 완전 물리 단계의 순 상이동을 누적합니다. `vapor_partial_pressure`, 보정 `saturation_pressure`, 액체 재고와 기체 체적을 함께 읽습니다. 펌프는 분리 액체만 흡입하며 2상 펌프/레일 수송, 기포 동반과 국소 NPSH는 미완성입니다.
+
+[유한 체적 연료 탱크 상평형](TANK_PHASE_EQUILIBRIUM.ko.md)

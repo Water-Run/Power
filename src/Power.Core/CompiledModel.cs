@@ -19,9 +19,9 @@ public sealed partial class CompiledModel
     public ulong Fingerprint { get; }
     public int NodeCount => Nodes.Length;
     public int ComponentCount => Components.Length;
-    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length;
+    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length + 3 * EquilibriumTankCount;
     public int OutputCount => Outputs.Length;
-    public string Fidelity => HasEquilibriumFuelFilms ? "equilibrium_liquid_fuel_powertrain" : HasTankHeadspaces ? "geometric_tank_liquid_fuel_powertrain" : HasLiquidReturns ? "recirculating_liquid_fuel_powertrain" : HasLiquidTanks ? "finite_tank_liquid_fuel_powertrain" : HasLiquidFeeds ? "pump_fed_liquid_fuel_powertrain" : AtControllers.Length != 0 ? "sampled_hydraulic_at_control" : DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
+    public string Fidelity => HasEquilibriumTanks ? "equilibrium_tank_liquid_fuel_powertrain" : HasEquilibriumFuelFilms ? "equilibrium_liquid_fuel_powertrain" : HasTankHeadspaces ? "geometric_tank_liquid_fuel_powertrain" : HasLiquidReturns ? "recirculating_liquid_fuel_powertrain" : HasLiquidTanks ? "finite_tank_liquid_fuel_powertrain" : HasLiquidFeeds ? "pump_fed_liquid_fuel_powertrain" : AtControllers.Length != 0 ? "sampled_hydraulic_at_control" : DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
         : HasPremixedGas ? "premixed_gas_transport"
         : HasValveTiming ? "crank_timed_gas_exchange"
         : GasCylinders.Any(c => c is not null) ? "moving_cylinder_gas_exchange"
@@ -901,7 +901,7 @@ public sealed partial class CompiledModel
         CompileTankHeadspaceRoutes(cs);
         EquilibriumFilmCount = FuelFilms.Count(film => film.Phase is not null);
         ValidateLiquidPhaseSources();
-        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
+        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length + 3 * EquilibriumTankCount <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
         HasValveTiming = Valves.Any(v => v is not null);
         DynamicCount = dynamics; ThermalCount = thermal;
         CoordinateStates = new bool[dynamics];
@@ -1017,6 +1017,13 @@ public sealed partial class CompiledModel
                 Output(c.Id,Field.InternalEnergy,i,Unit.Joule,"tank_caloric_energy",true);
                 Output(c.Id,Field.ChemicalEnergy,i,Unit.Joule,"tank_chemical_energy",true);
                 Output(c.Id,Field.TankState,i,Unit.StateCode,"tank_state_wet_zero_empty_one",true);
+                if (HeadspaceByTank[TankByComponent[i]] >= 0 && TankHeadspaces[HeadspaceByTank[TankByComponent[i]]].Equilibrium is not null)
+                {
+                    Output(c.Id, Field.EvaporatedFuelMass, i, Unit.Kilogram, "tank_total_net_evaporated_mass", true);
+                    Output(c.Id, Field.CondensedFuelMass, i, Unit.Kilogram, "tank_total_net_condensed_mass", true);
+                    Output(c.Id, Field.MassFlow, i, Unit.KilogramPerSecond, "tank_last_tick_net_phase_flow", true);
+                    Output(c.Id, Field.VaporPartialPressure, i, Unit.Pascal, "tank_fuel_vapor_partial_pressure", true);
+                }
                 if (FuelFilms[LiquidFuelInjectors[LiquidTanks[TankByComponent[i]].Injector].Film].Phase is not null)
                 {
                     Output(c.Id, Field.SaturationPressure, i, Unit.Pascal, "liquid_saturation_pressure", true);
@@ -1026,7 +1033,7 @@ public sealed partial class CompiledModel
                 if (HeadspaceByTank[TankByComponent[i]] >= 0)
                 {
                     Output(c.Id, Field.Pressure, i, Unit.Pascal, "tank_headspace_absolute_pressure", true);
-                    Output(c.Id, Field.HydraulicWork, i, Unit.Joule, "headspace_pressure_work_to_liquid", true);
+                    Output(c.Id, Field.HydraulicWork, i, Unit.Joule, TankHeadspaces[HeadspaceByTank[TankByComponent[i]]].Equilibrium is null ? "headspace_pressure_work_to_liquid" : "headspace_pump_displacement_work", true);
                     Output(c.Id, Field.FillFraction, i, Unit.Fraction, "tank_liquid_fill_fraction", true);
                 }
             }
@@ -1350,6 +1357,7 @@ public sealed partial class CompiledModel
         if (HasLiquidTanks) h = Numeric.Hash(h,31UL);
         if (HasTankHeadspaces) h = Numeric.Hash(h, 33UL);
         if (HasEquilibriumFuelFilms) h = Numeric.Hash(h, 34UL);
+        if (HasEquilibriumTanks) h = Numeric.Hash(h, 35UL);
         if (HasLiquidReturns) h = Numeric.Hash(h,32UL);
         if (AtControllers.Length != 0) h = Numeric.Hash(h, 29UL);
         if (DctControllers.Length != 0) h = Numeric.Hash(h, 26UL);
@@ -1416,6 +1424,7 @@ public sealed partial class CompiledModel
         foreach(var tank in LiquidTanks) { h=Numeric.Hash(h,(ulong)Components[LiquidFuelInjectors[tank.Injector].Component].Id);h=Numeric.Hash(h,tank.InitialMass);h=Numeric.Hash(h,tank.InitialTemperature); }
         foreach (var headspace in TankHeadspaces)
         { h = Numeric.Hash(h, (ulong)Components[LiquidTanks[headspace.Tank].Component].Id); h = Numeric.Hash(h, (ulong)Nodes[Gas!.NodeIndex[headspace.Gas]].Id); h = Numeric.Hash(h, headspace.Geometry.CapacityCubicMeters); }
+        foreach (var head in TankHeadspaces) if (head.Equilibrium is not null) h=Numeric.Hash(h,(ulong)Components[LiquidTanks[head.Tank].Component].Id);
         foreach(var feed in LiquidFeeds) if(feed.Tank>=0)h=Numeric.Hash(h,(ulong)Components[LiquidTanks[feed.Tank].Component].Id);
         foreach (var at in AtControllers)
         {

@@ -249,7 +249,7 @@ L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibl
 
 `at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
 
-Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v30 conserve routes, gains et horloges et lit v1-v29.
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v31 conserve routes, gains et horloges et lit v1-v30.
 
 Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
 
@@ -259,9 +259,9 @@ Ces commandes sont expérimentales et les paramètres restent `unverified`. Coor
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v30 conserve les liens et la température source et lit v1-v29. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v31 conserve les liens et la température source et lit v1-v30. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
-Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
 [PUMP_FED_FUEL.fr.md](PUMP_FED_FUEL.fr.md)
 
@@ -271,7 +271,7 @@ Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/
 
 Énergies calorique et chimique du réservoir entrent dans le stockage complet. Le transfert interne n'ajoute aucune matière ni énergie chimique externe. La pression d'entrée prescrite garde sa frontière de travail de pression. Admission/échappement gazeux peuvent encore transporter de l'énergie chimique.
 
-Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, équilibre des phases, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
 [LIQUID_FUEL_TANK.fr.md](LIQUID_FUEL_TANK.fr.md)
 
@@ -300,3 +300,11 @@ Un solveur scalaire borné utilise l'énergie d'équilibre monotone. La chaleur 
 `mass_flow` est le transfert net signé sur le pas physique complet. `evaporated_fuel_mass` et `condensed_fuel_mass` cumulent ses masses positive et négative, sans compter deux fois les projections qui s'annulent. `vapor_partial_pressure` donne la pression partielle du carburant. Les bilans thermiques, massiques et chimiques comprennent les deux phases.
 
 [Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md)
+
+## Équilibre du réservoir à volume fini
+
+Le récipient rigide contient un liquide incompressible et un gaz idéal avec pseudo-espèce et porteur. Le volume liquide modifie le volume gazeux. Le potentiel chimique liquide inclut `p/rho`, d'où une correction de la référence `p_0(T)` à déplacement négligeable du récepteur. `reference_pressure` garde ce sens et n'est pas réinterprété comme saturation réelle du fluide pur à densité finie.
+
+Un flash borné à U,V constants conserve carburant total et énergie thermique. Les orifices explicites transportent vapeur, porteur et énergie chimique ; les liens thermiques échangent avec des parois finies. Pompe/retour échangent le travail de déplacement avec le gaz, puis l'équilibre redistribue l'énergie interne. `hydraulic_work` compte le travail de déplacement de pompe, hors travail interne de changement de phase.
+
+[Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md)

@@ -42,7 +42,7 @@ Windows usa lo stesso comando `dotnet` e un percorso assoluto alla DLL. Una conn
 
 ## Strumenti e risultati
 
-Nell'API agente versione 0.35.0, `get_example_model` accetta un `name` facoltativo, predefinito `electrothermal`. `get_capabilities.examples` elenca tutti i 45 esempi, inclusi serbatoi finiti e ricircolo. CLI `list-labs` restituisce i 46 laboratori come JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` è riservato alla CLI per progettazione. Le capacità dichiarano anche componenti, fedeltà, limiti del solver e ingressi. Gli export usano `power.asset.v30` con lettori v1-v29 conservati. Validazione e creazione della sessione restituiscono canali e unità. KPI superati non attestano un powertrain completo o calibrato.
+Nell'API agente versione 0.36.0, `get_example_model` accetta un `name` facoltativo, predefinito `electrothermal`. `get_capabilities.examples` elenca tutti i 47 esempi, inclusi serbatoi finiti e ricircolo. CLI `list-labs` restituisce i 48 laboratori come JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` è riservato alla CLI per progettazione. Le capacità dichiarano anche componenti, fedeltà, limiti del solver e ingressi. Gli export usano `power.asset.v31` con lettori v1-v30 conservati. Validazione e creazione della sessione restituiscono canali e unità. KPI superati non attestano un powertrain completo o calibrato.
 
 | Strumento | Scopo |
 |---|---|
@@ -292,7 +292,7 @@ I report conservano pressione di linea/camera, corsa, capacità di contatto, lav
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v30 conserva percorsi, guadagni e clock e legge v1-v29.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v31 conserva percorsi, guadagni e clock e legge v1-v30.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -302,9 +302,9 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v30 conserva collegamenti e temperatura sorgente e legge v1-v29. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v31 conserva collegamenti e temperatura sorgente e legge v1-v30. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
-Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, equilibrio di fase, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
 [PUMP_FED_FUEL.it.md](PUMP_FED_FUEL.it.md)
 
@@ -314,7 +314,7 @@ Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma 
 
 Energia termica e chimica del serbatoio entrano nello stoccaggio totale. Il trasferimento interno non aggiunge massa o energia chimica esterna. La pressione prescritta all'ingresso mantiene il confine di lavoro di pressione. Aspirazione/scarico gas possono ancora trasportare energia chimica.
 
-Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, equilibrio di fase, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
 [LIQUID_FUEL_TANK.it.md](LIQUID_FUEL_TANK.it.md)
 
@@ -340,8 +340,16 @@ L'opzione `fuel_film.parameters.phase_equilibrium` dichiara `reference_pressure`
 
 `mass_flow` è il trasferimento netto con segno del passo fisico completo. `evaporated_fuel_mass` e `condensed_fuel_mass` accumulano masse positive e negative senza contare due volte proiezioni che si annullano. `vapor_partial_pressure` indica la pressione parziale del carburante. I bilanci termici, di massa e chimici includono entrambe le fasi.
 
-Rail, serbatoi finiti e ingressi espongono `saturation_pressure` e `cavitation_margin` in Pa. Il margine è pressione assoluta locale meno saturazione alla temperatura liquida. Un margine negativo con liquido respinge l'intero lotto. Questo delimita l'alimentazione monofase; trasferimento vapore del serbatoio, bolle e flusso cavitante della pompa restano aperti.
+L'alimentazione predefinita respinge liquido sotto saturazione. Il serbatoio finito opzionale risolve il vapore sorgente con potenziali corretti. Rail e aspirazione trasportano ancora liquido separato; bolle e flusso cavitante richiedono altra fisica.
 
 Il confronto ammette solo arrotondamento binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-52`. Il margine riportato non viene limitato. È un controllo di saturazione globale; perdite locali e NPSH della pompa richiedono un modello di flusso risolto. Le verifiche indipendenti richiedono inoltre entropia totale non decrescente nel flash adiabatico e nello scambio con parete finita.
 
 [Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md)
+
+## Equilibrio del serbatoio con volume liquido finito
+
+Impostare `liquid_fuel_tank.parameters.headspace.phase_equilibrium` a `true` per evaporazione e condensazione del serbatoio. Il film abbinato fornisce proprietà `phase_equilibrium`; il gas tracciato condivide R, cv, potere calorifico e stechiometria. Un serbatoio bagnato dichiara temperatura iniziale comune e pressione parziale satura, uno asciutto parte al massimo a saturazione. La densità totale resta inferiore a quella liquida.
+
+`evaporated_fuel_mass`, `condensed_fuel_mass` e `mass_flow` con segno contano il trasferimento netto per passo fisico. Leggere insieme `vapor_partial_pressure`, `saturation_pressure` corretta, inventario liquido e volume gas. La pompa aspira liquido separato; trasporto bifase, trascinamento di bolle e NPSH locale restano aperti.
+
+[Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)

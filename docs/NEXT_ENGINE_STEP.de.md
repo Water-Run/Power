@@ -4,18 +4,18 @@
 
 ## Fortsetzungspunkt
 
-Der Empfänger unterstützt reversibles Phasengleichgewicht und Sättigungsprüfungen der Versorgung.
+Der Tank löst endlichen Dampftransfer mit druckkorrigierten Potenzialen und getrennter Flüssigkeitsansaugung.
 
-[Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)
+[Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md)
 
 ## Nächster Schritt
 
-Als Nächstes Tankdampftransfer und zweiphasige Pumpen/Rail-Strömung mit expliziten Eigenschaften und erhaltender Volumen/Arbeitskopplung auflösen. Fehlende OEM-Messungen fehlen weiter. Zündung, Einlass/Auslass, mechanische Verluste und ECU/TCU-Koordination separat fortsetzen.
+Danach zweiphasige Strömung und lokale Einlassverluste mit expliziten Stoffwerten und erhaltender Volumen-, Impuls- und Arbeitskopplung lösen. Fehlende OEM-Messungen fehlen weiter. Zündung, Einlass/Auslass, mechanische Verluste und ECU/TCU separat fortsetzen.
 
 ## Abnahme
 
 Unabhängige analytische/Grenzreferenzen, vollständige Masse/Energie und passende Schrittverfeinerung verlangen. Batch-Rollback, Abbruch, Zweige, stabile Kanäle, portables Replay und alte Leser erhalten. Danach Zündung, Einlass/Auslass, mechanische Verluste, Getriebeaktuation und ECU/TCU-Koordination fortsetzen.
 
-Parameter bleiben `unverified`. Gemessene Benzineigenschaften, Mehrkomponenten- oder endliche Phasenkinetik, aufgelöste Flüssigkeitsverdrängung/Spray und OEM-Kalibrierung werden nicht geliefert. Echte Unity Editor/Play/Player/IL2CPP-Abnahme bleibt ausstehend.
+Gekoppelte Pumpen-, Wärme- und Entlüftungsfälle zeigen erste Ordnung. Beide Quellphasen bleiben im Stofftemperaturintervall, die Gesamtdichte mit binary64-Rundungsreserve unter der Flüssigkeitsdichte. Konstante Dichte/Gaseigenschaften, sofortiges Gleichgewicht und ebene Grenzfläche sind Forschungsnäherungen. Reale Gemische, Oberflächenspannung, Schwappen, endliche Kinetik, Messkalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben ungeprüft.
 
 [DEVELOPMENT_STATUS.de.md](DEVELOPMENT_STATUS.de.md) · [ROADMAP.de.md](ROADMAP.de.md) · [VALIDATION.de.md](VALIDATION.de.md)

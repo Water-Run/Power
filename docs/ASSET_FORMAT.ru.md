@@ -14,7 +14,24 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 30
+## Текущая версия 31
+
+Задать `liquid_fuel_tank.parameters.headspace.phase_equilibrium` как `true` для испарения и конденсации в баке. Связанная плёнка задаёт свойства `phase_equilibrium`; отслеживаемый газ имеет те же R, cv, теплоту сгорания и стехиометрию. Для влажного бака задаются общая начальная температура и насыщенное парциальное давление; сухой бак начинается не выше насыщения. Общая плотность ниже плотности жидкости.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[Равновесие топлива в баке конечного объёма](TANK_PHASE_EQUILIBRIUM.ru.md)
+
+## Сохранённая версия 30
 
 Необязательный `fuel_film.parameters.phase_equilibrium` задаёт `reference_pressure` в `pa` или `bar`, а `minimum_temperature` / `maximum_temperature` в `k`. `saturation_temperature` обозначает опорную температуру; `latent_internal_energy` — разность удельной внутренней энергии пара и жидкости при ней. Каждый равновесный приёмник имеет одну плёнку. Начальный снимок сохраняется; принятые интервалы уравновешивают газ и жидкость с теплообменом с конечной стенкой.
 

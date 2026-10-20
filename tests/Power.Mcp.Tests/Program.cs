@@ -792,4 +792,30 @@ foreach (var (name, vent) in new[] { ("equilibrium-fuel-cell", 1d), ("equilibriu
     await Call("close_session", new() { ["session_id"] = equilibriumSession, ["expected_revision"] = "0" });
     PassGroup("MCP " + name + " / reversible phase supply margins portable replay and independent branches");
 }
+foreach (var (name, channel, opening) in new[] { ("equilibrium-tank-supply", "110", 1d), ("equilibrium-tank-fired-cylinder", "960", 0d) })
+{
+    var phaseTankDocument = (await Call("get_example_model", new() { ["name"] = name })).GetProperty("data");
+    Require(capabilities.GetProperty("liquid_fuel_tank").GetProperty("headspace").GetProperty("phase_equilibrium").GetProperty("optional_boolean").GetString() == "phase_equilibrium", "Finite tank phase contract is missing");
+    var phaseTankReport = (await Call("run_experiment", new() { ["document"] = phaseTankDocument, ["include_samples"] = true })).GetProperty("data");
+    Require(phaseTankReport.GetProperty("passed").GetBoolean() && phaseTankReport.GetProperty("model").GetProperty("fidelity").GetString() == "equilibrium_tank_liquid_fuel_powertrain", "Tank phase experiment failed");
+    var phaseTankExport = (await Call("export_model_asset", new() { ["document"] = phaseTankDocument })).GetProperty("data");
+    var phaseTankAsset = AssetCodec.Decode(Convert.FromBase64String(phaseTankExport.GetProperty("content").GetString()!));
+    Require(phaseTankAsset.Model.HasEquilibriumTanks && phaseTankExport.GetProperty("format").GetString() == AssetCodec.FormatName, "Tank phase flag was lost");
+    var phaseTankPlayback = phaseTankAsset.CreatePlayback(); var phaseTankValues = new Power.Core.Scalar[phaseTankAsset.Model.OutputCount];
+    foreach (var phaseTankSample in phaseTankReport.GetProperty("samples").EnumerateArray())
+    {
+        ulong at = phaseTankSample.GetProperty("time_ns").GetUInt64();
+        while (phaseTankPlayback.TimeNanoseconds < at) Require(phaseTankPlayback.Advance(Math.Min(257 * phaseTankAsset.Model.StepNanoseconds, at - phaseTankPlayback.TimeNanoseconds)) == Power.Core.SimulationStatus.Ok, "Tank phase playback failed");
+        Require(phaseTankPlayback.ReadSnapshot(phaseTankValues).StateHash.ToString("x16") == phaseTankSample.GetProperty("state_hash").GetString() &&
+            phaseTankValues.All(value => value.Value == phaseTankSample.GetProperty("values").GetProperty(value.Channel.ToString()).GetDouble()), "Tank phase replay differs");
+    }
+    string phaseTankSession = (await Call("create_session", new() { ["document"] = phaseTankDocument })).GetProperty("data").GetProperty("session_id").GetString()!;
+    string phaseTankChild = (await Call("fork_session", new() { ["session_id"] = phaseTankSession, ["expected_revision"] = "0" })).GetProperty("data").GetProperty("session_id").GetString()!;
+    await Call("set_inputs", new() { ["session_id"] = phaseTankChild, ["expected_revision"] = "0", ["values"] = new[] { new { channel, value = opening } } });
+    await Call("step_session", new() { ["session_id"] = phaseTankChild, ["expected_revision"] = "1", ["delta_ns"] = "10000000" });
+    Require((await Call("read_snapshot", new() { ["session_id"] = phaseTankSession })).GetProperty("data").GetProperty("revision").GetString() == "0", "Tank phase branch changed its parent");
+    await Call("close_session", new() { ["session_id"] = phaseTankChild, ["expected_revision"] = "2" });
+    await Call("close_session", new() { ["session_id"] = phaseTankSession, ["expected_revision"] = "0" });
+    PassGroup("MCP " + name + " / finite liquid volume phase chemistry work and complete replay with independent branches");
+}
 Console.WriteLine($"{groupsPassed}/{groupsPassed} MCP integration groups passed against an actual child server process.");
