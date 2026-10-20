@@ -28,7 +28,7 @@ its recorded revision; new local changes need separate platform acceptance.
 
 ## Next managed work
 
-Resolve local inlet inertia and losses, phase-relaxation and slip sensitivity, then extend ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Validate each new equation against independent references and time refinement; obtain measured calibration and actual Unity acceptance separately.
+Connect the liquid momentum reference to the finite fuel network with an explicit line energy inventory and compatible port enthalpy. Establish variable-density and phase-change validity before claiming cavitating inlet dynamics. Continue phase relaxation, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. [Liquid inlet momentum reference](LIQUID_COLUMN.md)
 
 Then extend ignition/control, intake/exhaust dynamics and engine mechanical
 losses. The current Wiebe burn is prescribed and doesn't establish predictive

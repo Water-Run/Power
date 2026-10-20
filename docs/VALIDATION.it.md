@@ -2,6 +2,54 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · **Italiano** · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: Riferimento della quantità di moto all'ingresso liquido
+
+`LiquidColumn` è un riferimento C# autonomo per tubo orizzontale rigido con sezione, velocità uniforme, densità liquida e temperatura costanti. Le pressioni assolute sono prescritte nell'intervallo. Resistenze lineari e quadratiche sono input di ricerca espliciti. Non è un componente del grafo e non cambia rete o ugello.
+
+Accelerazione senza perdite, esponenziale lineare e tangente iperbolica quadratica indipendenti verificano i limiti. Una RK4 indipendente a pressione variabile verifica il secondo ordine con inversione. Decadimento passivo, equilibrio, energia completa, entropia non negativa, rifiuti, condivisione immutabile e allocazioni sono testati su entrambi gli obiettivi.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 502/502 |
+| standard_checks_on_dotnet | 392/392 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| new_core_groups | 6 |
+| convergence_order | 2 |
+| independent_rk4_steps | 20000, 40000 |
+| maximum_internal_intervals | 2 |
+| graph_component | false |
+| asset_format | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| verification_log_sha256 | ca5b2d46919c411d5b781b315b152bd906f6d0839e894e7257bbd53a943bd3b8 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| documentation_locales | 10 |
+| documentation_files | 60 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | interval_counts | normalized_errors |
+|---|---|---|
+| linear | 10, 20, 40, 80 | 5.1713882833185263e-05, 1.2927512993845731e-05, 3.231818398890559e-06, 8.079508596700909e-07 |
+| quadratic | 10, 20, 40, 80 | 0.0005959789277412566, 0.00014891933866423854, 3.722512036997342e-05, 9.305985415002721e-06 |
+| changing-pressure | 100, 200, 400, 800 | 7.556351839870537e-06, 1.8960140672276058e-06, 4.757354594406252e-07, 1.1881904671850701e-07 |
+
+- `artifacts/reports/liquid-column-final-2026-10-20.log`
+- `artifacts/reports/liquid-column-evidence-2026-10-20.json`
+- `artifacts/reports/liquid-column-baseline-2026-10-20.json`
+- `artifacts/reports/liquid-column-doc-audit-2026-10-20.json`
+
+I parametri restano `unverified`. La pressione minima è un confine liquido dichiarato dal chiamante, non una previsione di tensione di vapore o NPSH. Comprimibilità, acustica, gravità, geometria mobile, accumulo termico, cavitazione, scorrimento e rilassamento sono esclusi. I collegamenti bifase restano quasi statici. Unity reale e calibrazione misurata sono separati.
+
 ## 2026-10-20: Scarico carburante a titolo congelato e ricevitori finiti
 
 La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo congelato in un ricevitore acceso con volume liquido finito. Gli inventari comprendono cambio fase, lavoro di spostamento, energia cinetica del getto e impulso sulla parete ferma.

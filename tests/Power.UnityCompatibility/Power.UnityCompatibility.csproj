@@ -9,6 +9,7 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
   <ItemGroup>
     <Reference Include="Power.Core"><HintPath>../../Unity/Assets/Plugins/Power.Core.dll</HintPath></Reference>
     <Reference Include="Power.Assets"><HintPath>../../Unity/Assets/Plugins/Power.Assets.dll</HintPath></Reference>
+    <Compile Include="../Power.Tests/LiquidColumnChecks.cs" Link="LiquidColumnChecks.cs" />
     <Compile Include="../Power.Tests/CoreChecks.cs" Link="CoreChecks.cs" />
     <Compile Include="../Power.Tests/CompliantFuelVolumeChecks.cs" Link="CompliantFuelVolumeChecks.cs" />
     <Compile Include="../Power.Tests/EquilibriumFuelNetworkChecks.cs" Link="EquilibriumFuelNetworkChecks.cs" />

@@ -29,6 +29,8 @@ de transporte, de proveedor de modelos ni de terceros. Los scripts de Unity Asse
 C# 9. Unity carga los ensamblados Standard compilados por el SDK externo; no
 compila fuente de .NET 10 ni de C# 14.
 
+`LiquidColumn` es una referencia C# independiente de un tubo horizontal rígido con sección, velocidad uniforme, densidad líquida y temperatura constantes. Las presiones absolutas se prescriben por intervalo. Las resistencias lineal y cuadrática son entradas de investigación explícitas. No es un componente del grafo ni cambia las ecuaciones de red o tobera. [Referencia de cantidad de movimiento en la entrada líquida](LIQUID_COLUMN.es.md)
+
 ## Evidencia y límites
 
 El comando serie requerido `dotnet run --file tools/Build.cs -- verify` cubre ambos destinos de ensamblado, un proceso MCP real, todos los laboratorios, el archivo Zig y la ABI C#. Los recuentos, resultados y rutas de registros están en [VALIDATION.md](VALIDATION.md). Las comprobaciones Standard en .NET 10 no establecen aceptación del runtime Unity.

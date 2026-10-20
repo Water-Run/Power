@@ -29,6 +29,8 @@ transport, model-provider or third-party dependencies. Unity Assets scripts use
 C# 9. Unity loads the Standard assemblies built by the external SDK; it doesn't
 compile .NET 10/C# 14 source.
 
+`LiquidColumn` is a standalone C# reference for a horizontal rigid pipe with constant area, uniform velocity, constant liquid density and constant temperature. Absolute port pressures are prescribed during each local interval. Linear and quadratic resistance coefficients are explicit research inputs. It is not a graph component, and it does not change the existing fuel network or nozzle equations. [Liquid inlet momentum reference](LIQUID_COLUMN.md)
+
 ## Evidence and limits
 
 The required serial `dotnet run --file tools/Build.cs -- verify` covers both assembly targets, an actual MCP process, all laboratories, the Zig archive and the C# ABI. Counts, results and log paths live in [VALIDATION.md](VALIDATION.md). Standard-assembly checks hosted on .NET 10 don't establish Unity runtime acceptance.

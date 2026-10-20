@@ -8,9 +8,11 @@ La pompe du domaine carburant alimente désormais une aiguille physique et une d
 
 [Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)
 
+`LiquidColumn` est une référence C# autonome pour un tube horizontal rigide à section, vitesse uniforme, masse volumique liquide et température constantes. Les pressions absolues aux ports sont prescrites pendant chaque intervalle. Les résistances linéaire et quadratique sont des entrées de recherche explicites. Ce n'est pas un composant du graphe ; les équations du réseau et de la tuyère restent inchangées. [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md)
+
 ## Prochaine étape
 
-Résoudre inertie et pertes d'entrée, sensibilité à la relaxation de phase et au glissement, puis allumage, admission/échappement, pertes et ECU/TCU coordonnés. Chaque équation exige références indépendantes et raffinement ; calibration mesurée et acceptation Unity réelle restent séparées.
+Relier la référence de quantité de mouvement au réseau fini avec inventaire énergétique de ligne explicite et enthalpies compatibles. Établir la validité à densité variable et changement de phase avant de revendiquer une entrée cavitante. Poursuivre relaxation, allumage, admission/échappement, pertes et ECU/TCU coordonnés. [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md)
 
 ## Acceptation
 

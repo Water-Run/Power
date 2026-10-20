@@ -28,7 +28,7 @@ die dort festgehaltene Revision; neue lokale Änderungen brauchen eine eigene Pl
 
 ## Nächste verwaltete Arbeit
 
-Lokale Einlassträgheit und Verluste sowie Empfindlichkeit auf Phasenrelaxation und Schlupf lösen, dann Zündung, Gaswechsel, mechanische Verluste und ECU/TCU erweitern. Jede neue Gleichung braucht unabhängige Referenzen und Zeitverfeinerung; Messkalibrierung und tatsächliche Unity-Abnahme sind separat.
+Flüssigkeitsimpuls mit explizitem Leitungsenergieinventar und passenden Portenthalpien an das endliche Kraftstoffnetz koppeln. Veränderliche Dichte und Phasenwechsel prüfen, bevor kavitierende Einlassdynamik beansprucht wird. Weiter mit Relaxation, Zündung, Gaswechsel, Verlusten und ECU/TCU-Koordination. [Referenz für den Impuls am Flüssigkeitseinlass](LIQUID_COLUMN.de.md)
 
 Danach Zündung und Regelung, Saug- und Auslassdynamik sowie mechanische
 Motorverluste erweitern. Die aktuelle Wiebe-Verbrennung ist vorgeschrieben und begründet keine vorhersagende

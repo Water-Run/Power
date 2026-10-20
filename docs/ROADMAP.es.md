@@ -28,7 +28,7 @@ su revisión registrada; los cambios locales nuevos necesitan una aceptación de
 
 ## Siguiente trabajo gestionado
 
-Resolver inercia y pérdidas locales de entrada, sensibilidad a relajación de fase y deslizamiento, después encendido, admisión/escape, pérdidas mecánicas y ECU/TCU coordinados. Cada ecuación necesita referencias independientes y refinamiento temporal; calibración medida y aceptación Unity real son separadas.
+Conectar la referencia de cantidad de movimiento a la red finita con inventario energético de línea y entalpías compatibles explícitos. Establecer validez de densidad variable y cambio de fase antes de afirmar dinámica cavitante de entrada. Continuar relajación, encendido, admisión/escape, pérdidas y ECU/TCU coordinados. [Referencia de cantidad de movimiento en la entrada líquida](LIQUID_COLUMN.es.md)
 
 Después amplía el encendido y el control, la dinámica de admisión y escape, y las pérdidas mecánicas
 del motor. El quemado de Wiebe actual es prescrito y no establece combustión

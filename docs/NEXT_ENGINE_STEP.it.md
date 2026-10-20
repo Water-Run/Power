@@ -8,9 +8,11 @@ La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo conge
 
 [Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)
 
+`LiquidColumn` è un riferimento C# autonomo per tubo orizzontale rigido con sezione, velocità uniforme, densità liquida e temperatura costanti. Le pressioni assolute sono prescritte nell'intervallo. Resistenze lineari e quadratiche sono input di ricerca espliciti. Non è un componente del grafo e non cambia rete o ugello. [Riferimento della quantità di moto all'ingresso liquido](LIQUID_COLUMN.it.md)
+
 ## Prossimo incremento
 
-Risolvere inerzia e perdite d'ingresso, sensibilità a rilassamento di fase e scorrimento, poi accensione, aspirazione/scarico, perdite meccaniche e ECU/TCU coordinati. Ogni equazione richiede riferimenti indipendenti e raffinamento; calibrazione misurata e accettazione Unity reale restano separate.
+Collegare il riferimento di quantità di moto alla rete finita con inventario energetico della linea ed entalpie compatibili espliciti. Stabilire validità di densità variabile e cambio fase prima di dichiarare ingresso cavitante. Proseguire rilassamento, accensione, aspirazione/scarico, perdite ed ECU/TCU coordinati. [Riferimento della quantità di moto all'ingresso liquido](LIQUID_COLUMN.it.md)
 
 ## Accettazione
 

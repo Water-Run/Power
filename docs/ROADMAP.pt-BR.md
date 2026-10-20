@@ -21,7 +21,7 @@ Os pontos de controle numéricos atuais, as fixtures autênticas de asset e os r
 
 ## Próximo trabalho gerenciado
 
-Resolver inércia e perdas locais de entrada, sensibilidade à relaxação de fase e deslizamento; depois ignição, admissão/escape, perdas mecânicas e ECU/TCU coordenados. Cada equação exige referências independentes e refinamento temporal; calibração medida e aceitação Unity real são separadas.
+Conectar a referência de quantidade de movimento à rede finita com inventário energético da linha e entalpias compatíveis explícitos. Estabelecer validade de densidade variável e mudança de fase antes de afirmar entrada cavitante. Continuar relaxação, ignição, admissão/escape, perdas e ECU/TCU coordenados. [Referência de quantidade de movimento na entrada líquida](LIQUID_COLUMN.pt-BR.md)
 
 Depois estenda ignição/controle, dinâmica de admissão/escape e perdas mecânicas do motor. A queima de Wiebe atual é prescrita e não estabelece combustão preditiva, detonação, emissões nem calibração OEM. O [contrato de medição gasosa](FUEL_METERING.pt-BR.md) continua um caminho independente suportado.
 

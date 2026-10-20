@@ -22,6 +22,8 @@ Power! 已有托管仿真核心、共享模型文档与可移植资产、无头 
 
 核心与 Assets 同时面向 `net10.0` 与 `netstandard2.1`;核心没有 Unity、传输、模型提供商或第三方依赖。Unity Assets 脚本使用 C# 9。Unity 加载由外部 SDK 构建的 Standard 程序集;它不编译 .NET 10/C# 14 源码。
 
+`LiquidColumn` 是独立 C# 参考模型，描述水平刚性管中的恒定截面、均匀流速、恒定液体密度与恒定温度。每个局部区间内给定绝对端口压力。线性和二次阻力系数是显式研究输入。它不是图元件，不改变现有燃油网络或喷嘴方程。 [液体入口动量参考](LIQUID_COLUMN.zh-CN.md)
+
 ## 证据与限制
 
 规定的串行 `dotnet run --file tools/Build.cs -- verify` 覆盖两个程序集目标、实际 MCP 进程、全部实验室、Zig 存档和 C# ABI。计数、结果和日志路径见 [VALIDATION.md](VALIDATION.md)。在 .NET 10 上运行的 Standard 程序集检查不代表 Unity 运行时验收。

@@ -22,6 +22,8 @@ Power! a un cœur de simulation managé, des documents de modèle partagés et d
 
 Core et Assets ciblent à la fois `net10.0` et `netstandard2.1` ; le Core n'a aucune dépendance Unity, de transport, de fournisseur de modèle ou tierce. Les scripts Unity Assets utilisent C# 9. Unity charge les assemblys Standard construits par le SDK externe ; il ne compile pas de source .NET 10/C# 14.
 
+`LiquidColumn` est une référence C# autonome pour un tube horizontal rigide à section, vitesse uniforme, masse volumique liquide et température constantes. Les pressions absolues aux ports sont prescrites pendant chaque intervalle. Les résistances linéaire et quadratique sont des entrées de recherche explicites. Ce n'est pas un composant du graphe ; les équations du réseau et de la tuyère restent inchangées. [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md)
+
 ## Preuves et limites
 
 La commande série requise `dotnet run --file tools/Build.cs -- verify` couvre les deux cibles d'assemblage, un processus MCP réel, tous les laboratoires, l'archive Zig et l'ABI C#. Les comptes, résultats et chemins de journaux figurent dans [VALIDATION.md](VALIDATION.md). Les contrôles des assemblages Standard sous .NET 10 ne constituent pas une acceptation du runtime Unity.

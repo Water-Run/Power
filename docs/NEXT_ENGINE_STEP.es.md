@@ -8,9 +8,11 @@ La bomba del dominio de combustible alimenta ahora una aguja física y descarga 
 
 [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
 
+`LiquidColumn` es una referencia C# independiente de un tubo horizontal rígido con sección, velocidad uniforme, densidad líquida y temperatura constantes. Las presiones absolutas se prescriben por intervalo. Las resistencias lineal y cuadrática son entradas de investigación explícitas. No es un componente del grafo ni cambia las ecuaciones de red o tobera. [Referencia de cantidad de movimiento en la entrada líquida](LIQUID_COLUMN.es.md)
+
 ## Próximo incremento
 
-Resolver inercia y pérdidas locales de entrada, sensibilidad a relajación de fase y deslizamiento, después encendido, admisión/escape, pérdidas mecánicas y ECU/TCU coordinados. Cada ecuación necesita referencias independientes y refinamiento temporal; calibración medida y aceptación Unity real son separadas.
+Conectar la referencia de cantidad de movimiento a la red finita con inventario energético de línea y entalpías compatibles explícitos. Establecer validez de densidad variable y cambio de fase antes de afirmar dinámica cavitante de entrada. Continuar relajación, encendido, admisión/escape, pérdidas y ECU/TCU coordinados. [Referencia de cantidad de movimiento en la entrada líquida](LIQUID_COLUMN.es.md)
 
 ## Aceptación
 

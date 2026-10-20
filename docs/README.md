@@ -33,6 +33,7 @@ flowchart LR
 | [Agent API](AGENT_API.md) | MCP tools, revisions, errors and the operation sequence |
 | [Asset format](ASSET_FORMAT.md) | `.powerasset` v34 and the readers for v1 through v33 |
 | [Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md) | Frozen-quality choking, finite liquid displacement and physical pump/needle firing |
+| [Liquid inlet momentum reference](LIQUID_COLUMN.md) | Single-phase inlet inertia, friction heat and independently checked second-order momentum |
 | [Native Zig boundary](NATIVE_ZIG.md) | The archived Zig prototypes and the versioned ABI |
 
 ## Engine and fuel

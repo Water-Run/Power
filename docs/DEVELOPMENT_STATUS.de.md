@@ -29,6 +29,8 @@ Transport, einem Modellanbieter oder Drittanbietern. Skripte in Unity Assets ver
 C# 9. Unity lädt die Standard-Assemblies, die das externe SDK baut; es kompiliert
 keinen Quelltext für .NET 10 oder C# 14.
 
+`LiquidColumn` ist eine eigenständige C#-Referenz für ein waagerechtes starres Rohr mit konstantem Querschnitt, gleichförmiger Geschwindigkeit, Flüssigkeitsdichte und Temperatur. Absolute Portdrücke sind je Intervall vorgegeben. Lineare und quadratische Widerstände sind explizite Forschungswerte. Es ist keine Graphkomponente; Netzwerk und Düsen bleiben unverändert. [Referenz für den Impuls am Flüssigkeitseinlass](LIQUID_COLUMN.de.md)
+
 ## Nachweise und Grenzen
 
 Der vorgeschriebene serielle Befehl `dotnet run --file tools/Build.cs -- verify` prüft beide Assembly-Ziele, einen echten MCP-Prozess, alle Labore, das Zig-Archiv und die C#-ABI. Zählwerte, Ergebnisse und Logpfade stehen in [VALIDATION.md](VALIDATION.md). Standard-Assembly-Prüfungen unter .NET 10 belegen keine Unity-Laufzeitabnahme.

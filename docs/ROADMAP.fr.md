@@ -21,7 +21,7 @@ Les points de contrôle numériques actuels, les fixtures d'asset authentiques e
 
 ## Prochain travail managé
 
-Résoudre inertie et pertes d'entrée, sensibilité à la relaxation de phase et au glissement, puis allumage, admission/échappement, pertes et ECU/TCU coordonnés. Chaque équation exige références indépendantes et raffinement ; calibration mesurée et acceptation Unity réelle restent séparées.
+Relier la référence de quantité de mouvement au réseau fini avec inventaire énergétique de ligne explicite et enthalpies compatibles. Établir la validité à densité variable et changement de phase avant de revendiquer une entrée cavitante. Poursuivre relaxation, allumage, admission/échappement, pertes et ECU/TCU coordonnés. [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md)
 
 Étendre ensuite l'allumage/le contrôle, la dynamique d'admission/échappement et les pertes mécaniques du moteur. La combustion de Wiebe actuelle est prescrite et n'établit pas une combustion prédictive, le cliquetis, les émissions ou une calibration OEM. Le [contrat de dosage gazeux](FUEL_METERING.fr.md) reste un chemin pris en charge indépendant.
 

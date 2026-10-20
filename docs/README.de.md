@@ -33,6 +33,7 @@ flowchart LR
 | [Agent-API](AGENT_API.de.md) | MCP-Werkzeuge, Revisionen, Fehler und die Operationsfolge |
 | [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v34 und die Leser für v1 bis v33 |
 | [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md) | Kritischer Fluss mit eingefrorenem Dampfanteil, Flüssigkeitsverdrängung und physische Pumpe/Nadel |
+| [Referenz für den Impuls am Flüssigkeitseinlass](LIQUID_COLUMN.de.md) | Einphasige Einlassträgheit, Reibungswärme und unabhängig geprüfter Impuls zweiter Ordnung |
 | [Native Zig-Grenze](NATIVE_ZIG.de.md) | Die archivierten Zig-Prototypen und das versionierte ABI |
 
 ## Motor und Kraftstoff

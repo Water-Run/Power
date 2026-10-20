@@ -21,7 +21,7 @@ I punti di controllo numerici attuali, le fixture di asset autentiche e i regist
 
 ## Prossimo lavoro gestito
 
-Risolvere inerzia e perdite d'ingresso, sensibilità a rilassamento di fase e scorrimento, poi accensione, aspirazione/scarico, perdite meccaniche e ECU/TCU coordinati. Ogni equazione richiede riferimenti indipendenti e raffinamento; calibrazione misurata e accettazione Unity reale restano separate.
+Collegare il riferimento di quantità di moto alla rete finita con inventario energetico della linea ed entalpie compatibili espliciti. Stabilire validità di densità variabile e cambio fase prima di dichiarare ingresso cavitante. Proseguire rilassamento, accensione, aspirazione/scarico, perdite ed ECU/TCU coordinati. [Riferimento della quantità di moto all'ingresso liquido](LIQUID_COLUMN.it.md)
 
 Poi estendi accensione/controllo, dinamica di aspirazione/scarico e perdite meccaniche del motore. La combustione di Wiebe attuale è prescritta e non stabilisce combustione predittiva, detonazione, emissioni o calibrazione OEM. Il [contratto di dosatura gassosa](FUEL_METERING.it.md) resta un percorso supportato indipendente.
 

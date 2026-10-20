@@ -33,6 +33,7 @@ flowchart LR
 | [API agente](AGENT_API.it.md) | Strumenti MCP, revisioni, errori e la sequenza delle operazioni |
 | [Formato degli asset](ASSET_FORMAT.it.md) | `.powerasset` v34 e i lettori da v1 a v33 |
 | [Scarico carburante a titolo congelato e ricevitori finiti](FUEL_DISCHARGE.it.md) | Strozzamento a titolo congelato, spostamento liquido finito e pompa/ago fisici in combustione |
+| [Riferimento della quantità di moto all'ingresso liquido](LIQUID_COLUMN.it.md) | Inerzia d'ingresso monofase, calore d'attrito e quantità di moto del secondo ordine verificata |
 | [Confine Zig nativo](NATIVE_ZIG.it.md) | I prototipi Zig archiviati e l'ABI versionata |
 
 ## Motore e carburante

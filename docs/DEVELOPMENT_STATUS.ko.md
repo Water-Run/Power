@@ -22,6 +22,8 @@ Power!에는 관리형 시뮬레이션 코어, 공유 모델 문서와 이식 �
 
 코어와 Assets는 `net10.0`과 `netstandard2.1`을 모두 대상으로 합니다. 코어에는 Unity, 전송, 모델 공급자, 제3자 의존성이 없습니다. Unity Assets 스크립트는 C# 9를 사용합니다. Unity는 외부 SDK가 빌드한 Standard 어셈블리를 로드합니다. .NET 10/C# 14 소스를 컴파일하지는 않습니다.
 
+`LiquidColumn`은 단면적, 균일 속도, 액체 밀도와 온도가 일정한 수평 강체 관의 독립 C# 기준입니다. 각 국소 구간의 절대 포트 압력이 주어집니다. 선형·이차 저항은 명시적 연구 입력입니다. 그래프 컴포넌트가 아니며 기존 연료 네트워크와 노즐 방정식을 바꾸지 않습니다. [액체 입구 운동량 기준 모델](LIQUID_COLUMN.ko.md)
+
 ## 증거와 한계
 
 필수 직렬 명령 `dotnet run --file tools/Build.cs -- verify`는 두 어셈블리 대상, 실제 MCP 프로세스, 모든 실험실, Zig 보관 코드와 C# ABI를 검사합니다. 수치, 결과와 로그 경로는 [VALIDATION.md](VALIDATION.md)에 있습니다. .NET 10에서 실행한 Standard 어셈블리 검사는 Unity 런타임 인수를 입증하지 않습니다.

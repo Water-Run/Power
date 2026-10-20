@@ -33,6 +33,7 @@ flowchart LR
 | [API de agente](AGENT_API.es.md) | Herramientas MCP, revisiones, errores y la secuencia de operación |
 | [Formato de asset](ASSET_FORMAT.es.md) | `.powerasset` v34 y los lectores de v1 a v33 |
 | [Descarga de combustible con calidad congelada y receptores finitos](FUEL_DISCHARGE.es.md) | Estrangulamiento de calidad congelada, desplazamiento finito y combustión con bomba/aguja físicas |
+| [Referencia de cantidad de movimiento en la entrada líquida](LIQUID_COLUMN.es.md) | Inercia de entrada monofásica, calor de fricción y cantidad de movimiento de segundo orden verificada |
 | [Frontera Zig nativa](NATIVE_ZIG.es.md) | Los prototipos Zig archivados y el ABI versionado |
 
 ## Motor y combustible
