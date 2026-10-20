@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — эксперименты без интерфейса"]
     mcp["Power.Mcp — 12 инструментов MCP через stdio"]
-    assets["Power.Assets — .powerasset v33"]
+    assets["Power.Assets — .powerasset v34"]
     unity["Студия Unity 6.6 — 3D-лаборатории"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | Узнать модели, ограничения, соглашения о времени и ревизиях. Начните отсюда. |
 | `get_model_schema` | JSON Schema 2020-12 для `power.model.v1` |
-| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (51 примера) |
+| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (53 примера) |
 | `validate_model` | Проверить модель без запуска; структурированная диагностика исправлений |
 | `run_experiment` | Ограниченный запуск без интерфейса с пакетным повтором, KPI и происхождением |
 | `export_model_asset` | Экспортировать переносимый `.powerasset` |
@@ -147,12 +147,12 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > Все параметры образцов — `unverified`: исследовательские значения, а не калиброванные измерения.
 
-Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v33`, читатели прежних активов сохранены.
+Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v34`, читатели прежних активов сохранены.
 
-Конечные камеры обмениваются работой давления с валами и наполняются/подают через идеальные обратные элементы, включая фазовый переход при недостатке притока. Физическая форсунка и приёмник ещё не связаны. [Фазоразрешающий топливный насос с приводом от вала](docs/FUEL_CHAMBER_PUMP.ru.md)
+Насос топливного домена теперь питает физическую иглу и сопло с замороженным паросодержанием в работающий цилиндр с конечным объёмом жидкости. Полные запасы включают фазовый переход, работу вытеснения, кинетическую энергию и импульс неподвижной стенке. [Подача топлива с замороженным паросодержанием в конечный приёмник](docs/FUEL_DISCHARGE.ru.md) [Фазоразрешающий топливный насос с приводом от вала](docs/FUEL_CHAMBER_PUMP.ru.md)
 
 <details>
-<summary>Доступные лаборатории (52)</summary>
+<summary>Доступные лаборатории (54)</summary>
 
 | Имя образца (`get_example_model`) | Лаборатория | Что проверяет |
 |---|---|---|
@@ -208,6 +208,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | обратный перенос смеси и теплообмен с электромеханической лабораторией |
 | `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | недостаточный приток, объёмное парообразование и подача вращающимся по инерции валом |
 | `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | двигатель постоянного тока, жидкостное наполнение и конечное тепло стенки мотора |
+| `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | Подача топлива с замороженным паросодержанием в конечный приёмник |
+| `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Критический поток с замороженным паросодержанием, конечное вытеснение и физический насос/игла |
 
 </details>
 

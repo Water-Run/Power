@@ -31,7 +31,8 @@ flowchart LR
 | 文档 | 内容 |
 |---|---|
 | [智能体 API](AGENT_API.zh-CN.md) | MCP 工具、修订号、错误与操作序列 |
-| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v33,以及 v1 至 v32 的读取器 |
+| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v34,以及 v1 至 v33 的读取器 |
+| [冻结汽相质量分数的燃油喷流与有限体积接收腔](FUEL_DISCHARGE.zh-CN.md) | 冻结汽相质量分数阻塞、有限液体排量与物理泵/针阀燃烧 |
 | [原生 Zig 边界](NATIVE_ZIG.zh-CN.md) | 归档的 Zig 原型与带版本的 ABI |
 
 ## 发动机与燃油

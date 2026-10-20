@@ -26,10 +26,12 @@ O subpasso mecânico fechado mantém massa e entropia. A energia inclui fluido e
 
 Pedir `equilibrium-fuel-pump` ou `electric-equilibrium-fuel-pump` pelo MCP ou executar JSON na CLI. Ler massa, temperatura, pressão, vapor e energia junto à entrega de válvulas e velocidade do eixo. `volume` do componente é geométrico; `volume` do nó inclui expansão da parede. `torque`, `hydraulic_power`, `hydraulic_work` mostram a troca interna.
 
-Pressão/trabalho líquidos, adiabáticas de vapor ideal e inversão independente de entropia bifásica verificam o fechamento. O movimento líquido fechado refina em segunda ordem; enchimento/entrega com fase em primeira contra RK4 invertido independentemente. Falta e suprimento completo de entrada, acionamento elétrico, engrenagens/hidráulica/embreagem, replay, rollback e alocações cobrem integração. Asset v33 guarda geometria e lê v1-v32. Unity Editor/Play/Player/IL2CPP real segue não verificado.
+Pressão/trabalho líquidos, adiabáticas de vapor ideal e inversão independente de entropia bifásica verificam o fechamento. O movimento líquido fechado refina em segunda ordem; enchimento/entrega com fase em primeira contra RK4 invertido independentemente. Falta e suprimento completo de entrada, acionamento elétrico, engrenagens/hidráulica/embreagem, replay, rollback e alocações cobrem integração. Asset v34 guarda geometria e lê v1-v33. Unity Editor/Play/Player/IL2CPP real segue não verificado.
 
 ## Trabalho restante
 
-Parâmetros permanecem `unverified`. Temperatura, pressão e volume representável são limitados durante todo o ciclo. Assume-se líquido incompressível, vapor ideal de pseudoespécie, equilíbrio instantâneo em temperatura comum e pressão externa de carcaça zero. Inércia local/NPSH, escoamento crítico, atraso de nucleação, inércia/histerese de válvula, misturas reais e calibração medida seguem abertos. Injetor físico e trabalho de deslocamento/cinética do receptor são separados.
+Parâmetros permanecem `unverified`. Temperatura, pressão e volume representável são limitados durante todo o ciclo. Assume-se líquido incompressível, vapor ideal de pseudoespécie, equilíbrio instantâneo em temperatura comum e pressão externa de carcaça zero. Inércia local/NPSH, escoamento crítico, atraso de nucleação, inércia/histerese de válvula, misturas reais e calibração medida seguem abertos.
 
 [Modelica: swept volume](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [Cantera: reactor walls](https://cantera.org/dev/reference/reactors/interactions.html) · [VALIDATION.md](VALIDATION.pt-BR.md)
+
+A bomba do domínio de combustível agora alimenta agulha física e descarga de título congelado em um receptor em combustão com volume líquido finito. Os inventários completos incluem mudança de fase, trabalho de deslocamento, energia cinética e impulso na parede imóvel. [Descarga de combustível com título congelado e receptores finitos](FUEL_DISCHARGE.pt-BR.md)

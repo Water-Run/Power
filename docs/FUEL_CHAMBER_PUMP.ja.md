@@ -26,10 +26,12 @@ torque_pressure = -delta_E_adiabatic / delta_theta
 
 MCP で `equilibrium-fuel-pump` または `electric-equilibrium-fuel-pump` を要求するか JSON を CLI で実行します。室の質量、温度、圧力、蒸気割合、エネルギーを弁供給と軸速度に並べて確認します。コンポーネント `volume` は幾何基準、ノード `volume` は壁膨張込みです。`torque`、`hydraulic_power`、`hydraulic_work` が内部軸交換を示します。
 
-独立した液体圧力・仕事、理想蒸気断熱線、二相エントロピー反転で閉包を検証します。閉液体の軸運動は二次、相変化を伴う充填・排出は独立反転 RK4 参照に対して一次収束します。入口不足、十分な液体、電動、歯車・油圧・クラッチ組合せ、厳密再生、ロールバック、割当検証で統合を確認します。資産 v33 は幾何を保存し v1-v32 を読みます。実 Unity Editor/Play/Player/IL2CPP は未検証です。
+独立した液体圧力・仕事、理想蒸気断熱線、二相エントロピー反転で閉包を検証します。閉液体の軸運動は二次、相変化を伴う充填・排出は独立反転 RK4 参照に対して一次収束します。入口不足、十分な液体、電動、歯車・油圧・クラッチ組合せ、厳密再生、ロールバック、割当検証で統合を確認します。資産 v34 は幾何を保存し v1-v33 を読みます。実 Unity Editor/Play/Player/IL2CPP は未検証です。
 
 ## 残る作業
 
-パラメーターは `unverified` です。温度、圧力、分解可能な体積限界は全サイクルで適用します。非圧縮液体、理想擬似成分蒸気、瞬時共通温度平衡、外部ケース圧力ゼロを仮定します。局所入口慣性/NPSH、チョーク流、核生成遅延、弁慣性・ヒステリシス、実混合燃料、実測校正は残ります。物理噴射器接続と受容側の排除体積・運動仕事も別要件です。
+パラメーターは `unverified` です。温度、圧力、分解可能な体積限界は全サイクルで適用します。非圧縮液体、理想擬似成分蒸気、瞬時共通温度平衡、外部ケース圧力ゼロを仮定します。局所入口慣性/NPSH、チョーク流、核生成遅延、弁慣性・ヒステリシス、実混合燃料、実測校正は残ります。
 
 [Modelica: swept volume](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [Cantera: reactor walls](https://cantera.org/dev/reference/reactors/interactions.html) · [VALIDATION.md](VALIDATION.ja.md)
+
+燃料域ポンプは物理ニードルと凍結蒸気質量分率の流出を介して、有限液体体積の燃焼受容室へ供給します。全在庫に相変化、排除仕事、噴流運動エネルギー、静止壁力積を含みます。 [蒸気質量分率を凍結した燃料流出と有限受容室](FUEL_DISCHARGE.ja.md)

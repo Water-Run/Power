@@ -74,7 +74,7 @@ Windows verwendet denselben Befehl `dotnet` und einen absoluten Pfad zur DLL. Ei
 
 ## Werkzeuge und Ergebnisse
 
-In Agent-API-Version 0.36.0 akzeptiert `get_example_model` einen optionalen `name` mit Standardwert `electrothermal`. `get_capabilities.examples` listet alle 51 Beispiele einschließlich endlicher Tanks und Kraftstoffumlauf auf. CLI `list-labs` liefert alle 52 Labore als [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json)-JSON; `thermal-network` ist konstruktionsgemäß nur im CLI verfügbar. Die Fähigkeiten nennen auch Komponenten, Modelltreue, Solvergrenzen und Eingabegrenzen. Exporte nutzen `power.asset.v33` mit erhaltenen v1-v32-Lesern. Validierung und Sitzungserstellung liefern Ausgabekanäle und Einheiten. Bestandene Labor-KPIs belegen keinen vollständigen oder kalibrierten Antriebsstrang.
+In Agent-API-Version 0.39.0 akzeptiert `get_example_model` einen optionalen `name` mit Standardwert `electrothermal`. `get_capabilities.examples` listet alle 53 Beispiele einschließlich endlicher Tanks und Kraftstoffumlauf auf. CLI `list-labs` liefert alle 54 Labore als [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json)-JSON; `thermal-network` ist konstruktionsgemäß nur im CLI verfügbar. Die Fähigkeiten nennen auch Komponenten, Modelltreue, Solvergrenzen und Eingabegrenzen. Exporte nutzen `power.asset.v34` mit erhaltenen v1-v33-Lesern. Validierung und Sitzungserstellung liefern Ausgabekanäle und Einheiten. Bestandene Labor-KPIs belegen keinen vollständigen oder kalibrierten Antriebsstrang.
 
 | Werkzeug | Aufgabe |
 |---|---|
@@ -586,7 +586,7 @@ Verträge. Der Graph verwendet bestehende Datensätze von Asset v24, kein neues 
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v33 speichert Routen, Verstärkungen und Uhren und liest v1-v32.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v34 speichert Routen, Verstärkungen und Uhren und liest v1-v33.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -596,7 +596,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v33 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v32. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v34 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v33. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -636,7 +636,7 @@ Optionales `fuel_film.parameters.phase_equilibrium` deklariert `reference_pressu
 
 Die Standardversorgung verwirft Flüssigkeit unter Sättigung. Optionales endliches Tankgleichgewicht löst Quellendampftransfer mit druckkorrigierten Potenzialen. Rail und Ansaugung führen weiter getrennte Flüssigkeit; Blasenmitnahme und kavitierende Strömung benötigen weitere Physik.
 
-Der Druckvergleich erlaubt nur binary64-Rundung: `64 * epsilon * max(p, p_sat)` mit `epsilon = 2^-52`. Die ausgegebene Reserve wird nicht geklemmt. Es ist eine Bulk-Sättigungsprüfung; lokale Druckverluste und Pumpen-NPSH benötigen ein aufgelöstes Strömungsmodell. Unabhängige Prüfungen fordern außerdem nicht abnehmende Gesamtentropie bei adiabatischem Flash und endlichem Wandwärmeaustausch.
+Der Druckvergleich erlaubt nur binary64-Rundung: `64 * epsilon * max(p, p_sat)` mit `epsilon = 2^-54`. Die ausgegebene Reserve wird nicht geklemmt. Es ist eine Bulk-Sättigungsprüfung; lokale Druckverluste und Pumpen-NPSH benötigen ein aufgelöstes Strömungsmodell. Unabhängige Prüfungen fordern außerdem nicht abnehmende Gesamtentropie bei adiabatischem Flash und endlichem Wandwärmeaustausch.
 
 [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)
 

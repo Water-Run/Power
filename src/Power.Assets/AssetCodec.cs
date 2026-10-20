@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 33, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v33";
+    public const int FormatVersion = 34, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v34";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -25,7 +25,7 @@ public static class AssetCodec
         // Check the exact maximum allocation before writing caller-provided data.
         int cylinders = asset.Components.Count(c => c.Kind == ComponentKind.SealedCylinder);
         int gases = asset.Nodes.Count(n => n.Domain == Domain.Gas);
-        int orifices = asset.Components.Count(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector);
+        int orifices = asset.Components.Count(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector or ComponentKind.FuelDischarge);
         int moving = asset.Components.Count(c => c.Kind == ComponentKind.GasCylinder);
         int valves = asset.Components.Count(c => c.ValveTiming is not null);
         int mixtures = asset.Nodes.Count(n => n.Gas?.Premixed is not null);
@@ -55,9 +55,12 @@ public static class AssetCodec
         int liquidReturns=asset.Components.Count(c=>c.LiquidRailReturn is not null);
         int fuelVolumes = asset.Nodes.Count(n => n.Domain == Domain.Fuel);
         int fuelChambers = asset.Components.Count(c => c.Kind == ComponentKind.FuelChamber);
+        int finiteFilms = asset.Components.Count(c => c.Kind == ComponentKind.FiniteFuelFilm);
+        int discharges = asset.Components.Count(c => c.Kind == ComponentKind.FuelDischarge);
         long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 40 * 4 +
             44L * asset.Nodes.Count + 156L * asset.Components.Count + 116L * cylinders + 24L * gases + 36L * orifices +
             72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 100L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + 40L * needleDrivers + 104L * dctControllers + 208L * atControllers + 12L * atRoutes + 28L * liquidFeeds + 52L * liquidTanks + 24L * liquidReturns + 148L * fuelVolumes + 40L * fuelChambers + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
+        size += 12L * finiteFilms + 52L * discharges;
         if (size > MaxBytes) throw new AssetFormatException("Asset exceeds 1 MiB.");
         using var stream = new MemoryStream((int)size);
         using var writer = new BinaryWriter(stream, Utf8, true);
@@ -94,7 +97,7 @@ public static class AssetCodec
                 writer.Write(i); Quantity(gas.GasConstant); writer.Write(gas.Gamma);
             }
         for (int i = 0; i < asset.Components.Count; ++i)
-            if (asset.Components[i].Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector)
+            if (asset.Components[i].Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector or ComponentKind.FuelDischarge)
             {
                 var c = asset.Components[i];
                 writer.Write(i); Quantity(c.Area); writer.Write(c.DischargeCoefficient); Quantity(c.ReservoirPressure);
@@ -198,7 +201,8 @@ public static class AssetCodec
             { writer.Write(i); writer.Write(injector.CrankNode); Quantity(injector.CycleAngle); Quantity(injector.StartAngle); Quantity(injector.DurationAngle); Quantity(injector.MaximumDose); }
         for(int i=0;i<asset.Components.Count;++i)if(asset.Components[i].FuelFilm is { } film)
         {writer.Write(i);Quantity(film.InitialMass);Quantity(film.InitialTemperature);Quantity(film.LiquidSpecificHeat);Quantity(film.SaturationTemperature);Quantity(film.LatentInternalEnergy);
-         Quantity(film.PhaseEquilibrium?.ReferencePressure ?? default);Quantity(film.PhaseEquilibrium?.MinimumTemperature ?? default);Quantity(film.PhaseEquilibrium?.MaximumTemperature ?? default);}
+         Quantity(film.PhaseEquilibrium?.ReferencePressure ?? default);Quantity(film.PhaseEquilibrium?.MinimumTemperature ?? default);Quantity(film.PhaseEquilibrium?.MaximumTemperature ?? default);
+         if (asset.Components[i].Kind == ComponentKind.FiniteFuelFilm) Quantity(film.FiniteVolumeDensity);}
         for (int i = 0; i < asset.Components.Count; ++i)
             if (asset.Components[i].LiquidFuelInjector is { } injector)
             {
@@ -251,6 +255,12 @@ public static class AssetCodec
         for (int i = 0; i < asset.Components.Count; ++i)
             if (asset.Components[i].FuelChamber is { } chamber)
             { writer.Write(i); Quantity(chamber.MinimumReferenceVolume); Quantity(chamber.SweptVolume); Quantity(chamber.Phase); }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].FuelDischarge is { } discharge)
+            {
+                writer.Write(i); writer.Write(discharge.FilmComponent); writer.Write((int)discharge.PhaseModel); Quantity(discharge.WallKineticFraction);
+                writer.Write(discharge.Needle?.NeedleNode ?? 0); Quantity(discharge.Needle?.ClosedPosition ?? default); Quantity(discharge.Needle?.FullOpenPosition ?? default);
+            }
         foreach (var input in asset.Inputs) { writer.Write(input.TimeNanoseconds); writer.Write(input.Channel); writer.Write(input.Value); }
         foreach (var c in asset.Checks)
         {
@@ -337,9 +347,11 @@ public static class AssetCodec
                     InitialCurrent = Quantity(), Conductance = Quantity(), AmbientTemperature = Quantity()
                 };
             int fuelChambers = cs.Count(c => c.Kind == ComponentKind.FuelChamber);
+            int finiteFilms = cs.Count(c => c.Kind == ComponentKind.FiniteFuelFilm), discharges = cs.Count(c => c.Kind == ComponentKind.FuelDischarge);
+            if (version < 34 && (finiteFilms != 0 || discharges != 0)) throw new AssetFormatException("Finite-displacement receivers and fuel discharge require version 34.");
             if (version < 33 && (fuelChambers != 0 || cs.Any(c => c.Kind == ComponentKind.FuelCheckValve)))
                 throw new AssetFormatException("Moving fuel chambers and check valves require version 33.");
-            if (stream.Length - tableStart != declaredTableBytes + 148L * fuelVolumes + 40L * fuelChambers)
+            if (stream.Length - tableStart != declaredTableBytes + 148L * fuelVolumes + 40L * fuelChambers + 12L * finiteFilms + 52L * discharges)
                 throw new AssetFormatException("Asset length does not match its counts and typed fuel records.");
             if (version < 32 && cs.Any(c => c.Kind is ComponentKind.FuelRestriction or ComponentKind.FuelHeatLink))
                 throw new AssetFormatException("Equilibrium fuel links require version 32.");
@@ -361,7 +373,7 @@ public static class AssetCodec
             if (version < 19 && cs.Any(c => c.Kind == ComponentKind.LiquidFuelInjector)) throw new AssetFormatException("Liquid fuel injection requires asset version 19.");
             if (liquidInjectors != cs.Count(c => c.Kind == ComponentKind.LiquidFuelInjector)) throw new AssetFormatException("Every liquid injector requires one finite-source timing record.");
             if(version<18&&cs.Any(c=>c.Kind==ComponentKind.FuelFilm))throw new AssetFormatException("Liquid fuel film requires asset version 18.");
-            if(films!=cs.Count(c=>c.Kind==ComponentKind.FuelFilm))throw new AssetFormatException("Every liquid film requires one phase-property record.");
+            if(films!=cs.Count(c=>c.Kind is ComponentKind.FuelFilm or ComponentKind.FiniteFuelFilm))throw new AssetFormatException("Every liquid film requires one phase-property record.");
             if (version < 17 && cs.Any(c => c.Kind == ComponentKind.GasFuelInjector)) throw new AssetFormatException("Cycle fuel metering requires asset version 17.");
             if (injectors != cs.Count(c => c.Kind == ComponentKind.GasFuelInjector)) throw new AssetFormatException("Every gas fuel injector requires one timing extension.");
             if (version < 16 && cs.Any(c => c.Kind == ComponentKind.GasPiston)) throw new AssetFormatException("Linear gas pistons require asset version 16.");
@@ -387,7 +399,7 @@ public static class AssetCodec
             if (version < 3 && (ns.Any(n => n.Domain == Domain.Gas) || cs.Any(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasHeatLink)))
                 throw new AssetFormatException("Finite gas networks require asset version 3.");
             if (cylinders != cs.Count(c => c.Kind == ComponentKind.SealedCylinder) || gases != ns.Count(n => n.Domain == Domain.Gas) ||
-                orifices != cs.Count(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector) || moving != cs.Count(c => c.Kind == ComponentKind.GasCylinder) || burners != cs.Count(c => c.Kind == ComponentKind.PremixedCombustion) || clutches != cs.Count(c => c.Kind == ComponentKind.Clutch) || gears != cs.Count(c => c.Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) || converters != cs.Count(c => c.Kind == ComponentKind.TorqueConverter) ||
+                orifices != cs.Count(c => c.Kind is ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector or ComponentKind.FuelDischarge) || moving != cs.Count(c => c.Kind == ComponentKind.GasCylinder) || burners != cs.Count(c => c.Kind == ComponentKind.PremixedCombustion) || clutches != cs.Count(c => c.Kind == ComponentKind.Clutch) || gears != cs.Count(c => c.Kind is ComponentKind.IdealGear or ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) || converters != cs.Count(c => c.Kind == ComponentKind.TorqueConverter) ||
                 hydraulicRestrictions != cs.Count(c => c.Kind is ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve) || hydraulicClutches != cs.Count(c => c.Kind == ComponentKind.HydraulicClutch) || pumps != cs.Count(c => c.Kind == ComponentKind.HydraulicPump) || reliefs != cs.Count(c => c.Kind == ComponentKind.HydraulicRelief) || controllers != cs.Count(c => c.Kind == ComponentKind.PressureController))
                 throw new AssetFormatException("Every cylinder, gas node, orifice, burner, clutch, gear, converter and hydraulic component requires exactly one matching extension of a supported version.");
             for (int i = 0; i < cylinders; ++i)
@@ -412,7 +424,7 @@ public static class AssetCodec
             for (int i = 0; i < orifices; ++i)
             {
                 int index = reader.ReadInt32();
-                if (index < 0 || index >= components || cs[index].Kind is not (ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector) || seenOrifices[index])
+                if (index < 0 || index >= components || cs[index].Kind is not (ComponentKind.GasOrifice or ComponentKind.GasFuelInjector or ComponentKind.LiquidFuelInjector or ComponentKind.FuelDischarge) || seenOrifices[index])
                     throw new AssetFormatException("Orifice extension must reference a distinct gas-orifice component.");
                 seenOrifices[index] = true;
                 cs[index] = cs[index] with { Area = Quantity(), DischargeCoefficient = reader.ReadDouble(), ReservoirPressure = Quantity() };
@@ -609,7 +621,7 @@ public static class AssetCodec
                 cs[index] = cs[index] with { FuelInjector = new() { CrankNode = reader.ReadUInt32(), CycleAngle = Quantity(), StartAngle = Quantity(), DurationAngle = Quantity(), MaximumDose = Quantity() } };
             }
             for(int i=0;i<films;++i)
-            {int index=reader.ReadInt32();if(index<0||index>=components||cs[index].Kind!=ComponentKind.FuelFilm||cs[index].FuelFilm is not null)throw new AssetFormatException("Phase properties must reference a distinct fuel film.");
+            {int index=reader.ReadInt32();if(index<0||index>=components||cs[index].Kind is not (ComponentKind.FuelFilm or ComponentKind.FiniteFuelFilm)||cs[index].FuelFilm is not null)throw new AssetFormatException("Phase properties must reference a distinct fuel film.");
              var film = new FuelFilmDefinition { InitialMass=Quantity(),InitialTemperature=Quantity(),LiquidSpecificHeat=Quantity(),SaturationTemperature=Quantity(),LatentInternalEnergy=Quantity() };
              if (version >= 30)
              {
@@ -617,6 +629,7 @@ public static class AssetCodec
                  if (pressure == default && (minimum != default || maximum != default)) throw new AssetFormatException("Phase-equilibrium temperature limits require reference pressure.");
                  if (pressure != default) film = film with { PhaseEquilibrium = new() { ReferencePressure=pressure,MinimumTemperature=minimum,MaximumTemperature=maximum } };
              }
+             if (cs[index].Kind == ComponentKind.FiniteFuelFilm) film = film with { FiniteVolumeDensity = Quantity() };
              cs[index]=cs[index] with{FuelFilm=film};}
             for (int i = 0; i < liquidInjectors; ++i)
             {
@@ -720,6 +733,17 @@ public static class AssetCodec
                 if (index < 0 || index >= components || cs[index].Kind != ComponentKind.FuelChamber || cs[index].FuelChamber is not null)
                     throw new AssetFormatException("Chamber geometry must reference a distinct fuel-chamber component.");
                 cs[index] = cs[index] with { FuelChamber = new() { MinimumReferenceVolume = Quantity(), SweptVolume = Quantity(), Phase = Quantity() } };
+            }
+            for (int i = 0; i < discharges; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.FuelDischarge || cs[index].FuelDischarge is not null)
+                    throw new AssetFormatException("Fuel discharge record must reference a distinct discharge component.");
+                uint film = reader.ReadUInt32(); var phase = (FuelDischargePhaseModel)reader.ReadInt32(); var fraction = Quantity();
+                uint needle = reader.ReadUInt32(); var closed = Quantity(); var open = Quantity();
+                if (needle == 0 && (closed != default || open != default)) throw new AssetFormatException("Needle positions require a needle node.");
+                cs[index] = cs[index] with { FuelDischarge = new() { FilmComponent = film, PhaseModel = phase, WallKineticFraction = fraction,
+                    Needle = needle == 0 ? null : new() { NeedleNode = needle, ClosedPosition = closed, FullOpenPosition = open } } };
             }
             for (int i = 0; i < inputs; ++i) schedule[i] = new(reader.ReadUInt64(), reader.ReadUInt64(), reader.ReadDouble());
             var conditions = new AssetCheck[checks];

@@ -31,7 +31,8 @@ flowchart LR
 | Document | What it is |
 |---|---|
 | [Agent API](AGENT_API.md) | MCP tools, revisions, errors and the operation sequence |
-| [Asset format](ASSET_FORMAT.md) | `.powerasset` v33 and the readers for v1 through v32 |
+| [Asset format](ASSET_FORMAT.md) | `.powerasset` v34 and the readers for v1 through v33 |
+| [Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md) | Frozen-quality choking, finite liquid displacement and physical pump/needle firing |
 | [Native Zig boundary](NATIVE_ZIG.md) | The archived Zig prototypes and the versioned ABI |
 
 ## Engine and fuel

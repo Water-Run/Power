@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · **Italiano** · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: Scarico carburante a titolo congelato e ricevitori finiti
+
+La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo congelato in un ricevitore acceso con volume liquido finito. Gli inventari comprendono cambio fase, lavoro di spostamento, energia cinetica del getto e impulso sulla parete ferma.
+
+Limiti indipendenti di Bernoulli e gas ideale, massimizzazione separata del flusso bifase, energia/entropia e ODE ugello/ricevitore integrata indipendentemente verificano le equazioni. Il raffinamento temporale è del primo ordine. Replay portabile, MCP reale, rollback, annullamento, rami indipendenti e allocazioni coprono l'integrazione. Unity Editor/Play/Player/IL2CPP reale resta non verificato.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 496/496 |
+| standard_checks_on_dotnet | 386/386 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 52 |
+| identical_complete_sample_boundaries | 7287 |
+| all_sample_boundaries | 7379 |
+| new_core_groups | 7 |
+| new_constitutive_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_reference_steps | 1000, 2000 |
+| asset_version | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| fingerprint_tags | 38, 39 |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| additional_reported_states_per_discharge | 11 |
+| v33_fixture_sha256 | 3e3804c7277baea26c330c47a319669c5f61142486fb73f127679e56192fe9ba |
+| verification_log_sha256 | b39f7313ca8f90d028a0b76ade58d950dfddcaf73750de7891c62d0026042b2d |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 54 |
+| schema_negative_cases | 11 |
+| documentation_locales | 10 |
+| documentation_files | 200 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| step_ns | normalized_error |
+|---|---|
+| 200000 | 9.43999202748097e-05 |
+| 100000 | 4.716734258499583e-05 |
+| 50000 | 2.356437988192822e-05 |
+| 25000 | 1.1782714233986302e-05 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| finite-volume-fuel-discharge | 53190b5628ca0ab4 | 82f9e4a926d43249 | 11 | 2.2737367544323206e-13 |
+| pump-fed-finite-volume-cylinder | e4225e412bfa9802 | a4d2b9f5703c79d8 | 81 | 1.6226408661168534e-08 |
+
+- `artifacts/reports/fuel-discharge-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-final-2026-10-20.log`
+- `artifacts/reports/fuel-discharge-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-doc-audit-2026-10-20.json`
+
+I parametri restano `unverified`. Valgono temperature dichiarate, volume gas positivo e dominio di vapore diluito. Mancano inerzia locale d'ingresso, nucleazione finita, scorrimento delle fasi, spray risolto, criticità reale e calibrazione misurata. La combustione prescritta non prova equilibrio chimico o entropia di reazione. Proseguire ingresso, accensione, aspirazione/scarico, perdite e ECU/TCU coordinati.
+
 ## 2026-10-20: Pompa carburante a cambio di fase azionata da albero
 
 La verifica seriale richiesta passa localmente su Windows x64/.NET 10.0.12. I nuovi controlli della pompa carburante coprono entrambi i target assembly. I controlli Standard sono ospitati su .NET 10; Unity Editor/Play/Player/IL2CPP effettivo resta non verificato.

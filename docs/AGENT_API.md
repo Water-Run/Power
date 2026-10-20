@@ -76,7 +76,7 @@ Windows uses the same `dotnet` command and an absolute path to the DLL. A produc
 
 ## Tools and results
 
-In agent API version 0.36.0, `get_example_model` takes an optional `name`, defaulting to `electrothermal`. `get_capabilities.examples` lists all 51 available examples, including finite-tank and recirculating fuel models. CLI `list-labs` returns all 52 laboratories as [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON; `thermal-network` is CLI-only by design. Capabilities also advertise supported components, fidelity, solver limits and input bounds. Exports use `power.asset.v33`, with v1-v32 readers retained. Validation and session creation return output channels and units. Passing laboratory KPIs doesn't establish a complete or calibrated powertrain.
+In agent API version 0.39.0, `get_example_model` takes an optional `name`, defaulting to `electrothermal`. `get_capabilities.examples` lists all 53 available examples, including finite-tank and recirculating fuel models. CLI `list-labs` returns all 54 laboratories as [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON; `thermal-network` is CLI-only by design. Capabilities also advertise supported components, fidelity, solver limits and input bounds. Exports use `power.asset.v34`, with v1-v33 readers retained. Validation and session creation return output channels and units. Passing laboratory KPIs doesn't establish a complete or calibrated powertrain.
 
 | Tool | Purpose |
 |---|---|
@@ -610,7 +610,7 @@ format. See [AT_HYDRAULIC_ACTUATION.md](AT_HYDRAULIC_ACTUATION.md).
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v33 retains routes, gains and clocks and reads v1-v32.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v34 retains routes, gains and clocks and reads v1-v33.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -620,7 +620,7 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v33 retains feed links and source temperature and reads v1-v32. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v34 retains feed links and source temperature and reads v1-v33. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -660,7 +660,7 @@ Optional `fuel_film.parameters.phase_equilibrium` declares `reference_pressure` 
 
 The default liquid-supply model rejects wet states below saturation. Optional finite-volume tank equilibrium instead resolves source vapor transfer with pressure-corrected chemical potentials. The rail and pump pickup still carry separated liquid; bubble entrainment and cavitating pump/rail flow require further physics.
 
-The pressure comparison allows only binary64 roundoff: `64 * epsilon * max(p, p_sat)`, with `epsilon = 2^-52`. It doesn't clamp the reported margin. This is a bulk saturation check; local pressure losses and pump NPSH require a resolved flow model. Independent checks also require nondecreasing total entropy for adiabatic flash and finite-wall exchange.
+The pressure comparison allows only binary64 roundoff: `64 * epsilon * max(p, p_sat)`, with `epsilon = 2^-54`. It doesn't clamp the reported margin. This is a bulk saturation check; local pressure losses and pump NPSH require a resolved flow model. Independent checks also require nondecreasing total entropy for adiabatic flash and finite-wall exchange.
 
 [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)
 

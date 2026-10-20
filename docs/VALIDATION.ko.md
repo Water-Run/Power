@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: 증기 질량분율 동결 연료 토출과 유한 수용실
+
+연료 도메인 펌프는 이제 물리 니들과 증기 질량분율 동결 토출을 통해 유한 액체 체적 연소 수용실에 공급합니다. 전체 재고에는 상변화, 배제 일, 제트 운동에너지 및 정지 벽 충격량이 포함됩니다.
+
+독립 베르누이·이상기체 극한, 별도 혼합 유속 최대화, 에너지/엔트로피 및 독립 적분 노즐/수용실 ODE로 방정식을 검사합니다. 시간 수렴은 1차입니다. 이식 자산 재생, 실제 MCP, 롤백, 취소, 독립 분기 및 할당 검사가 통합을 확인합니다. 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 496/496 |
+| standard_checks_on_dotnet | 386/386 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 52 |
+| identical_complete_sample_boundaries | 7287 |
+| all_sample_boundaries | 7379 |
+| new_core_groups | 7 |
+| new_constitutive_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_reference_steps | 1000, 2000 |
+| asset_version | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| fingerprint_tags | 38, 39 |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| additional_reported_states_per_discharge | 11 |
+| v33_fixture_sha256 | 3e3804c7277baea26c330c47a319669c5f61142486fb73f127679e56192fe9ba |
+| verification_log_sha256 | b39f7313ca8f90d028a0b76ade58d950dfddcaf73750de7891c62d0026042b2d |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 54 |
+| schema_negative_cases | 11 |
+| documentation_locales | 10 |
+| documentation_files | 200 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| step_ns | normalized_error |
+|---|---|
+| 200000 | 9.43999202748097e-05 |
+| 100000 | 4.716734258499583e-05 |
+| 50000 | 2.356437988192822e-05 |
+| 25000 | 1.1782714233986302e-05 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| finite-volume-fuel-discharge | 53190b5628ca0ab4 | 82f9e4a926d43249 | 11 | 2.2737367544323206e-13 |
+| pump-fed-finite-volume-cylinder | e4225e412bfa9802 | a4d2b9f5703c79d8 | 81 | 1.6226408661168534e-08 |
+
+- `artifacts/reports/fuel-discharge-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-final-2026-10-20.log`
+- `artifacts/reports/fuel-discharge-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-doc-audit-2026-10-20.json`
+
+매개변수는 `unverified`입니다. 선언 온도 경계, 양의 기체 체적, 희박 증기 영역을 지킵니다. 입구 국소 관성, 유한 속도 핵생성, 상간 미끄럼, 분무 해상, 실제 유체 임계 거동 및 실측 보정은 빠져 있습니다. 규정 연소는 화학평형이나 반응 엔트로피 정확도를 입증하지 않습니다. 입구 동역학, 점화, 흡배기, 손실 및 ECU/TCU 협조로 진행합니다.
+
 ## 2026-10-20: 축 구동 상변화 연료 펌프
 
 필수 직렬 검증이 로컬 Windows x64/.NET 10.0.12에서 통과했습니다. 새 연료 펌프 검사는 두 어셈블리 대상을 모두 다룹니다. Standard 검사는 .NET 10에서 호스팅되며 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.

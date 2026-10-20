@@ -118,7 +118,7 @@ MCP-Sitzungen leben im lokalen Serverprozess. Die Grenze ist 16. Sie werden frei
 
 ## Was noch offen ist
 
-Kompressibler Gaswechsel, vorgeschriebene Vormischverbrennung, Kupplungen, Zahnräder, ein tabellierter Wandler und hydraulische Betätigung existieren jetzt als Komponenten mit Ports, Zustand und Erhaltungsprüfungen. Sie schließen den Antriebsstrang nicht ab. Noch offen: Leitungspumpe und Nachfüllung, Zündungsregelung, detaillierte Saug- und Auslassseite, mechanische Verluste, reichere Thermochemie, Nachgiebigkeit der Verzahnung, vollständige AT-Druck- und Schaltregelung, abgestimmtes ECU-/TCU-Verhalten und gemessene Kalibrierung. Eine neue Gleichung braucht weiterhin eine explizite Modellversion, Dimensionen und numerische Nachweise. Bestehende Komponentensemantik wird nicht still erweitert.
+Kompressibler Gaswechsel, vorgeschriebene Vormischverbrennung, Kupplungen, Zahnräder, ein tabellierter Wandler und hydraulische Betätigung existieren jetzt als Komponenten mit Ports, Zustand und Erhaltungsprüfungen. Sie schließen den Antriebsstrang nicht ab. Noch offen: gemessene Pumpenfüllung und Druckregelung, Zündungsregelung, detaillierte Saug- und Auslassseite, mechanische Verluste, reichere Thermochemie, Nachgiebigkeit der Verzahnung, vollständige AT-Druck- und Schaltregelung, abgestimmtes ECU-/TCU-Verhalten und gemessene Kalibrierung. Eine neue Gleichung braucht weiterhin eine explizite Modellversion, Dimensionen und numerische Nachweise. Bestehende Komponentensemantik wird nicht still erweitert.
 
 Ein Agent kann eine Topologie und einen Anfangszustand erzeugen, Parameterhypothesen vorschlagen, Komponentenkandidaten schreiben, Experimente bauen und die Nachweise zurücklesen. Der Ausführungskern besitzt weiterhin numerische Nebenbedingungen und Prüfungen. Ein Urteil eines Sprachmodells ist keine physikalische Tatsache. Graphbearbeitung in Unity, ein Simulations-Worker-Thread und ein austauschbares Hochleistungslöser-Backend warten, bis die Grenze stabil ist. Nichts hier behauptet einen allgemeinen nichtlinearen Löser, Burst oder einen GPU-Löser.
 
@@ -250,7 +250,7 @@ Die [Baugruppe der AT-Ansteuerung](AT_HYDRAULIC_ACTUATION.de.md) senkt 1..6 erkl
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v33 speichert Routen, Verstärkungen und Uhren und liest v1-v32.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v34 speichert Routen, Verstärkungen und Uhren und liest v1-v33.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -260,7 +260,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v33 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v32. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v34 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v33. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -327,3 +327,5 @@ Die Domäne `fuel` transportiert reine Flüssigkeit und Dampf gemeinsam in endli
 `fuel_chamber` koppelt eine tatsächliche Welle an eine endliche Kraftstoffkammer. Einlass- und Auslass-`fuel_check_valve` liefern druckgetrieben Füllung und Förderung. Flüssigkeit, Dampf und elastische Wandenergie teilen einen Abschluss. Bei Einlassmangel kann die Kammer beim Ansaugen verdampfen; Förderung folgt berechnetem Bestand und Druck.
 
 [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
+
+Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampfanteil in einen befeuerten Empfänger mit endlichem Flüssigkeitsvolumen. Vollständige Inventare enthalten Phasenwechsel, Verdrängungsarbeit, Strahlenergie und Impuls an die ruhende Wand. [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md)

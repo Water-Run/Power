@@ -159,7 +159,7 @@ internal sealed class LiquidFuelInjectorSolver(CompiledModel model, FuelFilmSolv
             if (injector.Needle is { } needle) { opening = needle.Opening(dynamics); ceiling = model.RailSample(i,state,hydraulics).MassKilograms; }
             if (opening == 0) continue;
             var film = model.FuelFilms[injector.Film];
-            double volume = model.Gas!.VolumeAt(film.Gas, dynamics);
+            double volume = model.Gas!.VolumeAt(film.Gas, dynamics, films: filmState);
             double pressure = (model.Gas.Gases[film.Gas].Gamma - 1) * gasEnergy[film.Gas] / volume;
             var rail = model.RailSample(i,state,hydraulics);
             if (!injector.Rail.TryAdvance(rail, pressure, duration * opening, ceiling, out var transfer)) return false;
@@ -184,7 +184,8 @@ internal sealed class LiquidFuelInjectorSolver(CompiledModel model, FuelFilmSolv
             Numeric.Accumulate(transfer.SourcePressureWorkJoules, ref state.SourceWork[i], ref state.SourceCorrection[i]);
             Numeric.Accumulate(transfer.ReceiverPressureWorkJoules, ref state.ReceiverWork[i], ref state.ReceiverCorrection[i]);
             Numeric.Accumulate(transfer.NozzleHeatJoules, ref state.Heat[i], ref state.HeatCorrection[i]);
-            ReceiverWork += transfer.ReceiverPressureWorkJoules;
+            if (film.FiniteVolume is null) ReceiverWork += transfer.ReceiverPressureWorkJoules;
+            else gasEnergy[film.Gas] += transfer.ReceiverPressureWorkJoules;
         }
         return state.Finite() && filmState.Finite() && Numeric.Finite(ReceiverWork);
     }

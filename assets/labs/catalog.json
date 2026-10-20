@@ -312,6 +312,18 @@
       "asset_name": "ElectricEquilibriumFuelPump",
       "display_name": "Electric equilibrium fuel pump laboratory",
       "agent_example": true
+    },
+    {
+      "name": "finite-volume-fuel-discharge",
+      "asset_name": "FiniteVolumeFuelDischarge",
+      "display_name": "Finite-volume fuel discharge laboratory",
+      "agent_example": true
+    },
+    {
+      "name": "pump-fed-finite-volume-cylinder",
+      "asset_name": "PumpFedFiniteVolumeCylinder",
+      "display_name": "Pump-fed finite-volume cylinder laboratory",
+      "agent_example": true
     }
   ]
 }

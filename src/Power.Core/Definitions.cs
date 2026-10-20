@@ -10,11 +10,11 @@ public enum Unit
     NewtonMeterPerRadian, NewtonMeterSecondPerRadian, Kelvin, JoulePerKelvin,
     WattPerKelvin, Ohm, Henry, NewtonMeterPerAmpere, Ampere, Volt, Joule, Rpm, Degree,
     Meter, Millimeter, CubicMeter, Pascal, Bar, Kilogram, JoulePerKilogramKelvin,
-    Liter, SquareMeter, SquareMillimeter, KilogramPerSecond, Watt, Fraction, JoulePerKilogram, StateCode, NewtonMeterSecondSquaredPerRadianSquared, CubicMeterPerPascal, CubicMeterPerSecondPascal, CubicMeterPerSecondSqrtPascal, CubicMeterPerSecond, Newton, CubicMeterPerRadian, VoltPerPascal, VoltPerPascalSecond, Coulomb, Farad, AmpereHour, FractionPerPascal, FractionPerPascalSecond, MeterPerSecond, NewtonPerMeter, NewtonSecondPerMeter, KilogramPerCubicMeter, HenryPerMeter
+    Liter, SquareMeter, SquareMillimeter, KilogramPerSecond, Watt, Fraction, JoulePerKilogram, StateCode, NewtonMeterSecondSquaredPerRadianSquared, CubicMeterPerPascal, CubicMeterPerSecondPascal, CubicMeterPerSecondSqrtPascal, CubicMeterPerSecond, Newton, CubicMeterPerRadian, VoltPerPascal, VoltPerPascalSecond, Coulomb, Farad, AmpereHour, FractionPerPascal, FractionPerPascalSecond, MeterPerSecond, NewtonPerMeter, NewtonSecondPerMeter, KilogramPerCubicMeter, HenryPerMeter, NewtonSecond
 }
 
 public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6, Fuel = 7 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn, FuelRestriction, FuelHeatLink, FuelChamber, FuelCheckValve }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn, FuelRestriction, FuelHeatLink, FuelChamber, FuelCheckValve, FuelDischarge, FiniteFuelFilm }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
@@ -23,7 +23,7 @@ public enum Field
     SourceWork = 16, HeatRejected, StoredEnergyChange, EnergyResidual,
     ReservoirEnthalpy = 20, MassResidual = 21,
     FuelMass = 22, FreshAirMass, ProductMass, ChemicalEnergy, FuelBurned, HeatReleased,
-    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower, SampledPressure, PressureError, IntegralVoltage, CommandVoltage, StateOfCharge, Charge, TerminalVoltage, PolarizationVoltage, BatteryCurrent, IntegralDuty, CommandDuty, Displacement, LinearSpeed, Force, RequestedFuelDose, DeliveredFuelDose, TotalFuelDelivered, EvaporatedFuelMass, FilmWallHeat, CopperHeat, PredictedFuelMass, PredictionTicks, DriverState, ClosingDelayTicks, RequestedGear, ActualGear, SelectedOddGear, SelectedEvenGear, ShiftPhase, SyncError, ControlFault, LockupState, ActuatorIntegralA, ActuatorIntegralB, ActuatorIntegralC, ActuatorIntegralD, ActuatorIntegralE, ActuatorIntegralF, TankState, FillFraction, CondensedFuelMass, VaporPartialPressure, SaturationPressure, CavitationMargin, VaporMass, VaporMassFraction, VaporVolumeFraction, ElasticEnergy, Entropy, SpecificEnthalpy, TransportEnergy, EntropyProduced
+    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower, SampledPressure, PressureError, IntegralVoltage, CommandVoltage, StateOfCharge, Charge, TerminalVoltage, PolarizationVoltage, BatteryCurrent, IntegralDuty, CommandDuty, Displacement, LinearSpeed, Force, RequestedFuelDose, DeliveredFuelDose, TotalFuelDelivered, EvaporatedFuelMass, FilmWallHeat, CopperHeat, PredictedFuelMass, PredictionTicks, DriverState, ClosingDelayTicks, RequestedGear, ActualGear, SelectedOddGear, SelectedEvenGear, ShiftPhase, SyncError, ControlFault, LockupState, ActuatorIntegralA, ActuatorIntegralB, ActuatorIntegralC, ActuatorIntegralD, ActuatorIntegralE, ActuatorIntegralF, TankState, FillFraction, CondensedFuelMass, VaporPartialPressure, SaturationPressure, CavitationMargin, VaporMass, VaporMassFraction, VaporVolumeFraction, ElasticEnergy, Entropy, SpecificEnthalpy, TransportEnergy, EntropyProduced, JetKineticEnergy, JetImpulse, ThroatPressure, ExitTemperature, ExitVelocity, Choked
 }
 public enum SimulationStatus { Ok, InvalidTimeStep, InvalidInput, UnknownChannel, NumericalFailure, Busy, Cancelled, ControlledInput }
 public enum DiagnosticCode { Schema, Capacity, Id, Unit, Range, Connection, Channel, Solver }
@@ -180,6 +180,7 @@ public sealed record ComponentDefinition
     public LiquidFuelTankDefinition? LiquidFuelTank { get; init; }
     public LiquidRailReturnDefinition? LiquidRailReturn { get; init; }
     public FuelChamberDefinition? FuelChamber { get; init; }
+    public FuelDischargeDefinition? FuelDischarge { get; init; }
     /// <summary>Optional gas-orifice timing. InitialInput and its channel then specify peak opening.</summary>
     public ValveTimingDefinition? ValveTiming { get; init; }
     public WiebeCombustionDefinition? Combustion { get; init; }
@@ -397,6 +398,14 @@ public sealed record ComponentDefinition
         Area = new(area, Unit.SquareMeter), DischargeCoefficient = dischargeCoefficient,
         ReservoirPressure = new(pressure, Unit.Pascal), AmbientTemperature = new(temperature, Unit.Kelvin),
         InitialInput = new(opening, Unit.Fraction)
+    };
+    public static ComponentDefinition FiniteLiquidFilm(uint id, uint gas, uint wall, double conductance, FuelFilmDefinition definition) =>
+        LiquidFilm(id, gas, wall, conductance, definition) with { Kind = ComponentKind.FiniteFuelFilm };
+    public static ComponentDefinition FuelDischargeNozzle(uint id, uint source, uint receiver, FuelDischargeDefinition definition,
+        double areaSquareMeters, double dischargeCoefficient, ulong channel = 0, double opening = 1) => new()
+    {
+        Id = id, Kind = ComponentKind.FuelDischarge, NodeA = source, NodeB = receiver, FuelDischarge = definition,
+        Area = new(areaSquareMeters, Unit.SquareMeter), DischargeCoefficient = dischargeCoefficient, InputChannel = channel, InitialInput = new(opening, Unit.Fraction)
     };
     public static ComponentDefinition FuelChamberPump(uint id, uint shaft, uint fuel, FuelChamberDefinition geometry) => new()
     { Id = id, Kind = ComponentKind.FuelChamber, NodeA = shaft, NodeB = fuel, FuelChamber = geometry };

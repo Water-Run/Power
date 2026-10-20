@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 33
+## 当前版本 34
+
+`fuel_discharge` 将有限燃油域源连接到 `finite_fuel_film` 的气体节点。将 `phase_mode` 声明为 `frozen`：喷嘴输运过程中汽相质量分数保持不变，两端主体重新达到平衡。均相两相具有共同温度和速度；液体不可压缩，蒸汽是理想伪组分。源与接收腔的材料属性和液体密度必须一致。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[冻结汽相质量分数的燃油喷流与有限体积接收腔](FUEL_DISCHARGE.zh-CN.md)
+
+
+## 保留版本 33
 
 `fuel_chamber` 将实际转轴与有限燃料域腔体耦合。进出口 `fuel_check_valve` 通过压差完成充填与排出。液体、蒸气和弹性壁储能使用同一物性闭合关系。入口供给不足时，腔体可在吸入期间闪蒸；交付燃料由实际库存和压力决定。
 

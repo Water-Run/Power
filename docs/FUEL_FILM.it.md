@@ -106,7 +106,7 @@ Scopri ID e unità di uscita attraverso la validazione o la creazione della sess
 globali di massa, carburante ed energia chimica includono l'inventario del film. L'erogazione interna
 di vapore non incrementa l'energia di carburante del serbatoio né l'entalpia esterna.
 
-L'asset v33 memorizza tutte le proprietà di fase e conserva i lettori v1-v32. Ogni film richiede
+L'asset v34 memorizza tutte le proprietà di fase e conserva i lettori v1-v33. Ogni film richiede
 un record di fase tipizzato da 100 byte. Lunghezze/conteggi limitati, digest, copertura completa,
 record duplicati/mancanti, unità, compilazione fisica e protezione dal declassamento
 sono controllati. La fixture autentica di dosatura carburante v17 conserva la sua impronta e il

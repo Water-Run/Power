@@ -872,4 +872,40 @@ foreach (var (name, channel, opening) in new[] { ("equilibrium-fuel-pump", "100"
     await Call("close_session", new() { ["session_id"] = fuelPumpSession, ["expected_revision"] = "0" });
     PassGroup("MCP " + name + " / phase-resolving shaft-driven chamber work filling and every portable boundary with independent inlet branches");
 }
+foreach (var (name, channel) in new[] { ("finite-volume-fuel-discharge", "100"), ("pump-fed-finite-volume-cylinder", "104") })
+{
+    var dischargeDocument = (await Call("get_example_model", new() { ["name"] = name })).GetProperty("data");
+    var malformedDischarge = System.Text.Json.Nodes.JsonNode.Parse(dischargeDocument.GetRawText())!;
+    var phaseParameters = malformedDischarge["components"]!.AsArray().Single(c => c!["kind"]!.GetValue<string>() == "fuel_discharge")!["parameters"]!;
+    foreach (System.Text.Json.Nodes.JsonNode? mode in new System.Text.Json.Nodes.JsonNode?[]
+        { System.Text.Json.Nodes.JsonValue.Create(1), System.Text.Json.Nodes.JsonValue.Create(true), null })
+    {
+        phaseParameters["phase_mode"] = mode;
+        using var malformedDocument = JsonDocument.Parse(malformedDischarge.ToJsonString());
+        var phaseError = await Call("validate_model", new() { ["document"] = malformedDocument.RootElement }, expectError: true);
+        Require(phaseError.GetProperty("error").GetProperty("code").GetString() == "invalid_argument", "Malformed phase mode must return a structured input error");
+    }
+    Require(capabilities.GetProperty("fuel_discharge").GetProperty("phase_mode").GetString() == "frozen", "Frozen discharge contract is missing");
+    var dischargeReport = (await Call("run_experiment", new() { ["document"] = dischargeDocument, ["include_samples"] = true })).GetProperty("data");
+    Require(dischargeReport.GetProperty("passed").GetBoolean() && dischargeReport.GetProperty("model").GetProperty("fidelity").GetString() == "finite_volume_fuel_discharge_powertrain", "Fuel discharge experiment failed");
+    var dischargeExport = (await Call("export_model_asset", new() { ["document"] = dischargeDocument })).GetProperty("data");
+    var dischargeAsset = AssetCodec.Decode(Convert.FromBase64String(dischargeExport.GetProperty("content").GetString()!));
+    Require(dischargeAsset.Model.HasFuelDischarge && dischargeAsset.Model.HasFiniteFuelReceivers, "Finite receiver was lost");
+    var dischargePlayback = dischargeAsset.CreatePlayback(); var dischargeValues = new Power.Core.Scalar[dischargeAsset.Model.OutputCount];
+    foreach (var dischargeSample in dischargeReport.GetProperty("samples").EnumerateArray())
+    {
+        ulong at = dischargeSample.GetProperty("time_ns").GetUInt64();
+        while (dischargePlayback.TimeNanoseconds < at) Require(dischargePlayback.Advance(Math.Min(257 * dischargeAsset.Model.StepNanoseconds, at - dischargePlayback.TimeNanoseconds)) == Power.Core.SimulationStatus.Ok, "Discharge playback failed");
+        Require(dischargePlayback.ReadSnapshot(dischargeValues).StateHash.ToString("x16") == dischargeSample.GetProperty("state_hash").GetString() &&
+            dischargeValues.All(value => value.Value == dischargeSample.GetProperty("values").GetProperty(value.Channel.ToString()).GetDouble()), "Discharge replay differs");
+    }
+    string dischargeSession = (await Call("create_session", new() { ["document"] = dischargeDocument })).GetProperty("data").GetProperty("session_id").GetString()!;
+    string dischargeChild = (await Call("fork_session", new() { ["session_id"] = dischargeSession, ["expected_revision"] = "0" })).GetProperty("data").GetProperty("session_id").GetString()!;
+    await Call("set_inputs", new() { ["session_id"] = dischargeChild, ["expected_revision"] = "0", ["values"] = new[] { new { channel, value = 0d } } });
+    await Call("step_session", new() { ["session_id"] = dischargeChild, ["expected_revision"] = "1", ["delta_ns"] = "1000000" });
+    Require((await Call("read_snapshot", new() { ["session_id"] = dischargeSession })).GetProperty("data").GetProperty("revision").GetString() == "0", "Discharge branch changed its parent");
+    await Call("close_session", new() { ["session_id"] = dischargeChild, ["expected_revision"] = "2" });
+    await Call("close_session", new() { ["session_id"] = dischargeSession, ["expected_revision"] = "0" });
+    PassGroup("MCP " + name + " / frozen choked discharge finite receiver and every portable boundary with independent admission branches");
+}
 Console.WriteLine($"{groupsPassed}/{groupsPassed} MCP integration groups passed against an actual child server process.");

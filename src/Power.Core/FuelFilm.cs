@@ -12,6 +12,7 @@ public sealed record FuelFilmDefinition
     public Quantity SaturationTemperature { get; init; }
     public Quantity LatentInternalEnergy { get; init; }
     public FuelPhaseEquilibriumDefinition? PhaseEquilibrium { get; init; }
+    public Quantity FiniteVolumeDensity { get; init; }
 }
 
 public readonly record struct FuelFilmSample(double LiquidMassKilograms, double ThermalEnergyJoules);
@@ -88,7 +89,7 @@ public sealed class EquilibriumFuelFilm
     }
 }
 
-internal sealed record CompiledFuelFilm(int Component,int Gas,int Wall,double WallCapacity,double HeatingValue,double InitialMass,FuelFilmSample Initial,EquilibriumFuelFilm Law, FuelPhaseEquilibrium? Phase = null)
+internal sealed record CompiledFuelFilm(int Component,int Gas,int Wall,double WallCapacity,double HeatingValue,double InitialMass,FuelFilmSample Initial,EquilibriumFuelFilm Law, FuelPhaseEquilibrium? Phase = null, FiniteTankFuelEquilibrium? FiniteVolume = null)
 {
     internal bool LiquidTemperatureValid(double temperature) => Numeric.Finite(temperature) &&
         (Phase is null ? temperature > 0 && temperature <= Law.SaturationTemperatureKelvin :
@@ -132,6 +133,7 @@ internal sealed class FuelFilmSolver(CompiledModel model)
         _wallTemperature[wall] += heat / capacity;
         WallHeat[wall] += heat;
     }
+    internal double CurrentWallTemperature(int wall) => _wallTemperature[wall];
     internal void BeginInterval(double[] temperature){Array.Copy(temperature,_wallTemperature,temperature.Length);Array.Clear(WallHeat,0,WallHeat.Length);}
     internal bool Advance(FuelFilmState state,double[] gasMass,double[] gasEnergy,MixtureState mixture,double duration,double[] dynamics,LiquidTankState? tanks,bool reverse=false,bool equilibriumOnly=false)
     {
@@ -139,6 +141,18 @@ internal sealed class FuelFilmSolver(CompiledModel model)
         {
             int i=reverse?model.FuelFilms.Length-1-slot:slot;
             var film=model.FuelFilms[i];
+            if (film.FiniteVolume is { } finite)
+            {
+                double oldMass = state.Mass[i], fuel = oldMass + mixture.Fuel[film.Gas], carrier = mixture.Air[film.Gas] + mixture.Products[film.Gas];
+                double energy = state.Energy[i] + gasEnergy[film.Gas], cavity = model.Gas!.CavityVolumeAt(film.Gas, dynamics, tanks);
+                if (!finite.TryHeatAtCapacity(fuel, carrier, energy, cavity, _wallTemperature[film.Wall], film.WallCapacity, film.Law.ConductanceWattsPerKelvin, duration, out var flash)) return false;
+                state.Mass[i] = flash.Liquid.LiquidMassKilograms; state.Energy[i] = flash.Liquid.ThermalEnergyJoules;
+                mixture.Fuel[film.Gas] = flash.VaporMassKilograms; gasMass[film.Gas] = mixture.Fuel[film.Gas] + carrier; gasEnergy[film.Gas] = flash.GasEnergyJoules;
+                _wallTemperature[film.Wall] = flash.WallTemperatureKelvin; WallHeat[film.Wall] -= flash.HeatFromWallJoules;
+                state.TickVapor[i] += oldMass - state.Mass[i];
+                Numeric.Accumulate(flash.HeatFromWallJoules, ref state.WallHeat[i], ref state.HeatCorrection[i]);
+                continue;
+            }
             if (film.Phase is { } phase)
             {
                 if (!phase.TryAdvance(new(state.Mass[i], state.Energy[i]), mixture.Fuel[film.Gas],

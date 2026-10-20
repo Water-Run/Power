@@ -4,18 +4,20 @@
 
 ## Point de reprise
 
-Les chambres finies échangent désormais le travail de pression avec les arbres et se remplissent/livrent par clapets idéaux, avec changement de phase en sous-alimentation. L'injecteur physique et le récepteur restent à coupler.
+La pompe du domaine carburant alimente désormais une aiguille physique et une décharge à titre figé dans un récepteur allumé à volume liquide fini. Les inventaires incluent changement de phase, travail de déplacement, énergie cinétique du jet et impulsion à la paroi immobile.
 
 [Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)
 
 ## Prochaine étape
 
-Relier la pompe carburant à l'injecteur physique et aux récepteurs cylindre/film avec transport diphasique, déplacement et travail cinétique explicites. Résoudre inertie locale d'entrée et blocage sonique par références indépendantes. Continuer allumage, admission/échappement, pertes, actionnement de transmission et coordination ECU/TCU vers l'objectif complet.
+Résoudre inertie et pertes d'entrée, sensibilité à la relaxation de phase et au glissement, puis allumage, admission/échappement, pertes et ECU/TCU coordonnés. Chaque équation exige références indépendantes et raffinement ; calibration mesurée et acceptation Unity réelle restent séparées.
 
 ## Acceptation
 
 Exiger références analytiques ou limites indépendantes, bilans complets masse/énergie et raffinement du pas adapté. Préserver retour arrière complet, annulation, branches, canaux stables, rejeu portable et anciens lecteurs. Continuer ensuite allumage, admission/échappement, pertes mécaniques, transmission et coordination ECU/TCU.
 
-Les paramètres restent `unverified`. Les limites de température, pression et volume représentable s'appliquent sur tout le cycle. Hypothèses : liquide incompressible, vapeur idéale pseudo-espèce, équilibre instantané à température commune et pression extérieure de carter nulle. Inertie d'entrée/NPSH, blocage sonique, nucléation retardée, inertie/hystérésis de clapet, mélanges réels et calibration mesurée restent ouverts. Raccordement physique d'injecteur et travail de déplacement/cinétique du récepteur restent distincts.
+Les paramètres restent `unverified`. Respecter températures déclarées, volume gazeux positif et domaine vapeur diluée. Inertie locale d'entrée, nucléation à vitesse finie, glissement, spray résolu, comportement critique réel et calibration mesurée sont omis. La combustion prescrite ne valide pas l'équilibre chimique ni l'entropie réactionnelle. Poursuivre entrée, allumage, admission/échappement, pertes et coordination ECU/TCU.
 
 [DEVELOPMENT_STATUS.fr.md](DEVELOPMENT_STATUS.fr.md) · [ROADMAP.fr.md](ROADMAP.fr.md) · [VALIDATION.fr.md](VALIDATION.fr.md)
+
+[Décharge de carburant à titre figé et récepteurs finis](FUEL_DISCHARGE.fr.md)

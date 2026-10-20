@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 33
+## 현재 버전 34
+
+`fuel_discharge`는 유한 연료 도메인 공급원을 `finite_fuel_film`의 기체 노드에 연결합니다. `phase_mode`를 `frozen`으로 선언하면 노즐 통과 중 증기 질량분율은 고정되고 양쪽 벌크는 다시 평형화됩니다. 균질 두 상은 온도와 속도를 공유합니다. 액체는 비압축성이고 증기는 이상 의사 종입니다. 재료 특성과 액체 밀도가 같아야 합니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[증기 질량분율 동결 연료 토출과 유한 수용실](FUEL_DISCHARGE.ko.md)
+
+
+## 보존 버전 33
 
 `fuel_chamber`는 실제 축과 유한 연료 챔버를 결합합니다. 입출구 `fuel_check_valve`가 압력차로 충전과 공급을 수행합니다. 액체, 증기, 탄성 벽 에너지는 같은 폐쇄 관계를 씁니다. 입구 공급 부족 시 흡입 중 플래시 증발이 가능하며 공급량은 계산한 재고와 압력에 따릅니다.
 

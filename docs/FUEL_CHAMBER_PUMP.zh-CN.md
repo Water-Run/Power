@@ -26,10 +26,12 @@ torque_pressure = -delta_E_adiabatic / delta_theta
 
 通过 MCP 请求 `equilibrium-fuel-pump` 或 `electric-equilibrium-fuel-pump`，也可用 CLI 运行其 JSON。联合读取腔体质量、温度、压力、蒸气比例、能量、阀交付量与轴速。组件 `volume` 是几何参考体积，节点 `volume` 包含壁膨胀。腔体 `torque`、`hydraulic_power`、`hydraulic_work` 公开内部轴功交换。
 
-独立液体压力/功、理想蒸气绝热关系和两相熵反演检查本构关系。封闭液体轴运动验证二阶细化；完整相变充填/排出实验相对独立反演的 RK4 参考验证一阶细化。入口不足、充分液体供给、电驱动、齿轮/液压/离合器组合、精确回放、回滚和分配检查覆盖集成。资产 v33 保存几何并读取 v1-v32。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+独立液体压力/功、理想蒸气绝热关系和两相熵反演检查本构关系。封闭液体轴运动验证二阶细化；完整相变充填/排出实验相对独立反演的 RK4 参考验证一阶细化。入口不足、充分液体供给、电驱动、齿轮/液压/离合器组合、精确回放、回滚和分配检查覆盖集成。资产 v34 保存几何并读取 v1-v33。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
 
 ## 后续工作
 
-参数保持 `unverified`。整个循环均遵守物性温度、压力及可分辨体积边界。模型假设不可压缩液体、理想伪组分蒸气、瞬时共同温度平衡及零外部壳体压力。局部入口惯性/NPSH、临界流、成核延迟、阀惯性/滞回、真实燃料混合物及实测标定仍待实现。物理喷油器交接与接收端排量/动能功耦合仍是独立要求。
+参数保持 `unverified`。整个循环均遵守物性温度、压力及可分辨体积边界。模型假设不可压缩液体、理想伪组分蒸气、瞬时共同温度平衡及零外部壳体压力。局部入口惯性/NPSH、临界流、成核延迟、阀惯性/滞回、真实燃料混合物及实测标定仍待实现。
 
 [Modelica: swept volume](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [Cantera: reactor walls](https://cantera.org/dev/reference/reactors/interactions.html) · [VALIDATION.md](VALIDATION.zh-CN.md)
+
+燃油域泵现在可向物理针阀和冻结汽相质量分数喷嘴供油，并进入有限液体体积的燃烧接收腔。完整库存包括相变、排量功、射流动能和静止壁面冲量。 [冻结汽相质量分数的燃油喷流与有限体积接收腔](FUEL_DISCHARGE.zh-CN.md)

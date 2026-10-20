@@ -4,18 +4,20 @@
 
 ## Fortsetzungspunkt
 
-Endliche Kraftstoffkammern tauschen Druckarbeit mit Wellen und füllen/fördern über ideale einseitige Widerstände, einschließlich Phasenwechsel bei Einlassmangel. Injektor- und Empfängerkopplung bleiben offen.
+Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampfanteil in einen befeuerten Empfänger mit endlichem Flüssigkeitsvolumen. Vollständige Inventare enthalten Phasenwechsel, Verdrängungsarbeit, Strahlenergie und Impuls an die ruhende Wand.
 
 [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
 
 ## Nächster Schritt
 
-Kraftstoffpumpe mit physischem Injektoraustrag und Zylinder-/Filmempfängern bei explizitem Zweiphasentransport, Verdrängung und kinetischer Arbeit verbinden. Einlassträgheit und kritische Strömung unabhängig referenzieren. Zündung, Ansaugung/Abgas, Verluste, Getriebeaktuation und ECU/TCU zum vollständigen Ziel fortsetzen.
+Lokale Einlassträgheit und Verluste sowie Empfindlichkeit auf Phasenrelaxation und Schlupf lösen, dann Zündung, Gaswechsel, mechanische Verluste und ECU/TCU erweitern. Jede neue Gleichung braucht unabhängige Referenzen und Zeitverfeinerung; Messkalibrierung und tatsächliche Unity-Abnahme sind separat.
 
 ## Abnahme
 
 Unabhängige analytische/Grenzreferenzen, vollständige Masse/Energie und passende Schrittverfeinerung verlangen. Batch-Rollback, Abbruch, Zweige, stabile Kanäle, portables Replay und alte Leser erhalten. Danach Zündung, Einlass/Auslass, mechanische Verluste, Getriebeaktuation und ECU/TCU-Koordination fortsetzen.
 
-Parameter bleiben `unverified`. Temperatur-, Druck- und darstellbare Volumengrenzen gelten über den Zyklus. Annahmen sind inkompressible Flüssigkeit, idealer Pseudospeziesdampf, sofortiges gemeinsames Temperaturgleichgewicht und äußerer Gehäusedruck null. Lokale Einlassträgheit/NPSH, kritische Strömung, Keimbildungsverzug, Ventilträgheit/-hysterese, reale Gemische und Messkalibrierung bleiben offen. Physische Injektoranbindung und Verdrängungs-/kinetische Empfängerarbeit bleiben gesondert.
+Parameter bleiben `unverified`. Temperaturgrenzen, positives Gasvolumen und verdünnter Dampf gelten. Lokale Einlassträgheit, endliche Keimbildung, Phasenschlupf, aufgelöster Spray, reales kritisches Verhalten und Messkalibrierung fehlen. Vorgegebene Verbrennung bestätigt weder chemisches Gleichgewicht noch Reaktionsentropie. Weiter mit Einlassdynamik, Zündung, Gaswechsel, Verlusten und ECU/TCU-Koordination.
 
 [DEVELOPMENT_STATUS.de.md](DEVELOPMENT_STATUS.de.md) · [ROADMAP.de.md](ROADMAP.de.md) · [VALIDATION.de.md](VALIDATION.de.md)
+
+[Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md)

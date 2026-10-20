@@ -14,8 +14,8 @@ calibración del vehículo y la aceptación de escritorio necesitan cada uno su 
 | Núcleo gestionado | Física sin dependencias y de doble destino, topología, unidades, tiempo entero, repetición y transacciones atómicas | Validación integrada de larga duración del grupo motopropulsor |
 | Interfaz de agente | Herramientas MCP definidas por esquema, diagnósticos estructurados, revisiones, ramas, cancelación e informes compactos; `list-labs` / `get_capabilities.examples` | Flujos de modelado y control para el alcance restante del grupo motopropulsor completo |
 | Estudio de Unity | Importación de modelo compartida, reproducción de laboratorio, componentes esquemáticos 3D y pruebas preparadas | Evidencia real de Editor/Play/Player/IL2CPP y empaquetado de escritorio |
-| Banco de modelado | Asset portátil v33, lectores v1-v32 y definiciones compartidas de JSON/CLI/MCP | Edición de grafos, guardado y gráficas de canales seleccionables |
-| Física del motor | Masa y energía de gas independientes, trabajo de biela-manivela, válvulas temporizadas, combustión prescrita, dosificación de combustible gaseoso y líquido, raíles flexibles finitos, evaporación de película y accionamiento físico de la aguja; [Raíl de combustible líquido alimentado por bomba](PUMP_FED_FUEL.es.md); tanques finitos y retornos de alivio conservativos; [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md); [Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md); [Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md) | oleaje/forma hidrostática y llenado/regulación medidos, comportamiento magnético, electrónico y de pulverización refinado, acoplamiento de volumen líquido finito, control de encendido, admisión y escape detallados, pérdidas mecánicas, termoquímica y calibración medida |
+| Banco de modelado | Asset portátil v34, lectores v1-v33 y definiciones compartidas de JSON/CLI/MCP | Edición de grafos, guardado y gráficas de canales seleccionables |
+| Física del motor | Masa y energía de gas independientes, trabajo de biela-manivela, válvulas temporizadas, combustión prescrita, dosificación de combustible gaseoso y líquido, raíles flexibles finitos, evaporación de película y accionamiento físico de la aguja; [Raíl de combustible líquido alimentado por bomba](PUMP_FED_FUEL.es.md); tanques finitos y retornos de alivio conservativos; [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md); [Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md); [Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md); [Descarga de combustible con calidad congelada y receptores finitos](FUEL_DISCHARGE.es.md) | Resolver inercia y pérdidas locales de entrada, sensibilidad a relajación de fase y deslizamiento, después encendido, admisión/escape, pérdidas mecánicas y ECU/TCU coordinados. Cada ecuación necesita referencias independientes y refinamiento temporal; calibración medida y aceptación Unity real son separadas. |
 | Transmisión | Embragues acoplados, engranajes y planetarios, convertidor y bloqueo mapeados, hidráulica, y caminos DCT de siete marchas adelante y marcha atrás y Ravigneaux de cuatro adelante y marcha atrás, con giro de satélite e inercia orbital resueltos | Flexibilidad, pérdidas y reparto de carga del engrane, actuación DCT, control completo de presión y cambio de la AT y encaminamiento medido, mapas medidos, comportamiento de válvulas, juntas y cavitación, y dinámica de convertidor más rica |
 | Controles e integración eléctrica | PI de presión muestreado, control de cierre de aguja y entrega DCT escalonada confirmada por sensor, voltaje y ciclo de trabajo acotados, propiedad de los actuadores, circuito equivalente de batería y accesorios; [`at_controller`](AT_CONTROL.es.md) | Ciclos coordinados de ECU/TCU, sensores y actuadores, solicitudes de par, fallos, BMS y comportamiento térmico y eléctrico medido |
 | Evidencia de vehículo y publicación | Muestras de investigación con límites y procedencia completos | Dos grupos motopropulsores medidos completos, presupuestos de incertidumbre, estabilidad, aceptación de escritorio y distribución |
@@ -28,7 +28,7 @@ su revisión registrada; los cambios locales nuevos necesitan una aceptación de
 
 ## Siguiente trabajo gestionado
 
-Conectar bomba a inyector físico y receptores de cilindro/película con transporte bifásico, desplazamiento y trabajo cinético explícitos. Resolver inercia de entrada y flujo crítico con referencias independientes. Continuar encendido, admisión/escape, pérdidas, actuación de transmisión y ECU/TCU hacia el objetivo completo.
+Resolver inercia y pérdidas locales de entrada, sensibilidad a relajación de fase y deslizamiento, después encendido, admisión/escape, pérdidas mecánicas y ECU/TCU coordinados. Cada ecuación necesita referencias independientes y refinamiento temporal; calibración medida y aceptación Unity real son separadas.
 
 Después amplía el encendido y el control, la dinámica de admisión y escape, y las pérdidas mecánicas
 del motor. El quemado de Wiebe actual es prescrito y no establece combustión
@@ -44,7 +44,7 @@ incluidas solicitudes de par, sensores y actuadores, y fallos recuperables.
 Amplía los modelos de pérdida constante de bomba, de batería y de válvula o acumulador cuando haya datos
 medidos de propiedades y control; los valores de investigación suministrados siguen sin verificar.
 
-Las cámaras finitas intercambian trabajo de presión con ejes y llenan/entregan por restricciones unidireccionales ideales, con fase bajo entrada insuficiente. Falta acoplar inyector físico y receptor. [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
+La bomba del dominio de combustible alimenta ahora una aguja física y descarga con calidad congelada en un receptor encendido con volumen líquido finito. Los inventarios completos incluyen cambio de fase, trabajo de desplazamiento, energía cinética e impulso sobre pared inmóvil. [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
 
 ## Estudio y aceptación medida
 
@@ -64,3 +64,5 @@ Sigue separado de la aplicación activa de C#/Unity. La migración nativa no
 completa la migración de funciones gestionadas ni la aceptación del grupo motopropulsor. Introduce
 paralelismo adicional, resolución dispersa o Burst cuando las mediciones lo justifiquen y los contratos
 del núcleo sigan estables.
+
+[Descarga de combustible con calidad congelada y receptores finitos](FUEL_DISCHARGE.es.md)

@@ -26,10 +26,12 @@ torque_pressure = -delta_E_adiabatic / delta_theta
 
 MCP에서 `equilibrium-fuel-pump` 또는 `electric-equilibrium-fuel-pump`를 요청하거나 JSON을 CLI로 실행합니다. 챔버 질량, 온도, 압력, 증기 비율, 에너지를 밸브 공급과 축 속도와 함께 읽습니다. 구성요소 `volume`는 기하 기준이며 노드 `volume`는 벽 팽창을 포함합니다. `torque`, `hydraulic_power`, `hydraulic_work`가 내부 축 교환을 보여 줍니다.
 
-독립 액체 압력/일, 이상 증기 단열선, 2상 엔트로피 반전으로 폐쇄 관계를 검증합니다. 닫힌 액체 축 운동은 2차, 상변화 충전/공급은 독립 반전 RK4 참조에 대해 1차 세분화를 보입니다. 입구 부족, 충분한 액체 공급, 전기 구동, 기어/유압/클러치 조합, 정확한 재생, 롤백, 메모리 검사가 통합을 다룹니다. 자산 v33은 기하를 저장하고 v1-v32를 읽습니다. 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
+독립 액체 압력/일, 이상 증기 단열선, 2상 엔트로피 반전으로 폐쇄 관계를 검증합니다. 닫힌 액체 축 운동은 2차, 상변화 충전/공급은 독립 반전 RK4 참조에 대해 1차 세분화를 보입니다. 입구 부족, 충분한 액체 공급, 전기 구동, 기어/유압/클러치 조합, 정확한 재생, 롤백, 메모리 검사가 통합을 다룹니다. 자산 v34은 기하를 저장하고 v1-v33를 읽습니다. 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
 
 ## 남은 작업
 
-매개변수는 `unverified`입니다. 온도, 압력, 분해 가능한 체적 한계가 전체 주기에 적용됩니다. 비압축 액체, 이상 의사 성분 증기, 순간 공통 온도 평형 및 외부 케이스 압력 0을 가정합니다. 국소 입구 관성/NPSH, 초킹, 핵생성 지연, 밸브 관성/이력, 실제 혼합 연료 및 실측 보정은 남습니다. 물리 인젝터 연결과 수신부 변위/운동 일 결합도 별도 요구입니다.
+매개변수는 `unverified`입니다. 온도, 압력, 분해 가능한 체적 한계가 전체 주기에 적용됩니다. 비압축 액체, 이상 의사 성분 증기, 순간 공통 온도 평형 및 외부 케이스 압력 0을 가정합니다. 국소 입구 관성/NPSH, 초킹, 핵생성 지연, 밸브 관성/이력, 실제 혼합 연료 및 실측 보정은 남습니다.
 
 [Modelica: swept volume](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [Cantera: reactor walls](https://cantera.org/dev/reference/reactors/interactions.html) · [VALIDATION.md](VALIDATION.ko.md)
+
+연료 도메인 펌프는 이제 물리 니들과 증기 질량분율 동결 토출을 통해 유한 액체 체적 연소 수용실에 공급합니다. 전체 재고에는 상변화, 배제 일, 제트 운동에너지 및 정지 벽 충격량이 포함됩니다. [증기 질량분율 동결 연료 토출과 유한 수용실](FUEL_DISCHARGE.ko.md)

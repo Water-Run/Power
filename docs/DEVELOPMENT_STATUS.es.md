@@ -14,12 +14,12 @@ aplicación de escritorio de Unity aceptada.
 |---|---|---|
 | Núcleo | Unidades explícitas e IDs estables; compilación inmutable; tiempo entero acotado; libros observables; repetición, cancelación, bifurcaciones independientes y reversión del lote entero | Evidencia de larga duración y del grupo motopropulsor completo |
 | Motor | Cilindros cerrados y abiertos, trabajo de presión de biela-manivela, flujo de gas bidireccional, válvulas temporizadas por cigüeñal, calor de pared y combustión premmezclada prescrita | Admisión y escape detallados, encendido, pérdidas mecánicas, termoquímica más rica y comportamiento medido del motor |
-| Combustible | Dosificación por ciclo, rieles flexibles con bomba, tanques finitos, retornos de alivio conservativos, evaporación de película, agujas físicas y predicción acotada de cierre; [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md); [Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md); [Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md); [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md) | oleaje/forma hidrostática y llenado/regulación medidos, comportamiento magnético, electrónico y de pulverización no lineal, conexión física del inyector e inercia/flujo crítico de entrada y propiedades de combustible medidas |
+| Combustible | Dosificación por ciclo, rieles flexibles con bomba, tanques finitos, retornos de alivio conservativos, evaporación de película, agujas físicas y predicción acotada de cierre; [Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md); [Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md); [Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md); [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md); [Descarga de combustible con calidad congelada y receptores finitos](FUEL_DISCHARGE.es.md) | Resolver inercia y pérdidas locales de entrada, sensibilidad a relajación de fase y deslizamiento, después encendido, admisión/escape, pérdidas mecánicas y ECU/TCU coordinados. Cada ecuación necesita referencias independientes y refinamiento temporal; calibración medida y aceptación Unity real son separadas. |
 | Transmisión | Embragues estáticos y deslizantes, actuación por contacto, engranajes y planetarios con signo, convertidor y bloqueo mapeados, y caminos DCT de siete marchas adelante y marcha atrás y Ravigneaux de cuatro adelante y marcha atrás, con giro de satélite e inercia orbital resueltos | Flexibilidad, pérdidas y reparto de carga del engrane, actuación DCT, control completo de presión y cambio de la AT y encaminamiento medido, cambios coordinados, pérdidas medidas y comportamiento de convertidor más rico |
 | Hidráulica | Volúmenes flexibles, restricciones, bombas con fugas y arrastre explícitos, alivio, pistones dinámicos, correderas dosificadas y acumuladores de gas de energía finita | Mapas medidos de válvulas, acumuladores y bombas, fricción de juntas, cavitación e hidráulica completa de transmisión |
 | Eléctrica | Motores RL, solenoides recíprocos de inductancia variable, batería de carga finita, polarización por resistencia y RC, conversión de ciclo de trabajo promediada y accesorios | Comportamiento químico y térmico medido, BMS, control de corriente e integración completa de la alimentación |
 | Controles | PI de presión muestreado, dosis/cierre de aguja, relevo DCT escalonado y cambios AT por realimentación de presión con confirmación física de bloqueo | Coordinación de par de ECU/TCU, sensores, actuadores y tratamiento de fallos |
-| Documentos y assets | 52 laboratorios JSON/CLI, 51 ejemplos MCP, asset v33 y lectores v1-v32 | Edición/guardado y colecciones de modelos calibrados |
+| Documentos y assets | 54 laboratorios JSON/CLI, 53 ejemplos MCP, asset v34 y lectores v1-v33 | Edición/guardado y colecciones de modelos calibrados |
 | Agentes | Doce herramientas MCP definidas por esquema; evidencia compacta, comprobaciones de revisión y diagnósticos accionables | Flujos completos para el alcance físico y de control restante |
 | Unity | Importación de modelos, reproducción en ticks exactos, componentes 3D esquemáticos, controles, reinicio y pruebas de ciclo de vida preparadas | Aceptación real de Editor/Play, gráficas seleccionables, edición y guardado de grafos, y Player/IL2CPP |
 | Archivo nativo | Prototipos de investigación en Zig 0.15.2, ABI conservado y procedencia original de las fuentes | Referencia histórica; la migración gestionada sigue separada de la funcionalidad completa |
@@ -41,14 +41,11 @@ Todos los parámetros siguen `unverified`. EA211 DJS + DQ200 y PSA EC5 + AT8 con
 
 CLI `list-labs`, el descubrimiento de ejemplos MCP y la verificación serie comparten [un catálogo de laboratorios](../assets/labs/catalog.json). La verificación comprueba que cubra cada fuente de laboratorio.
 
-Las cámaras finitas intercambian trabajo de presión con ejes y llenan/entregan por restricciones unidireccionales ideales, con fase bajo entrada insuficiente. Falta acoplar inyector físico y receptor. [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
+La bomba del dominio de combustible alimenta ahora una aguja física y descarga con calidad congelada en un receptor encendido con volumen líquido finito. Los inventarios completos incluyen cambio de fase, trabajo de desplazamiento, energía cinética e impulso sobre pared inmóvil. [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
 
 ## Siguiente secuencia de desarrollo
 
-1. Resolver flujo cavitante bomba/riel y pérdidas locales de entrada, llenado/regulación medidos y actuación magnética/electrónica. Sustituye el límite declarado
-   de trabajo de desplazamiento exportado cuando se resuelvan el volumen líquido finito y la cantidad de movimiento
-   de la pulverización. Mantén observables por separado el líquido entregado, el combustible evaporado y la reacción,
-   y conserva referencias independientes.
+1. Resolver inercia y pérdidas locales de entrada, sensibilidad a relajación de fase y deslizamiento, después encendido, admisión/escape, pérdidas mecánicas y ECU/TCU coordinados. Cada ecuación necesita referencias independientes y refinamiento temporal; calibración medida y aceptación Unity real son separadas.
 2. Amplía el motor con control de encendido, dinámica de admisión y escape, pérdidas
    mecánicas y termoquímica más rica. Conserva el objetivo del motor completo.
 3. Extender el accionamiento DCT y la hidráulica planetaria/AT medida, y coordinar solicitudes de par y cambios ECU/TCU con los controladores DCT y AT muestreados existentes. Añadir sensores/actuadores medidos y fallos recuperables.
@@ -56,3 +53,5 @@ Las cámaras finitas intercambian trabajo de presión con ejes y llenan/entregan
    Completa la selección de canales, la edición de grafos y el guardado como funciones distintas.
 5. Obtén mapas medidos, datos OEM y presupuestos de incertidumbre para los dos grupos
    motopropulsores objetivo antes de declarar muestras calibradas o preparación para la publicación.
+
+[Descarga de combustible con calidad congelada y receptores finitos](FUEL_DISCHARGE.es.md)

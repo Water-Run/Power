@@ -4,18 +4,20 @@
 
 ## Resume point
 
-Finite fuel chambers now exchange pressure work with shafts and fill/deliver through ideal one-way restrictions, including bulk phase change under inlet starvation. Physical injector and receiver coupling remains open.
+The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse.
 
 [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
 
 ## Next increment
 
-Connect the fuel-domain pump to physical injector discharge and cylinder/film receivers with explicit two-phase transport, displacement and kinetic-work accounting. Resolve local inlet inertia and sonic choking with independent references. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and ECU/TCU coordination toward the full powertrain objective.
+Resolve local inlet inertia and losses, phase-relaxation and slip sensitivity, then extend ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Validate each new equation against independent references and time refinement; obtain measured calibration and actual Unity acceptance separately.
 
 ## Acceptance
 
 Require independent analytic or limiting references, full mass/energy ledgers and step refinement appropriate to the new equations. Preserve batch rollback, cancellation, forks, stable channels, portable replay and prior asset readers. Then continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control.
 
-Parameters remain `unverified`. The material temperature, pressure and representable-volume limits apply throughout the cycle. The model assumes incompressible liquid, ideal pseudo-species vapor, instantaneous common-temperature equilibrium and zero external case pressure. Local inlet inertia/NPSH, sonic choking, nucleation delay, valve inertia/hysteresis, real fuel mixtures and measured calibration remain open. Physical injector handoff and receiver displacement/kinetic-work coupling are still separate requirements.
+Parameters remain `unverified`. Enforce declared temperature bounds, positive gas volume and the dilute-vapor material domain. The model omits local inlet inertia, finite-rate nucleation, phase slip, resolved spray, real-fluid critical behavior and measured hardware calibration. Prescribed combustion does not establish chemical-equilibrium or reaction-entropy accuracy. Continue inlet dynamics, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control.
 
 [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) · [ROADMAP.md](ROADMAP.md) · [VALIDATION.md](VALIDATION.md)
+
+[Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md)

@@ -32,7 +32,7 @@ h = (E - E_elastic + p V) / M
 
 通过 MCP 请求 `equilibrium-fuel-network` 或 `electrothermal-fuel-network`，也可用 CLI 运行同一 JSON。读取各容器的 `mass`、`internal_energy`、`elastic_energy`、`vapor_mass`、`vapor_mass_fraction`、`vapor_volume_fraction`、`entropy` 和 `specific_enthalpy`。这里 `internal_energy` 包含弹性壁储能，化学能单独报告。链接公开有符号质量/体积流、累计转移质量、`transport_energy` 和成对熵变化。
 
-实验覆盖液体排出并进入共存区、反向流、开度变化及有限壁/机电热耦合。独立液体压力指数解、同时求解两相质量/焓/传热的 ODE、热驱动反流及离合器试探捕获检查精度与组合。资产和实际 MCP 保持每个采样值及哈希一致。资产 v33 保存新物性记录并读取 v1-v32。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+实验覆盖液体排出并进入共存区、反向流、开度变化及有限壁/机电热耦合。独立液体压力指数解、同时求解两相质量/焓/传热的 ODE、热驱动反流及离合器试探捕获检查精度与组合。资产和实际 MCP 保持每个采样值及哈希一致。资产 v34 保存新物性记录并读取 v1-v33。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
 
 ## 后续工作
 

@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — esperimenti senza interfaccia"]
     mcp["Power.Mcp — 12 strumenti MCP via stdio"]
-    assets["Power.Assets — .powerasset v33"]
+    assets["Power.Assets — .powerasset v34"]
     unity["Studio Unity 6.6 — laboratori 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Il servizio espone dodici strumenti con schemi di input e output:
 |---|---|
 | `get_capabilities` | Scopre modelli, limiti e convenzioni di tempo e revisione. Inizia qui. |
 | `get_model_schema` | JSON Schema 2020-12 per `power.model.v1` |
-| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (51 esempi) |
+| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (53 esempi) |
 | `validate_model` | Valida un modello senza eseguirlo; diagnostica di riparazione strutturata |
 | `run_experiment` | Esecuzione senza interfaccia e limitata, con replay batch, KPI e provenienza |
 | `export_model_asset` | Esporta un `.powerasset` portabile |
@@ -147,12 +147,12 @@ Un grafo di ricerca Ravigneaux a quattro gamme aggiunge percorsi planetari compo
 > [!NOTE]
 > Tutti i parametri di esempio sono `unverified`: valori di ricerca, non misure calibrate.
 
-I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v33`, mantenendo i lettori per gli asset precedenti.
+I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v34`, mantenendo i lettori per gli asset precedenti.
 
-Le camere finite scambiano lavoro di pressione con alberi e riempiono/erogano attraverso restrizioni unidirezionali ideali, con cambio di fase sottoalimentato. Iniettore fisico e ricevitore restano da collegare. [Pompa carburante a cambio di fase azionata da albero](docs/FUEL_CHAMBER_PUMP.it.md)
+La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo congelato in un ricevitore acceso con volume liquido finito. Gli inventari comprendono cambio fase, lavoro di spostamento, energia cinetica del getto e impulso sulla parete ferma. [Scarico carburante a titolo congelato e ricevitori finiti](docs/FUEL_DISCHARGE.it.md) [Pompa carburante a cambio di fase azionata da albero](docs/FUEL_CHAMBER_PUMP.it.md)
 
 <details>
-<summary>Laboratori disponibili (52)</summary>
+<summary>Laboratori disponibili (54)</summary>
 
 | Nome esempio (`get_example_model`) | Laboratorio | Cosa esercita |
 |---|---|---|
@@ -208,6 +208,8 @@ Le camere finite scambiano lavoro di pressione con alberi e riempiono/erogano at
 | `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | trasporto inverso della miscela e calore condiviso con un laboratorio elettromeccanico |
 | `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | ingresso insufficiente, formazione di vapore ed erogazione da albero in folle |
 | `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | motore CC, riempimento liquido alimentato e calore finito della parete motore |
+| `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | Scarico carburante a titolo congelato e ricevitori finiti |
+| `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Strozzamento a titolo congelato, spostamento liquido finito e pompa/ago fisici in combustione |
 
 </details>
 

@@ -116,7 +116,7 @@ A impressão digital cobre a semântica do modelo, os parâmetros normalizados, 
 
 ## O que ainda está aberto
 
-Troca de gás compressível, combustão premisturada prescrita, embreagens, engrenagens, um conversor mapeado e acionamento hidráulico agora existem como componentes com portas, estado e verificações de conservação. Eles não concluem o powertrain. Ainda aberto: bomba e reabastecimento do trilho, controle de ignição, admissão e escape detalhados, perdas mecânicas, termoquímica mais rica, flexibilidade de engrenamento, controle completo de pressão e troca da AT, comportamento coordenado de ECU/TCU e calibração medida. Uma equação nova ainda precisa de uma versão explícita de modelo, dimensões e evidência numérica. A semântica dos componentes existentes não é estendida alterando-os em silêncio.
+Troca de gás compressível, combustão premisturada prescrita, embreagens, engrenagens, um conversor mapeado e acionamento hidráulico agora existem como componentes com portas, estado e verificações de conservação. Eles não concluem o powertrain. Ainda aberto: enchimento e regulação medidos da bomba, controle de ignição, admissão e escape detalhados, perdas mecânicas, termoquímica mais rica, flexibilidade de engrenamento, controle completo de pressão e troca da AT, comportamento coordenado de ECU/TCU e calibração medida. Uma equação nova ainda precisa de uma versão explícita de modelo, dimensões e evidência numérica. A semântica dos componentes existentes não é estendida alterando-os em silêncio.
 
 Um agente pode gerar uma topologia e um estado inicial, propor hipóteses de parâmetros, escrever candidatos de componente, construir experimentos e ler a evidência de volta. O núcleo de execução continua dono das restrições e verificações numéricas. O julgamento de um modelo de linguagem não é um fato físico. Edição de grafo no Unity, uma thread de trabalho de simulação e um backend substituível de solver de alto desempenho esperam até a fronteira estar estável. Nada aqui afirma um solver não linear geral, Burst ou um solver de GPU.
 
@@ -248,7 +248,7 @@ A [montagem de acionamento da AT](AT_HYDRAULIC_ACTUATION.pt-BR.md) reduz 1..6 al
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v33 preserva rotas, ganhos e relógios e lê v1-v32.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v34 preserva rotas, ganhos e relógios e lê v1-v33.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -258,7 +258,7 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v33 preserva conexões e temperatura da fonte e lê v1-v32. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v34 preserva conexões e temperatura da fonte e lê v1-v33. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
@@ -325,3 +325,5 @@ O domínio `fuel` transporta líquido puro e vapor juntos em recipientes elásti
 `fuel_chamber` acopla um eixo real a uma câmara finita de combustível. `fuel_check_valve` de entrada e saída fornecem enchimento e entrega por pressão. Líquido, vapor e energia elástica usam o mesmo fechamento. Com entrada insuficiente a câmara pode vaporizar na sucção; a entrega segue inventário e pressão calculados.
 
 [Bomba de combustível com mudança de fase acionada por eixo](FUEL_CHAMBER_PUMP.pt-BR.md)
+
+A bomba do domínio de combustível agora alimenta agulha física e descarga de título congelado em um receptor em combustão com volume líquido finito. Os inventários completos incluem mudança de fase, trabalho de deslocamento, energia cinética e impulso na parede imóvel. [Descarga de combustível com título congelado e receptores finitos](FUEL_DISCHARGE.pt-BR.md)

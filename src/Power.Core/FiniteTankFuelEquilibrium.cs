@@ -16,7 +16,7 @@ public readonly record struct FiniteTankPhaseTransfer(FuelFilmSample Liquid, dou
 /// The liquid chemical potential includes p/rho; its caloric and entropy reference
 /// is shared with the paired negligible-displacement film material.
 /// </summary>
-public sealed class FiniteTankFuelEquilibrium
+public sealed partial class FiniteTankFuelEquilibrium
 {
     public FuelPhaseEquilibrium Material { get; }
     public double CapacityCubicMeters { get; }
@@ -46,20 +46,26 @@ public sealed class FiniteTankFuelEquilibrium
     }
 
     /// <summary>Equilibrium energy and its temperature derivative at fixed total fuel, carrier mass and vessel volume.</summary>
-    public bool TryPoint(double temperatureKelvin, double fuelMassKilograms, double carrierMassKilograms, out FiniteTankPhasePoint point)
+    public bool TryPoint(double temperatureKelvin, double fuelMassKilograms, double carrierMassKilograms, out FiniteTankPhasePoint point) =>
+        TryPointAtCapacity(temperatureKelvin, fuelMassKilograms, carrierMassKilograms, CapacityCubicMeters, out point);
+
+    public bool TryPointAtCapacity(double temperatureKelvin, double fuelMassKilograms, double carrierMassKilograms, double capacityCubicMeters, out FiniteTankPhasePoint point)
     {
         point = default;
+        if (!Numeric.Finite(capacityCubicMeters) || capacityCubicMeters <= 0) return false;
+        double capacityMass = capacityCubicMeters == CapacityCubicMeters ? _capacityMass : capacityCubicMeters * DensityKilogramsPerCubicMeter;
+        if (!Numeric.Finite(capacityMass) || capacityMass <= 0) return false;
         if (!GearReference.Finite(temperatureKelvin, fuelMassKilograms, carrierMassKilograms, 0) || fuelMassKilograms < 0 || carrierMassKilograms < 0 ||
-            fuelMassKilograms + carrierMassKilograms <= 0 || fuelMassKilograms + carrierMassKilograms >= _capacityMass * (1 - 64 * GearReference.Epsilon) ||
+            fuelMassKilograms + carrierMassKilograms <= 0 || fuelMassKilograms + carrierMassKilograms >= capacityMass * (1 - 64 * GearReference.Epsilon) ||
             !Material.TrySaturationPressure(temperatureKelvin, out double zeroVolumePressure)) return false;
-        double freeMass = _capacityMass - fuelMassKilograms, r = Material.GasConstantJoulesPerKilogramKelvin;
+        double freeMass = capacityMass - fuelMassKilograms, r = Material.GasConstantJoulesPerKilogramKelvin;
         double vapor = fuelMassKilograms, slope = 0;
         if (fuelMassKilograms > 0)
         {
             // y = m_v / (rho*V_g). For total density below liquid density,
             // ln(y) - (1-carrier/freeMass)*y is strictly increasing on the physical interval.
             double carrierRatio = carrierMassKilograms / freeMass, a = 1 - carrierRatio;
-            double maximumY = fuelMassKilograms / _capacityMass, logMaximum = Math.Log(maximumY);
+            double maximumY = fuelMassKilograms / capacityMass, logMaximum = Math.Log(maximumY);
             double logB = Math.Log(zeroVolumePressure) - Math.Log(DensityKilogramsPerCubicMeter) - Math.Log(r) - Math.Log(temperatureKelvin) + carrierRatio;
             double atDry = logMaximum - a * maximumY - logB;
             if (atDry > 0)
@@ -83,7 +89,7 @@ public sealed class FiniteTankFuelEquilibrium
                 slope = freeMass * fraction / remaining / remaining * latent / r / temperatureKelvin / temperatureKelvin / (1 - a * fraction);
             }
         }
-        double liquid = fuelMassKilograms - vapor, volume = CapacityCubicMeters - liquid / DensityKilogramsPerCubicMeter;
+        double liquid = fuelMassKilograms - vapor, volume = capacityCubicMeters - liquid / DensityKilogramsPerCubicMeter;
         double gas = carrierMassKilograms + vapor, cv = Material.Caloric.VaporSpecificHeatJoulesPerKilogramKelvin, cl = Material.Caloric.LiquidSpecificHeatJoulesPerKilogramKelvin;
         double energy = gas * cv * temperatureKelvin + liquid * (cl * temperatureKelvin + Material.Caloric.LiquidEnergyOffsetJoulesPerKilogram);
         double capacity = gas * cv + liquid * cl + slope * Material.LatentInternalEnergy(temperatureKelvin);
@@ -104,8 +110,17 @@ public sealed class FiniteTankFuelEquilibrium
         if (liquid.LiquidMassKilograms > 0 && !Material.TrySaturationPressure(Material.Caloric.Temperature(liquid), out _)) return false;
         double fuel = liquid.LiquidMassKilograms + vaporMassKilograms, energy = liquid.ThermalEnergyJoules + gasEnergyJoules;
         if (!Numeric.Finite(fuel) || !Numeric.Finite(energy) || fuel + carrierMassKilograms >= _capacityMass * (1 - 64 * GearReference.Epsilon)) return false;
+        if (!TryFlashEnergyAtCapacity(fuel, carrierMassKilograms, energy, CapacityCubicMeters, out var state)) return false;
+        transfer = new(state.Liquid, state.VaporMassKilograms, state.GasEnergyJoules, state.TemperatureKelvin,
+            liquid.LiquidMassKilograms - state.Liquid.LiquidMassKilograms); return true;
+    }
+
+    public bool TryFlashEnergyAtCapacity(double fuel, double carrierMassKilograms, double energy, double capacityCubicMeters, out FiniteFuelPhaseState state)
+    {
+        state = default;
+        if (!GearReference.Finite(fuel, carrierMassKilograms, energy, capacityCubicMeters) || fuel < 0 || carrierMassKilograms < 0 || fuel + carrierMassKilograms <= 0 || capacityCubicMeters <= 0) return false;
         double lo = Material.MinimumTemperatureKelvin, hi = Material.MaximumTemperatureKelvin;
-        if (!TryPoint(lo, fuel, carrierMassKilograms, out var lower) || !TryPoint(hi, fuel, carrierMassKilograms, out var upper)) return false;
+        if (!TryPointAtCapacity(lo, fuel, carrierMassKilograms, capacityCubicMeters, out var lower) || !TryPointAtCapacity(hi, fuel, carrierMassKilograms, capacityCubicMeters, out var upper)) return false;
         FiniteTankPhasePoint result;
         double lowCorrection = (lower.ThermalEnergyJoules - energy) / lower.HeatCapacityJoulesPerKelvin;
         double highCorrection = (upper.ThermalEnergyJoules - energy) / upper.HeatCapacityJoulesPerKelvin;
@@ -117,7 +132,7 @@ public sealed class FiniteTankFuelEquilibrium
             double temperature = (lo + hi) / 2; result = default; bool converged = false;
             for (int iteration = 0; iteration < 64; ++iteration)
             {
-                if (!TryPoint(temperature, fuel, carrierMassKilograms, out result)) return false;
+                if (!TryPointAtCapacity(temperature, fuel, carrierMassKilograms, capacityCubicMeters, out result)) return false;
                 double correction = (result.ThermalEnergyJoules - energy) / result.HeatCapacityJoulesPerKelvin;
                 if (Math.Abs(correction) <= 32 * GearReference.Epsilon * Math.Max(1, temperature)) { converged = true; break; }
                 if (correction > 0) hi = temperature; else lo = temperature;
@@ -139,7 +154,6 @@ public sealed class FiniteTankFuelEquilibrium
         double liquidTemperature = result.LiquidMassKilograms == 0 ? t : Material.Caloric.Temperature(new(result.LiquidMassKilograms, liquidEnergy));
         if (!Numeric.Finite(gasEnergy) || gasEnergy <= 0 || !Numeric.Finite(gasTemperature) ||
             Math.Abs(t - gasTemperature) > 1e-8 + 128 * GearReference.Epsilon * t || Math.Abs(t - liquidTemperature) > 1e-8 + 128 * GearReference.Epsilon * t) return false;
-        transfer = new(new(result.LiquidMassKilograms, liquidEnergy), result.VaporMassKilograms, gasEnergy, t,
-            liquid.LiquidMassKilograms - result.LiquidMassKilograms); return true;
+        state = new(new(result.LiquidMassKilograms, liquidEnergy), result.VaporMassKilograms, gasEnergy, t); return true;
     }
 }

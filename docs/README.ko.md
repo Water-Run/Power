@@ -31,7 +31,8 @@ flowchart LR
 | 문서 | 내용 |
 |---|---|
 | [에이전트 API](AGENT_API.ko.md) | MCP 도구, 개정, 오류, 작업 순서 |
-| [자산 형식](ASSET_FORMAT.ko.md) | `.powerasset` v33와 v1부터 v30까지의 판독기 |
+| [자산 형식](ASSET_FORMAT.ko.md) | `.powerasset` v34와 v1부터 v30까지의 판독기 |
+| [증기 질량분율 동결 연료 토출과 유한 수용실](FUEL_DISCHARGE.ko.md) | 증기 분율 동결 초크, 유한 액체 배제 및 물리 펌프/니들 연소 |
 | [네이티브 Zig 경계](NATIVE_ZIG.ko.md) | 보관된 Zig 프로토타입과 버전이 있는 ABI |
 
 ## 엔진과 연료

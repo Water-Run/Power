@@ -28,7 +28,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
         ["v_pa"] = Unit.VoltPerPascal, ["v_pa_s"] = Unit.VoltPerPascalSecond,
         ["c"] = Unit.Coulomb, ["ah"] = Unit.AmpereHour, ["f"] = Unit.Farad,
         ["fraction_pa"] = Unit.FractionPerPascal, ["fraction_pa_s"] = Unit.FractionPerPascalSecond,
-        ["m_s"] = Unit.MeterPerSecond, ["n_m"] = Unit.NewtonPerMeter, ["n_s_m"] = Unit.NewtonSecondPerMeter,
+        ["m_s"] = Unit.MeterPerSecond, ["n_m"] = Unit.NewtonPerMeter, ["n_s_m"] = Unit.NewtonSecondPerMeter, ["n_s"] = Unit.NewtonSecond,
         ["m3_rad"] = Unit.CubicMeterPerRadian, ["m3_pa"] = Unit.CubicMeterPerPascal, ["m3_s_pa"] = Unit.CubicMeterPerSecondPascal,
         ["m3_s_sqrt_pa"] = Unit.CubicMeterPerSecondSqrtPascal, ["m3_s"] = Unit.CubicMeterPerSecond, ["n"] = Unit.Newton,
         ["nm_s2_rad2"] = Unit.NewtonMeterSecondSquaredPerRadianSquared, ["none"] = Unit.None, ["kg_m2"] = Unit.KilogramMeterSquared, ["rad"] = Unit.Radian,
@@ -43,6 +43,8 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     };
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
+        ["jet_kinetic_energy"] = Field.JetKineticEnergy, ["jet_impulse"] = Field.JetImpulse, ["throat_pressure"] = Field.ThroatPressure,
+        ["exit_temperature"] = Field.ExitTemperature, ["exit_velocity"] = Field.ExitVelocity, ["choked"] = Field.Choked,
         ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault, ["lockup_state"] = Field.LockupState,
         ["actuator_integral_a"] = Field.ActuatorIntegralA, ["actuator_integral_b"] = Field.ActuatorIntegralB, ["actuator_integral_c"] = Field.ActuatorIntegralC, ["actuator_integral_d"] = Field.ActuatorIntegralD, ["actuator_integral_e"] = Field.ActuatorIntegralE, ["actuator_integral_f"] = Field.ActuatorIntegralF, ["tank_state"] = Field.TankState, ["fill_fraction"] = Field.FillFraction,
         ["vapor_mass"] = Field.VaporMass, ["vapor_mass_fraction"] = Field.VaporMassFraction, ["vapor_volume_fraction"] = Field.VaporVolumeFraction, ["elastic_energy"] = Field.ElasticEnergy, ["entropy"] = Field.Entropy, ["specific_enthalpy"] = Field.SpecificEnthalpy, ["transport_energy"] = Field.TransportEnergy, ["entropy_produced"] = Field.EntropyProduced,
@@ -183,6 +185,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             var kind = Text(c.GetProperty("kind")) switch
             {
                 "fuel_chamber" => ComponentKind.FuelChamber, "fuel_check_valve" => ComponentKind.FuelCheckValve, "fuel_restriction" => ComponentKind.FuelRestriction, "fuel_heat_link" => ComponentKind.FuelHeatLink,
+                "fuel_discharge" => ComponentKind.FuelDischarge, "finite_fuel_film" => ComponentKind.FiniteFuelFilm,
                 "hydraulic_resistance" => ComponentKind.HydraulicResistance, "hydraulic_orifice" => ComponentKind.HydraulicOrifice,
                 "hydraulic_clutch" => ComponentKind.HydraulicClutch,
                 "hydraulic_pump" => ComponentKind.HydraulicPump, "hydraulic_relief" => ComponentKind.HydraulicRelief,
@@ -199,6 +202,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 _ => throw new ArgumentException("Unknown component kind.")
             };
             if (kind is ComponentKind.FuelRestriction or ComponentKind.FuelCheckValve) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel");
+            else if (kind == ComponentKind.FuelDischarge) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel", "valve_timing");
             else if (kind is ComponentKind.FuelHeatLink or ComponentKind.FuelChamber) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind == ComponentKind.IdealGear) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind is ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) Object(c, ["id", "kind", "node_a", "node_b", "node_c", "parameters"]);
@@ -211,7 +215,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             else if (kind is ComponentKind.TravelStop or ComponentKind.NeedleDriver) Object(c, ["id", "kind", "node_a", "parameters"]);
             else if (kind is ComponentKind.LiquidRailFeed or ComponentKind.LiquidFuelTank or ComponentKind.LiquidRailReturn) Object(c,["id","kind","node_a","parameters"]);
             else if (kind == ComponentKind.LiquidFuelInjector) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
-            else if(kind==ComponentKind.FuelFilm)Object(c,["id","kind","node_a","node_b","parameters"]);
+            else if(kind is ComponentKind.FuelFilm or ComponentKind.FiniteFuelFilm)Object(c,["id","kind","node_a","node_b","parameters"]);
             else if (kind == ComponentKind.GasFuelInjector) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"]);
             else if (kind is ComponentKind.HydraulicPiston or ComponentKind.GasPiston) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind == ComponentKind.PistonClutch) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
@@ -350,9 +354,22 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                     }
                 };
             }
-            if(kind==ComponentKind.FuelFilm)
+            if (kind == ComponentKind.FuelDischarge)
             {
-                Object(parameters,["initial_mass","initial_temperature","liquid_specific_heat","saturation_temperature","latent_internal_energy","conductance"],["phase_equilibrium"]);
+                Object(parameters, ["film_component", "phase_mode", "wall_kinetic_fraction", "area", "discharge_coefficient"], "needle");
+                if (Text(parameters.GetProperty("phase_mode")) != "frozen") throw new ArgumentException("fuel_discharge phase_mode must be frozen.");
+                InjectorNeedleDefinition? needle = null;
+                if (parameters.TryGetProperty("needle", out var needleData))
+                { Object(needleData, ["needle_node", "closed_position", "full_open_position"]); needle = new() { NeedleNode = Id(needleData, "needle_node"), ClosedPosition = Quantity(needleData.GetProperty("closed_position")), FullOpenPosition = Quantity(needleData.GetProperty("full_open_position")) }; }
+                return result with { Area = Quantity(parameters.GetProperty("area")), DischargeCoefficient = Number(parameters.GetProperty("discharge_coefficient")),
+                    FuelDischarge = new() { FilmComponent = Id(parameters, "film_component"), PhaseModel = FuelDischargePhaseModel.Frozen,
+                        WallKineticFraction = Quantity(parameters.GetProperty("wall_kinetic_fraction")), Needle = needle } };
+            }
+            if(kind is ComponentKind.FuelFilm or ComponentKind.FiniteFuelFilm)
+            {
+                if (kind == ComponentKind.FiniteFuelFilm)
+                    Object(parameters,["initial_mass","initial_temperature","liquid_specific_heat","saturation_temperature","latent_internal_energy","conductance","phase_equilibrium","finite_volume_density"]);
+                else Object(parameters,["initial_mass","initial_temperature","liquid_specific_heat","saturation_temperature","latent_internal_energy","conductance"],["phase_equilibrium"]);
                 FuelPhaseEquilibriumDefinition? phaseEquilibrium = null;
                 if (parameters.TryGetProperty("phase_equilibrium", out var phase))
                 {
@@ -364,7 +381,8 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 {
                     InitialMass = Quantity(parameters.GetProperty("initial_mass")), InitialTemperature = Quantity(parameters.GetProperty("initial_temperature")),
                     LiquidSpecificHeat = Quantity(parameters.GetProperty("liquid_specific_heat")), SaturationTemperature = Quantity(parameters.GetProperty("saturation_temperature")),
-                    LatentInternalEnergy = Quantity(parameters.GetProperty("latent_internal_energy")), PhaseEquilibrium = phaseEquilibrium
+                    LatentInternalEnergy = Quantity(parameters.GetProperty("latent_internal_energy")), PhaseEquilibrium = phaseEquilibrium,
+                    FiniteVolumeDensity = kind == ComponentKind.FiniteFuelFilm ? Quantity(parameters.GetProperty("finite_volume_density")) : default
                 } };
             }
             if (kind == ComponentKind.GasFuelInjector)

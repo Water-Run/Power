@@ -27,7 +27,7 @@ Um flash limitado a U,V constantes conserva combustível e energia térmica. Ori
 
 ## Evidência e limites
 
-`equilibrium-tank-supply` verifica reversão da bomba, ventilação com combustível e parede quente finita. `equilibrium-tank-fired-cylinder` conecta a fonte a um motor com combustão. Verificam-se máximo independente de entropia, potenciais, derivadas calóricas, refinamento ODE, balanços, replay, rollback e alocações. Asset v33 mantém o sinalizador e lê v1-v32.
+`equilibrium-tank-supply` verifica reversão da bomba, ventilação com combustível e parede quente finita. `equilibrium-tank-fired-cylinder` conecta a fonte a um motor com combustão. Verificam-se máximo independente de entropia, potenciais, derivadas calóricas, refinamento ODE, balanços, replay, rollback e alocações. Asset v34 mantém o sinalizador e lê v1-v33.
 
 Casos acoplados de bomba, calor e ventilação demonstram primeira ordem. As duas fases da fonte ficam no intervalo declarado; densidade total abaixo da líquida com margem binary64. Densidade/propriedades constantes, equilíbrio instantâneo e interface plana são aproximações de pesquisa. Misturas reais, tensão superficial, sloshing, cinética finita, calibração medida e Unity Editor/Play/Player/IL2CPP real seguem não verificados.
 

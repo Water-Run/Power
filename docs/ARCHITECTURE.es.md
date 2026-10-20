@@ -152,7 +152,7 @@ Las sesiones MCP viven en el proceso local del servidor. El límite es 16. Se li
 
 ## Lo que sigue pendiente
 
-El intercambio de gas compresible, la combustión premmezclada prescrita, los embragues, los engranajes, un convertidor mapeado y la actuación hidráulica existen ahora como componentes con puertos, estado y comprobaciones de conservación. No completan el grupo motopropulsor. Siguen pendientes: la bomba y el repostaje del raíl, el control de encendido, la admisión y el escape detallados, las pérdidas mecánicas, una termoquímica más rica, la flexibilidad de engrane, el control completo de presión y cambio de la AT, el comportamiento coordinado de ECU/TCU y la calibración medida. Una ecuación nueva sigue necesitando una versión de modelo explícita, dimensiones y evidencia numérica. La semántica de los componentes existentes no se amplía cambiándola en silencio.
+El intercambio de gas compresible, la combustión premmezclada prescrita, los embragues, los engranajes, un convertidor mapeado y la actuación hidráulica existen ahora como componentes con puertos, estado y comprobaciones de conservación. No completan el grupo motopropulsor. Siguen pendientes: el llenado y la regulación medidos de la bomba, el control de encendido, la admisión y el escape detallados, las pérdidas mecánicas, una termoquímica más rica, la flexibilidad de engrane, el control completo de presión y cambio de la AT, el comportamiento coordinado de ECU/TCU y la calibración medida. Una ecuación nueva sigue necesitando una versión de modelo explícita, dimensiones y evidencia numérica. La semántica de los componentes existentes no se amplía cambiándola en silencio.
 
 Un agente puede generar una topología y un estado inicial, proponer hipótesis de parámetros, escribir candidatos de componente, construir experimentos y leer la evidencia de vuelta. El núcleo de ejecución sigue siendo dueño de las restricciones y comprobaciones numéricas. El juicio de un modelo de lenguaje no es un hecho físico. La edición de grafos en Unity, un hilo de trabajo de simulación y un backend de solver de alto rendimiento sustituible esperan a que la frontera sea estable. Nada de esto afirma un solver no lineal general, Burst ni un solver en GPU.
 
@@ -493,7 +493,7 @@ siguen separados de la realimentación y el control de la AT, y de la aceptació
 
 `at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
 
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v33 conserva rutas, ganancias y relojes y lee v1-v32.
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v34 conserva rutas, ganancias y relojes y lee v1-v33.
 
 Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
 
@@ -503,7 +503,7 @@ Son controles de investigación y los parámetros siguen `unverified`. Coordinac
 
 `liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
 
-v33 conserva enlaces y temperatura de fuente y lee v1-v32. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v34 conserva enlaces y temperatura de fuente y lee v1-v33. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
 Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
@@ -570,3 +570,5 @@ El dominio `fuel` transporta líquido puro y vapor juntos en recipientes elásti
 `fuel_chamber` acopla un eje real a una cámara finita de combustible. `fuel_check_valve` de entrada y salida permiten llenado y entrega por presión. Líquido, vapor y energía elástica comparten cierre. Con entrada insuficiente la cámara puede vaporizar en aspiración; la entrega sigue inventario y presión calculados.
 
 [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
+
+La bomba del dominio de combustible alimenta ahora una aguja física y descarga con calidad congelada en un receptor encendido con volumen líquido finito. Los inventarios completos incluyen cambio de fase, trabajo de desplazamiento, energía cinética e impulso sobre pared inmóvil. [Descarga de combustible con calidad congelada y receptores finitos](FUEL_DISCHARGE.es.md)

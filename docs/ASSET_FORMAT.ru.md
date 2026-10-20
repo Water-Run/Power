@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 33
+## Текущая версия 34
+
+`fuel_discharge` связывает конечный источник топливного домена с газовым узлом `finite_fuel_film`. Задайте `phase_mode` как `frozen`: массовая доля пара постоянна в сопле, а объёмы на концах вновь уравновешиваются. Однородные фазы имеют общие температуру и скорость; жидкость несжимаема, пар — идеальная псевдокомпонента. Свойства и плотность жидкости должны совпадать.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[Подача топлива с замороженным паросодержанием в конечный приёмник](FUEL_DISCHARGE.ru.md)
+
+
+## Сохранённая версия 33
 
 `fuel_chamber` связывает фактический вал с конечной камерой топлива. Входной и выходной `fuel_check_valve` обеспечивают наполнение и подачу по перепаду давления. Жидкость, пар и упругая энергия используют одно замыкание. При недостаточном притоке камера может испарять топливо на всасывании; подача следует рассчитанным массе и давлению.
 

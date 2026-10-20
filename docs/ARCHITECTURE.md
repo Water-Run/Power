@@ -152,7 +152,7 @@ MCP sessions live in the local server process. The limit is 16. They are release
 
 ## What is still open
 
-Compressible gas exchange, prescribed premixed combustion, clutches, gears, a mapped converter and hydraulic actuation now exist as components with ports, state and conservation checks. They do not finish the powertrain. Still open: rail pump and refill, ignition control, detailed intake and exhaust, mechanical losses, richer thermochemistry, mesh compliance, complete AT pressure and shift control, coordinated ECU/TCU behavior, and measured calibration. A new equation still needs an explicit model version, dimensions and numerical evidence. Existing component semantics are not extended by changing them quietly.
+Compressible gas exchange, prescribed premixed combustion, clutches, gears, a mapped converter and hydraulic actuation now exist as components with ports, state and conservation checks. They do not finish the powertrain. Still open: measured pump filling and regulation, ignition control, detailed intake and exhaust, mechanical losses, richer thermochemistry, mesh compliance, complete AT pressure and shift control, coordinated ECU/TCU behavior, and measured calibration. A new equation still needs an explicit model version, dimensions and numerical evidence. Existing component semantics are not extended by changing them quietly.
 
 An agent can generate a topology and initial state, propose parameter hypotheses, write component candidates, build experiments and read the evidence back. The execution core still owns numerical constraints and checks. A language-model judgment is not a physical fact. Unity graph editing, a simulation worker thread and a replaceable high-performance solver backend wait until the boundary is stable. Nothing here claims a general nonlinear solver, Burst or a GPU solver.
 
@@ -493,7 +493,7 @@ remain separate from AT feedback/control and measured valve-body acceptance.
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v33 retains routes, gains and clocks and reads v1-v32.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v34 retains routes, gains and clocks and reads v1-v33.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -503,7 +503,7 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v33 retains feed links and source temperature and reads v1-v32. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v34 retains feed links and source temperature and reads v1-v33. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -570,3 +570,5 @@ The `fuel` domain carries pure liquid and vapor together in finite elastic vesse
 A `fuel_chamber` couples an actual shaft to a finite fuel-domain chamber. Inlet and outlet `fuel_check_valve` components provide pressure-driven filling and delivery. Liquid, vapor and elastic wall energy share the same material closure. An inlet-starved chamber can flash during suction; delivered fuel follows the computed inventory and pressure.
 
 [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
+
+The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse. [Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md)

@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現行バージョン 33
+## 現行バージョン 34
+
+`fuel_discharge` は有限燃料源を `finite_fuel_film` の気体ノードへ接続します。`phase_mode` を `frozen` と宣言し、ノズル通過中の蒸気質量分率を固定します。両端のバルクは再平衡化します。均質な両相は温度と速度を共有し、液体は非圧縮、蒸気は理想擬似種です。材料特性と液体密度は一致する必要があります。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[蒸気質量分率を凍結した燃料流出と有限受容室](FUEL_DISCHARGE.ja.md)
+
+
+## 保持バージョン 33
 
 `fuel_chamber` は実際の軸と有限燃料室を結合します。入口・出口の `fuel_check_valve` が圧力差で充填と供給を行います。液体、蒸気、弾性壁エネルギーは同じ閉包を使います。入口不足では吸入中にフラッシュ蒸発でき、供給量は計算した在庫と圧力に従います。
 

@@ -32,7 +32,7 @@ h = (E - E_elastic + p V) / M
 
 MCP에서 `equilibrium-fuel-network` 또는 `electrothermal-fuel-network`를 요청하거나 동일 JSON을 CLI로 실행합니다. 용기별 `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy`, `specific_enthalpy`를 읽습니다. 여기서 `internal_energy`는 탄성 벽을 포함하며 화학 에너지는 별도입니다. 링크는 부호 있는 흐름, 누적 질량, `transport_energy`, 쌍 엔트로피 변화를 공개합니다.
 
-실험은 공존 상태로 이동하는 액체 배출, 역류, 개도 변경, 유한 벽/전기기계 열 결합을 다룹니다. 독립 액체 압력 지수해, 동시 2상 질량/엔탈피/열 ODE, 열 구동 역류, 클러치 시험 포착으로 정확도와 조합을 검사합니다. 자산과 실제 MCP가 모든 샘플 값과 해시를 유지합니다. 자산 v33는 물성을 저장하고 v1-v32을 읽습니다. 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
+실험은 공존 상태로 이동하는 액체 배출, 역류, 개도 변경, 유한 벽/전기기계 열 결합을 다룹니다. 독립 액체 압력 지수해, 동시 2상 질량/엔탈피/열 ODE, 열 구동 역류, 클러치 시험 포착으로 정확도와 조합을 검사합니다. 자산과 실제 MCP가 모든 샘플 값과 해시를 유지합니다. 자산 v34는 물성을 저장하고 v1-v33을 읽습니다. 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
 
 ## 남은 작업
 

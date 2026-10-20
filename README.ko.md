@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 헤드리스 실험"]
     mcp["Power.Mcp — stdio MCP 도구 12개"]
-    assets["Power.Assets — .powerasset v33"]
+    assets["Power.Assets — .powerasset v34"]
     unity["Unity 6.6 스튜디오 — 3D 실험실"]
 
     model --> core
@@ -147,12 +147,12 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 모든 샘플 매개변수는 `unverified`입니다. 연구 값이지 교정 측정값이 아닙니다.
 
-아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v33`를 사용하며 이전 자산의 판독기는 유지됩니다.
+아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v34`를 사용하며 이전 자산의 판독기는 유지됩니다.
 
-유한 연료 챔버가 축과 압력 일을 교환하고 이상 단방향 저항을 통해 충전/공급합니다. 입구 부족 시 벌크 상변화도 다룹니다. 물리 인젝터와 수신부 결합은 남습니다. [축 구동 상변화 연료 펌프](docs/FUEL_CHAMBER_PUMP.ko.md)
+연료 도메인 펌프는 이제 물리 니들과 증기 질량분율 동결 토출을 통해 유한 액체 체적 연소 수용실에 공급합니다. 전체 재고에는 상변화, 배제 일, 제트 운동에너지 및 정지 벽 충격량이 포함됩니다. [증기 질량분율 동결 연료 토출과 유한 수용실](docs/FUEL_DISCHARGE.ko.md) [축 구동 상변화 연료 펌프](docs/FUEL_CHAMBER_PUMP.ko.md)
 
 <details>
-<summary>사용 가능한 실험실 (52)</summary>
+<summary>사용 가능한 실험실 (54)</summary>
 
 | 예제 이름(`get_example_model`) | 실험실 | 다루는 내용 |
 |---|---|---|
@@ -208,6 +208,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | 역방향 혼합물 수송 및 전기기계 실험 열 결합 |
 | `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | 입구 부족, 벌크 증기 형성 및 관성 회전 축 공급 |
 | `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | 직류 모터 구동, 충분한 액체 충전 및 유한 모터 벽 열교환 |
+| `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | 증기 질량분율 동결 연료 토출과 유한 수용실 |
+| `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | 증기 분율 동결 초크, 유한 액체 배제 및 물리 펌프/니들 연소 |
 
 </details>
 

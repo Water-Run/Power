@@ -191,6 +191,12 @@
           },
           {
             "$ref": "#/$defs/fuel_chamber"
+          },
+          {
+            "$ref": "#/$defs/finite_fuel_film"
+          },
+          {
+            "$ref": "#/$defs/fuel_discharge"
           }
         ]
       },
@@ -944,7 +950,13 @@
             "entropy",
             "specific_enthalpy",
             "transport_energy",
-            "entropy_produced"
+            "entropy_produced",
+            "jet_kinetic_energy",
+            "jet_impulse",
+            "throat_pressure",
+            "exit_temperature",
+            "exit_velocity",
+            "choked"
           ]
         },
         "min": {
@@ -7244,6 +7256,421 @@
                   "enum": [
                     "rad",
                     "deg"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "finite_fuel_film": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "finite_fuel_film"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "initial_mass",
+            "initial_temperature",
+            "liquid_specific_heat",
+            "saturation_temperature",
+            "latent_internal_energy",
+            "conductance",
+            "phase_equilibrium",
+            "finite_volume_density"
+          ],
+          "properties": {
+            "initial_mass": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "kg"
+                  ]
+                }
+              }
+            },
+            "initial_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "liquid_specific_heat": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "saturation_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "latent_internal_energy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg"
+                  ]
+                }
+              }
+            },
+            "conductance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "w_k"
+                  ]
+                }
+              }
+            },
+            "phase_equilibrium": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "reference_pressure",
+                "minimum_temperature",
+                "maximum_temperature"
+              ],
+              "properties": {
+                "reference_pressure": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "pa",
+                        "bar"
+                      ]
+                    }
+                  }
+                },
+                "minimum_temperature": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "k"
+                      ]
+                    }
+                  }
+                },
+                "maximum_temperature": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "k"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "finite_volume_density": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "kg_m3"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "Instantaneous pure-fuel phase equilibrium in a finite cavity. Liquid mass/density displaces gas; declared material temperature bounds apply."
+    },
+    "fuel_discharge": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Finite fuel-domain source to finite-displacement film/gas receiver. Frozen-quality common-temperature nozzle transit, effective throat area Cd, sonic choking and ideal fully expanded jet reference. No finite-rate phase kinetics or local inlet inertia.",
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "initial_input",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "fuel_discharge"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854776000
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "valve_timing": {
+          "$ref": "#/$defs/valve_timing"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "film_component",
+            "phase_mode",
+            "wall_kinetic_fraction",
+            "area",
+            "discharge_coefficient"
+          ],
+          "properties": {
+            "film_component": {
+              "$ref": "#/$defs/id"
+            },
+            "area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "discharge_coefficient": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "needle": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "needle_node",
+                "closed_position",
+                "full_open_position"
+              ],
+              "properties": {
+                "needle_node": {
+                  "$ref": "#/$defs/id"
+                },
+                "closed_position": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "enum": [
+                        "m",
+                        "mm"
+                      ]
+                    }
+                  }
+                },
+                "full_open_position": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "enum": [
+                        "m",
+                        "mm"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "phase_mode": {
+              "const": "frozen"
+            },
+            "wall_kinetic_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
                   ]
                 }
               }

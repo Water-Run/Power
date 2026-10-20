@@ -4,18 +4,20 @@
 
 ## Punto di ripresa
 
-Le camere finite scambiano lavoro di pressione con alberi e riempiono/erogano attraverso restrizioni unidirezionali ideali, con cambio di fase sottoalimentato. Iniettore fisico e ricevitore restano da collegare.
+La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo congelato in un ricevitore acceso con volume liquido finito. Gli inventari comprendono cambio fase, lavoro di spostamento, energia cinetica del getto e impulso sulla parete ferma.
 
 [Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)
 
 ## Prossimo incremento
 
-Collegare la pompa a iniettore fisico e ricevitori cilindro/film con trasporto bifase, spostamento e lavoro cinetico espliciti. Risolvere inerzia d’ingresso e flusso critico con riferimenti indipendenti. Continuare accensione, aspirazione/scarico, perdite, attuazione trasmissione ed ECU/TCU verso l’obiettivo completo.
+Risolvere inerzia e perdite d'ingresso, sensibilità a rilassamento di fase e scorrimento, poi accensione, aspirazione/scarico, perdite meccaniche e ECU/TCU coordinati. Ogni equazione richiede riferimenti indipendenti e raffinamento; calibrazione misurata e accettazione Unity reale restano separate.
 
 ## Accettazione
 
 Richiedere riferimenti analitici/limite indipendenti, bilanci completi massa/energia e raffinamento appropriato. Conservare rollback del lotto, annullamento, rami, canali stabili, replay portabile e vecchi lettori. Continuare poi accensione, aspirazione/scarico, perdite meccaniche, trasmissione e coordinamento ECU/TCU.
 
-I parametri restano `unverified`. Limiti di temperatura, pressione e volume rappresentabile valgono per tutto il ciclo. Si assumono liquido incomprimibile, vapore ideale pseudo-specie, equilibrio istantaneo a temperatura comune e pressione esterna del carter nulla. Inerzia locale/NPSH, flusso critico, ritardo di nucleazione, inerzia/isteresi valvole, miscele reali e calibrazione misurata restano aperti. Iniettore fisico e lavoro di spostamento/cinetica del ricevitore sono separati.
+I parametri restano `unverified`. Valgono temperature dichiarate, volume gas positivo e dominio di vapore diluito. Mancano inerzia locale d'ingresso, nucleazione finita, scorrimento delle fasi, spray risolto, criticità reale e calibrazione misurata. La combustione prescritta non prova equilibrio chimico o entropia di reazione. Proseguire ingresso, accensione, aspirazione/scarico, perdite e ECU/TCU coordinati.
 
 [DEVELOPMENT_STATUS.it.md](DEVELOPMENT_STATUS.it.md) · [ROADMAP.it.md](ROADMAP.it.md) · [VALIDATION.it.md](VALIDATION.it.md)
+
+[Scarico carburante a titolo congelato e ricevitori finiti](FUEL_DISCHARGE.it.md)

@@ -14,8 +14,8 @@ und Desktop-Abnahme brauchen jeweils eigene Nachweise.
 | Verwalteter Kern | Abhängigkeitsfreie Physik mit Doppelziel, Topologie, Einheiten, Ganzzahlzeit, Replay und atomare Transaktionen | Langzeit-Validierung eines integrierten Antriebsstrangs |
 | Agent-Schnittstelle | Schema-definierte MCP-Werkzeuge, strukturierte Diagnosen, Revisionen, Zweige, Abbruch und kompakte Berichte; `list-labs` / `get_capabilities.examples` | Modellierungs- und Regelungsabläufe für den verbleibenden vollen Antriebsstrangumfang |
 | Unity-Studio | Gemeinsamer Modellimport, Laborwiedergabe, schematische 3D-Komponenten und vorbereitete Tests | Tatsächliche Editor-/Play-/Player-/IL2CPP-Nachweise und Desktop-Paketierung |
-| Modellierwerkbank | Portables Asset v33, Leser für v1-v32 und gemeinsame JSON-/CLI-/MCP-Definitionen | Graphbearbeitung, Speichern und wählbare Kanaldiagramme |
-| Motorphysik | Unabhängige Gasmasse/-energie, Schubkurbelarbeit, zeitgesteuerte Ventile, vorgeschriebene Verbrennung, gasförmige und flüssige Kraftstoffdosierung, endliche nachgiebige Leitungen, Filmverdampfung und physische Nadelansteuerung; [Pumpengespeiste Flüssigkraftstoffschiene](PUMP_FED_FUEL.de.md); endliche Tanks und erhaltende Entlastungsrückläufe; [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md); [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md); [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md) | Schwappen/hydrostatische Form und gemessene Pumpenfüllung/Regelung, verfeinertes magnetisches/elektronisches/Spray-Verhalten, Kopplung endlichen Flüssigkeitsvolumens, Zündungsregelung, detaillierte Saug- und Auslassseite, mechanische Verluste, Thermochemie und gemessene Kalibrierung |
+| Modellierwerkbank | Portables Asset v34, Leser für v1-v33 und gemeinsame JSON-/CLI-/MCP-Definitionen | Graphbearbeitung, Speichern und wählbare Kanaldiagramme |
+| Motorphysik | Unabhängige Gasmasse/-energie, Schubkurbelarbeit, zeitgesteuerte Ventile, vorgeschriebene Verbrennung, gasförmige und flüssige Kraftstoffdosierung, endliche nachgiebige Leitungen, Filmverdampfung und physische Nadelansteuerung; [Pumpengespeiste Flüssigkraftstoffschiene](PUMP_FED_FUEL.de.md); endliche Tanks und erhaltende Entlastungsrückläufe; [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md); [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md); [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md); [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md) | Lokale Einlassträgheit und Verluste sowie Empfindlichkeit auf Phasenrelaxation und Schlupf lösen, dann Zündung, Gaswechsel, mechanische Verluste und ECU/TCU erweitern. Jede neue Gleichung braucht unabhängige Referenzen und Zeitverfeinerung; Messkalibrierung und tatsächliche Unity-Abnahme sind separat. |
 | Getriebe | Gekoppelte Kupplungen, Zahnräder/Planetensätze, tabellierter Wandler/Überbrückung, Hydraulik sowie DCT-Pfade mit sieben Vorwärtsgängen/Rückwärtsgang und Ravigneaux-Pfade mit vier Vorwärtsgängen/Rückwärtsgang bei aufgelöster Planetendrehung/Bahnträgheit | Nachgiebigkeit, Verluste und Lastverteilung der Verzahnung, DCT-Ansteuerung, vollständige AT-Druck- und Schaltregelung und gemessene Führung, gemessene Kennfelder, Ventil-/Dichtungs-/Kavitationsverhalten und reichere Wandlerdynamik |
 | Regelungen und elektrische Integration | Abgetasteter Druck-PI, Nadelschließregelung und sensorbestätigte gestaffelte DCT-Übergabe, begrenzte Spannung/Tastverhältnis, Stellgliedbesitz, Batterie-Ersatzschaltbild und Zusatzverbraucher; [`at_controller`](AT_CONTROL.de.md) | Abgestimmte ECU-/TCU-Zyklen, Sensoren/Stellglieder, Momentenanforderungen, Fehler, BMS und gemessenes thermisches/elektrisches Verhalten |
 | Fahrzeugnachweis und Veröffentlichung | Forschungsbeispiele mit vollständigen Grenzen und Herkunft | Zwei vollständig gemessene Antriebsstränge, Unsicherheitsbudgets, Stabilität, Desktop-Abnahme und Verteilung |
@@ -28,7 +28,7 @@ die dort festgehaltene Revision; neue lokale Änderungen brauchen eine eigene Pl
 
 ## Nächste verwaltete Arbeit
 
-Kraftstoffpumpe mit physischem Injektoraustrag und Zylinder-/Filmempfängern bei explizitem Zweiphasentransport, Verdrängung und kinetischer Arbeit verbinden. Einlassträgheit und kritische Strömung unabhängig referenzieren. Zündung, Ansaugung/Abgas, Verluste, Getriebeaktuation und ECU/TCU zum vollständigen Ziel fortsetzen.
+Lokale Einlassträgheit und Verluste sowie Empfindlichkeit auf Phasenrelaxation und Schlupf lösen, dann Zündung, Gaswechsel, mechanische Verluste und ECU/TCU erweitern. Jede neue Gleichung braucht unabhängige Referenzen und Zeitverfeinerung; Messkalibrierung und tatsächliche Unity-Abnahme sind separat.
 
 Danach Zündung und Regelung, Saug- und Auslassdynamik sowie mechanische
 Motorverluste erweitern. Die aktuelle Wiebe-Verbrennung ist vorgeschrieben und begründet keine vorhersagende
@@ -43,7 +43,7 @@ gekoppelten Wandler-, Zahnrad-, Kupplungs- und Hydraulikprimitive. Von der [abge
 Modelle konstanter Pumpenverluste, der Batterie und von Ventil/Akkumulator erweitern, sobald gemessene
 Stoff- und Regelungsdaten vorliegen; angegebene Forschungswerte bleiben ungeprüft.
 
-Endliche Kraftstoffkammern tauschen Druckarbeit mit Wellen und füllen/fördern über ideale einseitige Widerstände, einschließlich Phasenwechsel bei Einlassmangel. Injektor- und Empfängerkopplung bleiben offen. [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
+Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampfanteil in einen befeuerten Empfänger mit endlichem Flüssigkeitsvolumen. Vollständige Inventare enthalten Phasenwechsel, Verdrängungsarbeit, Strahlenergie und Impuls an die ruhende Wand. [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
 
 ## Studio und gemessene Abnahme
 
@@ -60,3 +60,5 @@ Das [Zig-Archiv](NATIVE_ZIG.de.md) behält ursprüngliche Hashes und Git-Herkunf
 Es bleibt getrennt von der aktiven C#-/Unity-Anwendung. Die native Migration schließt
 weder die Migration verwalteter Funktionen noch die Antriebsstrangabnahme ab. Zusätzliche
 Parallelität, dünnbesetzte Lösung oder Burst erst einführen, wenn Messungen das rechtfertigen und die Kernverträge stabil bleiben.
+
+[Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md)

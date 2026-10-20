@@ -30,7 +30,10 @@ internal sealed class GasNetwork
             if (n.Domain != Domain.Gas) continue;
             var composition = model.NodeGases[i]!;
             NodeIndex[n.Index] = i; Gases[n.Index] = composition; Volume[n.Index] = n.Storage;
-            InitialMass[n.Index] = n.Position * n.Storage / (composition.GasConstantJoulePerKilogramKelvin * n.Initial);
+            double initialGasVolume = n.Storage;
+            int finiteFilm = model.FiniteFilmByGas[n.Index];
+            if (finiteFilm >= 0) initialGasVolume -= model.FuelFilms[finiteFilm].Initial.LiquidMassKilograms / model.FuelFilms[finiteFilm].FiniteVolume!.DensityKilogramsPerCubicMeter;
+            InitialMass[n.Index] = n.Position * initialGasVolume / (composition.GasConstantJoulePerKilogramKelvin * n.Initial);
             Mixtures[n.Index] = model.NodeMixtures[i];
             if (Mixtures[n.Index] is { } mixture)
             {
@@ -71,7 +74,12 @@ internal sealed class GasNetwork
         }
     }
 
-    internal double VolumeAt(int gas, double[] dynamics, LiquidTankState? tanks = null)
+    internal double VolumeAt(int gas, double[] dynamics, LiquidTankState? tanks = null, FuelFilmState? films = null)
+    {
+        double cavity = CavityVolumeAt(gas, dynamics, tanks); int film = _model.FiniteFilmByGas[gas];
+        return film >= 0 && films is not null ? cavity - films.Mass[film] / _model.FuelFilms[film].FiniteVolume!.DensityKilogramsPerCubicMeter : cavity;
+    }
+    internal double CavityVolumeAt(int gas, double[] dynamics, LiquidTankState? tanks = null)
     {
         int tankComponent = _model.TankHeadspaceByNode[NodeIndex[gas]];
         if (tankComponent >= 0 && tanks is not null)
@@ -235,10 +243,10 @@ internal sealed class GasSolver
     /// Advance the gas states across one whole tick. On success <see cref="WallHeat"/> holds the joules
     /// delivered to each thermal node and the reservoir fields hold the net mass and enthalpy taken in.
     /// </summary>
-    internal bool Advance(double[] mass, double[] energy, double[] wallTemperature, double[] inputs, double[] dynamics, double dt, MixtureState? mixture, FuelInjectorState? injectors = null, LiquidTankState? tanks = null)
+    internal bool Advance(double[] mass, double[] energy, double[] wallTemperature, double[] inputs, double[] dynamics, double dt, MixtureState? mixture, FuelInjectorState? injectors = null, LiquidTankState? tanks = null, FuelFilmState? films = null)
     {
-        if (_model.HasMovingGas || _model.HasTankHeadspaces)
-            for (int i = 0; i < _volume.Length; ++i) _volume[i] = _network.VolumeAt(i, dynamics, tanks);
+        if (_model.HasMovingGas || _model.HasTankHeadspaces || _model.HasFiniteFuelReceivers)
+            for (int i = 0; i < _volume.Length; ++i) _volume[i] = _network.VolumeAt(i, dynamics, tanks, films);
         foreach (int component in _network.OrificeComponent)
         {
             int slot = _model.InjectorByComponent[component];

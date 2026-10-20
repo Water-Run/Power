@@ -27,7 +27,7 @@ Un flash acotado a U,V constantes conserva combustible y energía térmica. Orif
 
 ## Evidencia y límites
 
-`equilibrium-tank-supply` prueba inversión de bomba, venteo con combustible y pared finita caliente. `equilibrium-tank-fired-cylinder` conecta esa fuente a un motor encendido. Se verifican máximo independiente de entropía, potenciales, derivadas calóricas, refinamiento ODE, balances, replay, rollback y asignaciones. Asset v33 conserva el indicador y lee v1-v32.
+`equilibrium-tank-supply` prueba inversión de bomba, venteo con combustible y pared finita caliente. `equilibrium-tank-fired-cylinder` conecta esa fuente a un motor encendido. Se verifican máximo independiente de entropía, potenciales, derivadas calóricas, refinamiento ODE, balances, replay, rollback y asignaciones. Asset v34 conserva el indicador y lee v1-v33.
 
 Casos acoplados de bomba, calor y venteo demuestran primer orden. Ambas fases fuente permanecen en el intervalo declarado; la densidad total queda bajo la líquida con margen binary64. Densidad/propiedades constantes, equilibrio instantáneo e interfaz plana son aproximaciones de investigación. Mezclas reales, tensión superficial, oleaje, cinética finita, calibración medida y Unity Editor/Play/Player/IL2CPP real siguen sin verificar.
 

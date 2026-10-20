@@ -33,7 +33,7 @@ Der Druckvergleich erlaubt nur binary64-Rundung: `64 * epsilon * max(p, p_sat)` 
 
 ## Nachweise
 
-`equilibrium-fuel-cell` zeigt Kondensation, Entlüftungsverdampfung und erneute Kondensation. `equilibrium-injected-cylinder` ergänzt den belüfteten Tankmotor um reversibles Empfängergleichgewicht und Versorgungsreserven. Unabhängige Entropiemaximierung, analytische Grenzen, simultane ODE-Verfeinerung, vollständiges Replay, Rollback und Allokationen werden geprüft. Asset v33 erhält Eigenschaften und liest v1-v32.
+`equilibrium-fuel-cell` zeigt Kondensation, Entlüftungsverdampfung und erneute Kondensation. `equilibrium-injected-cylinder` ergänzt den belüfteten Tankmotor um reversibles Empfängergleichgewicht und Versorgungsreserven. Unabhängige Entropiemaximierung, analytische Grenzen, simultane ODE-Verfeinerung, vollständiges Replay, Rollback und Allokationen werden geprüft. Asset v34 erhält Eigenschaften und liest v1-v33.
 
 Parameter bleiben `unverified`. Gemessene Benzineigenschaften, Mehrkomponenten- oder endliche Phasenkinetik, aufgelöste Flüssigkeitsverdrängung/Spray und OEM-Kalibrierung werden nicht geliefert. Echte Unity Editor/Play/Player/IL2CPP-Abnahme bleibt ausstehend.
 

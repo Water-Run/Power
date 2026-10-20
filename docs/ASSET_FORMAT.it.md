@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione attuale 33
+## Versione attuale 34
+
+Un `fuel_discharge` collega una sorgente finita del dominio carburante al nodo gas di un `finite_fuel_film`. Dichiarare `phase_mode` come `frozen`: il titolo massico del vapore resta fisso nell'ugello mentre i volumi alle estremità tornano in equilibrio. Le fasi omogenee condividono temperatura e velocità; liquido incomprimibile e vapore come pseudospecie ideale. Proprietà e densità devono coincidere.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[Scarico carburante a titolo congelato e ricevitori finiti](FUEL_DISCHARGE.it.md)
+
+
+## Versione conservata 33
 
 `fuel_chamber` accoppia un albero reale a una camera carburante finita. `fuel_check_valve` di ingresso e uscita forniscono riempimento ed erogazione per pressione. Liquido, vapore ed energia elastica usano la stessa chiusura. Con ingresso insufficiente la camera può evaporare in aspirazione; l’erogazione segue inventario e pressione calcolati.
 

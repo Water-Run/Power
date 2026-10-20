@@ -117,7 +117,7 @@ Les sessions MCP vivent dans le processus serveur local. La limite est 16. Elles
 
 ## Ce qui reste ouvert
 
-L'échange gazeux compressible, la combustion prémélangée prescrite, les embrayages, les engrenages, un convertisseur cartographié et l'actionnement hydraulique existent maintenant comme composants avec ports, état et contrôles de conservation. Ils n'achèvent pas le groupe motopropulseur. Encore ouvert : pompe et ravitaillement de rampe, contrôle d'allumage, admission et échappement détaillés, pertes mécaniques, thermochimie plus riche, compliance d'engrènement, pression et contrôle de passage AT complets, comportement ECU/TCU coordonné, et calibration mesurée. Une nouvelle équation a encore besoin d'une version de modèle explicite, de dimensions et de preuves numériques. La sémantique des composants existants n'est pas étendue en la changeant en silence.
+L'échange gazeux compressible, la combustion prémélangée prescrite, les embrayages, les engrenages, un convertisseur cartographié et l'actionnement hydraulique existent maintenant comme composants avec ports, état et contrôles de conservation. Ils n'achèvent pas le groupe motopropulseur. Encore ouvert : remplissage et régulation de pompe mesurés, contrôle d'allumage, admission et échappement détaillés, pertes mécaniques, thermochimie plus riche, compliance d'engrènement, pression et contrôle de passage AT complets, comportement ECU/TCU coordonné, et calibration mesurée. Une nouvelle équation a encore besoin d'une version de modèle explicite, de dimensions et de preuves numériques. La sémantique des composants existants n'est pas étendue en la changeant en silence.
 
 Un agent peut générer une topologie et un état initial, proposer des hypothèses de paramètres, écrire des candidats de composants, construire des expériences et relire les preuves. Le cœur d'exécution possède encore les contraintes numériques et les contrôles. Le jugement d'un modèle de langage n'est pas un fait physique. L'édition de graphe Unity, un fil de travailleur de simulation et un backend de solveur haute performance remplaçable attendent que la frontière soit stable. Rien ici ne revendique un solveur non linéaire général, Burst ou un solveur GPU.
 
@@ -249,7 +249,7 @@ L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibl
 
 `at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
 
-Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v33 conserve routes, gains et horloges et lit v1-v32.
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v34 conserve routes, gains et horloges et lit v1-v33.
 
 Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
 
@@ -259,7 +259,7 @@ Ces commandes sont expérimentales et les paramètres restent `unverified`. Coor
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v33 conserve les liens et la température source et lit v1-v32. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v34 conserve les liens et la température source et lit v1-v33. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -326,3 +326,5 @@ Le domaine `fuel` transporte ensemble liquide pur et vapeur dans des récipients
 `fuel_chamber` couple un arbre réel à une chambre finie du domaine carburant. Des `fuel_check_valve` d'entrée et de sortie assurent remplissage et livraison par pression. Liquide, vapeur et énergie élastique partagent la même fermeture. Une chambre sous-alimentée peut vaporiser à l'aspiration ; la livraison suit l'inventaire et la pression calculés.
 
 [Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)
+
+La pompe du domaine carburant alimente désormais une aiguille physique et une décharge à titre figé dans un récepteur allumé à volume liquide fini. Les inventaires incluent changement de phase, travail de déplacement, énergie cinétique du jet et impulsion à la paroi immobile. [Décharge de carburant à titre figé et récepteurs finis](FUEL_DISCHARGE.fr.md)

@@ -94,7 +94,13 @@ internal sealed class CylinderSolver : MechanicalSolver
             else
             {
                 int gas = _model.Nodes[_model.Components[i].B].Index;
-                torque += _model.GasCylinders[i]!.DiscreteTorque(angle, delta, energy[gas] + .5 * (_combustion?.PreviewHeat(gas, angle + delta) ?? 0), _model.Gas!.Gases[gas].Gamma);
+                double heat = .5 * (_combustion?.PreviewHeat(gas, angle + delta) ?? 0);
+                if (_model.FiniteFilmByGas[gas] >= 0)
+                {
+                    if (!_model.FiniteReceiverWork(i, FiniteFilms!, FiniteMixture!, energy, angle, delta, heat, out _, out double receiverTorque)) return double.NaN;
+                    torque += receiverTorque;
+                }
+                else torque += _model.GasCylinders[i]!.DiscreteTorque(angle, delta, energy[gas] + heat, _model.Gas!.Gases[gas].Gamma);
             }
         }
         return torque;

@@ -15,7 +15,7 @@ public sealed partial class CompiledModel
     }
     internal bool TryLiquidSaturation(int injector, double temperature, double pressure, out double saturation)
     {
-        var finite = TankPhaseForInjector(injector);
+        var finite = TankPhaseForInjector(injector) ?? FuelFilms[LiquidFuelInjectors[injector].Film].FiniteVolume;
         return finite is not null ? finite.TrySaturationPressure(temperature, pressure, out saturation) :
             FuelFilms[LiquidFuelInjectors[injector].Film].Phase!.TrySaturationPressure(temperature, out saturation);
     }

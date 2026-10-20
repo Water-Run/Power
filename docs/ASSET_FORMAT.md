@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 33
+## Current version 34
+
+A `fuel_discharge` connects a finite fuel-domain source to the gas node of a `finite_fuel_film`. Declare `phase_mode` as `frozen`: vapor mass quality stays fixed during nozzle transit, while both bulk endpoints re-equilibrate. The homogeneous phases share temperature and velocity; liquid is incompressible and vapor is an ideal pseudo-species. Source and receiver material properties and liquid density must agree.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md)
+
+
+## Retained version 33
 
 A `fuel_chamber` couples an actual shaft to a finite fuel-domain chamber. Inlet and outlet `fuel_check_valve` components provide pressure-driven filling and delivery. Liquid, vapor and elastic wall energy share the same material closure. An inlet-starved chamber can flash during suction; delivered fuel follows the computed inventory and pressure.
 

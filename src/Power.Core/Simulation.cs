@@ -19,6 +19,7 @@ public sealed partial class Simulation
         internal LiquidReturnState? LiquidReturns;
         internal EquilibriumFuelState? Fuel;
         internal FuelChamberState? FuelChambers;
+        internal FuelDischargeState? FuelDischarges;
         internal SolenoidState? Solenoids;
         internal NeedleDriverState? NeedleDrivers;
         internal DctControllerState? DctControllers;
@@ -42,7 +43,7 @@ public sealed partial class Simulation
             Mixture?.CopyFrom(other.Mixture!); Injectors?.CopyFrom(other.Injectors!);Films?.CopyFrom(other.Films!);
             LiquidInjectors?.CopyFrom(other.LiquidInjectors!);
             LiquidFeeds?.CopyFrom(other.LiquidFeeds!); LiquidTanks?.CopyFrom(other.LiquidTanks!); LiquidReturns?.CopyFrom(other.LiquidReturns!);
-            Fuel?.CopyFrom(other.Fuel!); FuelChambers?.CopyFrom(other.FuelChambers!);
+            Fuel?.CopyFrom(other.Fuel!); FuelChambers?.CopyFrom(other.FuelChambers!); FuelDischarges?.CopyFrom(other.FuelDischarges!);
             Solenoids?.CopyFrom(other.Solenoids!); NeedleDrivers?.CopyFrom(other.NeedleDrivers!);
             DctControllers?.CopyFrom(other.DctControllers!);
             AtControllers?.CopyFrom(other.AtControllers!);
@@ -73,6 +74,7 @@ public sealed partial class Simulation
     private readonly LiquidFuelInjectorSolver? _liquidInjectors;
     private readonly HydraulicSolver? _hydraulics;
     private readonly EquilibriumFuelSolver? _fuel;
+    private readonly FuelDischargeSolver? _discharges;
     private readonly ElectricalDynamics? _electrical;
     private readonly CombustionSolver? _combustion;
     private readonly ClutchSolver? _clutches;
@@ -95,6 +97,7 @@ public sealed partial class Simulation
         else if (model.CylinderCoupling is not null) _mechanicalSolver = new CylinderSolver(model);
         if (model.Gas is not null) _gasSolver = new(model);
         if(model.HasFuelFilms)_films=new(model);
+        if (model.HasFuelDischarge) _discharges = new(model, _films!);
         if (model.HasLiquidFuelInjectors) _liquidInjectors = new(model, _films!);
         if (model.Burners.Any(b => b is not null)) _combustion = new(model);
         State CreateState() => new(model.DynamicCount, model.ThermalCount, model.ComponentCount, model.GasCount,
@@ -102,6 +105,7 @@ public sealed partial class Simulation
             { Solenoids = model.HasSolenoids ? new(model.Solenoids.Length) : null, NeedleDrivers = model.NeedleDrivers.Length != 0 ? new(model.NeedleDrivers.Length, model.HasClosurePrediction) : null,
                 DctControllers = model.DctControllers.Length != 0 ? new(model.DctControllers.Length) : null,
                 AtControllers = model.AtControllers.Length != 0 ? new(model.AtControllers.Length) : null,
+                FuelDischarges = model.HasFuelDischarge ? new(model.FuelDischarges.Length) : null,
                 FuelChambers = model.HasFuelChambers ? new(model.FuelChambers.Length) : null,
                 Fuel = model.HasEquilibriumFuelNetwork ? new(model.FuelVolumes.Length, model.FuelLinks.Length, model.HasFuelChambers) : null,
                 LiquidFeeds = model.HasLiquidFeeds ? new(model.LiquidFeeds.Length,model.LiquidFuelInjectors.Length) : null,
@@ -390,7 +394,7 @@ public sealed partial class Simulation
             s.Inputs[controller.Motor] = result.CommandVoltage;
         }
         Array.Clear(s.GearTorque, 0, s.GearTorque.Length);
-        s.Fuel?.BeginTick(); s.FuelChambers?.BeginTick();
+        s.Fuel?.BeginTick(); s.FuelChambers?.BeginTick(); s.FuelDischarges?.BeginTick();
         s.LiquidTanks?.BeginTick();s.Films?.BeginTick();s.Injectors?.BeginTick(); s.Converters?.BeginTick(); s.Hydraulic?.BeginTick();
         s.LiquidInjectors?.Quota.BeginTick();
         s.Solenoids?.BeginTick();
@@ -437,6 +441,7 @@ public sealed partial class Simulation
         }
         if (s.Fuel is not null && !s.Fuel.EndTick(_model.Dt)) return false;
         if (s.FuelChambers is not null && !s.FuelChambers.EndTick(_model.Dt)) return false;
+        if (s.FuelDischarges is not null && !s.FuelDischarges.EndTick(_model.Dt)) return false;
         if (s.Converters is not null && !s.Converters.EndTick(_model.Dt)) return false;
         if (s.Hydraulic is not null && !s.Hydraulic.EndTick(_model.Dt)) return false;
         if (s.Injectors is not null && !s.Injectors.EndTick(_model.Dt)) return false;
@@ -476,8 +481,9 @@ public sealed partial class Simulation
             _liquidInjectors?.BeginInterval();
             if (_liquidInjectors is not null && !_liquidInjectors.Advance(s.LiquidInjectors!, s.Films!, s.X, s.Energy, s.Inputs, dt / 2, hydraulics:s.Hydraulic,feedState:s.LiquidFeeds)) return false;
             if (!_films.Advance(s.Films!, s.Mass, s.Energy, s.Mixture!, dt / 2, s.X, s.LiquidTanks)) return false;
+            if (_discharges is not null && !_discharges.Advance(s.FuelDischarges!, s.Fuel!, s.Films!, s.Mixture!, s.Mass, s.Energy, s.X, s.Inputs, s.LiquidTanks, dt / 2)) return false;
         }
-        if (splitGas && !_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture, s.Injectors, s.LiquidTanks)) return false;
+        if (splitGas && !_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture, s.Injectors, s.LiquidTanks, s.Films)) return false;
         if (_model.HasEquilibriumTanks)
         { if (!EquilibrateTanks(s)) return false; _hydraulics!.PrepareLiquidSupply(s.LiquidTanks!, dt); }
         var force = _electrical?.Force ?? _model.ConstantForce;
@@ -494,6 +500,11 @@ public sealed partial class Simulation
         }
         if (!(_clutches?.Dynamics ?? dynamics).Solve(_mid)) return false;
         if (_gears is not null && !_gears.ProjectFree(_mid, s.X)) return false;
+        if (_model.HasFiniteFuelReceivers)
+        {
+            if (!EquilibrateFiniteReceivers(s)) return false;
+            _mechanicalSolver?.PrepareFiniteReceivers(s.Films!, s.Mixture!);
+        }
         if (_model.HasFuelChambers) _mechanicalSolver!.PrepareFuel(s.Fuel!);
         _combustion?.Prepare(s.Mixture!, s.Inputs);
         if (_model.HasTankHeadspaces) _hydraulics!.PrepareHeadspaces(s.LiquidTanks!, s.Energy);
@@ -563,7 +574,7 @@ public sealed partial class Simulation
             if (Math.Abs(2 * (_mid[injector.Meter.Crank] - s.X[injector.Meter.Crank])) > injector.Meter.Profile.MaximumTravelRadians) return false;
         for (int i = 0; i < _model.Valves.Length; ++i)
             if (s.Inputs[i] != 0 && _model.Valves[i] is { } valve && !valve.Resolved(s.X, _mid, dt)) return false;
-        if (_gasSolver is not null && !splitGas && !_gasSolver.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt, s.Mixture, s.Injectors, s.LiquidTanks)) return false;
+        if (_gasSolver is not null && !splitGas && !_gasSolver.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt, s.Mixture, s.Injectors, s.LiquidTanks, s.Films)) return false;
         foreach (var n in _model.Nodes)
             if (n.Domain == Domain.Thermal)
                 _temperature[n.Index] = n.Storage * s.Temperature[n.Index] + _model.AmbientForce[n.Index] * (dt / _model.Dt);
@@ -643,7 +654,13 @@ public sealed partial class Simulation
                 int angle = _model.Nodes[c.A].Index, gas = _model.Nodes[c.B].Index;
                 double delta = (2 * _mid[angle] - s.X[angle]) - s.X[angle];
                 var cylinder = _model.GasCylinders[i]!;
-                s.Energy[gas] += cylinder.EnergyChange(s.X[angle], delta, s.Energy[gas], _model.Gas!.Gases[gas].Gamma);
+                int finiteFilm = _model.FiniteFilmByGas[gas];
+                if (finiteFilm >= 0)
+                {
+                    if (!_model.FiniteReceiverWork(i, s.Films!, s.Mixture!, s.Energy, s.X[angle], delta, 0, out var receiverWork, out _)) return false;
+                    CommitFiniteReceiver(s, finiteFilm, receiverWork.State);
+                }
+                else s.Energy[gas] += cylinder.EnergyChange(s.X[angle], delta, s.Energy[gas], _model.Gas!.Gases[gas].Gamma);
                 if (!(s.Energy[gas] > 0) || !Numeric.Finite(s.Energy[gas])) return false;
                 work += cylinder.BackPressureWork(s.X[angle], delta);
             }
@@ -672,13 +689,14 @@ public sealed partial class Simulation
         }
         if (splitGas)
         {
-            if (!_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture, s.Injectors, s.LiquidTanks)) return false;
+            if (!_gasSolver!.Advance(s.Mass, s.Energy, s.Temperature, s.Inputs, s.X, dt / 2, s.Mixture, s.Injectors, s.LiquidTanks, s.Films)) return false;
             for (int w = 0; w < _temperature.Length; ++w) _temperature[w] += _gasSolver.WallHeat[w];
             intake += _gasSolver.ReservoirMass; enthalpy += _gasSolver.ReservoirEnthalpy;
         }
         if (_model.HasEquilibriumTanks && !EquilibrateTanks(s)) return false;
         // Reverse the first half's operators, including films that share a finite wall.
         if (_films is not null && !_films.Advance(s.Films!, s.Mass, s.Energy, s.Mixture!, dt / 2, s.X, s.LiquidTanks, reverse: true)) return false;
+        if (_discharges is not null && !_discharges.Advance(s.FuelDischarges!, s.Fuel!, s.Films!, s.Mixture!, s.Mass, s.Energy, s.X, s.Inputs, s.LiquidTanks, dt / 2, reverse: true)) return false;
         if (_liquidInjectors is not null)
         {
             if (!_liquidInjectors.Advance(s.LiquidInjectors!, s.Films!, s.X, s.Energy, s.Inputs, dt / 2, reverse: true,hydraulics:s.Hydraulic,feedState:s.LiquidFeeds)) return false;
@@ -770,7 +788,7 @@ public sealed partial class Simulation
     }
 
     private double GasPressure(State s, int gas) =>
-        (_model.Gas!.Gases[gas].Gamma - 1) * s.Energy[gas] / _model.Gas.VolumeAt(gas, s.X, s.LiquidTanks);
+        (_model.Gas!.Gases[gas].Gamma - 1) * s.Energy[gas] / _model.Gas.VolumeAt(gas, s.X, s.LiquidTanks, s.Films);
     private double GasTemperature(State s, int gas) =>
         s.Energy[gas] / (s.Mass[gas] * _model.Gas!.Gases[gas].IsochoricHeatCapacityJoulePerKilogramKelvin);
 
@@ -788,6 +806,15 @@ public sealed partial class Simulation
 
     private bool ObservablesFinite(State s)
     {
+        if (_model.HasFiniteFuelReceivers)
+            foreach (var film in _model.FuelFilms)
+                if (film.FiniteVolume is { } finite)
+                {
+                    double cavity = _model.Gas!.CavityVolumeAt(film.Gas, s.X, s.LiquidTanks), gasVolume = cavity - s.Films!.Mass[_model.FilmByComponent[film.Component]] / finite.DensityKilogramsPerCubicMeter;
+                    double total = s.Films.Mass[_model.FilmByComponent[film.Component]] + s.Mass[film.Gas];
+                    if (!Numeric.Finite(gasVolume) || gasVolume <= 0 || total >= cavity * finite.DensityKilogramsPerCubicMeter * (1 - 64 * GearReference.Epsilon)) return false;
+                }
+        if (s.FuelDischarges is not null && !s.FuelDischarges.Finite()) return false;
         if (s.FuelChambers is not null && !s.FuelChambers.Finite()) return false;
         if (s.Fuel is not null)
         {
@@ -954,6 +981,7 @@ public sealed partial class Simulation
         if(s.LiquidReturns is not null)h=s.LiquidReturns.Hash(h);
         if (s.Fuel is not null) h = s.Fuel.Hash(h);
         if (s.FuelChambers is not null) h = s.FuelChambers.Hash(h);
+        if (s.FuelDischarges is not null) h = s.FuelDischarges.Hash(h);
         if (s.Solenoids is not null) h = s.Solenoids.Hash(h);
         if (s.NeedleDrivers is not null) h = s.NeedleDrivers.Hash(h);
         if (s.DctControllers is not null) h = s.DctControllers.Hash(h);
@@ -1061,6 +1089,15 @@ public sealed partial class Simulation
                         Field.Entropy => fuelPoint.EntropyJoulesPerKelvin, Field.SpecificEnthalpy => fuelPoint.SpecificEnthalpyJoulesPerKilogram,
                         Field.ChemicalEnergy => fuelPoint.MassKilograms * definition.HeatingValue, _ => double.NaN
                     };
+                    destination[i] = new(Channels.Output(b.ObjectId, b.Field), value); continue;
+                }
+                int discharge = b.IsComponent ? _model.FuelDischargeByComponent[b.Index] : -1;
+                if (discharge >= 0)
+                {
+                    var state = _state.FuelDischarges!;
+                    value = b.Field switch { Field.MassFlow => state.Flow[discharge], Field.TotalFuelDelivered => state.Mass[discharge], Field.TransportEnergy => state.Energy[discharge],
+                        Field.JetKineticEnergy => state.Kinetic[discharge], Field.FluidHeat => state.Heat[discharge], Field.JetImpulse => state.Impulse[discharge], Field.Force => state.Force[discharge],
+                        Field.ThroatPressure => state.Throat[discharge], Field.ExitTemperature => state.ExitTemperature[discharge], Field.ExitVelocity => state.ExitVelocity[discharge], Field.Choked => state.Choked[discharge], _ => double.NaN };
                     destination[i] = new(Channels.Output(b.ObjectId, b.Field), value); continue;
                 }
                 int fuelChamber = b.IsComponent ? _model.FuelChamberByComponent[b.Index] : -1;
@@ -1199,7 +1236,7 @@ public sealed partial class Simulation
                 {
                     var film=_model.FuelFilms[filmSlot];var filmState=_state.Films!;double mass=filmState.Mass[filmSlot];
                     double filmTemperature = mass == 0 && film.Phase is not null ? _state.Energy[film.Gas] / _state.Mass[film.Gas] / film.Law.VaporSpecificHeatJoulesPerKilogramKelvin : film.Law.Temperature(new(mass,filmState.Energy[filmSlot]));
-                    value=b.Field switch{Field.Mass=>mass,Field.Temperature=>filmTemperature,Field.InternalEnergy=>filmState.Energy[filmSlot],Field.ChemicalEnergy=>mass*film.HeatingValue,Field.EvaporatedFuelMass=>filmState.Vaporized[filmSlot],Field.MassFlow=>filmState.TickVapor[filmSlot],Field.FilmWallHeat=>filmState.WallHeat[filmSlot],Field.HeatFlow=>mass==0&&film.Phase is null?0:film.Law.ConductanceWattsPerKelvin*(_state.Temperature[film.Wall]-filmTemperature),
+                    value=b.Field switch{Field.Mass=>mass,Field.Volume=>mass/film.FiniteVolume!.DensityKilogramsPerCubicMeter,Field.Temperature=>filmTemperature,Field.InternalEnergy=>filmState.Energy[filmSlot],Field.ChemicalEnergy=>mass*film.HeatingValue,Field.EvaporatedFuelMass=>filmState.Vaporized[filmSlot],Field.MassFlow=>filmState.TickVapor[filmSlot],Field.FilmWallHeat=>filmState.WallHeat[filmSlot],Field.HeatFlow=>mass==0&&film.Phase is null?0:film.Law.ConductanceWattsPerKelvin*(_state.Temperature[film.Wall]-filmTemperature),
                         Field.CondensedFuelMass=>filmState.Condensed![filmSlot],Field.VaporPartialPressure=>GasPressure(_state,film.Gas)*_state.Mixture!.Fuel[film.Gas]/_state.Mass[film.Gas],_=>double.NaN};
                     if(!Numeric.Finite(value))throw new InvalidOperationException("Invalid film channel in committed state.");destination[i]=new(Channels.Output(b.ObjectId,b.Field),value);continue;
                 }
@@ -1214,7 +1251,7 @@ public sealed partial class Simulation
                             : _state.Temperature[_model.Nodes[b.Index].Index];
                         break;
                     case Field.Pressure: value = hydraulicNode ? pressure : cylinder is not null ? cylinder.Pressure(crank) : GasPressure(_state, volume); break;
-                    case Field.Volume: value = hydraulicNode ? _model.Nodes[b.Index].Storage * pressure : volume >= 0 ? _model.Gas!.VolumeAt(volume, _state.X, _state.LiquidTanks) : cylinder is not null ? cylinder.GeometryAt(crank).VolumeCubicMeters : gasPiston is not null ? gasPiston.VolumeAt(_state.X[_model.Nodes[_model.Components[b.Index].A].Index]) : movingCylinder!.GeometryAt(crank).VolumeCubicMeters; break;
+                    case Field.Volume: value = hydraulicNode ? _model.Nodes[b.Index].Storage * pressure : volume >= 0 ? _model.Gas!.VolumeAt(volume, _state.X, _state.LiquidTanks, _state.Films) : cylinder is not null ? cylinder.GeometryAt(crank).VolumeCubicMeters : gasPiston is not null ? gasPiston.VolumeAt(_state.X[_model.Nodes[_model.Components[b.Index].A].Index]) : movingCylinder!.GeometryAt(crank).VolumeCubicMeters; break;
                     case Field.Mass: value = cylinder is not null ? cylinder.Mass : _state.Mass[volume]; break;
                     case Field.InternalEnergy:
                         if (b.IsComponent && _model.Components[b.Index].Kind == ComponentKind.HydraulicPiston)
@@ -1345,7 +1382,9 @@ public sealed partial class Simulation
                     case Field.Torque:
                         var c = _model.Components[b.Index];
                         int movingGas = movingCylinder is null ? -1 : _model.Nodes[c.B].Index;
-                        value = movingCylinder is not null ? movingCylinder.Torque(crank, _state.Energy[movingGas], _model.Gas!.Gases[movingGas].Gamma)
+                        value = movingCylinder is not null ? _model.FiniteFilmByGas[movingGas] >= 0
+                            ? (GasPressure(_state, movingGas) - movingCylinder.BackPressure) * movingCylinder.GeometryAt(crank).VolumeDerivativeCubicMetersPerRadian
+                            : movingCylinder.Torque(crank, _state.Energy[movingGas], _model.Gas!.Gases[movingGas].Gamma)
                             : cylinder is not null ? cylinder.Torque(crank) : c.Kind is ComponentKind.DcMotor or ComponentKind.BatteryMotor ? c.P2 * _state.X[c.Index]
                             : c.Kind == ComponentKind.HydraulicPump ? _state.Hydraulic!.PumpTorque[c.Index]
                             : c.Kind == ComponentKind.TorqueConverter ? _state.Converters!.PumpTorque[c.Index]

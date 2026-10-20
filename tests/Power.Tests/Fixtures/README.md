@@ -308,3 +308,14 @@ Keep these authentic bytes when extending the writer.
 
 SHA-256: `dc53c55f9ed58503a4e37d3b9a57ace52e5aac8196fdb5707bb555c47f3a593e`.
 Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.
+
+## Equilibrium fuel pump v33
+
+`equilibrium-fuel-pump-v33.powerasset` was retained on 2026-10-20 from the
+unmodified v33 encoder and laboratory at commit `0fd4036c04e7e31029b7ec6f37a74c4c1643e447`.
+It preserves shaft-driven phase-resolving fuel pumping before finite receiver
+displacement and frozen-quality nozzle records. Keep these authentic bytes.
+
+SHA-256: `3e3804c7277baea26c330c47a319669c5f61142486fb73f127679e56192fe9ba`.
+`FuelDischargeAssetChecks` checks the digest and every original/upgraded replay
+boundary. The Power! GPL license and Unity Linking Exception apply.

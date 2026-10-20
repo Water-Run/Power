@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — Experimente ohne Oberfläche"]
     mcp["Power.Mcp — 12 MCP-Werkzeuge über stdio"]
-    assets["Power.Assets — .powerasset v33"]
+    assets["Power.Assets — .powerasset v34"]
     unity["Unity-6.6-Studio — 3D-Laboratorien"]
 
     model --> core
@@ -119,7 +119,7 @@ Der Dienst stellt zwölf Werkzeuge mit Eingabe- und Ausgabeschemas bereit:
 |---|---|
 | `get_capabilities` | Modelle, Grenzen, Zeit- und Revisionskonventionen entdecken. Hier beginnen. |
 | `get_model_schema` | JSON Schema 2020-12 für `power.model.v1` |
-| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (51 Beispiele) |
+| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (53 Beispiele) |
 | `validate_model` | Modell ohne Ausführung prüfen; strukturierte Reparaturdiagnosen |
 | `run_experiment` | Begrenzter Lauf ohne Oberfläche mit Batch-Replay, KPIs und Herkunft |
 | `export_model_asset` | Ein portables `.powerasset` exportieren |
@@ -147,12 +147,12 @@ Ein Ravigneaux-Forschungsgraph mit vier Bereichen ergänzt zusammengesetzte Plan
 > [!NOTE]
 > Alle Beispielparameter sind `unverified` — Forschungswerte, keine kalibrierten Messungen.
 
-Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v33`, Leser für ältere Assets bleiben erhalten.
+Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v34`, Leser für ältere Assets bleiben erhalten.
 
-Endliche Kraftstoffkammern tauschen Druckarbeit mit Wellen und füllen/fördern über ideale einseitige Widerstände, einschließlich Phasenwechsel bei Einlassmangel. Injektor- und Empfängerkopplung bleiben offen. [Wellengetriebene phasenauflösende Kraftstoffpumpe](docs/FUEL_CHAMBER_PUMP.de.md)
+Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampfanteil in einen befeuerten Empfänger mit endlichem Flüssigkeitsvolumen. Vollständige Inventare enthalten Phasenwechsel, Verdrängungsarbeit, Strahlenergie und Impuls an die ruhende Wand. [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](docs/FUEL_DISCHARGE.de.md) [Wellengetriebene phasenauflösende Kraftstoffpumpe](docs/FUEL_CHAMBER_PUMP.de.md)
 
 <details>
-<summary>Verfügbare Laboratorien (52)</summary>
+<summary>Verfügbare Laboratorien (54)</summary>
 
 | Beispielname (`get_example_model`) | Laboratorium | Was es prüft |
 |---|---|---|
@@ -208,6 +208,8 @@ Endliche Kraftstoffkammern tauschen Druckarbeit mit Wellen und füllen/fördern 
 | `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | Rücktransport des Gemischs und Wärmekopplung mit einem elektromechanischen Labor |
 | `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | Einlassmangel, Dampfentstehung und Förderung durch auslaufende Welle |
 | `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | DC-Motorantrieb, versorgte Flüssigkeitsfüllung und endliche Motorwandwärme |
+| `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger |
+| `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Kritischer Fluss mit eingefrorenem Dampfanteil, Flüssigkeitsverdrängung und physische Pumpe/Nadel |
 
 </details>
 

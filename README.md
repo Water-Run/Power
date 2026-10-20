@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — headless experiments"]
     mcp["Power.Mcp — 12 stdio MCP tools"]
-    assets["Power.Assets — .powerasset v33"]
+    assets["Power.Assets — .powerasset v34"]
     unity["Unity 6.6 studio — 3D laboratories"]
 
     model --> core
@@ -119,7 +119,7 @@ The service exposes twelve tools with input and output schemas:
 |---|---|
 | `get_capabilities` | Discover models, limits, time and revision conventions. Start here. |
 | `get_model_schema` | JSON Schema 2020-12 for `power.model.v1` |
-| `get_example_model` | Get an editable synthetic model and experiment (51 examples) |
+| `get_example_model` | Get an editable synthetic model and experiment (53 examples) |
 | `validate_model` | Validate a model without running it; structured repair diagnostics |
 | `run_experiment` | Bounded headless run with batch replay, KPIs, and provenance |
 | `export_model_asset` | Export a portable `.powerasset` |
@@ -147,12 +147,12 @@ A four-range Ravigneaux research graph adds compound planetary paths and a conve
 > [!NOTE]
 > All sample parameters are `unverified` — research values, not calibrated measurements.
 
-The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v33`, with readers for earlier assets retained.
+The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v34`, with readers for earlier assets retained.
 
-Finite fuel chambers now exchange pressure work with shafts and fill/deliver through ideal one-way restrictions, including bulk phase change under inlet starvation. Physical injector and receiver coupling remains open. [Shaft-driven phase-resolving fuel pump](docs/FUEL_CHAMBER_PUMP.md)
+The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse. [Frozen-quality fuel discharge and finite receivers](docs/FUEL_DISCHARGE.md) [Shaft-driven phase-resolving fuel pump](docs/FUEL_CHAMBER_PUMP.md)
 
 <details>
-<summary>Available laboratories (52)</summary>
+<summary>Available laboratories (54)</summary>
 
 | Example name (`get_example_model`) | Laboratory | What it exercises |
 |---|---|---|
@@ -208,6 +208,8 @@ Finite fuel chambers now exchange pressure work with shafts and fill/deliver thr
 | `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | reverse mixture transport and heat coupling to an electromechanical laboratory |
 | `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | inlet starvation, bulk vapor formation and coasting-shaft delivery |
 | `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | DC motor drive, supplied liquid filling and finite motor-wall heat |
+| `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | Frozen-quality fuel discharge and finite receivers |
+| `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Frozen-quality choking, finite liquid displacement and physical pump/needle firing |
 
 </details>
 

@@ -14,12 +14,12 @@ accepted Unity desktop application remain unfinished.
 |---|---|---|
 | Core | Explicit units and stable IDs; immutable compilation; bounded integer time; observable ledgers; replay, cancellation, independent forks and whole-batch rollback | Long-run and complete powertrain evidence |
 | Engine | Sealed/open cylinders, slider-crank pressure work, bidirectional gas flow, crank-timed valves, wall heat and prescribed premixed combustion | Detailed intake/exhaust, ignition, mechanical losses, richer thermochemistry and measured engine behavior |
-| Fuel | Cycle metering, pump-fed compliant rails, finite tanks, conserving relief returns, film evaporation, physical needles and bounded closure prediction; [Geometric tank and finite headspace](TANK_HEADSPACE.md); [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md); [Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md); [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md) | slosh/hydrostatic shape and measured pump filling/regulation, nonlinear magnetic/electronic/spray behavior, physical injector handoff and local inlet inertia/choking and measured fuel properties |
+| Fuel | Cycle metering, pump-fed compliant rails, finite tanks, conserving relief returns, film evaporation, physical needles and bounded closure prediction; [Geometric tank and finite headspace](TANK_HEADSPACE.md); [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md); [Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md); [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md); [Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md) | Resolve local inlet inertia and losses, phase-relaxation and slip sensitivity, then extend ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Validate each new equation against independent references and time refinement; obtain measured calibration and actual Unity acceptance separately. |
 | Transmission | Static/sliding clutches, contact actuation, signed gears/planetaries, mapped converter/lockup and seven-forward/reverse DCT and four-forward/reverse Ravigneaux paths with resolved planet spin/orbital inertia | Mesh compliance/losses and load sharing, DCT actuation, complete AT pressure/shift control and measured routing, coordinated shifts, measured losses and richer converter behavior |
 | Hydraulics | Compliant volumes, restrictions, pumps with explicit leakage/drag, relief, dynamic pistons, metered spools and finite-energy gas accumulators | Measured valve/accumulator/pump maps, seal friction, cavitation and complete transmission hydraulics |
 | Electrical | RL motors, reciprocal variable-inductance solenoids, finite-charge battery, resistance/RC polarization, averaged duty conversion and accessories | Measured chemistry/thermal behavior, BMS, current control and complete supply integration |
 | Controls | Sampled pressure PI, needle dose/closure control, staged DCT handoff and pressure-feedback AT shifts with physical lock confirmation | ECU/TCU torque coordination, sensors, actuators and fault handling |
-| Documents and assets | 52 JSON/CLI laboratories, 51 MCP examples, asset v33 with v1-v32 readers | Workbench editing/saving and calibrated model collections |
+| Documents and assets | 54 JSON/CLI laboratories, 53 MCP examples, asset v34 with v1-v33 readers | Workbench editing/saving and calibrated model collections |
 | Agents | Twelve schema-defined MCP tools; compact evidence, revision checks and actionable diagnostics | Complete workflows for the remaining physical/control scope |
 | Unity | Model import, exact-tick playback, schematic 3D components, controls, reset and prepared lifecycle tests | Actual Editor/Play acceptance, selectable plots, graph editing/saving and Player/IL2CPP |
 | Native archive | Zig 0.15.2 research prototypes, preserved ABI and original source provenance | Historical reference; managed migration remains separate from full functionality |
@@ -41,14 +41,11 @@ All parameters remain `unverified`. EA211 DJS + DQ200 and PSA EC5 + AT8 retain c
 
 CLI `list-labs`, MCP example discovery and serial verification share [one laboratory catalog](../assets/labs/catalog.json). Verification checks that it covers every laboratory source.
 
-Finite fuel chambers now exchange pressure work with shafts and fill/deliver through ideal one-way restrictions, including bulk phase change under inlet starvation. Physical injector and receiver coupling remains open. [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
+The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse. [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
 
 ## Next development sequence
 
-1. Resolve cavitating pump/rail flow and local inlet losses, measured filling/regulation and refined magnetic/electronic actuation. Replace the declared
-   exported displacement-work boundary when finite liquid volume and spray
-   momentum are resolved. Keep delivered liquid, evaporated fuel and reaction
-   separately observable and retain independent references.
+1. Resolve local inlet inertia and losses, phase-relaxation and slip sensitivity, then extend ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Validate each new equation against independent references and time refinement; obtain measured calibration and actual Unity acceptance separately.
 2. Extend the engine with ignition control, intake/exhaust dynamics, mechanical
    losses and richer thermochemistry. Preserve the complete engine objective.
 3. Extend DCT actuation and measured planetary/AT hydraulics, then coordinate ECU/TCU torque requests and shifts using the existing sampled DCT and AT controllers. Add measured sensors, actuators and recoverable faults.
@@ -56,3 +53,5 @@ Finite fuel chambers now exchange pressure work with shafts and fill/deliver thr
    Complete channel selection, graph editing and saving as distinct features.
 5. Obtain measured maps, OEM data and uncertainty budgets for the two target
    powertrains before declaring calibrated samples or release readiness.
+
+[Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md)

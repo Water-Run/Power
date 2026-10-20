@@ -42,7 +42,7 @@ O Windows usa o mesmo comando `dotnet` e um caminho absoluto para a DLL. Uma con
 
 ## Ferramentas e resultados
 
-Na API de agente versão 0.36.0, `get_example_model` aceita um `name` opcional, com padrão `electrothermal`. `get_capabilities.examples` lista os 51 exemplos, incluindo tanque finito e recirculação. CLI `list-labs` retorna os 52 laboratórios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` é exclusivo da CLI por projeto. As capacidades também anunciam componentes, fidelidade, limites do solver e entradas. Exports usam `power.asset.v33`, mantendo leitores v1-v32. Validação e criação de sessão retornam canais e unidades. KPI aprovados não estabelecem um powertrain completo ou calibrado.
+Na API de agente versão 0.39.0, `get_example_model` aceita um `name` opcional, com padrão `electrothermal`. `get_capabilities.examples` lista os 53 exemplos, incluindo tanque finito e recirculação. CLI `list-labs` retorna os 54 laboratórios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` é exclusivo da CLI por projeto. As capacidades também anunciam componentes, fidelidade, limites do solver e entradas. Exports usam `power.asset.v34`, mantendo leitores v1-v33. Validação e criação de sessão retornam canais e unidades. KPI aprovados não estabelecem um powertrain completo ou calibrado.
 
 | Ferramenta | Finalidade |
 |---|---|
@@ -292,7 +292,7 @@ Os relatórios conservam pressão de linha/câmara, curso, capacidade de contato
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v33 preserva rotas, ganhos e relógios e lê v1-v32.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v34 preserva rotas, ganhos e relógios e lê v1-v33.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -302,7 +302,7 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v33 preserva conexões e temperatura da fonte e lê v1-v32. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v34 preserva conexões e temperatura da fonte e lê v1-v33. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
@@ -342,7 +342,7 @@ A opção `fuel_film.parameters.phase_equilibrium` declara `reference_pressure` 
 
 O suprimento padrão rejeita líquido sob saturação. O tanque finito opcional resolve vapor da fonte com potenciais corrigidos por pressão. Trilho e captação ainda levam líquido separado; bolhas e fluxo cavitante precisam de mais física.
 
-A comparação só admite arredondamento binary64: `64 * epsilon * max(p, p_sat)`, com `epsilon = 2^-52`. A margem informada não é limitada. É uma verificação de saturação global; perdas locais e NPSH da bomba exigem modelo de fluxo resolvido. As verificações independentes também exigem entropia total não decrescente no flash adiabático e na troca com parede finita.
+A comparação só admite arredondamento binary64: `64 * epsilon * max(p, p_sat)`, com `epsilon = 2^-54`. A margem informada não é limitada. É uma verificação de saturação global; perdas locais e NPSH da bomba exigem modelo de fluxo resolvido. As verificações independentes também exigem entropia total não decrescente no flash adiabático e na troca com parede finita.
 
 [Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md)
 

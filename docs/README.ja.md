@@ -31,7 +31,8 @@ flowchart LR
 | ドキュメント | 内容 |
 |---|---|
 | [エージェント API](AGENT_API.ja.md) | MCP ツール、リビジョン、エラー、操作シーケンス |
-| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v33 と、v1 から v32 までのリーダー |
+| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v34 と、v1 から v33 までのリーダー |
+| [蒸気質量分率を凍結した燃料流出と有限受容室](FUEL_DISCHARGE.ja.md) | 凍結蒸気分率のチョーク、有限液体排除、物理ポンプ/ニードル燃焼 |
 | [ネイティブ Zig 境界](NATIVE_ZIG.ja.md) | 保管された Zig プロトタイプと、バージョン付き ABI |
 
 ## エンジンと燃料

@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 33
+## Aktuelle Version 34
+
+Ein `fuel_discharge` verbindet eine endliche Kraftstoffquelle mit dem Gasknoten eines `finite_fuel_film`. `phase_mode` muss `frozen` sein: Der Dampfmassenanteil bleibt im Düsendurchgang konstant, beide Endvolumina stellen sich erneut ins Gleichgewicht. Die homogenen Phasen teilen Temperatur und Geschwindigkeit; Flüssigkeit ist inkompressibel, Dampf eine ideale Pseudospezies. Stoffdaten und Flüssigkeitsdichte müssen übereinstimmen.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md)
+
+
+## Beibehaltene Version 33
 
 `fuel_chamber` koppelt eine tatsächliche Welle an eine endliche Kraftstoffkammer. Einlass- und Auslass-`fuel_check_valve` liefern druckgetrieben Füllung und Förderung. Flüssigkeit, Dampf und elastische Wandenergie teilen einen Abschluss. Bei Einlassmangel kann die Kammer beim Ansaugen verdampfen; Förderung folgt berechnetem Bestand und Druck.
 

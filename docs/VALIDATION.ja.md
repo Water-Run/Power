@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: 蒸気質量分率を凍結した燃料流出と有限受容室
+
+燃料域ポンプは物理ニードルと凍結蒸気質量分率の流出を介して、有限液体体積の燃焼受容室へ供給します。全在庫に相変化、排除仕事、噴流運動エネルギー、静止壁力積を含みます。
+
+独立したベルヌーイ・理想気体極限、別の混相流束最大化、エネルギー/エントロピー、独立積分したノズル/受容室 ODE で検証します。時間収束は一次です。可搬再生、実 MCP、ロールバック、キャンセル、独立分岐、割り当て検査が統合を確認します。実 Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 496/496 |
+| standard_checks_on_dotnet | 386/386 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 52 |
+| identical_complete_sample_boundaries | 7287 |
+| all_sample_boundaries | 7379 |
+| new_core_groups | 7 |
+| new_constitutive_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_reference_steps | 1000, 2000 |
+| asset_version | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| fingerprint_tags | 38, 39 |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| additional_reported_states_per_discharge | 11 |
+| v33_fixture_sha256 | 3e3804c7277baea26c330c47a319669c5f61142486fb73f127679e56192fe9ba |
+| verification_log_sha256 | b39f7313ca8f90d028a0b76ade58d950dfddcaf73750de7891c62d0026042b2d |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 54 |
+| schema_negative_cases | 11 |
+| documentation_locales | 10 |
+| documentation_files | 200 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| step_ns | normalized_error |
+|---|---|
+| 200000 | 9.43999202748097e-05 |
+| 100000 | 4.716734258499583e-05 |
+| 50000 | 2.356437988192822e-05 |
+| 25000 | 1.1782714233986302e-05 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| finite-volume-fuel-discharge | 53190b5628ca0ab4 | 82f9e4a926d43249 | 11 | 2.2737367544323206e-13 |
+| pump-fed-finite-volume-cylinder | e4225e412bfa9802 | a4d2b9f5703c79d8 | 81 | 1.6226408661168534e-08 |
+
+- `artifacts/reports/fuel-discharge-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-final-2026-10-20.log`
+- `artifacts/reports/fuel-discharge-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-doc-audit-2026-10-20.json`
+
+パラメーターは `unverified` です。宣言温度、正の気体体積、希薄蒸気領域を守ります。入口局所慣性、有限速度核生成、相間滑り、解像噴霧、実流体臨界挙動、実測校正を含みません。規定燃焼は化学平衡や反応エントロピーの精度を示しません。入口動特性、点火、吸排気、損失、ECU/TCU 協調へ進みます。
+
 ## 2026-10-20: 軸駆動の相変化燃料ポンプ
 
 必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しました。新しい燃料ポンプ検証は両アセンブリ対象で実行します。Standard 検証は .NET 10 上でホストされ、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
