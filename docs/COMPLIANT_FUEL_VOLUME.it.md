@@ -34,6 +34,8 @@ Dichiarare volume di riferimento, cedevolezza, densità liquida e pressione mass
 
 Rispettare l’intervallo termico materiale e `0 < M <= rho_l (V_0 + C p_max)`. Vuoto, gas portante, miscele reali, dilatazione termica, inerzia della parete, tensione superficiale e cinetica di fase finita sono esclusi. I parametri restano `unverified`. Riempimento pompa da albero, collegamento iniettore, quantità di moto e flusso critico richiedono ulteriore accoppiamento ed evidenze indipendenti.
 
+`AdiabaticReferenceVolume` sposta lo stesso materiale immutabile tra volumi espliciti a massa ed entropia fisse. La variazione di energia include elasticità ed è il lavoro meccanico. Valutazione variabile, flash e bagno finito rispettano i limiti dichiarati. [Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)
+
 ## Evidenze indipendenti
 
 Si confrontano potenziali chimici, pendenze di Clapeyron, derivate caloriche ed entropiche e Gibbs con accumulo elastico. Una massimizzazione indipendente dell’entropia vincolata non usa il solver di saturazione. Limiti di recipiente rigido, gas ideale e scala estensiva e raffinamento RK4 del bagno finito forniscono riferimenti indipendenti. Lo scambio conserva l’energia totale e converge al primo ordine con entropia totale non decrescente. Non dimostra validità misurata del carburante né accettazione Unity.

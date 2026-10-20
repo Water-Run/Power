@@ -34,6 +34,8 @@ Declarar volume de referência, complacência, densidade líquida e pressão má
 
 Respeitar o intervalo térmico material e `0 < M <= rho_l (V_0 + C p_max)`. Vácuo, gás portador, misturas reais, expansão térmica, inércia da parede, tensão superficial e cinética de fase finita ficam fora. Parâmetros permanecem `unverified`. Enchimento de bomba por eixo, conexão de injetor, quantidade de movimento e escoamento crítico exigem mais acoplamento e evidências independentes.
 
+`AdiabaticReferenceVolume` move o mesmo material imutável entre volumes explícitos com massa e entropia fixas. A mudança de energia inclui elasticidade e é o trabalho mecânico. Avaliação variável, flash e banho finito respeitam os limites declarados. [Bomba de combustível com mudança de fase acionada por eixo](FUEL_CHAMBER_PUMP.pt-BR.md)
+
 ## Evidências independentes
 
 Os testes comparam potenciais químicos, inclinações de Clapeyron, derivadas calóricas e entrópicas e Gibbs com armazenamento elástico. A maximização independente da entropia restrita não usa o solver de saturação. Limites de recipiente rígido, gás ideal e escala extensiva e refinamento RK4 do banho finito fornecem referências independentes. A troca preserva energia total e refina em primeira ordem com entropia total não decrescente. Não comprova propriedades medidas de combustível nem aceitação Unity.

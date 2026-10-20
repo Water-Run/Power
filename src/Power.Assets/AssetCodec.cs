@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 32, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v32";
+    public const int FormatVersion = 33, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v33";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -54,9 +54,10 @@ public static class AssetCodec
         int liquidTanks=asset.Components.Count(c=>c.LiquidFuelTank is not null);
         int liquidReturns=asset.Components.Count(c=>c.LiquidRailReturn is not null);
         int fuelVolumes = asset.Nodes.Count(n => n.Domain == Domain.Fuel);
+        int fuelChambers = asset.Components.Count(c => c.Kind == ComponentKind.FuelChamber);
         long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 40 * 4 +
             44L * asset.Nodes.Count + 156L * asset.Components.Count + 116L * cylinders + 24L * gases + 36L * orifices +
-            72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 100L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + 40L * needleDrivers + 104L * dctControllers + 208L * atControllers + 12L * atRoutes + 28L * liquidFeeds + 52L * liquidTanks + 24L * liquidReturns + 148L * fuelVolumes + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
+            72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 100L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + 40L * needleDrivers + 104L * dctControllers + 208L * atControllers + 12L * atRoutes + 28L * liquidFeeds + 52L * liquidTanks + 24L * liquidReturns + 148L * fuelVolumes + 40L * fuelChambers + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
         if (size > MaxBytes) throw new AssetFormatException("Asset exceeds 1 MiB.");
         using var stream = new MemoryStream((int)size);
         using var writer = new BinaryWriter(stream, Utf8, true);
@@ -247,6 +248,9 @@ public static class AssetCodec
                 Quantity(fuel.VaporSpecificHeat); Quantity(fuel.LiquidSpecificHeat); Quantity(fuel.ReferenceTemperature); Quantity(fuel.LatentInternalEnergy);
                 Quantity(fuel.ReferencePressure); Quantity(fuel.MinimumTemperature); Quantity(fuel.MaximumTemperature); Quantity(fuel.LowerHeatingValue);
             }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].FuelChamber is { } chamber)
+            { writer.Write(i); Quantity(chamber.MinimumReferenceVolume); Quantity(chamber.SweptVolume); Quantity(chamber.Phase); }
         foreach (var input in asset.Inputs) { writer.Write(input.TimeNanoseconds); writer.Write(input.Channel); writer.Write(input.Value); }
         foreach (var c in asset.Checks)
         {
@@ -323,9 +327,6 @@ public static class AssetCodec
             for (int i = 0; i < nodes; ++i) ns[i] = new(reader.ReadUInt32(), (Domain)reader.ReadInt32(), Quantity(), Quantity(), Quantity());
             int fuelVolumes = ns.Count(n => n.Domain == Domain.Fuel);
             if (version < 32 && fuelVolumes != 0) throw new AssetFormatException("Equilibrium fuel nodes require version 32.");
-            if (stream.Length - tableStart != declaredTableBytes + 148L * fuelVolumes)
-                throw new AssetFormatException("Asset length does not match its counts and typed fuel nodes.");
-
             for (int i = 0; i < components; ++i)
                 cs[i] = new()
                 {
@@ -335,6 +336,11 @@ public static class AssetCodec
                     Ratio = reader.ReadDouble(), Resistance = Quantity(), Inductance = Quantity(), Coupling = Quantity(),
                     InitialCurrent = Quantity(), Conductance = Quantity(), AmbientTemperature = Quantity()
                 };
+            int fuelChambers = cs.Count(c => c.Kind == ComponentKind.FuelChamber);
+            if (version < 33 && (fuelChambers != 0 || cs.Any(c => c.Kind == ComponentKind.FuelCheckValve)))
+                throw new AssetFormatException("Moving fuel chambers and check valves require version 33.");
+            if (stream.Length - tableStart != declaredTableBytes + 148L * fuelVolumes + 40L * fuelChambers)
+                throw new AssetFormatException("Asset length does not match its counts and typed fuel records.");
             if (version < 32 && cs.Any(c => c.Kind is ComponentKind.FuelRestriction or ComponentKind.FuelHeatLink))
                 throw new AssetFormatException("Equilibrium fuel links require version 32.");
             if(version<28&&cs.Any(c=>c.Kind==ComponentKind.LiquidRailReturn))throw new AssetFormatException("Liquid return paths require version 28.");
@@ -707,6 +713,13 @@ public static class AssetCodec
                     VaporSpecificHeat = Quantity(), LiquidSpecificHeat = Quantity(), ReferenceTemperature = Quantity(), LatentInternalEnergy = Quantity(),
                     ReferencePressure = Quantity(), MinimumTemperature = Quantity(), MaximumTemperature = Quantity(), LowerHeatingValue = Quantity()
                 } };
+            }
+            for (int i = 0; i < fuelChambers; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.FuelChamber || cs[index].FuelChamber is not null)
+                    throw new AssetFormatException("Chamber geometry must reference a distinct fuel-chamber component.");
+                cs[index] = cs[index] with { FuelChamber = new() { MinimumReferenceVolume = Quantity(), SweptVolume = Quantity(), Phase = Quantity() } };
             }
             for (int i = 0; i < inputs; ++i) schedule[i] = new(reader.ReadUInt64(), reader.ReadUInt64(), reader.ReadDouble());
             var conditions = new AssetCheck[checks];

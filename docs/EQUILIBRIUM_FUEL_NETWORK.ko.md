@@ -32,10 +32,10 @@ h = (E - E_elastic + p V) / M
 
 MCP에서 `equilibrium-fuel-network` 또는 `electrothermal-fuel-network`를 요청하거나 동일 JSON을 CLI로 실행합니다. 용기별 `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy`, `specific_enthalpy`를 읽습니다. 여기서 `internal_energy`는 탄성 벽을 포함하며 화학 에너지는 별도입니다. 링크는 부호 있는 흐름, 누적 질량, `transport_energy`, 쌍 엔트로피 변화를 공개합니다.
 
-실험은 공존 상태로 이동하는 액체 배출, 역류, 개도 변경, 유한 벽/전기기계 열 결합을 다룹니다. 독립 액체 압력 지수해, 동시 2상 질량/엔탈피/열 ODE, 열 구동 역류, 클러치 시험 포착으로 정확도와 조합을 검사합니다. 자산과 실제 MCP가 모든 샘플 값과 해시를 유지합니다. 자산 v32는 물성을 저장하고 v1-v31을 읽습니다. 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
+실험은 공존 상태로 이동하는 액체 배출, 역류, 개도 변경, 유한 벽/전기기계 열 결합을 다룹니다. 독립 액체 압력 지수해, 동시 2상 질량/엔탈피/열 ODE, 열 구동 역류, 클러치 시험 포착으로 정확도와 조합을 검사합니다. 자산과 실제 MCP가 모든 샘플 값과 해시를 유지합니다. 자산 v33는 물성을 저장하고 v1-v32을 읽습니다. 실제 Unity Editor/Play/Player/IL2CPP는 미검증입니다.
 
 ## 남은 작업
 
-구성 관계의 물성 및 분해 가능한 벽 변형 한계가 계속 적용됩니다. 매개변수는 `unverified`입니다. 펌프 충전과 축 일, 인젝터 연결, 국소 관성, 초킹, 핵생성 지연, 상간 미끄럼 및 실제 혼합물 측정은 별도 작업입니다. 기존 펌프 공급 인젝터 레일은 연결 구현까지 분리 액체 경로를 유지합니다.
+연료 수송은 축 구동 `fuel_chamber` 및 이상 `fuel_check_valve`와 결합합니다. 물리 인젝터, 국소 관성/초킹, 실측 혼합물은 별도 작업입니다. 매개변수는 `unverified`입니다. [축 구동 상변화 연료 펌프](FUEL_CHAMBER_PUMP.ko.md)
 
 [Modelica: two-port transport](https://doc.modelica.org/om/Modelica.Fluid.Interfaces.PartialTwoPortTransport.html) · [CompliantFuelVolume](COMPLIANT_FUEL_VOLUME.ko.md) · [VALIDATION.md](VALIDATION.ko.md)

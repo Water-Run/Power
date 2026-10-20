@@ -12,7 +12,7 @@
 
 ## 증거와 한계
 
-v32은 공급 연결과 원천 온도를 저장하고 v1-v31를 읽습니다. 축/압력 해석 교환, 독립 동시 ODE 세분화, 열 혼합, 질량/연료/에너지/체적 원장, 역류와 완전 rollback을 각각 확인합니다.
+v33은 공급 연결과 원천 온도를 저장하고 v1-v32를 읽습니다. 축/압력 해석 교환, 독립 동시 ODE 세분화, 열 혼합, 질량/연료/에너지/체적 원장, 역류와 완전 rollback을 각각 확인합니다.
 
 강체 혼합 탱크, 비압축 액체와 이상기체 모델입니다. 슬로싱/정수압 형상, 실제 혼합물 열역학, 캐비테이션, 실측 펌프/밸브 맵, OEM 보정과 실제 Unity Editor/Play/Player/IL2CPP는 미완성입니다. 매개변수는 `unverified`입니다.
 
@@ -57,3 +57,5 @@ v32은 공급 연결과 원천 온도를 저장하고 v1-v31를 읽습니다. �
 탱크 `evaporated_fuel_mass`, `condensed_fuel_mass`와 부호 있는 `mass_flow`는 완전 물리 단계의 순 상이동을 누적합니다. `vapor_partial_pressure`, 보정 `saturation_pressure`, 액체 재고와 기체 체적을 함께 읽습니다. 펌프는 분리 액체만 흡입하며 2상 펌프/레일 수송, 기포 동반과 국소 NPSH는 미완성입니다.
 
 [유한 체적 연료 탱크 상평형](TANK_PHASE_EQUILIBRIUM.ko.md)
+
+연료 수송은 축 구동 `fuel_chamber` 및 이상 `fuel_check_valve`와 결합합니다. 물리 인젝터, 국소 관성/초킹, 실측 혼합물은 별도 작업입니다. 매개변수는 `unverified`입니다. [축 구동 상변화 연료 펌프](FUEL_CHAMBER_PUMP.ko.md)

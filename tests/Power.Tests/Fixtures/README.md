@@ -298,3 +298,13 @@ Keep these authentic bytes when extending the writer.
 
 SHA-256: `8042d65c3171a71cd79eaa0b49ba733a232a805bd4ed429d23a93e5821016349`.
 Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.
+
+## Equilibrium fuel network v32
+
+`equilibrium-fuel-network-v32.powerasset` was retained on 2026-10-20 from the
+unmodified v32 encoder and laboratory at commit `904b97a95df5e08dbbc838a648d363a16ac07d56`.
+It preserves homogeneous fuel transport and finite-wall heat before moving chamber geometry.
+Keep these authentic bytes when extending the writer.
+
+SHA-256: `dc53c55f9ed58503a4e37d3b9a57ace52e5aac8196fdb5707bb555c47f3a593e`.
+Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.

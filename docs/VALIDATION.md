@@ -2,6 +2,99 @@
 
 **English** · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: Shaft-driven phase-resolving fuel pump
+
+The required serial verification passes locally on Windows x64/.NET 10.0.12. The new fuel-pump checks run against both assembly targets. Standard-assembly checks are hosted on .NET 10; actual Unity Editor/Play/Player/IL2CPP remains unverified.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 478/478 |
+| standard_checks_on_dotnet | 370/370 |
+| actual_mcp_groups | 56/56 |
+| laboratories | 52 |
+| agent_examples | 51 |
+| unchanged_laboratories | 50 |
+| identical_complete_sample_boundaries | 7085 |
+| all_sample_boundaries | 7287 |
+| new_core_groups | 8 |
+| new_constitutive_groups | 4 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| closed_liquid_convergence_order | 2 |
+| phase_changing_pump_convergence_order | 1 |
+| independent_rk4_reference_step_counts | 16000, 32000 |
+| independent_rk4_refinement_difference | 7.3033901113193e-09 |
+| asset_version | power.asset.v33 |
+| agent_api_version | 0.38.0 |
+| fingerprint_tag | 37 |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| additional_reported_states_per_chamber | 3 |
+| v32_fixture_sha256 | dc53c55f9ed58503a4e37d3b9a57ace52e5aac8196fdb5707bb555c47f3a593e |
+| verification_log_sha256 | 81b64552d28447704043ee7b253aad25486200a94f06e1a3a601ea09fc602b8e |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 52 |
+| audited_documents | 200 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 904b97a95df5e08dbbc838a648d363a16ac07d56 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-pump | electric-equilibrium-fuel-pump |
+|---|---|---|
+| boundaries | 101 | 101 |
+| state_count | 21 | 28 |
+| fingerprint | 30f8057b21ff5860 | faa54f82c2b83d52 |
+| source_sha256 | f07afca1eeb49e9a462366a6458985b3396c8bd319c67799c6b44c78c64265fa | 4cdd4d0eab90afb2e7d0092316a4a1cedd86ec1a91f1943a8d0ae8a390dc6878 |
+| report_sha256 | 8cf56eb4a84b5ff27db280470a03ee5264e47679ec9603394e7f4402c9738eff | f4589b23ef386cf53ff9b0f5d0760c7d342660bf066255cf6fc8e5f0b7d73873 |
+| final_state_hash | 99856e5951328734 | 63199f094da67091 |
+| max_sampled_energy_residual_j | 1.862645149230957e-09 | 1.8570620735625099e-09 |
+| max_sampled_mass_residual_kg | 6.911788849595091e-18 | 6.667843360785852e-18 |
+| max_sampled_fuel_residual_kg | 6.911788849595091e-18 | 6.667843360785852e-18 |
+| maximum_sampled_vapor_kg | 5.177782452991471e-08 | 0 |
+| final_delivered_kg | 7.361187328902878e-05 | 0.0004189649656093893 |
+| final_chamber_work_j | 0.026875072320387147 | 0.16071542089376198 |
+| final_shaft_speed_rad_s | 99.73088716821476 | 100.37362340296784 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| closed_liquid | 7.017638564699169e-07, 1.7544040498140845e-07, 4.386006580148205e-08, 1.0965013230723741e-08 | 4.000012748171001, 4.000003232450241, 4.000001174516329 |
+| phase_changing_pump | 2.488428192603582e-05, 1.2876657736742689e-05, 6.204988735247702e-06, 3.007042341865784e-06 | 1.9325109383803978, 2.0752104937106957, 2.0634856546109304 |
+
+| inlet_conductance_m3_s_pa | delivered_kg | maximum_vapor_kg |
+|---|---|---|
+| 1e-11 | 7.361187328902878e-05 | 5.177782452991471e-08 |
+| 3e-10 | 0.00041896562499261326 | 0.0 |
+
+Independent liquid pressure/work, ideal-vapor adiabats and two-phase entropy inversion check the constitutive relation. Closed-liquid shaft motion demonstrates second-order refinement; the complete phase-changing filling/delivery experiment demonstrates first-order refinement against an independently inverted RK4 reference. Inlet starvation, full liquid supply, electric drive, gear/hydraulic/clutch composition, exact replay, rollback and allocation checks cover the integration. Asset v33 stores geometry and reads v1-v32. Actual Unity Editor/Play/Player/IL2CPP remains unverified.
+
+Parameters remain `unverified`. The material temperature, pressure and representable-volume limits apply throughout the cycle. The model assumes incompressible liquid, ideal pseudo-species vapor, instantaneous common-temperature equilibrium and zero external case pressure. Local inlet inertia/NPSH, sonic choking, nucleation delay, valve inertia/hysteresis, real fuel mixtures and measured calibration remain open. Physical injector handoff and receiver displacement/kinetic-work coupling are still separate requirements.
+
+- `artifacts/reports/fuel-pump-final-2026-10-20.log`
+- `artifacts/reports/fuel-pump-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-pump-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-pump-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-pump-doc-audit-2026-10-20.json`
+- `artifacts/reports/fuel-pump-provenance-audit-2026-10-20.json`
+- `tests/Power.Tests/Fixtures/equilibrium-fuel-network-v32.powerasset`
+- `artifacts/reports/equilibrium-fuel-pump.json`
+- `artifacts/reports/electric-equilibrium-fuel-pump.json`
+
+[Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
+
+
 ## 2026-10-20: Equilibrium fuel transport network
 
 The required serial verification passes locally on Windows x64/.NET 10.0.12. The new fuel-network checks run against both assembly targets. Standard-assembly checks are hosted on .NET 10; actual Unity Editor/Play/Player/IL2CPP remains unverified.

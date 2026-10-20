@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現行バージョン 32
+## 現行バージョン 33
+
+`fuel_chamber` は実際の軸と有限燃料室を結合します。入口・出口の `fuel_check_valve` が圧力差で充填と供給を行います。液体、蒸気、弾性壁エネルギーは同じ閉包を使います。入口不足では吸入中にフラッシュ蒸発でき、供給量は計算した在庫と圧力に従います。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[軸駆動の相変化燃料ポンプ](FUEL_CHAMBER_PUMP.ja.md)
+
+
+## 保持バージョン 32
 
 `fuel` ドメインは有限弾性容器内で純燃料の液体と蒸気を共に輸送します。各容器は総質量と熱量・弾性の合計エネルギーを独立に保持し、相平衡フラッシュが温度、圧力、蒸気割合を決定します。`fuel_restriction` は均質な供給側流体を交換し、`fuel_heat_link` は有限熱ノードと熱交換します。発熱量に対応する化学エネルギーは別台帳です。
 

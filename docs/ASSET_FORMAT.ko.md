@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 32
+## 현재 버전 33
+
+`fuel_chamber`는 실제 축과 유한 연료 챔버를 결합합니다. 입출구 `fuel_check_valve`가 압력차로 충전과 공급을 수행합니다. 액체, 증기, 탄성 벽 에너지는 같은 폐쇄 관계를 씁니다. 입구 공급 부족 시 흡입 중 플래시 증발이 가능하며 공급량은 계산한 재고와 압력에 따릅니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[축 구동 상변화 연료 펌프](FUEL_CHAMBER_PUMP.ko.md)
+
+
+## 유지 버전 32
 
 `fuel` 도메인은 유한 탄성 용기에서 순수 연료 액체와 증기를 함께 수송합니다. 각 용기는 총질량과 열량·탄성 총에너지를 독립적으로 유지하며 상평형 플래시가 온도, 압력, 증기 비율을 결정합니다. `fuel_restriction`은 균질 공급 유체를 교환하고 `fuel_heat_link`는 유한 열 노드와 열을 교환합니다. 발열량에 해당하는 화학 에너지는 별도 장부입니다.
 

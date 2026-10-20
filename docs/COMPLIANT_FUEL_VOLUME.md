@@ -34,6 +34,8 @@ Declare positive reference volume, compliance, liquid density and maximum wall p
 
 Use the material temperature interval and `0 < M <= rho_l (V_0 + C p_max)`. Vacuum, carrier gas, real mixtures, thermal expansion, finite wall inertia, surface tension and finite-rate phase kinetics are outside this reference. Material and wall parameters remain `unverified`. Shaft-driven pump filling, injector handoff, resolved momentum and choking require further coupling and independent evidence.
 
+`AdiabaticReferenceVolume` moves the same immutable material between explicit reference volumes at fixed total mass and entropy. Its returned energy change includes elastic storage and is the mechanical work. Variable-volume evaluation, flash and finite-bath heat remain bounded by the declared material and wall limits. [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
+
 ## Independent evidence
 
 Checks compare chemical potentials, Clapeyron slopes, caloric and entropy derivatives, and the Gibbs relation with elastic storage. An independent constrained entropy maximization does not use the saturation solve. Rigid-vessel, ideal-gas and extensive-scaling limits and finite-bath RK4 refinement provide independent references. Heat exchange conserves total energy and has first-order refinement with nondecreasing total entropy. This evidence does not establish measured fuel validity or Unity acceptance.

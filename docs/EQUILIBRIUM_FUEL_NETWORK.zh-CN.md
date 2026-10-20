@@ -32,10 +32,10 @@ h = (E - E_elastic + p V) / M
 
 通过 MCP 请求 `equilibrium-fuel-network` 或 `electrothermal-fuel-network`，也可用 CLI 运行同一 JSON。读取各容器的 `mass`、`internal_energy`、`elastic_energy`、`vapor_mass`、`vapor_mass_fraction`、`vapor_volume_fraction`、`entropy` 和 `specific_enthalpy`。这里 `internal_energy` 包含弹性壁储能，化学能单独报告。链接公开有符号质量/体积流、累计转移质量、`transport_energy` 和成对熵变化。
 
-实验覆盖液体排出并进入共存区、反向流、开度变化及有限壁/机电热耦合。独立液体压力指数解、同时求解两相质量/焓/传热的 ODE、热驱动反流及离合器试探捕获检查精度与组合。资产和实际 MCP 保持每个采样值及哈希一致。资产 v32 保存新物性记录并读取 v1-v31。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+实验覆盖液体排出并进入共存区、反向流、开度变化及有限壁/机电热耦合。独立液体压力指数解、同时求解两相质量/焓/传热的 ODE、热驱动反流及离合器试探捕获检查精度与组合。资产和实际 MCP 保持每个采样值及哈希一致。资产 v33 保存新物性记录并读取 v1-v32。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
 
 ## 后续工作
 
-本构闭合关系的物性及可分辨壁变形边界仍适用。参数保持 `unverified`。泵充填与轴功、喷油器交接、局部流体惯性、临界流、成核延迟、相间滑移及真实混合物测量仍需单独推进。现有泵供油喷油器燃轨在完成这些耦合前仍沿用分离液体路径。
+燃料域输运现可与轴驱动 `fuel_chamber` 及理想 `fuel_check_valve` 链接组合。物理喷油器交接、局部惯性/临界流及实测真实混合物行为仍需单独推进。参数保持 `unverified`。 [轴驱动相变燃料泵](FUEL_CHAMBER_PUMP.zh-CN.md)
 
 [Modelica: two-port transport](https://doc.modelica.org/om/Modelica.Fluid.Interfaces.PartialTwoPortTransport.html) · [CompliantFuelVolume](COMPLIANT_FUEL_VOLUME.zh-CN.md) · [VALIDATION.md](VALIDATION.zh-CN.md)

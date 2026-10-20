@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione attuale 32
+## Versione attuale 33
+
+`fuel_chamber` accoppia un albero reale a una camera carburante finita. `fuel_check_valve` di ingresso e uscita forniscono riempimento ed erogazione per pressione. Liquido, vapore ed energia elastica usano la stessa chiusura. Con ingresso insufficiente la camera può evaporare in aspirazione; l’erogazione segue inventario e pressione calcolati.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)
+
+
+## Versione conservata 32
 
 Il dominio `fuel` trasporta insieme liquido puro e vapore in recipienti elastici finiti. Ogni recipiente conserva massa totale ed energia calorica più elastica indipendenti; il flash determina temperatura, pressione e frazioni di vapore. `fuel_restriction` scambia fluido donatore omogeneo, `fuel_heat_link` scambia calore con un nodo termico finito. L’energia chimica del potere calorifico resta separata.
 

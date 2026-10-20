@@ -34,6 +34,8 @@ Positives Referenzvolumen, positive Nachgiebigkeit, Flüssigkeitsdichte und maxi
 
 Stofftemperaturintervall und `0 < M <= rho_l (V_0 + C p_max)` einhalten. Vakuum, Trägergas, reale Gemische, Wärmeausdehnung, Wandträgheit, Oberflächenspannung und endliche Phasenkinetik liegen außerhalb. Stoff- und Wandparameter bleiben `unverified`. Wellengetriebene Pumpenfüllung, Injektoranbindung, aufgelöster Impuls und kritische Strömung brauchen weitere Kopplung und unabhängige Nachweise.
 
+`AdiabaticReferenceVolume` bewegt dasselbe unveränderliche Material zwischen expliziten Referenzvolumen bei fester Masse und Entropie. Die zurückgegebene Energieänderung enthält elastischen Speicher und ist mechanische Arbeit. Variable Auswertung, Flash und endliches Bad halten Stoff-/Wandgrenzen ein. [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
+
 ## Unabhängige Nachweise
 
 Geprüft werden chemische Potenziale, Clapeyron-Steigungen, kalorische und Entropieableitungen sowie Gibbs mit elastischem Speicher. Unabhängige beschränkte Entropiemaximierung nutzt den Sättigungssolver nicht. Grenzfälle starrer Behälter, ideales Gas und extensive Skalierung sowie RK4-Verfeinerung des endlichen Bads liefern unabhängige Referenzen. Wärmeaustausch erhält Gesamtenergie und verfeinert erster Ordnung bei nicht sinkender Gesamtentropie. Das belegt weder gemessene Kraftstoffgültigkeit noch Unity-Abnahme.

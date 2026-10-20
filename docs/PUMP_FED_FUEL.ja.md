@@ -12,7 +12,7 @@
 
 ## 証拠と制限
 
-v32 は補給接続と源温度を保存し v1-v31 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
+v33 は補給接続と源温度を保存し v1-v32 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
 
 剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、実混合物の熱力学、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
 
@@ -57,3 +57,5 @@ v32 は補給接続と源温度を保存し v1-v31 を読みます。軸/圧力�
 タンクの `evaporated_fuel_mass`、`condensed_fuel_mass` と符号付き `mass_flow` は完全刻みの正味相移動を累積します。`vapor_partial_pressure`、補正 `saturation_pressure`、液量と気体容積を併読します。ポンプは分離液体だけを吸い、二相ポンプ/レール輸送、気泡巻込みと局所 NPSH は未完成です。
 
 [有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md)
+
+燃料輸送は軸駆動 `fuel_chamber` と理想 `fuel_check_valve` に接続できます。物理噴射器、局所慣性・チョーク流、実測混合物は別作業です。パラメーターは `unverified` です。 [軸駆動の相変化燃料ポンプ](FUEL_CHAMBER_PUMP.ja.md)

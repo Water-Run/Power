@@ -4,18 +4,18 @@
 
 ## Point de reprise
 
-Les récipients du domaine carburant échangent les mélanges liquide/vapeur par restrictions dissipatives conservatives et liens thermiques finis. Remplissage de pompe, arbre et décharge d'injecteur restent à raccorder.
+Les chambres finies échangent désormais le travail de pression avec les arbres et se remplissent/livrent par clapets idéaux, avec changement de phase en sous-alimentation. L'injecteur physique et le récepteur restent à coupler.
 
-[Réseau de transport de carburant en équilibre](EQUILIBRIUM_FUEL_NETWORK.fr.md)
+[Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)
 
 ## Prochaine étape
 
-Raccorder les volumes carburant au remplissage de pompe entraînée par arbre et à la décharge d'injecteur physique, avec matière, quantité de mouvement et travail conservatifs. Résoudre inertie locale d'entrée et blocage sonique par références indépendantes. Continuer allumage, admission/échappement, pertes, actionnement de transmission et ECU/TCU sans assimiler ce réseau au groupe motopropulseur complet.
+Relier la pompe carburant à l'injecteur physique et aux récepteurs cylindre/film avec transport diphasique, déplacement et travail cinétique explicites. Résoudre inertie locale d'entrée et blocage sonique par références indépendantes. Continuer allumage, admission/échappement, pertes, actionnement de transmission et coordination ECU/TCU vers l'objectif complet.
 
 ## Acceptation
 
 Exiger références analytiques ou limites indépendantes, bilans complets masse/énergie et raffinement du pas adapté. Préserver retour arrière complet, annulation, branches, canaux stables, rejeu portable et anciens lecteurs. Continuer ensuite allumage, admission/échappement, pertes mécaniques, transmission et coordination ECU/TCU.
 
-Les limites de matière et de déformation représentable de la fermeture restent applicables. Les paramètres restent `unverified`. Remplissage de pompe et travail d'arbre, raccordement d'injecteur, inertie locale, blocage sonique, retard de nucléation, glissement et mesures de mélanges réels restent à réaliser. Les rails d'injecteur alimentés par pompe gardent leur chemin liquide séparé en attendant ces couplages.
+Les paramètres restent `unverified`. Les limites de température, pression et volume représentable s'appliquent sur tout le cycle. Hypothèses : liquide incompressible, vapeur idéale pseudo-espèce, équilibre instantané à température commune et pression extérieure de carter nulle. Inertie d'entrée/NPSH, blocage sonique, nucléation retardée, inertie/hystérésis de clapet, mélanges réels et calibration mesurée restent ouverts. Raccordement physique d'injecteur et travail de déplacement/cinétique du récepteur restent distincts.
 
 [DEVELOPMENT_STATUS.fr.md](DEVELOPMENT_STATUS.fr.md) · [ROADMAP.fr.md](ROADMAP.fr.md) · [VALIDATION.fr.md](VALIDATION.fr.md)

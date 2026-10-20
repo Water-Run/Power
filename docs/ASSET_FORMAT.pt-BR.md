@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, conferir a impressão digital]
 ```
 
-## Versão atual 32
+## Versão atual 33
+
+`fuel_chamber` acopla um eixo real a uma câmara finita de combustível. `fuel_check_valve` de entrada e saída fornecem enchimento e entrega por pressão. Líquido, vapor e energia elástica usam o mesmo fechamento. Com entrada insuficiente a câmara pode vaporizar na sucção; a entrega segue inventário e pressão calculados.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[Bomba de combustível com mudança de fase acionada por eixo](FUEL_CHAMBER_PUMP.pt-BR.md)
+
+
+## Versão mantida 32
 
 O domínio `fuel` transporta líquido puro e vapor juntos em recipientes elásticos finitos. Cada recipiente mantém massa total e energia calórica mais elástica independentes; o flash determina temperatura, pressão e frações de vapor. `fuel_restriction` troca fluido doador homogêneo e `fuel_heat_link` troca calor com um nó térmico finito. A energia química do poder calorífico mantém um balanço separado.
 

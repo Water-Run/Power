@@ -31,7 +31,7 @@ flowchart LR
 | Documento | Che cos'è |
 |---|---|
 | [API agente](AGENT_API.it.md) | Strumenti MCP, revisioni, errori e la sequenza delle operazioni |
-| [Formato degli asset](ASSET_FORMAT.it.md) | `.powerasset` v32 e i lettori da v1 a v31 |
+| [Formato degli asset](ASSET_FORMAT.it.md) | `.powerasset` v33 e i lettori da v1 a v32 |
 | [Confine Zig nativo](NATIVE_ZIG.it.md) | I prototipi Zig archiviati e l'ABI versionata |
 
 ## Motore e carburante
@@ -54,6 +54,7 @@ flowchart LR
 | [Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md) | Spostamento liquido finito, correzione di pressione e sfiato con vapore |
 | [Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md) | Equilibrio liquido/vapore, accumulo elastico e calore conservativo con bagno finito |
 | [Rete di trasporto del carburante in equilibrio](EQUILIBRIUM_FUEL_NETWORK.it.md) | Trasporto bifase omogeneo di entalpia, calore di parete finita e bilanci completi |
+| [Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md) | Riempimento finito, cambio di fase e lavoro conservativo dell’albero |
 
 ## Trasmissione
 

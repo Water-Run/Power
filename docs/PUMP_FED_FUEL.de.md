@@ -12,7 +12,7 @@ Druckenergie wird nur einmal im Hydraulikknoten gespeichert. Volumenstrom und We
 
 ## Nachweise und Grenzen
 
-v32 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v31. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v33 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v32. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -57,3 +57,5 @@ Der Druckvergleich erlaubt nur binary64-Rundung: `64 * epsilon * max(p, p_sat)` 
 Tank-`evaporated_fuel_mass`, `condensed_fuel_mass` und vorzeichenbehafteter `mass_flow` zählen Nettophasentransfer pro vollständigem Physikschritt. `vapor_partial_pressure`, korrigierten `saturation_pressure`, Flüssigkeitsinventar und Gasvolumen zusammen lesen. Die Pumpe saugt getrennte Flüssigkeit; zweiphasiger Transport, Blasenmitnahme und lokaler NPSH bleiben offen.
 
 [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md)
+
+Kraftstofftransport komponiert jetzt mit wellengetriebenem `fuel_chamber` und idealem `fuel_check_valve`. Injektor, lokale Trägheit/kritische Strömung und gemessene reale Gemische bleiben gesondert. Parameter bleiben `unverified`. [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)

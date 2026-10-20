@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — expériences sans interface"]
     mcp["Power.Mcp — 12 outils MCP sur stdio"]
-    assets["Power.Assets — .powerasset v32"]
+    assets["Power.Assets — .powerasset v33"]
     unity["Studio Unity 6.6 — laboratoires 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Le service expose douze outils avec schémas d'entrée et de sortie :
 |---|---|
 | `get_capabilities` | Découvrir les modèles, les limites, les conventions de temps et de révision. Commencez ici. |
 | `get_model_schema` | JSON Schema 2020-12 pour `power.model.v1` |
-| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (49 exemples) |
+| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (51 exemples) |
 | `validate_model` | Valider un modèle sans l'exécuter ; diagnostics de réparation structurés |
 | `run_experiment` | Exécution sans interface bornée, avec rejeu par lots, KPI et provenance |
 | `export_model_asset` | Exporter un `.powerasset` portable |
@@ -147,12 +147,12 @@ Un graphe de recherche Ravigneaux à quatre plages ajoute des chemins planétair
 > [!NOTE]
 > Tous les paramètres d'exemple sont `unverified` — des valeurs de recherche, pas des mesures calibrées.
 
-Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v32`, avec conservation des lecteurs pour les assets antérieurs.
+Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v33`, avec conservation des lecteurs pour les assets antérieurs.
 
-Les récipients du domaine carburant échangent les mélanges liquide/vapeur par restrictions dissipatives conservatives et liens thermiques finis. Remplissage de pompe, arbre et décharge d'injecteur restent à raccorder. [Réseau de transport de carburant en équilibre](docs/EQUILIBRIUM_FUEL_NETWORK.fr.md)
+Les chambres finies échangent désormais le travail de pression avec les arbres et se remplissent/livrent par clapets idéaux, avec changement de phase en sous-alimentation. L'injecteur physique et le récepteur restent à coupler. [Pompe carburant diphasique entraînée par arbre](docs/FUEL_CHAMBER_PUMP.fr.md)
 
 <details>
-<summary>Laboratoires disponibles (50)</summary>
+<summary>Laboratoires disponibles (52)</summary>
 
 | Nom d'exemple (`get_example_model`) | Laboratoire | Ce qu'il exerce |
 |---|---|---|
@@ -206,6 +206,8 @@ Les récipients du domaine carburant échangent les mélanges liquide/vapeur par
 | `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | carburant recirculé avec aiguille physique et rejeu complet |
 | `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | décharge liquide vers coexistence, événements de vanne et chaleur de paroi finie |
 | `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | transport inverse du mélange et couplage thermique à un laboratoire électromécanique |
+| `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | sous-alimentation, vapeur volumique et livraison par arbre en roue libre |
+| `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | moteur CC, remplissage liquide alimenté et chaleur de paroi moteur finie |
 
 </details>
 

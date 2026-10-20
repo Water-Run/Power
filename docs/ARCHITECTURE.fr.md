@@ -249,7 +249,7 @@ L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibl
 
 `at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
 
-Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v32 conserve routes, gains et horloges et lit v1-v31.
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v33 conserve routes, gains et horloges et lit v1-v32.
 
 Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
 
@@ -259,7 +259,7 @@ Ces commandes sont expérimentales et les paramètres restent `unverified`. Coor
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v32 conserve les liens et la température source et lit v1-v31. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v33 conserve les liens et la température source et lit v1-v32. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -320,3 +320,9 @@ Un flash borné à U,V constants conserve carburant total et énergie thermique.
 Le domaine `fuel` transporte ensemble liquide pur et vapeur dans des récipients élastiques finis. Chaque récipient conserve indépendamment masse totale et énergie calorique plus élastique ; le flash détermine température, pression et fractions de vapeur. `fuel_restriction` échange le fluide donneur homogène et `fuel_heat_link` échange avec un nœud thermique fini. L'énergie chimique du pouvoir calorifique garde son bilan séparé.
 
 [Réseau de transport de carburant en équilibre](EQUILIBRIUM_FUEL_NETWORK.fr.md)
+
+## Pompe carburant diphasique entraînée par arbre
+
+`fuel_chamber` couple un arbre réel à une chambre finie du domaine carburant. Des `fuel_check_valve` d'entrée et de sortie assurent remplissage et livraison par pression. Liquide, vapeur et énergie élastique partagent la même fermeture. Une chambre sous-alimentée peut vaporiser à l'aspiration ; la livraison suit l'inventaire et la pression calculés.
+
+[Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)

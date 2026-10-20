@@ -4,18 +4,18 @@
 
 ## Resume point
 
-Fuel-domain vessels now exchange liquid/vapor mixtures through conservative dissipative restrictions and finite-wall heat links. Pump filling, shaft coupling and injector discharge remain to be connected.
+Finite fuel chambers now exchange pressure work with shafts and fill/deliver through ideal one-way restrictions, including bulk phase change under inlet starvation. Physical injector and receiver coupling remains open.
 
-[Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md)
+[Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
 
 ## Next increment
 
-Connect fuel-domain volumes to shaft-driven pump filling and physical injector discharge, with conservative material, momentum and work coupling. Resolve local inlet inertia and choking with independent references. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and ECU/TCU coordination without treating this network as a complete powertrain.
+Connect the fuel-domain pump to physical injector discharge and cylinder/film receivers with explicit two-phase transport, displacement and kinetic-work accounting. Resolve local inlet inertia and sonic choking with independent references. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and ECU/TCU coordination toward the full powertrain objective.
 
 ## Acceptance
 
 Require independent analytic or limiting references, full mass/energy ledgers and step refinement appropriate to the new equations. Preserve batch rollback, cancellation, forks, stable channels, portable replay and prior asset readers. Then continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control.
 
-The material and representable wall-deformation limits of the constitutive closure still apply. Parameters remain `unverified`. Resolved pump filling and shaft work, injector handoff, local fluid inertia, sonic choking, nucleation delay, phase slip and real-mixture measurements remain separate work. Existing pump-fed injector rails retain their separated-liquid path until those couplings are implemented.
+Parameters remain `unverified`. The material temperature, pressure and representable-volume limits apply throughout the cycle. The model assumes incompressible liquid, ideal pseudo-species vapor, instantaneous common-temperature equilibrium and zero external case pressure. Local inlet inertia/NPSH, sonic choking, nucleation delay, valve inertia/hysteresis, real fuel mixtures and measured calibration remain open. Physical injector handoff and receiver displacement/kinetic-work coupling are still separate requirements.
 
 [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) · [ROADMAP.md](ROADMAP.md) · [VALIDATION.md](VALIDATION.md)

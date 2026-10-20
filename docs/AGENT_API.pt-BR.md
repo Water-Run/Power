@@ -42,7 +42,7 @@ O Windows usa o mesmo comando `dotnet` e um caminho absoluto para a DLL. Uma con
 
 ## Ferramentas e resultados
 
-Na API de agente versão 0.36.0, `get_example_model` aceita um `name` opcional, com padrão `electrothermal`. `get_capabilities.examples` lista os 49 exemplos, incluindo tanque finito e recirculação. CLI `list-labs` retorna os 50 laboratórios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` é exclusivo da CLI por projeto. As capacidades também anunciam componentes, fidelidade, limites do solver e entradas. Exports usam `power.asset.v32`, mantendo leitores v1-v31. Validação e criação de sessão retornam canais e unidades. KPI aprovados não estabelecem um powertrain completo ou calibrado.
+Na API de agente versão 0.36.0, `get_example_model` aceita um `name` opcional, com padrão `electrothermal`. `get_capabilities.examples` lista os 51 exemplos, incluindo tanque finito e recirculação. CLI `list-labs` retorna os 52 laboratórios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` é exclusivo da CLI por projeto. As capacidades também anunciam componentes, fidelidade, limites do solver e entradas. Exports usam `power.asset.v33`, mantendo leitores v1-v32. Validação e criação de sessão retornam canais e unidades. KPI aprovados não estabelecem um powertrain completo ou calibrado.
 
 | Ferramenta | Finalidade |
 |---|---|
@@ -292,7 +292,7 @@ Os relatórios conservam pressão de linha/câmara, curso, capacidade de contato
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v32 preserva rotas, ganhos e relógios e lê v1-v31.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v33 preserva rotas, ganhos e relógios e lê v1-v32.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -302,7 +302,7 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v32 preserva conexões e temperatura da fonte e lê v1-v31. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v33 preserva conexões e temperatura da fonte e lê v1-v32. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
@@ -361,3 +361,11 @@ Pedir `equilibrium-fuel-network` ou `electrothermal-fuel-network` pelo MCP ou ex
 Euler implícito limitado resolve as mesmas massa q e entalpia H aceitas nos dois recipientes. Elos avançam por ID estável; o banho finito usa outro subpasso conservativo. O acoplamento é de primeira ordem. Massa, temperatura ou pressão fora dos limites e falhas rejeitam todo o lote, incluindo entradas, históricos compensados e intervalos especulativos de embreagem.
 
 [Rede de transporte de combustível em equilíbrio](EQUILIBRIUM_FUEL_NETWORK.pt-BR.md)
+
+## Bomba de combustível com mudança de fase acionada por eixo
+
+Pedir `equilibrium-fuel-pump` ou `electric-equilibrium-fuel-pump` pelo MCP ou executar JSON na CLI. Ler massa, temperatura, pressão, vapor e energia junto à entrega de válvulas e velocidade do eixo. `volume` do componente é geométrico; o do nó inclui expansão da parede. `torque`, `hydraulic_power`, `hydraulic_work` mostram a troca interna.
+
+O subpasso mecânico fechado mantém massa e entropia. A energia inclui fluido e parede elástica, então o trabalho do eixo usa o volume geométrico de referência. A mesma mudança aceita determina torque no solver mecânico conjunto com engrenagens, conversores, hidráulica e intervalos especulativos da embreagem. A expansão empurra o eixo; `hydraulic_work` positivo entra na câmara. Nenhuma fonte externa adicional de pressão é incluída.
+
+[Bomba de combustível com mudança de fase acionada por eixo](FUEL_CHAMBER_PUMP.pt-BR.md)

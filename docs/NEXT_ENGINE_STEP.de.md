@@ -4,18 +4,18 @@
 
 ## Fortsetzungspunkt
 
-Kraftstoffbehälter tauschen Flüssigkeit/Dampf-Gemische über konservative dissipative Widerstände und endliche Wärmepfade. Pumpenfüllung, Wellenkopplung und Injektoraustrag müssen noch angebunden werden.
+Endliche Kraftstoffkammern tauschen Druckarbeit mit Wellen und füllen/fördern über ideale einseitige Widerstände, einschließlich Phasenwechsel bei Einlassmangel. Injektor- und Empfängerkopplung bleiben offen.
 
-[Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md)
+[Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
 
 ## Nächster Schritt
 
-Kraftstoffvolumen mit wellengetriebener Pumpenfüllung und physischem Injektoraustrag konservativ in Stoff, Impuls und Arbeit verbinden. Lokale Einlassträgheit und kritische Strömung mit unabhängigen Referenzen auflösen. Zündung, Ansaugung/Abgas, Verluste, Getriebeaktuation und ECU/TCU fortsetzen; dieses Netz ist kein vollständiger Antriebsstrang.
+Kraftstoffpumpe mit physischem Injektoraustrag und Zylinder-/Filmempfängern bei explizitem Zweiphasentransport, Verdrängung und kinetischer Arbeit verbinden. Einlassträgheit und kritische Strömung unabhängig referenzieren. Zündung, Ansaugung/Abgas, Verluste, Getriebeaktuation und ECU/TCU zum vollständigen Ziel fortsetzen.
 
 ## Abnahme
 
 Unabhängige analytische/Grenzreferenzen, vollständige Masse/Energie und passende Schrittverfeinerung verlangen. Batch-Rollback, Abbruch, Zweige, stabile Kanäle, portables Replay und alte Leser erhalten. Danach Zündung, Einlass/Auslass, mechanische Verluste, Getriebeaktuation und ECU/TCU-Koordination fortsetzen.
 
-Stoff- und darstellbare Wandverformungsgrenzen des Abschlusses gelten weiter. Parameter bleiben `unverified`. Pumpenfüllung und Wellenarbeit, Injektoranbindung, lokale Trägheit, kritische Strömung, Keimbildungsverzug, Phasenschlupf und reale Gemischmessungen bleiben eigene Aufgaben. Bestehende pumpengespeiste Injektorrails behalten ihren getrennten Flüssigkeitspfad bis zur Anbindung.
+Parameter bleiben `unverified`. Temperatur-, Druck- und darstellbare Volumengrenzen gelten über den Zyklus. Annahmen sind inkompressible Flüssigkeit, idealer Pseudospeziesdampf, sofortiges gemeinsames Temperaturgleichgewicht und äußerer Gehäusedruck null. Lokale Einlassträgheit/NPSH, kritische Strömung, Keimbildungsverzug, Ventilträgheit/-hysterese, reale Gemische und Messkalibrierung bleiben offen. Physische Injektoranbindung und Verdrängungs-/kinetische Empfängerarbeit bleiben gesondert.
 
 [DEVELOPMENT_STATUS.de.md](DEVELOPMENT_STATUS.de.md) · [ROADMAP.de.md](ROADMAP.de.md) · [VALIDATION.de.md](VALIDATION.de.md)

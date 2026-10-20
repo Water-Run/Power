@@ -41,7 +41,7 @@ internal static class EquilibriumFuelNetworkIntegrationChecks
     private static void Sessions()
     {
         var capability = Data(AgentWorkspace.Capabilities());
-        Require(capability.GetProperty("equilibrium_fuel_network").GetProperty("domain").GetString() == "fuel" && capability.GetProperty("asset_format").GetString() == "power.asset.v32");
+        Require(capability.GetProperty("equilibrium_fuel_network").GetProperty("domain").GetString() == "fuel" && capability.GetProperty("asset_format").GetString() == AssetCodec.FormatName);
         var example = Data(AgentWorkspace.ExampleModel("equilibrium-fuel-network")); var workspace = new AgentWorkspace();
         string parent = Data(workspace.CreateSession(example)).GetProperty("session_id").GetString()!;
         string child = Data(workspace.ForkSession(parent, "0")).GetProperty("session_id").GetString()!;

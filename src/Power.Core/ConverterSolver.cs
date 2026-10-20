@@ -6,6 +6,8 @@ namespace Power.Core;
 
 internal abstract class MechanicalSolver
 {
+    protected EquilibriumFuelState? FuelState;
+    internal void PrepareFuel(EquilibriumFuelState state) => FuelState = state;
     internal abstract bool SetInterval(double duration, Factorization dynamics, GearSolver? gears);
     internal abstract bool Solve(double[] old, double[] midpoint, double[] energy, CombustionSolver? combustion = null, CancellationToken cancellation = default);
     internal abstract void AddGearReactions(double[] reactions);
@@ -141,7 +143,12 @@ internal sealed class ConverterSolver : MechanicalSolver
     {
         double torque = 0;
         foreach (int i in _model.CylinderCoupling!.Components[k])
-            if (_model.Cylinders[i] is { } sealedCylinder) torque += sealedCylinder.DiscreteTorque(angle, delta);
+            if (_model.FuelChamberByComponent[i] is int chamber && chamber >= 0)
+            {
+                if (!_model.FuelChamberWork(chamber, FuelState!, angle, delta, out _, out double fuelTorque, out _)) return double.NaN;
+                torque += fuelTorque;
+            }
+            else if (_model.Cylinders[i] is { } sealedCylinder) torque += sealedCylinder.DiscreteTorque(angle, delta);
             else
             {
                 int gas = _model.Nodes[_model.Components[i].B].Index;

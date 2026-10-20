@@ -12,7 +12,7 @@ L'energia di pressione è memorizzata una volta nel nodo idraulico. Portata e re
 
 ## Evidenze e limiti
 
-v32 conserva collegamenti e temperatura sorgente e legge v1-v31. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v33 conserva collegamenti e temperatura sorgente e legge v1-v32. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
@@ -57,3 +57,5 @@ Impostare `liquid_fuel_tank.parameters.headspace.phase_equilibrium` a `true` per
 `evaporated_fuel_mass`, `condensed_fuel_mass` e `mass_flow` con segno contano il trasferimento netto per passo fisico. Leggere insieme `vapor_partial_pressure`, `saturation_pressure` corretta, inventario liquido e volume gas. La pompa aspira liquido separato; trasporto bifase, trascinamento di bolle e NPSH locale restano aperti.
 
 [Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)
+
+Il trasporto compone ora con `fuel_chamber` azionato da albero e `fuel_check_valve` ideale. Iniettore, inerzia/flusso critico e miscele reali misurate restano separati. I parametri sono `unverified`. [Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)

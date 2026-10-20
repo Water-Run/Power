@@ -32,10 +32,10 @@ Termodinámica compatible y conductancia positiva impulsada por presión produce
 
 Pedir `equilibrium-fuel-network` o `electrothermal-fuel-network` por MCP o ejecutar el mismo JSON con CLI. Leer `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy`, `specific_enthalpy`. Aquí `internal_energy` incluye pared elástica y la energía química es aparte. Los enlaces exponen flujos con signo, masa acumulada, `transport_energy` y cambio de entropía de pareja.
 
-Los laboratorios cubren descarga líquida a coexistencia, flujo inverso, cambios de apertura y calor finito/electromecánico. Exponencial independiente de presión líquida, EDO bifásica simultánea de masa/entalpía/calor, inversión térmica y captura especulativa del embrague verifican precisión y composición. Assets y MCP real conservan todos los valores y hashes. Asset v32 guarda propiedades y lee v1-v31. Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+Los laboratorios cubren descarga líquida a coexistencia, flujo inverso, cambios de apertura y calor finito/electromecánico. Exponencial independiente de presión líquida, EDO bifásica simultánea de masa/entalpía/calor, inversión térmica y captura especulativa del embrague verifican precisión y composición. Assets y MCP real conservan todos los valores y hashes. Asset v33 guarda propiedades y lee v1-v32. Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
 
 ## Trabajo restante
 
-Siguen vigentes los límites de material y deformación representable del cierre. Los parámetros siguen `unverified`. Llenado de bomba y trabajo del eje, conexión de inyector, inercia local, flujo crítico, retraso de nucleación, deslizamiento y medidas de mezclas reales siguen pendientes. Los rieles de inyector alimentados por bomba conservan su ruta de líquido separado hasta integrarlos.
+El transporte se combina ahora con `fuel_chamber` por eje y `fuel_check_valve` ideal. Inyector, inercia/flujo crítico y mezclas reales medidas siguen separados. Los parámetros son `unverified`. [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
 
 [Modelica: two-port transport](https://doc.modelica.org/om/Modelica.Fluid.Interfaces.PartialTwoPortTransport.html) · [CompliantFuelVolume](COMPLIANT_FUEL_VOLUME.es.md) · [VALIDATION.md](VALIDATION.es.md)

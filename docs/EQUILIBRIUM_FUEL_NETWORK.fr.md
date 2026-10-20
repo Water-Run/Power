@@ -32,10 +32,10 @@ La thermodynamique compatible et une conductance positive entraînée par la pre
 
 Demander `equilibrium-fuel-network` ou `electrothermal-fuel-network` par MCP, ou exécuter le même JSON par CLI. Lire `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy` et `specific_enthalpy` par récipient. Ici `internal_energy` comprend la paroi élastique ; l'énergie chimique est séparée. Les liens exposent débits signés, masse cumulée, `transport_energy` et variation d'entropie de paire.
 
-Les laboratoires couvrent décharge liquide vers coexistence, inversion, changements d'ouverture et couplage thermique fini/électromécanique. Une exponentielle indépendante de pression liquide, une EDO simultanée diphasique masse/enthalpie/chaleur, l'inversion par chauffage et la capture spéculative d'embrayage vérifient précision et composition. Assets et MCP réel conservent chaque valeur et hash échantillonnés. L'asset v32 conserve les propriétés et lit v1-v31. Unity Editor/Play/Player/IL2CPP réel reste non vérifié.
+Les laboratoires couvrent décharge liquide vers coexistence, inversion, changements d'ouverture et couplage thermique fini/électromécanique. Une exponentielle indépendante de pression liquide, une EDO simultanée diphasique masse/enthalpie/chaleur, l'inversion par chauffage et la capture spéculative d'embrayage vérifient précision et composition. Assets et MCP réel conservent chaque valeur et hash échantillonnés. L'asset v33 conserve les propriétés et lit v1-v32. Unity Editor/Play/Player/IL2CPP réel reste non vérifié.
 
 ## Travail restant
 
-Les limites de matière et de déformation représentable de la fermeture restent applicables. Les paramètres restent `unverified`. Remplissage de pompe et travail d'arbre, raccordement d'injecteur, inertie locale, blocage sonique, retard de nucléation, glissement et mesures de mélanges réels restent à réaliser. Les rails d'injecteur alimentés par pompe gardent leur chemin liquide séparé en attendant ces couplages.
+Le transport carburant compose maintenant avec `fuel_chamber` entraîné par arbre et `fuel_check_valve` idéal. Injecteur physique, inertie/blocage sonique et mélanges réels mesurés restent séparés. Les paramètres restent `unverified`. [Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)
 
 [Modelica: two-port transport](https://doc.modelica.org/om/Modelica.Fluid.Interfaces.PartialTwoPortTransport.html) · [CompliantFuelVolume](COMPLIANT_FUEL_VOLUME.fr.md) · [VALIDATION.md](VALIDATION.fr.md)

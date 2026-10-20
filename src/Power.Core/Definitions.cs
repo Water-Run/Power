@@ -14,7 +14,7 @@ public enum Unit
 }
 
 public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6, Fuel = 7 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn, FuelRestriction, FuelHeatLink }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn, FuelRestriction, FuelHeatLink, FuelChamber, FuelCheckValve }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
@@ -179,6 +179,7 @@ public sealed record ComponentDefinition
     public LiquidRailFeedDefinition? LiquidRailFeed { get; init; }
     public LiquidFuelTankDefinition? LiquidFuelTank { get; init; }
     public LiquidRailReturnDefinition? LiquidRailReturn { get; init; }
+    public FuelChamberDefinition? FuelChamber { get; init; }
     /// <summary>Optional gas-orifice timing. InitialInput and its channel then specify peak opening.</summary>
     public ValveTimingDefinition? ValveTiming { get; init; }
     public WiebeCombustionDefinition? Combustion { get; init; }
@@ -397,6 +398,10 @@ public sealed record ComponentDefinition
         ReservoirPressure = new(pressure, Unit.Pascal), AmbientTemperature = new(temperature, Unit.Kelvin),
         InitialInput = new(opening, Unit.Fraction)
     };
+    public static ComponentDefinition FuelChamberPump(uint id, uint shaft, uint fuel, FuelChamberDefinition geometry) => new()
+    { Id = id, Kind = ComponentKind.FuelChamber, NodeA = shaft, NodeB = fuel, FuelChamber = geometry };
+    public static ComponentDefinition FuelCheckValve(uint id, uint a, uint b, double conductance, ulong channel = 0, double opening = 1) =>
+        FuelRestriction(id, a, b, conductance, channel, opening) with { Kind = ComponentKind.FuelCheckValve };
     public static ComponentDefinition FuelRestriction(uint id, uint a, uint b, double conductance, ulong channel = 0, double opening = 1) => new()
     {
         Id = id, Kind = ComponentKind.FuelRestriction, NodeA = a, NodeB = b,

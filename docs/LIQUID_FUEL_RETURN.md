@@ -12,7 +12,7 @@ Read `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_heat
 
 ## Evidence and limits
 
-`recirculating-liquid-cylinder` and `recirculating-needle-cylinder` retain finite fuel, actual injection, evaporation and optional needle dynamics. Asset v32 retains return links and heat fraction and reads v1-v31. Each return adds 8 states within the unchanged model bounds.
+`recirculating-liquid-cylinder` and `recirculating-needle-cylinder` retain finite fuel, actual injection, evaporation and optional needle dynamics. Asset v33 retains return links and heat fraction and reads v1-v32. Each return adds 8 states within the unchanged model bounds.
 
 Independent relief decay/pressure work and simultaneous mechanical, pressure and thermal refinement, heat fractions, multiple routes, external boundaries, every-boundary replay, rollback and allocation checks pass. Liquid boiling and unresolved transport intervals fail the entire batch.
 

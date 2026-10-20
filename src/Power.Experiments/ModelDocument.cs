@@ -182,7 +182,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             Object(c, ["id", "kind", "node_a"], "node_b", "node_c", "heat_node", "input_channel", "initial_input", "parameters", "valve_timing", "reservoir_fractions");
             var kind = Text(c.GetProperty("kind")) switch
             {
-                "fuel_restriction" => ComponentKind.FuelRestriction, "fuel_heat_link" => ComponentKind.FuelHeatLink,
+                "fuel_chamber" => ComponentKind.FuelChamber, "fuel_check_valve" => ComponentKind.FuelCheckValve, "fuel_restriction" => ComponentKind.FuelRestriction, "fuel_heat_link" => ComponentKind.FuelHeatLink,
                 "hydraulic_resistance" => ComponentKind.HydraulicResistance, "hydraulic_orifice" => ComponentKind.HydraulicOrifice,
                 "hydraulic_clutch" => ComponentKind.HydraulicClutch,
                 "hydraulic_pump" => ComponentKind.HydraulicPump, "hydraulic_relief" => ComponentKind.HydraulicRelief,
@@ -198,8 +198,8 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 "ideal_gear" => ComponentKind.IdealGear, "planetary_gear" => ComponentKind.PlanetaryGear, "double_pinion_planetary_gear" => ComponentKind.DoublePinionPlanetaryGear, "carrier_gear" => ComponentKind.CarrierGear,
                 _ => throw new ArgumentException("Unknown component kind.")
             };
-            if (kind == ComponentKind.FuelRestriction) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel");
-            else if (kind == ComponentKind.FuelHeatLink) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
+            if (kind is ComponentKind.FuelRestriction or ComponentKind.FuelCheckValve) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel");
+            else if (kind is ComponentKind.FuelHeatLink or ComponentKind.FuelChamber) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind == ComponentKind.IdealGear) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind is ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) Object(c, ["id", "kind", "node_a", "node_b", "node_c", "parameters"]);
             else if (kind == ComponentKind.TorqueConverter) Object(c, ["id", "kind", "node_a", "node_b", "parameters"], "heat_node");
@@ -241,7 +241,13 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 return result;
             }
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
-            if (kind is ComponentKind.FuelRestriction or ComponentKind.FuelHeatLink)
+            if (kind == ComponentKind.FuelChamber)
+            {
+                Object(parameters, ["minimum_reference_volume", "swept_volume", "phase"]);
+                return result with { FuelChamber = new() { MinimumReferenceVolume = Quantity(parameters.GetProperty("minimum_reference_volume")),
+                    SweptVolume = Quantity(parameters.GetProperty("swept_volume")), Phase = Quantity(parameters.GetProperty("phase")) } };
+            }
+            if (kind is ComponentKind.FuelRestriction or ComponentKind.FuelHeatLink or ComponentKind.FuelCheckValve)
             {
                 Object(parameters, ["conductance"]);
                 return result with { Conductance = Quantity(parameters.GetProperty("conductance")) };

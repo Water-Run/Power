@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 32
+## Aktuelle Version 33
+
+`fuel_chamber` koppelt eine tatsächliche Welle an eine endliche Kraftstoffkammer. Einlass- und Auslass-`fuel_check_valve` liefern druckgetrieben Füllung und Förderung. Flüssigkeit, Dampf und elastische Wandenergie teilen einen Abschluss. Bei Einlassmangel kann die Kammer beim Ansaugen verdampfen; Förderung folgt berechnetem Bestand und Druck.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
+
+
+## Beibehaltene Version 32
 
 Die Domäne `fuel` transportiert reine Flüssigkeit und Dampf gemeinsam in endlichen elastischen Behältern. Jeder Behälter hält Gesamtmasse und kalorische plus elastische Energie unabhängig; der Phasenflash bestimmt Temperatur, Druck und Dampfanteile. `fuel_restriction` tauscht homogenes Spenderfluid aus, `fuel_heat_link` tauscht Wärme mit einem endlichen thermischen Knoten. Chemische Heizwertenergie bleibt separat bilanziert.
 

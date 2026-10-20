@@ -106,7 +106,7 @@ Descubre los identificadores y las unidades de salida mediante la validación o 
 de masa, de combustible y de energía química incluyen el inventario de la película. La entrega interna
 de vapor no incrementa la energía de combustible del depósito ni la entalpía externa.
 
-El asset v32 almacena todas las propiedades de fase y conserva los lectores v1-v31. Cada película necesita
+El asset v33 almacena todas las propiedades de fase y conserva los lectores v1-v32. Cada película necesita
 un registro de fase tipado de 100 bytes. Se comprueban longitudes y cuentas acotadas, el resumen, la cobertura completa,
 los registros duplicados o ausentes, las unidades, la compilación física y la protección contra degradación.
 El fixture auténtico de dosificación de combustible v17 conserva su huella y

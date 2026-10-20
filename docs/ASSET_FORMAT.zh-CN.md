@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 32
+## 当前版本 33
+
+`fuel_chamber` 将实际转轴与有限燃料域腔体耦合。进出口 `fuel_check_valve` 通过压差完成充填与排出。液体、蒸气和弹性壁储能使用同一物性闭合关系。入口供给不足时，腔体可在吸入期间闪蒸；交付燃料由实际库存和压力决定。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[轴驱动相变燃料泵](FUEL_CHAMBER_PUMP.zh-CN.md)
+
+
+## 保留版本 32
 
 `fuel` 域在有限弹性容器中共同输送纯燃料液体与蒸气。每个容器独立保存总质量及热量加弹性储能，相平衡闪蒸据此确定温度、压力和蒸气比例。`fuel_restriction` 交换均匀混合的供体流体，`fuel_heat_link` 与有限热节点换热。燃料热值对应的化学能使用独立账本。
 

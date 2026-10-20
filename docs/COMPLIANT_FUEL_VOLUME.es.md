@@ -34,6 +34,8 @@ Declarar volumen de referencia, flexibilidad, densidad líquida y presión máxi
 
 Respetar el intervalo térmico del material y `0 < M <= rho_l (V_0 + C p_max)`. Vacío, gas portador, mezclas reales, expansión térmica, inercia de pared, tensión superficial y cinética de fase finita quedan fuera. Los parámetros siguen `unverified`. Llenado de bomba por eje, conexión de inyector, cantidad de movimiento y flujo crítico requieren más acoplamiento y evidencia independiente.
 
+`AdiabaticReferenceVolume` mueve el mismo material inmutable entre volúmenes explícitos con masa y entropía fijas. El cambio de energía incluye elasticidad y es el trabajo mecánico. Evaluación variable, flash y baño finito respetan límites materiales y de pared. [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
+
 ## Evidencia independiente
 
 Los controles comparan potenciales químicos, pendientes de Clapeyron, derivadas calóricas y entrópicas y Gibbs con almacenamiento elástico. Una maximización independiente de entropía restringida no usa el solver de saturación. Los límites de recipiente rígido, gas ideal y escala extensiva y el refinamiento RK4 del baño finito aportan referencias independientes. El intercambio conserva energía total y refina a primer orden con entropía total no decreciente. No acredita combustible medido ni aceptación Unity.

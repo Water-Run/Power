@@ -300,6 +300,18 @@
       "asset_name": "ElectrothermalFuelNetwork",
       "display_name": "Electrothermal fuel network laboratory",
       "agent_example": true
+    },
+    {
+      "name": "equilibrium-fuel-pump",
+      "asset_name": "EquilibriumFuelPump",
+      "display_name": "Equilibrium fuel pump laboratory",
+      "agent_example": true
+    },
+    {
+      "name": "electric-equilibrium-fuel-pump",
+      "asset_name": "ElectricEquilibriumFuelPump",
+      "display_name": "Electric equilibrium fuel pump laboratory",
+      "agent_example": true
     }
   ]
 }

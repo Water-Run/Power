@@ -33,7 +33,7 @@ The pressure comparison allows only binary64 roundoff: `64 * epsilon * max(p, p_
 
 ## Evidence
 
-`equilibrium-fuel-cell` demonstrates condensation, vent-driven evaporation and renewed condensation. `equilibrium-injected-cylinder` adds reversible receiver phase behavior and observable supply margins to the vented-tank engine. Independent entropy maximization, analytic saturation/heat limits, simultaneous ODE refinement, complete replay, rollback and allocation checks cover the implementation. Asset v32 retains these properties and reads v1-v31.
+`equilibrium-fuel-cell` demonstrates condensation, vent-driven evaporation and renewed condensation. `equilibrium-injected-cylinder` adds reversible receiver phase behavior and observable supply margins to the vented-tank engine. Independent entropy maximization, analytic saturation/heat limits, simultaneous ODE refinement, complete replay, rollback and allocation checks cover the implementation. Asset v33 retains these properties and reads v1-v32.
 
 Parameters remain `unverified`. The model does not supply measured gasoline properties, multicomponent or finite-rate phase kinetics, resolved liquid displacement/spray, or OEM calibration. Actual Unity Editor/Play/Player/IL2CPP acceptance remains pending.
 

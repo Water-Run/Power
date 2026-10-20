@@ -12,7 +12,7 @@ The examples `pump-fed-liquid-cylinder` and `pump-fed-needle-cylinder` retain ph
 
 ## Evidence and limits
 
-Asset v32 retains feed links and source temperature and reads v1-v31. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v33 retains feed links and source temperature and reads v1-v32. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -57,3 +57,5 @@ Set `liquid_fuel_tank.parameters.headspace.phase_equilibrium` to `true` to resol
 Tank `evaporated_fuel_mass`, `condensed_fuel_mass` and signed `mass_flow` count net phase transfer per complete physical tick. Read `vapor_partial_pressure`, pressure-corrected `saturation_pressure`, liquid inventory and gas volume together. The pump picks up separated liquid only; two-phase pump/rail transport, entrainment and local NPSH remain open.
 
 [Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)
+
+Fuel-domain transport now composes with shaft-driven `fuel_chamber` components and ideal `fuel_check_valve` links. Physical injector handoff, local inertia/choking and measured real-mixture behavior remain separate work. Parameters remain `unverified`. [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)

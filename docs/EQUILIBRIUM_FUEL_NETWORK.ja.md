@@ -32,10 +32,10 @@ h = (E - E_elastic + p V) / M
 
 MCP で `equilibrium-fuel-network` または `electrothermal-fuel-network` を要求するか、同じ JSON を CLI で実行します。各容器の `mass`、`internal_energy`、`elastic_energy`、`vapor_mass`、`vapor_mass_fraction`、`vapor_volume_fraction`、`entropy`、`specific_enthalpy` を確認します。`internal_energy` は弾性壁を含み、化学エネルギーは別です。リンクは符号付き流量、累積質量、`transport_energy`、対エントロピー変化を公開します。
 
-実験は共存への液体排出、逆流、開度変更、有限壁と機電系の熱結合を扱います。独立した液体圧力指数解、同時二相質量・エンタルピー・熱 ODE、熱駆動逆流、クラッチ試行捕捉で精度と組合せを検証します。資産と実 MCP は全サンプル値とハッシュを保持します。資産 v32 は物性を保持し v1-v31 を読みます。実 Unity Editor/Play/Player/IL2CPP は未検証です。
+実験は共存への液体排出、逆流、開度変更、有限壁と機電系の熱結合を扱います。独立した液体圧力指数解、同時二相質量・エンタルピー・熱 ODE、熱駆動逆流、クラッチ試行捕捉で精度と組合せを検証します。資産と実 MCP は全サンプル値とハッシュを保持します。資産 v33 は物性を保持し v1-v32 を読みます。実 Unity Editor/Play/Player/IL2CPP は未検証です。
 
 ## 残る作業
 
-構成則の物性・分解可能な壁変形限界が引き続き適用されます。パラメーターは `unverified` です。ポンプ充填と軸仕事、噴射器接続、局所慣性、チョーク流、核生成遅延、相間滑り、実混合物測定は別途必要です。既存のポンプ供給噴射レールは接続実装まで分離液体経路を使います。
+燃料輸送は軸駆動 `fuel_chamber` と理想 `fuel_check_valve` に接続できます。物理噴射器、局所慣性・チョーク流、実測混合物は別作業です。パラメーターは `unverified` です。 [軸駆動の相変化燃料ポンプ](FUEL_CHAMBER_PUMP.ja.md)
 
 [Modelica: two-port transport](https://doc.modelica.org/om/Modelica.Fluid.Interfaces.PartialTwoPortTransport.html) · [CompliantFuelVolume](COMPLIANT_FUEL_VOLUME.ja.md) · [VALIDATION.md](VALIDATION.ja.md)

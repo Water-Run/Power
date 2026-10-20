@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version actuelle 32
+## Version actuelle 33
+
+`fuel_chamber` couple un arbre réel à une chambre finie du domaine carburant. Des `fuel_check_valve` d'entrée et de sortie assurent remplissage et livraison par pression. Liquide, vapeur et énergie élastique partagent la même fermeture. Une chambre sous-alimentée peut vaporiser à l'aspiration ; la livraison suit l'inventaire et la pression calculés.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)
+
+
+## Version conservée 32
 
 Le domaine `fuel` transporte ensemble liquide pur et vapeur dans des récipients élastiques finis. Chaque récipient conserve indépendamment masse totale et énergie calorique plus élastique ; le flash détermine température, pression et fractions de vapeur. `fuel_restriction` échange le fluide donneur homogène et `fuel_heat_link` échange avec un nœud thermique fini. L'énergie chimique du pouvoir calorifique garde son bilan séparé.
 

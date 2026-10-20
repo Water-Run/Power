@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 无头实验"]
     mcp["Power.Mcp — 12 个 stdio MCP 工具"]
-    assets["Power.Assets — .powerasset v32"]
+    assets["Power.Assets — .powerasset v33"]
     unity["Unity 6.6 工作室 — 3D 实验室"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | 发现模型、限制、时间与修订约定。从这里开始。 |
 | `get_model_schema` | `power.model.v1` 的 JSON Schema 2020-12 |
-| `get_example_model` | 获取可编辑的合成模型与实验(49 个示例) |
+| `get_example_model` | 获取可编辑的合成模型与实验(51 个示例) |
 | `validate_model` | 不运行即校验模型;结构化修复诊断 |
 | `run_experiment` | 有界无头运行,含批量回放、KPI 与溯源 |
 | `export_model_asset` | 导出可移植的 `.powerasset` |
@@ -147,12 +147,12 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 所有示例参数均为 `unverified`——研究取值,不是标定测量值。
 
-下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v32`,并保留对更早资产的读取。
+下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v33`,并保留对更早资产的读取。
 
-燃料域容器已通过守恒耗散流阻与有限壁热链接交换液/汽混合物。泵充填、轴耦合和喷油器排出仍待接入。 [相平衡燃料输运网络](docs/EQUILIBRIUM_FUEL_NETWORK.zh-CN.md)
+有限燃料腔体已与轴交换压力功，并通过理想单向流阻充填和排出，涵盖入口不足时的体相相变。物理喷油器及接收端耦合仍待实现。 [轴驱动相变燃料泵](docs/FUEL_CHAMBER_PUMP.zh-CN.md)
 
 <details>
-<summary>可用实验室(50 个)</summary>
+<summary>可用实验室(52 个)</summary>
 
 | 示例名(`get_example_model`) | 实验室 | 验证内容 |
 |---|---|---|
@@ -206,6 +206,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | 循环燃油、物理针阀与完整回放 |
 | `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | 液体排出进入两相共存、阀事件与有限壁传热 |
 | `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | 反向混合物输运及与机电实验的热耦合 |
+| `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | 入口不足、体相蒸气形成与滑行轴排出 |
+| `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | 直流电机驱动、充分液体充填与有限电机壁传热 |
 
 </details>
 

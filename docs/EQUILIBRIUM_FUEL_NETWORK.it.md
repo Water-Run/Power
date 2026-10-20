@@ -32,10 +32,10 @@ Termodinamica compatibile e conduttanza positiva guidata dalla pressione danno p
 
 Richiedere `equilibrium-fuel-network` o `electrothermal-fuel-network` via MCP oppure eseguire lo stesso JSON con CLI. Leggere `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy`, `specific_enthalpy`. Qui `internal_energy` include la parete elastica e l’energia chimica è separata. I collegamenti mostrano portate con segno, massa cumulativa, `transport_energy` e variazione di entropia della coppia.
 
-I laboratori coprono scarico liquido in coesistenza, flusso inverso, aperture e calore finito/elettromeccanico. Esponenziale indipendente della pressione liquida, ODE bifase simultanea massa/entalpia/calore, inversione termica e cattura speculativa della frizione verificano accuratezza e composizione. Asset e MCP effettivo mantengono tutti i campioni e gli hash. Asset v32 conserva proprietà e legge v1-v31. Unity Editor/Play/Player/IL2CPP effettivo resta non verificato.
+I laboratori coprono scarico liquido in coesistenza, flusso inverso, aperture e calore finito/elettromeccanico. Esponenziale indipendente della pressione liquida, ODE bifase simultanea massa/entalpia/calore, inversione termica e cattura speculativa della frizione verificano accuratezza e composizione. Asset e MCP effettivo mantengono tutti i campioni e gli hash. Asset v33 conserva proprietà e legge v1-v32. Unity Editor/Play/Player/IL2CPP effettivo resta non verificato.
 
 ## Lavoro rimanente
 
-Restano i limiti del materiale e della deformazione rappresentabile della chiusura. I parametri restano `unverified`. Riempimento pompa e lavoro d’albero, collegamento iniettore, inerzia locale, flusso critico, ritardo di nucleazione, scorrimento e misure di miscele reali rimangono separati. I rail iniettore alimentati da pompa mantengono il percorso liquido separato fino all’accoppiamento.
+Il trasporto compone ora con `fuel_chamber` azionato da albero e `fuel_check_valve` ideale. Iniettore, inerzia/flusso critico e miscele reali misurate restano separati. I parametri sono `unverified`. [Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)
 
 [Modelica: two-port transport](https://doc.modelica.org/om/Modelica.Fluid.Interfaces.PartialTwoPortTransport.html) · [CompliantFuelVolume](COMPLIANT_FUEL_VOLUME.it.md) · [VALIDATION.md](VALIDATION.it.md)

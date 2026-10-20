@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 32
+## Current version 33
+
+A `fuel_chamber` couples an actual shaft to a finite fuel-domain chamber. Inlet and outlet `fuel_check_valve` components provide pressure-driven filling and delivery. Liquid, vapor and elastic wall energy share the same material closure. An inlet-starved chamber can flash during suction; delivered fuel follows the computed inventory and pressure.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
+
+
+## Retained version 32
 
 The `fuel` domain carries pure liquid and vapor together in finite elastic vessels. Each vessel owns independent total mass and caloric-plus-elastic energy; its phase flash determines temperature, pressure and vapor fractions. `fuel_restriction` exchanges homogeneous donor fluid and `fuel_heat_link` exchanges heat with a finite thermal node. Chemical heating-value energy stays in a separate ledger.
 

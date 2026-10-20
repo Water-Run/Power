@@ -34,6 +34,8 @@ Déclarer volume de référence, compliance, densité liquide et pression maxima
 
 Respecter l'intervalle thermique du matériau et `0 < M <= rho_l (V_0 + C p_max)`. Vide, gaz porteur, mélanges réels, dilatation thermique, inertie de paroi, tension superficielle et cinétique de phase finie sont hors portée. Les paramètres restent `unverified`. Remplissage de pompe entraînée par arbre, raccordement d'injecteur, quantité de mouvement et blocage sonique demandent encore couplage et preuves indépendantes.
 
+`AdiabaticReferenceVolume` déplace le même matériau immuable entre volumes de référence explicites à masse et entropie constantes. Sa variation d'énergie comprend l'élasticité et constitue le travail mécanique. Évaluation variable, flash et bain fini respectent les limites déclarées. [Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)
+
 ## Preuves indépendantes
 
 Les contrôles comparent potentiels chimiques, pentes de Clapeyron, dérivées caloriques et entropiques et relation de Gibbs avec stockage élastique. Une maximisation indépendante de l'entropie contrainte n'utilise pas le solveur de saturation. Les limites de récipient rigide, gaz idéal et extensivité et le raffinement RK4 du bain fini servent de références. L'échange thermique conserve l'énergie totale et converge à l'ordre un avec entropie totale non décroissante. Cela ne valide ni carburant mesuré ni Unity.

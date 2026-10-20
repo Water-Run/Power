@@ -22,20 +22,23 @@ public sealed record EquilibriumFuelDefinition
 }
 
 internal sealed record CompiledFuelVolume(int Node, CompliantFuelVolume Law, CompliantFuelPoint Initial, double HeatingValue);
-internal sealed record CompiledFuelLink(int Component, int A, int B, double Conductance, bool Heat, double WallCapacity);
+internal sealed record CompiledFuelLink(int Component, int A, int B, double Conductance, bool Heat, double WallCapacity, bool OneWay);
 
 internal sealed class EquilibriumFuelState
 {
     internal readonly double[] Mass, MassCorrection, Energy, EnergyCorrection;
+    internal readonly double[]? ReferenceVolume;
     internal readonly double[] Flow, VolumeFlow, Transferred, TransferCorrection, Enthalpy, EnthalpyCorrection, Entropy, EntropyCorrection;
-    internal EquilibriumFuelState(int volumes, int links)
+    internal EquilibriumFuelState(int volumes, int links, bool moving = false)
     {
+        ReferenceVolume = moving ? new double[volumes] : null;
         Mass = new double[volumes]; MassCorrection = new double[volumes]; Energy = new double[volumes]; EnergyCorrection = new double[volumes];
         Flow = new double[links]; VolumeFlow = new double[links]; Transferred = new double[links]; TransferCorrection = new double[links];
         Enthalpy = new double[links]; EnthalpyCorrection = new double[links]; Entropy = new double[links]; EntropyCorrection = new double[links];
     }
     internal void CopyFrom(EquilibriumFuelState other)
     {
+        if (ReferenceVolume is not null) Array.Copy(other.ReferenceVolume!, ReferenceVolume, Mass.Length);
         Array.Copy(other.Mass, Mass, Mass.Length); Array.Copy(other.MassCorrection, MassCorrection, Mass.Length);
         Array.Copy(other.Energy, Energy, Energy.Length); Array.Copy(other.EnergyCorrection, EnergyCorrection, Energy.Length);
         Array.Copy(other.Flow, Flow, Flow.Length); Array.Copy(other.VolumeFlow, VolumeFlow, Flow.Length);
@@ -53,6 +56,7 @@ internal sealed class EquilibriumFuelState
     {
         for (int i = 0; i < Mass.Length; ++i)
             if (Mass[i] <= 0 || !GearReference.Finite(Mass[i], MassCorrection[i], Energy[i], EnergyCorrection[i])) return false;
+        if (ReferenceVolume is not null) foreach (double value in ReferenceVolume) if (!Numeric.Finite(value) || value <= 0) return false;
         for (int i = 0; i < Flow.Length; ++i)
             if (!GearReference.Finite(Flow[i], VolumeFlow[i], Transferred[i], TransferCorrection[i]) ||
                 !GearReference.Finite(Enthalpy[i], EnthalpyCorrection[i], Entropy[i], EntropyCorrection[i])) return false;
@@ -60,6 +64,7 @@ internal sealed class EquilibriumFuelState
     }
     internal ulong Hash(ulong hash)
     {
+        if (ReferenceVolume is not null) foreach (double value in ReferenceVolume) hash = Numeric.Hash(hash, value);
         for (int i = 0; i < Mass.Length; ++i)
         { hash = Numeric.Hash(hash, Mass[i]); hash = Numeric.Hash(hash, MassCorrection[i]); hash = Numeric.Hash(hash, Energy[i]); hash = Numeric.Hash(hash, EnergyCorrection[i]); }
         for (int i = 0; i < Flow.Length; ++i)
@@ -116,12 +121,12 @@ public sealed partial class CompiledModel
         var links = new List<CompiledFuelLink>();
         for (int i = 0; i < Components.Length; ++i)
         {
-            var c = Components[i]; if (c.Kind is not (ComponentKind.FuelRestriction or ComponentKind.FuelHeatLink)) continue;
+            var c = Components[i]; if (c.Kind is not (ComponentKind.FuelRestriction or ComponentKind.FuelHeatLink or ComponentKind.FuelCheckValve)) continue;
             int a = FuelByNode[c.A]; bool heat = c.Kind == ComponentKind.FuelHeatLink;
             int b = heat ? Nodes[c.B].Index : FuelByNode[c.B];
             if (!heat) Require(FuelCompatible(FuelVolumes[a], FuelVolumes[b]), DiagnosticCode.Connection, c.Id, "fuel.material",
                 "Connected fuel volumes require equal density, caloric/phase reference, temperature limits and heating value.");
-            FuelLinkByComponent[i] = links.Count; links.Add(new(i, a, b, c.P0, heat, heat ? Nodes[c.B].Storage : 0));
+            FuelLinkByComponent[i] = links.Count; links.Add(new(i, a, b, c.P0, heat, heat ? Nodes[c.B].Storage : 0, c.Kind == ComponentKind.FuelCheckValve));
         }
         FuelLinks = links.ToArray();
     }
@@ -155,7 +160,7 @@ internal sealed class EquilibriumFuelSolver(CompiledModel model)
             var link = model.FuelLinks[i];
             if (link.Heat)
             {
-                if (model.FuelVolumes[link.A].Law.AdvanceHeat(state.Mass[link.A], state.Energy[link.A], temperature[link.B], link.WallCapacity,
+                if (model.FuelVolumes[link.A].Law.AdvanceHeatAtReferenceVolume(state.Mass[link.A], state.Energy[link.A], Reference(model.FuelVolumes[link.A], state, link.A), temperature[link.B], link.WallCapacity,
                     link.Conductance, seconds, out var heat) != FuelVolumeStatus.Success) return false;
                 Numeric.Accumulate(heat.HeatFromWallJoules, ref state.Energy[link.A], ref state.EnergyCorrection[link.A]);
                 temperature[link.B] = heat.WallTemperatureKelvin;
@@ -169,10 +174,12 @@ internal sealed class EquilibriumFuelSolver(CompiledModel model)
     }
 
     internal static bool Point(CompiledFuelVolume volume, EquilibriumFuelState state, int slot, out CompliantFuelPoint point) =>
-        volume.Law.Flash(state.Mass[slot], state.Energy[slot], out point) == FuelVolumeStatus.Success;
+        volume.Law.FlashAtReferenceVolume(state.Mass[slot], state.Energy[slot], Reference(volume, state, slot), out point) == FuelVolumeStatus.Success;
+
+    private static double Reference(CompiledFuelVolume volume, EquilibriumFuelState state, int slot) => state.ReferenceVolume is null ? volume.Law.ReferenceVolumeCubicMeters : state.ReferenceVolume[slot];
 
     // Partial derivatives at fixed M,E, including elastic storage and coexistence.
-    internal static void Derivatives(CompliantFuelVolume law, CompliantFuelPoint p, out double pm, out double pe, out double hm, out double he, out double vm, out double ve)
+    internal static void Derivatives(CompliantFuelVolume law, CompliantFuelPoint p, out double pm, out double pe, out double hm, out double he, out double vm, out double ve, double referenceVolumeCubicMeters)
     {
         double r = law.Material.GasConstantJoulesPerKilogramKelvin, density = law.LiquidDensityKilogramsPerCubicMeter;
         double cv = law.Material.Caloric.VaporSpecificHeatJoulesPerKilogramKelvin, cl = law.Material.Caloric.LiquidSpecificHeatJoulesPerKilogramKelvin;
@@ -183,7 +190,7 @@ internal sealed class EquilibriumFuelSolver(CompiledModel model)
             double direct;
             if (p.Phase == FuelVolumePhase.Vapor)
             {
-                double denominator = law.ReferenceVolumeCubicMeters + 2 * law.ComplianceCubicMetersPerPascal * p.PressurePascals;
+                double denominator = referenceVolumeCubicMeters + 2 * law.ComplianceCubicMetersPerPascal * p.PressurePascals;
                 direct = r * p.TemperatureKelvin / denominator; pt = p.MassKilograms * r / denominator;
                 em = cv * p.TemperatureKelvin + law.ComplianceCubicMetersPerPascal * p.PressurePascals * direct;
             }
@@ -204,26 +211,35 @@ internal sealed class EquilibriumFuelSolver(CompiledModel model)
     private bool Transfer(EquilibriumFuelState state, int slot, CompiledFuelLink link, double kh)
     {
         if (!Point(model.FuelVolumes[link.A], state, link.A, out var pa) || !Point(model.FuelVolumes[link.B], state, link.B, out var pb)) return false;
-        if (pa.PressurePascals == pb.PressurePascals || kh == 0) return true;
+        if (pa.PressurePascals == pb.PressurePascals || kh == 0 || link.OneWay && pa.PressurePascals < pb.PressurePascals) return true;
         bool forward = pa.PressurePascals > pb.PressurePascals;
         int source = forward ? link.A : link.B, sink = forward ? link.B : link.A;
         var a = model.FuelVolumes[source]; var b = model.FuelVolumes[sink];
         double m0 = state.Mass[source], m1 = state.Mass[sink], e0 = state.Energy[source], e1 = state.Energy[sink];
         double massScale = Math.Min(m0, m1), energyScale = Math.Max(Math.Abs(e0) + Math.Abs(e1), massScale * a.Law.Material.Caloric.LiquidSpecificHeatJoulesPerKilogramKelvin * pa.TemperatureKelvin);
+        double referenceA = Reference(a, state, source), referenceB = Reference(b, state, sink);
+        double maximumMassB = b.Law.LiquidDensityKilogramsPerCubicMeter * (referenceB + b.Law.ComplianceCubicMetersPerPascal * b.Law.MaximumPressurePascals);
         double q = 0, energy = 0;
         bool Evaluate(double mass, double transfer, bool derivative, out CompliantFuelPoint left, out CompliantFuelPoint right, out double r0, out double r1, out double norm)
         {
             left = right = default; r0 = r1 = norm = double.PositiveInfinity;
-            if (mass < 0 || mass >= m0 || m1 + mass > b.Law.MaximumMassKilograms ||
-                a.Law.Flash(m0 - mass, e0 - transfer, out left) != FuelVolumeStatus.Success ||
-                b.Law.Flash(m1 + mass, e1 + transfer, out right) != FuelVolumeStatus.Success) return false;
+            if (mass < 0 || mass >= m0 || m1 + mass > maximumMassB ||
+                a.Law.FlashAtReferenceVolume(m0 - mass, e0 - transfer, referenceA, out left) != FuelVolumeStatus.Success ||
+                b.Law.FlashAtReferenceVolume(m1 + mass, e1 + transfer, referenceB, out right) != FuelVolumeStatus.Success) return false;
             double v = left.VolumeCubicMeters / left.MassKilograms, dp = left.PressurePascals - right.PressurePascals;
             r0 = mass - kh * dp / v; r1 = transfer - mass * left.SpecificEnthalpyJoulesPerKilogram;
-            norm = Math.Max(Math.Abs(r0) / massScale, Math.Abs(r1) / energyScale);
+            if (model.HasFuelChambers || link.OneWay)
+            {
+                double massTolerance = 128 * GearReference.Epsilon * (mass + kh * (left.PressurePascals + right.PressurePascals) * left.MassKilograms / left.VolumeCubicMeters);
+                double energyTolerance = 128 * GearReference.Epsilon * (Math.Abs(transfer) + mass * (Math.Abs(left.SpecificEnthalpyJoulesPerKilogram) + left.HeatCapacityJoulesPerKelvin * left.TemperatureKelvin / left.MassKilograms));
+                if (!Numeric.Finite(massTolerance) || !Numeric.Finite(energyTolerance)) return false;
+                norm = Math.Max(Math.Abs(r0) / massTolerance, energyTolerance == 0 ? (r1 == 0 ? 0 : double.PositiveInfinity) : Math.Abs(r1) / energyTolerance);
+            }
+            else norm = Math.Max(Math.Abs(r0) / massScale, Math.Abs(r1) / energyScale);
             if (derivative)
             {
-                Derivatives(a.Law, left, out double am, out double ae, out double hm, out double he, out double vm, out double ve);
-                Derivatives(b.Law, right, out double bm, out double be, out _, out _, out _, out _);
+                Derivatives(a.Law, left, out double am, out double ae, out double hm, out double he, out double vm, out double ve, referenceA);
+                Derivatives(b.Law, right, out double bm, out double be, out _, out _, out _, out _, referenceB);
                 _jacobian[0, 0] = 1 + kh / v * (am + bm - dp * vm / v);
                 _jacobian[0, 1] = kh / v * (ae + be - dp * ve / v) * energyScale / massScale;
                 _jacobian[1, 0] = (-left.SpecificEnthalpyJoulesPerKilogram + mass * hm) * massScale / energyScale;

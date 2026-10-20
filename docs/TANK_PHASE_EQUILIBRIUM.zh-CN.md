@@ -27,7 +27,7 @@ U = (M_c + m_v) cv T + m_l (cl T + a)
 
 ## 证据与限制
 
-`equilibrium-tank-supply` 演练泵反转、含燃料通气和有限热壁。`equilibrium-tank-fired-cylinder` 将同类供给接入点火发动机。验证涵盖独立熵最大化、化学势及热容导数、联立 ODE 细化、完整账本、回放、回滚与分配检查。资产 v32 保留该标志，并读取 v1-v31。
+`equilibrium-tank-supply` 演练泵反转、含燃料通气和有限热壁。`equilibrium-tank-fired-cylinder` 将同类供给接入点火发动机。验证涵盖独立熵最大化、化学势及热容导数、联立 ODE 细化、完整账本、回放、回滚与分配检查。资产 v33 保留该标志，并读取 v1-v32。
 
 泵、传热及通气耦合算例验证了一阶收敛。供给端两相均保持在声明温度区间内，总密度与液体密度之间保留 binary64 舍入裕量。常密度/共用气体属性、瞬时平衡和平面界面是研究近似。真实混合物、表面张力、晃动、有限速率动力学、实测标定与实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
 

@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 32
+## Текущая версия 33
+
+`fuel_chamber` связывает фактический вал с конечной камерой топлива. Входной и выходной `fuel_check_valve` обеспечивают наполнение и подачу по перепаду давления. Жидкость, пар и упругая энергия используют одно замыкание. При недостаточном притоке камера может испарять топливо на всасывании; подача следует рассчитанным массе и давлению.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[Фазоразрешающий топливный насос с приводом от вала](FUEL_CHAMBER_PUMP.ru.md)
+
+
+## Сохранённая версия 32
 
 Домен `fuel` переносит чистую жидкость и пар вместе в конечных упругих сосудах. Каждый сосуд независимо хранит полную массу и калорическую плюс упругую энергию; фазовый flash определяет температуру, давление и доли пара. `fuel_restriction` обменивает однородную среду донора, `fuel_heat_link` обменивается теплом с конечным тепловым узлом. Химическая энергия теплоты сгорания учитывается отдельно.
 

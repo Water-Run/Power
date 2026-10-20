@@ -31,7 +31,7 @@ flowchart LR
 | Dokument | Worum es geht |
 |---|---|
 | [Agent-API](AGENT_API.de.md) | MCP-Werkzeuge, Revisionen, Fehler und die Operationsfolge |
-| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v32 und die Leser für v1 bis v31 |
+| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v33 und die Leser für v1 bis v32 |
 | [Native Zig-Grenze](NATIVE_ZIG.de.md) | Die archivierten Zig-Prototypen und das versionierte ABI |
 
 ## Motor und Kraftstoff
@@ -54,6 +54,7 @@ flowchart LR
 | [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md) | Endliche Flüssigkeitsverdrängung, Druckkorrektur und dampfführende Entlüftung |
 | [Referenz für ein nachgiebiges Kraftstoffvolumen](COMPLIANT_FUEL_VOLUME.de.md) | Flüssigkeit/Dampf-Gleichgewicht, elastischer Speicher und konservativer Wärmeaustausch mit endlichem Bad |
 | [Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md) | Homogener Zweiphasen-Enthalpietransport, endliche Wandwärme und vollständige Bilanzen |
+| [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md) | Endliche Kammerfüllung, Phasenwechsel und konservative Wellen-Druckarbeit |
 
 ## Getriebe
 

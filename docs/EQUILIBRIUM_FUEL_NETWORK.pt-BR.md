@@ -32,10 +32,10 @@ Termodinâmica compatível e condutância positiva movida por pressão dão prod
 
 Pedir `equilibrium-fuel-network` ou `electrothermal-fuel-network` pelo MCP ou executar o mesmo JSON pela CLI. Ler `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy`, `specific_enthalpy`. Aqui `internal_energy` inclui parede elástica e a energia química é separada. Os elos mostram vazões com sinal, massa acumulada, `transport_energy` e mudança de entropia do par.
 
-Os laboratórios cobrem descarga líquida em coexistência, fluxo reverso, abertura e calor finito/eletromecânico. Exponencial independente de pressão líquida, EDO bifásica simultânea massa/entalpia/calor, reversão térmica e captura especulativa da embreagem verificam precisão e composição. Artefatos e MCP real preservam todos os valores e hashes. Asset v32 guarda propriedades e lê v1-v31. Unity Editor/Play/Player/IL2CPP real segue não verificado.
+Os laboratórios cobrem descarga líquida em coexistência, fluxo reverso, abertura e calor finito/eletromecânico. Exponencial independente de pressão líquida, EDO bifásica simultânea massa/entalpia/calor, reversão térmica e captura especulativa da embreagem verificam precisão e composição. Artefatos e MCP real preservam todos os valores e hashes. Asset v33 guarda propriedades e lê v1-v32. Unity Editor/Play/Player/IL2CPP real segue não verificado.
 
 ## Trabalho restante
 
-Os limites de material e deformação representável do fechamento continuam válidos. Parâmetros permanecem `unverified`. Enchimento de bomba e trabalho de eixo, conexão de injetor, inércia local, escoamento crítico, atraso de nucleação, deslizamento e medidas de misturas reais seguem separados. Os rails de injetor alimentados por bomba mantêm o caminho líquido separado até o acoplamento.
+O transporte agora compõe com `fuel_chamber` por eixo e `fuel_check_valve` ideal. Injetor, inércia/escoamento crítico e misturas reais medidas seguem separados. Os parâmetros são `unverified`. [Bomba de combustível com mudança de fase acionada por eixo](FUEL_CHAMBER_PUMP.pt-BR.md)
 
 [Modelica: two-port transport](https://doc.modelica.org/om/Modelica.Fluid.Interfaces.PartialTwoPortTransport.html) · [CompliantFuelVolume](COMPLIANT_FUEL_VOLUME.pt-BR.md) · [VALIDATION.md](VALIDATION.pt-BR.md)

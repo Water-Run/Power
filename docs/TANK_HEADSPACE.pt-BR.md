@@ -10,7 +10,7 @@ O solver acoplado troca trabalho de pressão entre eixo, trilho e gás sem fonte
 
 ## Evidência e limites
 
-`vented-tank-liquid-cylinder` e `vented-tank-needle-cylinder` usam tanque 1513, gás 1520 e entrada de ventilação 960. Asset v32 guarda geometria e lê v1-v31. Passam trabalho/derivadas analíticos, convergência ODE independente, balanços, replay portable/MCP, rollback e passos sem alocação.
+`vented-tank-liquid-cylinder` e `vented-tank-needle-cylinder` usam tanque 1513, gás 1520 e entrada de ventilação 960. Asset v33 guarda geometria e lê v1-v32. Passam trabalho/derivadas analíticos, convergência ODE independente, balanços, replay portable/MCP, rollback e passos sem alocação.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 

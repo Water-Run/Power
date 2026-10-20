@@ -42,7 +42,7 @@ Windows 使用同一条 `dotnet` 命令,以及指向 DLL 的绝对路径。生�
 
 ## 工具与结果
 
-智能体 API 版本 0.36.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 49 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 50 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v32`，并保留 v1-v31 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
+智能体 API 版本 0.36.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 51 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 52 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v33`，并保留 v1-v32 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
 
 | 工具 | 作用 |
 |---|---|
@@ -292,7 +292,7 @@ flowchart TD
 
 `at_controller` 接受 [-1,4] 范围内的整数目标挡位；零表示空挡。它管理五组充油/泄压阀以及可选的变矩器锁止支路。支路顺序为行星架输入、小太阳轮输入、大太阳轮输入、行星架制动、大太阳轮制动，最后是锁止。
 
-示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v32 保留支路、增益和时钟，并可读取 v1-v31。
+示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v33 保留支路、增益和时钟，并可读取 v1-v32。
 
 这是研究控制，参数仍为 `unverified`。协调 ECU 扭矩融合、详细传感器/阀模型、完整车辆故障及 OEM 标定仍待完成。托管和 Standard 检查不能证明实际 Unity Editor/Play/Player/IL2CPP 验收。
 
@@ -302,7 +302,7 @@ flowchart TD
 
 `liquid_rail_feed` 将液体喷射器与现有排量泵及显式质量/热边界配对。液压出口节点必须与燃轨的顺应性和初始绝对压力一致。配对泵和喷射器管理该压力节点；其他未计入的流体路径会被拒绝。
 
-资产 v32 保留补给连接和源温度，并读取 v1-v31。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
+资产 v33 保留补给连接和源温度，并读取 v1-v32。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
 
 该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、真实流体混合物热力学、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
 
@@ -361,3 +361,11 @@ flowchart TD
 有界后向 Euler 求解为两个容器确定同一组已接受质量 q 与焓 H。链接按稳定组件 ID 顺序推进，有限热浴换热使用另一守恒子步。耦合方法为一阶。质量、温度或压力越界及求解失败均拒绝整批，包括输入、补偿历史和离合器试探区间。
 
 [相平衡燃料输运网络](EQUILIBRIUM_FUEL_NETWORK.zh-CN.md)
+
+## 轴驱动相变燃料泵
+
+通过 MCP 请求 `equilibrium-fuel-pump` 或 `electric-equilibrium-fuel-pump`，也可用 CLI 运行其 JSON。联合读取腔体质量、温度、压力、蒸气比例、能量、阀交付量与轴速。组件 `volume` 是几何参考体积，节点 `volume` 包含壁膨胀。腔体 `torque`、`hydraulic_power`、`hydraulic_work` 公开内部轴功交换。
+
+封闭机械子步保持质量与熵不变。储能包含流体和弹性壁，因此轴功使用几何参考体积的变化。同一组已接受能量变化在联合机械求解中确定压力转矩，并包含齿轮、变矩器、液压和离合器试探区间。膨胀推动轴；正 `hydraulic_work` 表示轴向腔体做功。不添加额外外部压力源。
+
+[轴驱动相变燃料泵](FUEL_CHAMBER_PUMP.zh-CN.md)

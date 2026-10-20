@@ -480,9 +480,16 @@ namespace Power.Studio
                 if (component.Kind == ComponentKind.Shaft || component.Kind == ComponentKind.ThermalLink)
                     Connection("Component " + component.Id, a, component.NodeB == 0 ? new Vector3(a.x, 0.05f, a.z + 1) : positions[component.NodeB],
                         component.Kind == ComponentKind.Shaft ? steel : copper, component.Kind == ComponentKind.Shaft ? 0.15f : 0.07f);
-                if (component.Kind == ComponentKind.FuelRestriction || component.Kind == ComponentKind.FuelHeatLink)
-                    Connection((component.Kind == ComponentKind.FuelRestriction ? "Fuel restriction " : "Fuel heat link ") + component.Id,
-                        a, positions[component.NodeB], component.Kind == ComponentKind.FuelRestriction ? blue : copper, 0.08f);
+                if (component.Kind == ComponentKind.FuelRestriction || component.Kind == ComponentKind.FuelCheckValve || component.Kind == ComponentKind.FuelHeatLink)
+                    Connection((component.Kind == ComponentKind.FuelHeatLink ? "Fuel heat link " : "Fuel restriction ") + component.Id,
+                        a, positions[component.NodeB], component.Kind == ComponentKind.FuelHeatLink ? copper : blue, 0.08f);
+                if (component.Kind == ComponentKind.FuelChamber)
+                {
+                    Vector3 fuel = positions[component.NodeB], center = (a + fuel) * 0.5f + Vector3.up * 0.6f;
+                    Shape("Fuel chamber " + component.Id, PrimitiveType.Cylinder, center, new Vector3(0.7f, 0.4f, 0.7f), copper);
+                    Connection("Fuel chamber shaft " + component.Id, a, center, steel, 0.1f);
+                    Connection("Fuel chamber port " + component.Id, center, fuel, blue, 0.08f);
+                }
                 if (component.Kind == ComponentKind.GasOrifice)
                 {
                     Vector3 b = component.NodeB == 0 ? a + new Vector3(0, 0, 1.5f) : positions[component.NodeB];

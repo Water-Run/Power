@@ -32,10 +32,10 @@ Kompatible Thermodynamik und positiver druckgetriebener Leitwert ergeben nichtne
 
 `equilibrium-fuel-network` oder `electrothermal-fuel-network` per MCP anfordern oder dasselbe JSON per CLI ausführen. Pro Behälter `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy` und `specific_enthalpy` lesen. `internal_energy` enthält die elastische Wand; chemische Energie bleibt separat. Verbindungen zeigen vorzeichenbehaftete Flüsse, kumulierte Masse, `transport_energy` und Paarentropieänderung.
 
-Die Labore prüfen Flüssigkeitsaustrag in Koexistenz, Rückfluss, Öffnungswechsel und endliche Wand-/elektromechanische Wärme. Unabhängige Flüssigkeitsdruckexponentiallösung, gleichzeitige Zweiphasen-Massen-/Enthalpie-/Wärme-ODE, wärmegetriebene Umkehr und spekulativer Kupplungsfang prüfen Genauigkeit und Zusammensetzung. Assets und tatsächliches MCP bewahren jeden Abtastwert und Hash. Asset v32 speichert Stoffdaten und liest v1-v31. Tatsächliches Unity Editor/Play/Player/IL2CPP bleibt ungeprüft.
+Die Labore prüfen Flüssigkeitsaustrag in Koexistenz, Rückfluss, Öffnungswechsel und endliche Wand-/elektromechanische Wärme. Unabhängige Flüssigkeitsdruckexponentiallösung, gleichzeitige Zweiphasen-Massen-/Enthalpie-/Wärme-ODE, wärmegetriebene Umkehr und spekulativer Kupplungsfang prüfen Genauigkeit und Zusammensetzung. Assets und tatsächliches MCP bewahren jeden Abtastwert und Hash. Asset v33 speichert Stoffdaten und liest v1-v32. Tatsächliches Unity Editor/Play/Player/IL2CPP bleibt ungeprüft.
 
 ## Verbleibende Arbeit
 
-Stoff- und darstellbare Wandverformungsgrenzen des Abschlusses gelten weiter. Parameter bleiben `unverified`. Pumpenfüllung und Wellenarbeit, Injektoranbindung, lokale Trägheit, kritische Strömung, Keimbildungsverzug, Phasenschlupf und reale Gemischmessungen bleiben eigene Aufgaben. Bestehende pumpengespeiste Injektorrails behalten ihren getrennten Flüssigkeitspfad bis zur Anbindung.
+Kraftstofftransport komponiert jetzt mit wellengetriebenem `fuel_chamber` und idealem `fuel_check_valve`. Injektor, lokale Trägheit/kritische Strömung und gemessene reale Gemische bleiben gesondert. Parameter bleiben `unverified`. [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
 
 [Modelica: two-port transport](https://doc.modelica.org/om/Modelica.Fluid.Interfaces.PartialTwoPortTransport.html) · [CompliantFuelVolume](COMPLIANT_FUEL_VOLUME.de.md) · [VALIDATION.md](VALIDATION.de.md)

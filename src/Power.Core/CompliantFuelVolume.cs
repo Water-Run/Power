@@ -11,7 +11,8 @@ public enum FuelVolumeStatus
     TemperatureOutOfRange,
     MassOutOfRange,
     EnergyOutOfRange,
-    NoConvergence
+    NoConvergence,
+    EntropyOutOfRange
 }
 
 public enum FuelVolumePhase { Liquid, LiquidVapor, Vapor }
@@ -39,7 +40,7 @@ public readonly record struct CompliantFuelHeatTransfer(CompliantFuelPoint Fluid
 /// Liquid is incompressible, vapor is ideal, and the massless elastic wall stores C p² / 2.
 /// This local constitutive reference has no pump, nozzle, transport or simulation clock.
 /// </summary>
-public sealed class CompliantFuelVolume
+public sealed partial class CompliantFuelVolume
 {
     public FuelPhaseEquilibrium Material { get; }
     public double ReferenceVolumeCubicMeters { get; }
@@ -47,6 +48,7 @@ public sealed class CompliantFuelVolume
     public double LiquidDensityKilogramsPerCubicMeter { get; }
     public double MaximumPressurePascals { get; }
     public double MaximumMassKilograms { get; }
+    private readonly double _minimumCoexistencePressure;
 
     public CompliantFuelVolume(FuelPhaseEquilibrium material, double referenceVolumeCubicMeters,
         double complianceCubicMetersPerPascal, double liquidDensityKilogramsPerCubicMeter,
@@ -75,6 +77,7 @@ public sealed class CompliantFuelVolume
             !Numeric.Finite(material.Caloric.VaporSpecificHeatJoulesPerKilogramKelvin + r) ||
             (referenceVolumeCubicMeters + complianceCubicMetersPerPascal * minimum.PressurePascals) - referenceVolumeCubicMeters < 128 * GearReference.Epsilon * referenceVolumeCubicMeters)
             throw new ArgumentException("Use representable vessel/material scales and a pressure limit covering the low-density saturation curve over the complete temperature interval.");
+        _minimumCoexistencePressure = minimum.PressurePascals;
         if (Evaluate(material.MinimumTemperatureKelvin, MaximumMassKilograms, out var cold) != FuelVolumeStatus.Success ||
             Evaluate(material.MaximumTemperatureKelvin, MaximumMassKilograms, out var hot) != FuelVolumeStatus.Success ||
             !Numeric.Finite(hot.StoredEnergyJoules - cold.StoredEnergyJoules))
@@ -116,17 +119,25 @@ public sealed class CompliantFuelVolume
     }
 
     /// <summary>Equilibrium at declared total mass and temperature, including elastic wall energy.</summary>
-    public FuelVolumeStatus Evaluate(double temperatureKelvin, double massKilograms, out CompliantFuelPoint point)
+    public FuelVolumeStatus Evaluate(double temperatureKelvin, double massKilograms, out CompliantFuelPoint point) =>
+        EvaluateAtReferenceVolume(temperatureKelvin, massKilograms, ReferenceVolumeCubicMeters, out point);
+
+    /// <summary>Evaluate the same immutable material and compliance at an explicit geometric reference volume.</summary>
+    public FuelVolumeStatus EvaluateAtReferenceVolume(double temperatureKelvin, double massKilograms, double referenceVolumeCubicMeters, out CompliantFuelPoint point)
     {
         point = default;
+        if (!ReferenceVolumeValid(referenceVolumeCubicMeters)) return FuelVolumeStatus.InvalidInput;
+        double maximumMass = referenceVolumeCubicMeters == ReferenceVolumeCubicMeters ? MaximumMassKilograms :
+            LiquidDensityKilogramsPerCubicMeter * (referenceVolumeCubicMeters + ComplianceCubicMetersPerPascal * MaximumPressurePascals);
+        if (!Numeric.Finite(maximumMass)) return FuelVolumeStatus.InvalidInput;
         if (!Numeric.Finite(massKilograms) || !Numeric.Finite(temperatureKelvin)) return FuelVolumeStatus.InvalidInput;
-        if (massKilograms <= 0 || massKilograms > MaximumMassKilograms) return FuelVolumeStatus.MassOutOfRange;
+        if (massKilograms <= 0 || massKilograms > maximumMass) return FuelVolumeStatus.MassOutOfRange;
         var status = Saturation(temperatureKelvin, out var saturation);
         if (status != FuelVolumeStatus.Success) return status;
         double density = LiquidDensityKilogramsPerCubicMeter, r = Material.GasConstantJoulesPerKilogramKelvin;
         double cv = Material.Caloric.VaporSpecificHeatJoulesPerKilogramKelvin, cl = Material.Caloric.LiquidSpecificHeatJoulesPerKilogramKelvin;
         double a = Material.Caloric.LiquidEnergyOffsetJoulesPerKilogram, compliance = ComplianceCubicMetersPerPascal;
-        double volume = ReferenceVolumeCubicMeters + compliance * saturation.PressurePascals;
+        double volume = referenceVolumeCubicMeters + compliance * saturation.PressurePascals;
         double liquidLimit = density * volume, vaporLimit = volume / saturation.VaporSpecificVolumeCubicMetersPerKilogram;
         double pressure, vapor, capacity;
         FuelVolumePhase phase;
@@ -135,17 +146,17 @@ public sealed class CompliantFuelVolume
             phase = FuelVolumePhase.Liquid; vapor = 0;
             // The declared upper mass is formed from the declared upper pressure.
             // Retain that endpoint when tiny wall compliance makes the inverse ill-conditioned.
-            pressure = massKilograms == MaximumMassKilograms ? MaximumPressurePascals :
-                (massKilograms / density - ReferenceVolumeCubicMeters) / compliance;
+            pressure = massKilograms == maximumMass ? MaximumPressurePascals :
+                (massKilograms / density - referenceVolumeCubicMeters) / compliance;
             capacity = massKilograms * cl;
         }
         else if (massKilograms <= vaporLimit)
         {
             phase = FuelVolumePhase.Vapor; vapor = massKilograms;
-            double idealPressure = massKilograms / ReferenceVolumeCubicMeters * r * temperatureKelvin;
-            double ratio = compliance / ReferenceVolumeCubicMeters * idealPressure;
+            double idealPressure = massKilograms / referenceVolumeCubicMeters * r * temperatureKelvin;
+            double ratio = compliance / referenceVolumeCubicMeters * idealPressure;
             pressure = idealPressure / (.5 + Math.Sqrt(.25 + ratio));
-            double pressureSlope = massKilograms * r / (ReferenceVolumeCubicMeters + 2 * compliance * pressure);
+            double pressureSlope = massKilograms * r / (referenceVolumeCubicMeters + 2 * compliance * pressure);
             capacity = massKilograms * cv + compliance * pressure * pressureSlope;
         }
         else
@@ -158,7 +169,7 @@ public sealed class CompliantFuelVolume
             capacity = (massKilograms - vapor) * cl + vapor * cv + vaporSlope * Material.LatentInternalEnergy(temperatureKelvin) +
                 compliance * pressure * saturation.PressureDerivativePascalsPerKelvin;
         }
-        volume = ReferenceVolumeCubicMeters + compliance * pressure;
+        volume = referenceVolumeCubicMeters + compliance * pressure;
         double liquid = massKilograms - vapor, gasVolume = vapor == 0 ? 0 : vapor * r * temperatureKelvin / pressure;
         double liquidEnergy = cl * temperatureKelvin + a, vaporEnergy = cv * temperatureKelvin;
         double fluidEnergy = liquid * liquidEnergy + vapor * vaporEnergy;
@@ -177,29 +188,37 @@ public sealed class CompliantFuelVolume
     }
 
     /// <summary>Fixed total mass and fluid-plus-wall energy flash. No energy or mass boundary is inferred.</summary>
-    public FuelVolumeStatus Flash(double massKilograms, double storedEnergyJoules, out CompliantFuelPoint point)
+    public FuelVolumeStatus Flash(double massKilograms, double storedEnergyJoules, out CompliantFuelPoint point) =>
+        FlashAtReferenceVolume(massKilograms, storedEnergyJoules, ReferenceVolumeCubicMeters, out point);
+
+    public FuelVolumeStatus FlashAtReferenceVolume(double massKilograms, double storedEnergyJoules, double referenceVolumeCubicMeters, out CompliantFuelPoint point)
     {
         point = default;
         if (!Numeric.Finite(storedEnergyJoules)) return FuelVolumeStatus.InvalidInput;
-        var status = Solve(massKilograms, storedEnergyJoules, 0, out var result);
+        var status = Solve(massKilograms, storedEnergyJoules, 0, out var result, referenceVolumeCubicMeters);
         return status == FuelVolumeStatus.Success ? RetainEnergy(result, storedEnergyJoules, out point) : status;
     }
 
     /// <summary>Finite-bath heat exchange by backward Euler; phase change and wall elasticity share the energy solve.</summary>
     public FuelVolumeStatus AdvanceHeat(double massKilograms, double storedEnergyJoules,
         double wallTemperatureKelvin, double wallCapacityJoulesPerKelvin, double conductanceWattsPerKelvin,
-        double seconds, out CompliantFuelHeatTransfer transfer)
+        double seconds, out CompliantFuelHeatTransfer transfer) =>
+        AdvanceHeatAtReferenceVolume(massKilograms, storedEnergyJoules, ReferenceVolumeCubicMeters, wallTemperatureKelvin,
+            wallCapacityJoulesPerKelvin, conductanceWattsPerKelvin, seconds, out transfer);
+
+    public FuelVolumeStatus AdvanceHeatAtReferenceVolume(double massKilograms, double storedEnergyJoules, double referenceVolumeCubicMeters,
+        double wallTemperatureKelvin, double wallCapacityJoulesPerKelvin, double conductanceWattsPerKelvin, double seconds, out CompliantFuelHeatTransfer transfer)
     {
         transfer = default;
         if (!GearReference.Finite(wallTemperatureKelvin, wallCapacityJoulesPerKelvin, conductanceWattsPerKelvin, seconds) ||
             wallTemperatureKelvin <= 0 || wallCapacityJoulesPerKelvin <= 0 || conductanceWattsPerKelvin < 0 || seconds < 0)
             return FuelVolumeStatus.InvalidInput;
-        var status = Flash(massKilograms, storedEnergyJoules, out var initial);
+        var status = FlashAtReferenceVolume(massKilograms, storedEnergyJoules, referenceVolumeCubicMeters, out var initial);
         if (status != FuelVolumeStatus.Success) return status;
         double kh = conductanceWattsPerKelvin * seconds;
         if (!Numeric.Finite(kh)) return FuelVolumeStatus.InvalidInput;
         double alpha = kh == 0 ? 0 : wallCapacityJoulesPerKelvin / (1 + wallCapacityJoulesPerKelvin / kh);
-        status = Solve(massKilograms, storedEnergyJoules + alpha * wallTemperatureKelvin, alpha, out var result);
+        status = Solve(massKilograms, storedEnergyJoules + alpha * wallTemperatureKelvin, alpha, out var result, referenceVolumeCubicMeters);
         if (status != FuelVolumeStatus.Success) return status;
         double heat = alpha * (wallTemperatureKelvin - result.TemperatureKelvin);
         status = RetainEnergy(result, storedEnergyJoules + heat, out result);
@@ -214,14 +233,14 @@ public sealed class CompliantFuelVolume
         return FuelVolumeStatus.Success;
     }
 
-    private FuelVolumeStatus Solve(double mass, double target, double extraCapacity, out CompliantFuelPoint point)
+    private FuelVolumeStatus Solve(double mass, double target, double extraCapacity, out CompliantFuelPoint point, double referenceVolumeCubicMeters)
     {
         point = default;
         if (!Numeric.Finite(target)) return FuelVolumeStatus.InvalidInput;
         double lo = Material.MinimumTemperatureKelvin, hi = Material.MaximumTemperatureKelvin;
-        var status = Evaluate(lo, mass, out var lower);
+        var status = EvaluateAtReferenceVolume(lo, mass, referenceVolumeCubicMeters, out var lower);
         if (status != FuelVolumeStatus.Success) return status;
-        status = Evaluate(hi, mass, out var upper);
+        status = EvaluateAtReferenceVolume(hi, mass, referenceVolumeCubicMeters, out var upper);
         if (status != FuelVolumeStatus.Success) return status;
         double lowerEnergy = lower.StoredEnergyJoules + extraCapacity * lo, upperEnergy = upper.StoredEnergyJoules + extraCapacity * hi;
         if (!Numeric.Finite(lowerEnergy) || !Numeric.Finite(upperEnergy)) return FuelVolumeStatus.NoConvergence;
@@ -231,7 +250,7 @@ public sealed class CompliantFuelVolume
         double temperature = lo + (hi - lo) * ((target - lowerEnergy) / (upperEnergy - lowerEnergy));
         for (int iteration = 0; iteration < 80; ++iteration)
         {
-            status = Evaluate(temperature, mass, out var result);
+            status = EvaluateAtReferenceVolume(temperature, mass, referenceVolumeCubicMeters, out var result);
             if (status != FuelVolumeStatus.Success) return status;
             double residual = result.StoredEnergyJoules + extraCapacity * temperature - target;
             double correction = residual / (result.HeatCapacityJoulesPerKelvin + extraCapacity);
@@ -244,6 +263,10 @@ public sealed class CompliantFuelVolume
         }
         return FuelVolumeStatus.NoConvergence;
     }
+
+    private bool ReferenceVolumeValid(double referenceVolume) => Numeric.Finite(referenceVolume) && referenceVolume > 0 &&
+        (referenceVolume + ComplianceCubicMetersPerPascal * _minimumCoexistencePressure) - referenceVolume >=
+            128 * GearReference.Epsilon * referenceVolume;
 
     private static FuelVolumeStatus RetainEnergy(CompliantFuelPoint result, double energy, out CompliantFuelPoint point)
     {

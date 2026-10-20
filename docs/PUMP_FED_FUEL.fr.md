@@ -12,7 +12,7 @@ L'énergie de pression est stockée une seule fois dans le nœud hydraulique. D�
 
 ## Preuves et limites
 
-Le format v32 conserve les liens et la température source et lit v1-v31. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v33 conserve les liens et la température source et lit v1-v32. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -57,3 +57,5 @@ Activer `liquid_fuel_tank.parameters.headspace.phase_equilibrium` avec `true` po
 `evaporated_fuel_mass`, `condensed_fuel_mass` et `mass_flow` signé cumulent le transfert net par pas physique complet. Lire ensemble `vapor_partial_pressure`, `saturation_pressure` corrigée, inventaire liquide et volume gazeux. La pompe aspire seulement le liquide séparé ; transport diphasique pompe/rail, entraînement et NPSH local restent ouverts.
 
 [Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md)
+
+Le transport carburant compose maintenant avec `fuel_chamber` entraîné par arbre et `fuel_check_valve` idéal. Injecteur physique, inertie/blocage sonique et mélanges réels mesurés restent séparés. Les paramètres restent `unverified`. [Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)

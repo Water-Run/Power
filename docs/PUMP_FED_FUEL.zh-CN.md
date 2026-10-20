@@ -12,7 +12,7 @@
 
 ## 证据与限制
 
-资产 v32 保留补给连接和源温度，并读取 v1-v31。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
+资产 v33 保留补给连接和源温度，并读取 v1-v32。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
 
 该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、真实流体混合物热力学、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
 
@@ -57,3 +57,5 @@
 油箱 `evaporated_fuel_mass`、`condensed_fuel_mass` 和带符号 `mass_flow` 按完整物理时间步的净相变量累计。结合读取 `vapor_partial_pressure`、压力修正后的 `saturation_pressure`、液体库存及气体体积。泵只吸取已分离的液体；两相泵/燃轨输运、夹带与局部 NPSH 仍待实现。
 
 [有限体积油箱相平衡](TANK_PHASE_EQUILIBRIUM.zh-CN.md)
+
+燃料域输运现可与轴驱动 `fuel_chamber` 及理想 `fuel_check_valve` 链接组合。物理喷油器交接、局部惯性/临界流及实测真实混合物行为仍需单独推进。参数保持 `unverified`。 [轴驱动相变燃料泵](FUEL_CHAMBER_PUMP.zh-CN.md)

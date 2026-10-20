@@ -12,7 +12,7 @@ La energía de presión se almacena una sola vez en el nodo hidráulico. Caudal 
 
 ## Evidencia y límites
 
-v32 conserva enlaces y temperatura de fuente y lee v1-v31. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v33 conserva enlaces y temperatura de fuente y lee v1-v32. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
 Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
@@ -57,3 +57,5 @@ Activar `liquid_fuel_tank.parameters.headspace.phase_equilibrium` con `true` par
 `evaporated_fuel_mass`, `condensed_fuel_mass` y `mass_flow` con signo cuentan transferencia neta por paso físico completo. Leer juntos `vapor_partial_pressure`, `saturation_pressure` corregida, inventario líquido y volumen gaseoso. La bomba toma líquido separado; transporte bifásico, arrastre de burbujas y NPSH local siguen abiertos.
 
 [Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md)
+
+El transporte se combina ahora con `fuel_chamber` por eje y `fuel_check_valve` ideal. Inyector, inercia/flujo crítico y mezclas reales medidas siguen separados. Los parámetros son `unverified`. [Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)

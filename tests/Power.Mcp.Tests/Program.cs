@@ -846,4 +846,30 @@ foreach (var (name, channel, opening) in new[] { ("equilibrium-fuel-network", "1
     await Call("close_session", new() { ["session_id"] = fuelNetworkSession, ["expected_revision"] = "0" });
     PassGroup("MCP " + name + " / homogeneous two-phase enthalpy transport heat and every portable boundary with independent branches");
 }
+foreach (var (name, channel, opening) in new[] { ("equilibrium-fuel-pump", "100", 0d), ("electric-equilibrium-fuel-pump", "100", 0d) })
+{
+    var fuelPumpDocument = (await Call("get_example_model", new() { ["name"] = name })).GetProperty("data");
+    Require(capabilities.GetProperty("fuel_chamber").GetProperty("component").GetString() == "fuel_chamber", "Moving fuel chamber contract is missing");
+    var fuelPumpReport = (await Call("run_experiment", new() { ["document"] = fuelPumpDocument, ["include_samples"] = true })).GetProperty("data");
+    Require(fuelPumpReport.GetProperty("passed").GetBoolean() && fuelPumpReport.GetProperty("model").GetProperty("fidelity").GetString() == "shaft_driven_equilibrium_fuel_pump", "Fuel pump experiment failed");
+    var fuelPumpExport = (await Call("export_model_asset", new() { ["document"] = fuelPumpDocument })).GetProperty("data");
+    var fuelPumpAsset = AssetCodec.Decode(Convert.FromBase64String(fuelPumpExport.GetProperty("content").GetString()!));
+    Require(fuelPumpAsset.Model.HasFuelChambers && fuelPumpExport.GetProperty("format").GetString() == AssetCodec.FormatName, "Fuel pump flag was lost");
+    var fuelPumpPlayback = fuelPumpAsset.CreatePlayback(); var fuelPumpValues = new Power.Core.Scalar[fuelPumpAsset.Model.OutputCount];
+    foreach (var fuelPumpSample in fuelPumpReport.GetProperty("samples").EnumerateArray())
+    {
+        ulong at = fuelPumpSample.GetProperty("time_ns").GetUInt64();
+        while (fuelPumpPlayback.TimeNanoseconds < at) Require(fuelPumpPlayback.Advance(Math.Min(257 * fuelPumpAsset.Model.StepNanoseconds, at - fuelPumpPlayback.TimeNanoseconds)) == Power.Core.SimulationStatus.Ok, "Fuel pump playback failed");
+        Require(fuelPumpPlayback.ReadSnapshot(fuelPumpValues).StateHash.ToString("x16") == fuelPumpSample.GetProperty("state_hash").GetString() &&
+            fuelPumpValues.All(value => value.Value == fuelPumpSample.GetProperty("values").GetProperty(value.Channel.ToString()).GetDouble()), "Fuel pump replay differs");
+    }
+    string fuelPumpSession = (await Call("create_session", new() { ["document"] = fuelPumpDocument })).GetProperty("data").GetProperty("session_id").GetString()!;
+    string fuelPumpChild = (await Call("fork_session", new() { ["session_id"] = fuelPumpSession, ["expected_revision"] = "0" })).GetProperty("data").GetProperty("session_id").GetString()!;
+    await Call("set_inputs", new() { ["session_id"] = fuelPumpChild, ["expected_revision"] = "0", ["values"] = new[] { new { channel, value = opening } } });
+    await Call("step_session", new() { ["session_id"] = fuelPumpChild, ["expected_revision"] = "1", ["delta_ns"] = "10000000" });
+    Require((await Call("read_snapshot", new() { ["session_id"] = fuelPumpSession })).GetProperty("data").GetProperty("revision").GetString() == "0", "Fuel pump branch changed its parent");
+    await Call("close_session", new() { ["session_id"] = fuelPumpChild, ["expected_revision"] = "2" });
+    await Call("close_session", new() { ["session_id"] = fuelPumpSession, ["expected_revision"] = "0" });
+    PassGroup("MCP " + name + " / phase-resolving shaft-driven chamber work filling and every portable boundary with independent inlet branches");
+}
 Console.WriteLine($"{groupsPassed}/{groupsPassed} MCP integration groups passed against an actual child server process.");

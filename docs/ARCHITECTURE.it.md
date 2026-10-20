@@ -250,7 +250,7 @@ L'[assemblaggio di azionamento AT](AT_HYDRAULIC_ACTUATION.it.md) abbassa i bersa
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v32 conserva percorsi, guadagni e clock e legge v1-v31.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v33 conserva percorsi, guadagni e clock e legge v1-v32.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -260,7 +260,7 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v32 conserva collegamenti e temperatura sorgente e legge v1-v31. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v33 conserva collegamenti e temperatura sorgente e legge v1-v32. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
@@ -321,3 +321,9 @@ Un flash limitato a U,V costanti conserva combustibile ed energia termica. Orifi
 Il dominio `fuel` trasporta insieme liquido puro e vapore in recipienti elastici finiti. Ogni recipiente conserva massa totale ed energia calorica più elastica indipendenti; il flash determina temperatura, pressione e frazioni di vapore. `fuel_restriction` scambia fluido donatore omogeneo, `fuel_heat_link` scambia calore con un nodo termico finito. L’energia chimica del potere calorifico resta separata.
 
 [Rete di trasporto del carburante in equilibrio](EQUILIBRIUM_FUEL_NETWORK.it.md)
+
+## Pompa carburante a cambio di fase azionata da albero
+
+`fuel_chamber` accoppia un albero reale a una camera carburante finita. `fuel_check_valve` di ingresso e uscita forniscono riempimento ed erogazione per pressione. Liquido, vapore ed energia elastica usano la stessa chiusura. Con ingresso insufficiente la camera può evaporare in aspirazione; l’erogazione segue inventario e pressione calcolati.
+
+[Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)

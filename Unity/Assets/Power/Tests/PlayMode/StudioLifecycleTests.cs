@@ -262,6 +262,12 @@ namespace Power.Studio.Tests
         public IEnumerator EquilibriumTankEngineImportsAndReplays() => PumpAssemblyReplay("EquilibriumTankFiredCylinder", "Liquid fuel tank 1513");
 
         [UnityTest]
+        public IEnumerator EquilibriumFuelPumpImportsAndReplays() => PumpAssemblyReplay("EquilibriumFuelPump", "Fuel chamber 12");
+
+        [UnityTest]
+        public IEnumerator ElectricEquilibriumFuelPumpImportsAndReplays() => PumpAssemblyReplay("ElectricEquilibriumFuelPump", "Fuel chamber 12");
+
+        [UnityTest]
         public IEnumerator EquilibriumFuelNetworkImportsAndReplays() => PumpAssemblyReplay("EquilibriumFuelNetwork", "Fuel vessel 1");
 
         [UnityTest]

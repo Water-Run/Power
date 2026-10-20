@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — experimentos sin interfaz"]
     mcp["Power.Mcp — 12 herramientas MCP por stdio"]
-    assets["Power.Assets — .powerasset v32"]
+    assets["Power.Assets — .powerasset v33"]
     unity["Estudio Unity 6.6 — laboratorios 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ El servicio expone doce herramientas con esquemas de entrada y salida:
 |---|---|
 | `get_capabilities` | Descubrir modelos, límites y convenciones de tiempo y revisión. Empieza aquí. |
 | `get_model_schema` | JSON Schema 2020-12 para `power.model.v1` |
-| `get_example_model` | Obtener un modelo sintético editable y su experimento (49 ejemplos) |
+| `get_example_model` | Obtener un modelo sintético editable y su experimento (51 ejemplos) |
 | `validate_model` | Validar un modelo sin ejecutarlo; diagnóstico de reparación estructurado |
 | `run_experiment` | Ejecución sin interfaz y acotada, con repetición por lotes, KPIs y procedencia |
 | `export_model_asset` | Exportar un `.powerasset` portátil |
@@ -147,12 +147,12 @@ Un grafo de investigación Ravigneaux de cuatro rangos añade caminos planetario
 > [!NOTE]
 > Todos los parámetros de ejemplo son `unverified`: valores de investigación, no mediciones calibradas.
 
-Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v32`, con lectores para assets anteriores conservados.
+Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v33`, con lectores para assets anteriores conservados.
 
-Los recipientes de combustible intercambian mezclas líquido/vapor por restricciones disipativas conservativas y enlaces térmicos finitos. Faltan llenado de bomba, eje y descarga del inyector. [Red de transporte de combustible en equilibrio](docs/EQUILIBRIUM_FUEL_NETWORK.es.md)
+Las cámaras finitas intercambian trabajo de presión con ejes y llenan/entregan por restricciones unidireccionales ideales, con fase bajo entrada insuficiente. Falta acoplar inyector físico y receptor. [Bomba de combustible con cambio de fase impulsada por eje](docs/FUEL_CHAMBER_PUMP.es.md)
 
 <details>
-<summary>Laboratorios disponibles (50)</summary>
+<summary>Laboratorios disponibles (52)</summary>
 
 | Nombre de ejemplo (`get_example_model`) | Laboratorio | Qué ejercita |
 |---|---|---|
@@ -206,6 +206,8 @@ Los recipientes de combustible intercambian mezclas líquido/vapor por restricci
 | `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | combustible recirculado con aguja física y reproducción completa |
 | `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | descarga líquida a coexistencia, eventos de válvula y calor de pared finita |
 | `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | transporte inverso de mezcla y calor compartido con un laboratorio electromecánico |
+| `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | entrada insuficiente, formación de vapor y entrega por eje libre |
+| `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | motor CC, llenado líquido alimentado y calor finito de pared del motor |
 
 </details>
 

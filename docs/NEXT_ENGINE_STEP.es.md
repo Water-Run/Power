@@ -4,18 +4,18 @@
 
 ## Punto de continuación
 
-Los recipientes de combustible intercambian mezclas líquido/vapor por restricciones disipativas conservativas y enlaces térmicos finitos. Faltan llenado de bomba, eje y descarga del inyector.
+Las cámaras finitas intercambian trabajo de presión con ejes y llenan/entregan por restricciones unidireccionales ideales, con fase bajo entrada insuficiente. Falta acoplar inyector físico y receptor.
 
-[Red de transporte de combustible en equilibrio](EQUILIBRIUM_FUEL_NETWORK.es.md)
+[Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
 
 ## Próximo incremento
 
-Conectar volúmenes de combustible a llenado de bomba por eje y descarga física del inyector con acoplamiento conservativo de materia, cantidad de movimiento y trabajo. Resolver inercia local de entrada y flujo crítico con referencias independientes. Continuar encendido, admisión/escape, pérdidas, accionamiento de transmisión y ECU/TCU sin considerar esta red un tren motriz completo.
+Conectar bomba a inyector físico y receptores de cilindro/película con transporte bifásico, desplazamiento y trabajo cinético explícitos. Resolver inercia de entrada y flujo crítico con referencias independientes. Continuar encendido, admisión/escape, pérdidas, actuación de transmisión y ECU/TCU hacia el objetivo completo.
 
 ## Aceptación
 
 Exigir referencias analíticas o límite independientes, balances completos de masa/energía y refinamiento adecuado. Preservar rollback de lote, cancelación, ramas, canales estables, replay portable y lectores anteriores. Continuar luego encendido, admisión/escape, pérdidas mecánicas, transmisión y coordinación ECU/TCU.
 
-Siguen vigentes los límites de material y deformación representable del cierre. Los parámetros siguen `unverified`. Llenado de bomba y trabajo del eje, conexión de inyector, inercia local, flujo crítico, retraso de nucleación, deslizamiento y medidas de mezclas reales siguen pendientes. Los rieles de inyector alimentados por bomba conservan su ruta de líquido separado hasta integrarlos.
+Los parámetros siguen `unverified`. Temperatura, presión y volumen representable están limitados durante todo el ciclo. Se asumen líquido incompresible, vapor de pseudoespecie ideal, equilibrio instantáneo a temperatura común y presión exterior de carcasa cero. Inercia local/NPSH, flujo crítico, retraso de nucleación, inercia/histéresis de válvula, mezclas reales y calibración medida siguen abiertos. Inyector físico y trabajo de desplazamiento/cinética del receptor son requisitos separados.
 
 [DEVELOPMENT_STATUS.es.md](DEVELOPMENT_STATUS.es.md) · [ROADMAP.es.md](ROADMAP.es.md) · [VALIDATION.es.md](VALIDATION.es.md)

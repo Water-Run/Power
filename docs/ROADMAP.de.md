@@ -14,7 +14,7 @@ und Desktop-Abnahme brauchen jeweils eigene Nachweise.
 | Verwalteter Kern | Abhängigkeitsfreie Physik mit Doppelziel, Topologie, Einheiten, Ganzzahlzeit, Replay und atomare Transaktionen | Langzeit-Validierung eines integrierten Antriebsstrangs |
 | Agent-Schnittstelle | Schema-definierte MCP-Werkzeuge, strukturierte Diagnosen, Revisionen, Zweige, Abbruch und kompakte Berichte; `list-labs` / `get_capabilities.examples` | Modellierungs- und Regelungsabläufe für den verbleibenden vollen Antriebsstrangumfang |
 | Unity-Studio | Gemeinsamer Modellimport, Laborwiedergabe, schematische 3D-Komponenten und vorbereitete Tests | Tatsächliche Editor-/Play-/Player-/IL2CPP-Nachweise und Desktop-Paketierung |
-| Modellierwerkbank | Portables Asset v32, Leser für v1-v31 und gemeinsame JSON-/CLI-/MCP-Definitionen | Graphbearbeitung, Speichern und wählbare Kanaldiagramme |
+| Modellierwerkbank | Portables Asset v33, Leser für v1-v32 und gemeinsame JSON-/CLI-/MCP-Definitionen | Graphbearbeitung, Speichern und wählbare Kanaldiagramme |
 | Motorphysik | Unabhängige Gasmasse/-energie, Schubkurbelarbeit, zeitgesteuerte Ventile, vorgeschriebene Verbrennung, gasförmige und flüssige Kraftstoffdosierung, endliche nachgiebige Leitungen, Filmverdampfung und physische Nadelansteuerung; [Pumpengespeiste Flüssigkraftstoffschiene](PUMP_FED_FUEL.de.md); endliche Tanks und erhaltende Entlastungsrückläufe; [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md); [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md); [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md) | Schwappen/hydrostatische Form und gemessene Pumpenfüllung/Regelung, verfeinertes magnetisches/elektronisches/Spray-Verhalten, Kopplung endlichen Flüssigkeitsvolumens, Zündungsregelung, detaillierte Saug- und Auslassseite, mechanische Verluste, Thermochemie und gemessene Kalibrierung |
 | Getriebe | Gekoppelte Kupplungen, Zahnräder/Planetensätze, tabellierter Wandler/Überbrückung, Hydraulik sowie DCT-Pfade mit sieben Vorwärtsgängen/Rückwärtsgang und Ravigneaux-Pfade mit vier Vorwärtsgängen/Rückwärtsgang bei aufgelöster Planetendrehung/Bahnträgheit | Nachgiebigkeit, Verluste und Lastverteilung der Verzahnung, DCT-Ansteuerung, vollständige AT-Druck- und Schaltregelung und gemessene Führung, gemessene Kennfelder, Ventil-/Dichtungs-/Kavitationsverhalten und reichere Wandlerdynamik |
 | Regelungen und elektrische Integration | Abgetasteter Druck-PI, Nadelschließregelung und sensorbestätigte gestaffelte DCT-Übergabe, begrenzte Spannung/Tastverhältnis, Stellgliedbesitz, Batterie-Ersatzschaltbild und Zusatzverbraucher; [`at_controller`](AT_CONTROL.de.md) | Abgestimmte ECU-/TCU-Zyklen, Sensoren/Stellglieder, Momentenanforderungen, Fehler, BMS und gemessenes thermisches/elektrisches Verhalten |
@@ -28,13 +28,7 @@ die dort festgehaltene Revision; neue lokale Änderungen brauchen eine eigene Pl
 
 ## Nächste verwaltete Arbeit
 
-Kavitierende Pumpen/Rail-Strömung und lokale Einlassverluste, gemessene Füllung/Regelung und verfeinerte magnetische/elektronische Ansteuerung auflösen. Endliche nachgiebige Quellenmasse
-und Druckenergie, tatsächliche Nadelbewegung, abgetastete Dosisrückführung, Filmnachschub
-und Verdampfung sind umgesetzt. Siehe [den Nadelvertrag](NEEDLE_ACTUATION.de.md) und die [begrenzte Schließvorhersage](CLOSURE_PREDICTION.de.md). Der
-Empfänger exportiert weiterhin Verdrängungsdruckarbeit unter der erklärten Grenze vernachlässigbaren
-Flüssigkeitsvolumens; aufgelöstes Spray und aufgelöste Verdrängung müssen sie durch geprüfte
-Geometrie und Impuls-/Arbeitskopplung ersetzen. Lieferung, Dampfverfügbarkeit und
-vorgeschriebene Reaktion getrennt halten und analytische, Erhaltungs- und Konvergenznachweise behalten. [Pumpengespeiste Flüssigkraftstoffschiene](PUMP_FED_FUEL.de.md)
+Kraftstoffpumpe mit physischem Injektoraustrag und Zylinder-/Filmempfängern bei explizitem Zweiphasentransport, Verdrängung und kinetischer Arbeit verbinden. Einlassträgheit und kritische Strömung unabhängig referenzieren. Zündung, Ansaugung/Abgas, Verluste, Getriebeaktuation und ECU/TCU zum vollständigen Ziel fortsetzen.
 
 Danach Zündung und Regelung, Saug- und Auslassdynamik sowie mechanische
 Motorverluste erweitern. Die aktuelle Wiebe-Verbrennung ist vorgeschrieben und begründet keine vorhersagende
@@ -49,7 +43,7 @@ gekoppelten Wandler-, Zahnrad-, Kupplungs- und Hydraulikprimitive. Von der [abge
 Modelle konstanter Pumpenverluste, der Batterie und von Ventil/Akkumulator erweitern, sobald gemessene
 Stoff- und Regelungsdaten vorliegen; angegebene Forschungswerte bleiben ungeprüft.
 
-Kraftstoffbehälter tauschen Flüssigkeit/Dampf-Gemische über konservative dissipative Widerstände und endliche Wärmepfade. Pumpenfüllung, Wellenkopplung und Injektoraustrag müssen noch angebunden werden. [Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md)
+Endliche Kraftstoffkammern tauschen Druckarbeit mit Wellen und füllen/fördern über ideale einseitige Widerstände, einschließlich Phasenwechsel bei Einlassmangel. Injektor- und Empfängerkopplung bleiben offen. [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
 
 ## Studio und gemessene Abnahme
 

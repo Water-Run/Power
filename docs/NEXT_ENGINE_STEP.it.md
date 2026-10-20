@@ -4,18 +4,18 @@
 
 ## Punto di ripresa
 
-I recipienti carburante scambiano miscele liquido/vapore attraverso restrizioni dissipative conservative e collegamenti termici finiti. Riempimento pompa, albero e scarico iniettore restano da collegare.
+Le camere finite scambiano lavoro di pressione con alberi e riempiono/erogano attraverso restrizioni unidirezionali ideali, con cambio di fase sottoalimentato. Iniettore fisico e ricevitore restano da collegare.
 
-[Rete di trasporto del carburante in equilibrio](EQUILIBRIUM_FUEL_NETWORK.it.md)
+[Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)
 
 ## Prossimo incremento
 
-Collegare i volumi carburante a riempimento pompa da albero e scarico fisico iniettore con materia, quantità di moto e lavoro conservativi. Risolvere inerzia locale d’ingresso e flusso critico con riferimenti indipendenti. Proseguire accensione, aspirazione/scarico, perdite, attuazione trasmissione ed ECU/TCU senza considerare questa rete un gruppo motopropulsore completo.
+Collegare la pompa a iniettore fisico e ricevitori cilindro/film con trasporto bifase, spostamento e lavoro cinetico espliciti. Risolvere inerzia d’ingresso e flusso critico con riferimenti indipendenti. Continuare accensione, aspirazione/scarico, perdite, attuazione trasmissione ed ECU/TCU verso l’obiettivo completo.
 
 ## Accettazione
 
 Richiedere riferimenti analitici/limite indipendenti, bilanci completi massa/energia e raffinamento appropriato. Conservare rollback del lotto, annullamento, rami, canali stabili, replay portabile e vecchi lettori. Continuare poi accensione, aspirazione/scarico, perdite meccaniche, trasmissione e coordinamento ECU/TCU.
 
-Restano i limiti del materiale e della deformazione rappresentabile della chiusura. I parametri restano `unverified`. Riempimento pompa e lavoro d’albero, collegamento iniettore, inerzia locale, flusso critico, ritardo di nucleazione, scorrimento e misure di miscele reali rimangono separati. I rail iniettore alimentati da pompa mantengono il percorso liquido separato fino all’accoppiamento.
+I parametri restano `unverified`. Limiti di temperatura, pressione e volume rappresentabile valgono per tutto il ciclo. Si assumono liquido incomprimibile, vapore ideale pseudo-specie, equilibrio istantaneo a temperatura comune e pressione esterna del carter nulla. Inerzia locale/NPSH, flusso critico, ritardo di nucleazione, inerzia/isteresi valvole, miscele reali e calibrazione misurata restano aperti. Iniettore fisico e lavoro di spostamento/cinetica del ricevitore sono separati.
 
 [DEVELOPMENT_STATUS.it.md](DEVELOPMENT_STATUS.it.md) · [ROADMAP.it.md](ROADMAP.it.md) · [VALIDATION.it.md](VALIDATION.it.md)

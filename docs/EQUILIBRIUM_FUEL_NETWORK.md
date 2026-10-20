@@ -32,10 +32,10 @@ Compatible material thermodynamics and positive pressure-driven conductance give
 
 Request `equilibrium-fuel-network` or `electrothermal-fuel-network` through MCP, or run the same JSON through CLI. Read `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy` and `specific_enthalpy` on each vessel. Here `internal_energy` includes the elastic wall; chemical energy is reported separately. Links expose signed mass/volume flow, cumulative transferred mass, `transport_energy` and pair entropy change.
 
-The laboratories exercise liquid discharge into coexistence, reverse flow, opening changes and finite-wall/electromechanical heat coupling. An independent liquid-pressure exponential, simultaneous two-phase mass/enthalpy/heat ODE, heat-driven reversal and speculative clutch capture check accuracy and composition. Portable assets and actual MCP preserve every sampled value and hash. Asset v32 retains the new material records and reads v1-v31. Actual Unity Editor/Play/Player/IL2CPP remains unverified.
+The laboratories exercise liquid discharge into coexistence, reverse flow, opening changes and finite-wall/electromechanical heat coupling. An independent liquid-pressure exponential, simultaneous two-phase mass/enthalpy/heat ODE, heat-driven reversal and speculative clutch capture check accuracy and composition. Portable assets and actual MCP preserve every sampled value and hash. Asset v33 retains the new material records and reads v1-v32. Actual Unity Editor/Play/Player/IL2CPP remains unverified.
 
 ## Remaining work
 
-The material and representable wall-deformation limits of the constitutive closure still apply. Parameters remain `unverified`. Resolved pump filling and shaft work, injector handoff, local fluid inertia, sonic choking, nucleation delay, phase slip and real-mixture measurements remain separate work. Existing pump-fed injector rails retain their separated-liquid path until those couplings are implemented.
+Fuel-domain transport now composes with shaft-driven `fuel_chamber` components and ideal `fuel_check_valve` links. Physical injector handoff, local inertia/choking and measured real-mixture behavior remain separate work. Parameters remain `unverified`. [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
 
 [Modelica: two-port transport](https://doc.modelica.org/om/Modelica.Fluid.Interfaces.PartialTwoPortTransport.html) · [CompliantFuelVolume](COMPLIANT_FUEL_VOLUME.md) · [VALIDATION.md](VALIDATION.md)
