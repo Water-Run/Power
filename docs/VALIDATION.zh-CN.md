@@ -2,6 +2,66 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: 柔性燃料容积参考模型
+
+必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。新增本构检查覆盖两个程序集目标。Standard 程序集检查由 .NET 10 托管，实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 449/449 |
+| standard_checks_on_dotnet | 345/345 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| new_constitutive_groups_per_assembly | 9 |
+| roundtrip_states_per_assembly | 80 |
+| independent_entropy_maximum_states_per_assembly | 4 |
+| finite_bath_convergence_order | 1 |
+| finite_bath_reference_tolerance_j | 2e-6 |
+| heat_interval_energy_residual_tolerance_j | 5e-13 |
+| entropy_decrease_roundoff_j_k | 1e-13 |
+| entropy_maximum_tolerance_j_k | 1e-10 |
+| wall_expansion_roundoff_relative | 2.8421709430404007e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| graph_transport | separated_liquid_only |
+| verification_log_sha256 | f663d7d383b7961572c48cd6dd05e7e26c68313a44b6af02f196cf1d7caefcf7 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 70 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 50597595f1085bbe35b948d3826ded2832ad8a85 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | Value |
+|---|---|
+| duration_s | 6 |
+| step_counts | 32, 64, 128, 256 |
+| energy_errors_j | 1.313327615023411, 0.6450572281738829, 0.31948411040258407, 0.1589624951980113 |
+| error_ratios | 2.035986200389321, 2.019058873885909, 2.009808099732074 |
+
+检查比较化学势、Clapeyron 斜率、热量与熵导数，以及包含弹性储能的 Gibbs 关系。独立约束熵最大化不使用饱和求解器。刚性容器、理想气体与广延缩放极限及有限热浴 RK4 细化提供独立参考。热交换保持总能量守恒，并在总熵不减条件下呈现一阶收敛。这些证据不等于实测燃料有效性或 Unity 验收。
+
+纯燃料柔性容器闭合关系已求解液态、蒸气及带弹性储能的两相共存。它是局部本构参考，图级泵与喷嘴输运仍需接入。
+
+- `artifacts/reports/compliant-volume-verify-2026-10-20.log`
+- `artifacts/reports/compliant-volume-evidence-2026-10-20.json`
+- `artifacts/reports/compliant-volume-baseline-replays-2026-10-20.json`
+- `artifacts/reports/compliant-volume-doc-audit-2026-10-20.json`
+- `src/Power.Core/CompliantFuelVolume.cs`
+- `tests/Power.Tests/CompliantFuelVolumeChecks.cs`
+
+[柔性燃料容积参考模型](COMPLIANT_FUEL_VOLUME.zh-CN.md)
+
+
 ## 2026-10-20: 有限体积油箱相平衡
 
 规定的串行验证在本地 Windows x64/.NET 10.0.12 上通过。Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。

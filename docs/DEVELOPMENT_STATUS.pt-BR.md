@@ -34,6 +34,8 @@ Todos os parâmetros permanecem `unverified`. EA211 DJS + DQ200 e PSA EC5 + AT8 
 
 CLI `list-labs`, descoberta de exemplos MCP e verificação serial compartilham [um catálogo de laboratórios](../assets/labs/catalog.json). A verificação exige a cobertura de cada fonte de laboratório.
 
+O fechamento do recipiente complacente de combustível puro resolve líquido, vapor e coexistência com armazenamento elástico. É uma referência constitutiva local; o transporte de bomba e bocal no grafo ainda precisa de integração. [Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md)
+
 ## Próxima sequência de desenvolvimento
 
 1. Resolver fluxo cavitante bomba/trilho e perdas locais de entrada, enchimento/regulação medidos e acionamento magnético/eletrônico. Substitua a fronteira declarada de trabalho de deslocamento exportado quando o volume líquido finito e o momento da pulverização estiverem resolvidos. Mantenha o líquido entregue, o combustível evaporado e a reação observáveis em separado e conserve referências independentes.

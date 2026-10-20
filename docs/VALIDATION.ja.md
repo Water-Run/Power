@@ -2,6 +2,66 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: 弾性燃料容積の参照モデル
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しました。新しい構成則検証は両アセンブリ対象で実行します。Standard 検証は .NET 10 上でホストされ、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 449/449 |
+| standard_checks_on_dotnet | 345/345 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| new_constitutive_groups_per_assembly | 9 |
+| roundtrip_states_per_assembly | 80 |
+| independent_entropy_maximum_states_per_assembly | 4 |
+| finite_bath_convergence_order | 1 |
+| finite_bath_reference_tolerance_j | 2e-6 |
+| heat_interval_energy_residual_tolerance_j | 5e-13 |
+| entropy_decrease_roundoff_j_k | 1e-13 |
+| entropy_maximum_tolerance_j_k | 1e-10 |
+| wall_expansion_roundoff_relative | 2.8421709430404007e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| graph_transport | separated_liquid_only |
+| verification_log_sha256 | f663d7d383b7961572c48cd6dd05e7e26c68313a44b6af02f196cf1d7caefcf7 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 70 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 50597595f1085bbe35b948d3826ded2832ad8a85 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | Value |
+|---|---|
+| duration_s | 6 |
+| step_counts | 32, 64, 128, 256 |
+| energy_errors_j | 1.313327615023411, 0.6450572281738829, 0.31948411040258407, 0.1589624951980113 |
+| error_ratios | 2.035986200389321, 2.019058873885909, 2.009808099732074 |
+
+化学ポテンシャル、Clapeyron 勾配、熱量・エントロピー導関数、弾性蓄積を含む Gibbs 関係を比較します。独立した拘束付きエントロピー最大化は飽和ソルバーを使いません。剛体容器、理想気体、示量性スケーリングの極限と有限熱浴 RK4 細分化が独立参照です。熱交換は総エネルギーを保存し、総エントロピー非減少で一次収束します。実測燃料妥当性や Unity 検証を意味しません。
+
+純燃料の弾性容器閉包は液体、蒸気、弾性蓄積を伴う共存を解決します。局所構成則参照であり、グラフのポンプとノズル輸送には接続が必要です。
+
+- `artifacts/reports/compliant-volume-verify-2026-10-20.log`
+- `artifacts/reports/compliant-volume-evidence-2026-10-20.json`
+- `artifacts/reports/compliant-volume-baseline-replays-2026-10-20.json`
+- `artifacts/reports/compliant-volume-doc-audit-2026-10-20.json`
+- `src/Power.Core/CompliantFuelVolume.cs`
+- `tests/Power.Tests/CompliantFuelVolumeChecks.cs`
+
+[弾性燃料容積の参照モデル](COMPLIANT_FUEL_VOLUME.ja.md)
+
+
 ## 2026-10-20: 有限体積燃料タンクの相平衡
 
 必須の直列検証はローカルの Windows x64/.NET 10.0.12 で合格しました。Standard アセンブリ検証は .NET 10 上で実行しており、実際の Unity Editor/Play/Player/IL2CPP は未検証です。

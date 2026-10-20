@@ -308,3 +308,9 @@ Le récipient rigide contient un liquide incompressible et un gaz idéal avec ps
 Un flash borné à U,V constants conserve carburant total et énergie thermique. Les orifices explicites transportent vapeur, porteur et énergie chimique ; les liens thermiques échangent avec des parois finies. Pompe/retour échangent le travail de déplacement avec le gaz, puis l'équilibre redistribue l'énergie interne. `hydraulic_work` compte le travail de déplacement de pompe, hors travail interne de changement de phase.
 
 [Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md)
+
+## Référence de volume de carburant déformable
+
+`CompliantFuelVolume` est une référence constitutive immuable du Core pour un carburant pur dans un récipient élastique. Elle résout liquide, vapeur et coexistence à partir de la masse totale et de la température ou de l'énergie stockée. Elle prépare la fermeture du futur solveur de rampe diphasique ; les rampes du graphe transportent encore du liquide séparé.
+
+[Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md)

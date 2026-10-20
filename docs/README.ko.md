@@ -52,6 +52,7 @@ flowchart LR
 | [탱크 형상과 유한 헤드스페이스](TANK_HEADSPACE.ko.md) | 강체 용량, 유한 기체 압력 일과 명시적 통기 |
 | [연료 상평형과 액체 공급 경계](FUEL_PHASE_EQUILIBRIUM.ko.md) | 가역 증발/응축, 포화압과 액체 공급 경계 |
 | [유한 체적 연료 탱크 상평형](TANK_PHASE_EQUILIBRIUM.ko.md) | 유한 액체 변위, 압력 보정 증발/응축과 증기 통기 |
+| [탄성 연료 체적 참조 모델](COMPLIANT_FUEL_VOLUME.ko.md) | 액체/증기 평형, 탄성 저장 및 보존적 유한 열욕 열교환 |
 
 ## 변속기
 

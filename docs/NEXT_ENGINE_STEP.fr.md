@@ -8,9 +8,13 @@ Le réservoir résout le transfert vapeur à volume fini avec potentiels corrig�
 
 [Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md)
 
+La fermeture du récipient déformable de carburant pur résout liquide, vapeur et coexistence avec stockage élastique. Cette référence constitutive locale attend encore son intégration au transport par pompe et buse du graphe.
+
+[Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md)
+
 ## Prochaine étape
 
-Résoudre ensuite le débit diphasique pompe/rail et les pertes d'entrée avec propriétés explicites et couplage conservatif volume, quantité de mouvement et travail. Garder les mesures OEM manquantes. Continuer séparément allumage, admission/échappement, pertes mécaniques et ECU/TCU.
+Relier cette fermeture au transport conservatif diphasique par pompe et rampe, puis résoudre pertes locales d'entrée, quantité de mouvement du mélange et décharge de buse. Garder propriétés explicites et couplage complet volume/travail. Les mesures OEM absentes restent absentes. Poursuivre séparément allumage, admission/échappement, pertes mécaniques et coordination ECU/TCU.
 
 ## Acceptation
 

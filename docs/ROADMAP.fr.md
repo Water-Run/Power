@@ -27,6 +27,8 @@ Résoudre écoulement cavitant pompe/rail et pertes d'entrée locales, remplissa
 
 S'appuyer sur le [graphe DCT à sept rapports avant/marche arrière](DUAL_CLUTCH_TRANSMISSION.fr.md) avec un actionnement détaillé de synchroniseur/crabot/embrayage. S'appuyer sur le [graphe Ravigneaux](RAVIGNEAUX_TRANSMISSION.fr.md) avec [des propriétés de planétaires et un comportement d'engrènement mesurés](RESOLVED_PLANETS.fr.md), un [actionnement par piston alimenté par pompe](AT_HYDRAULIC_ACTUATION.fr.md) complet et un contrôle AT qui utilise le convertisseur couplé, les engrenages, les embrayages et les primitives hydrauliques. S'appuyer sur le [contrôle DCT échantillonné](DCT_CONTROL.fr.md) vers des passages à mélange de couple et une coordination ECU/TCU bornée, y compris les demandes de couple, les capteurs/actionneurs et les défauts récupérables. Étendre les modèles de pertes de pompe constantes, de batterie et de vanne/accumulateur lorsque des données mesurées de propriété ou de contrôle sont disponibles ; les valeurs de recherche fournies restent non vérifiées.
 
+La fermeture du récipient déformable de carburant pur résout liquide, vapeur et coexistence avec stockage élastique. Cette référence constitutive locale attend encore son intégration au transport par pompe et buse du graphe. [Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md)
+
 ## Studio et acceptation mesurée
 
 Définir `POWER_UNITY_EDITOR` vers l'éditeur épinglé et exécuter `unity-test`. Obtenir des preuves réelles d'import/Play/rendu, puis des preuves Player/IL2CPP. La sélection générale de canaux, l'édition de graphe et l'enregistrement restent des fonctions Studio séparées. La CLI, le MCP et Unity doivent continuer à consommer la même sémantique de modèle.

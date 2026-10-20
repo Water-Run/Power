@@ -52,6 +52,7 @@ flowchart LR
 | [Geometria do tanque e espaço gasoso finito](TANK_HEADSPACE.pt-BR.md) | Capacidade rígida, trabalho do gás finito e ventilação explícita |
 | [Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md) | Evaporação/condensação reversíveis, saturação e limites de suprimento líquido |
 | [Equilíbrio do tanque com volume líquido finito](TANK_PHASE_EQUILIBRIUM.pt-BR.md) | Deslocamento líquido finito, correção de pressão e ventilação com vapor |
+| [Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md) | Equilíbrio líquido/vapor, armazenamento elástico e calor conservativo com banho finito |
 
 ## Transmissão
 

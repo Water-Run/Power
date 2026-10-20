@@ -34,6 +34,8 @@ Tous les paramètres restent `unverified`. EA211 DJS + DQ200 et PSA EC5 + AT8 co
 
 CLI `list-labs`, la découverte des exemples MCP et la vérification série partagent [un catalogue de laboratoires](../assets/labs/catalog.json). La vérification contrôle qu'il couvre chaque source de laboratoire.
 
+La fermeture du récipient déformable de carburant pur résout liquide, vapeur et coexistence avec stockage élastique. Cette référence constitutive locale attend encore son intégration au transport par pompe et buse du graphe. [Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md)
+
 ## Prochaine séquence de développement
 
 1. Résoudre écoulement cavitant pompe/rail et pertes d'entrée locales, remplissage/régulation mesurés et actionnement magnétique/électronique. Remplacer la frontière déclarée de travail de déplacement exporté lorsque le volume liquide fini et la quantité de mouvement de pulvérisation sont résolus. Garder le liquide délivré, le carburant évaporé et la réaction séparément observables, et conserver des références indépendantes.

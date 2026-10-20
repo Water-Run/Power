@@ -309,3 +309,9 @@ Il recipiente rigido contiene liquido incomprimibile e gas ideale di pseudospeci
 Un flash limitato a U,V costanti conserva combustibile ed energia termica. Orifizi espliciti trasportano vapore, portante ed energia chimica; collegamenti termici scambiano con nodi finiti. Pompa/ritorno scambiano lavoro di spostamento col gas, poi l'equilibrio ridistribuisce energia interna. `hydraulic_work` conta il lavoro di pompa escludendo quello interno di fase.
 
 [Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)
+
+## Riferimento del volume di carburante cedevole
+
+`CompliantFuelVolume` è un riferimento costitutivo immutabile del Core per carburante puro in un recipiente elastico. Risolve liquido, vapore e coesistenza in equilibrio da massa totale e temperatura o energia accumulata. Fornisce la chiusura per il futuro solver bifase del rail; i rail del grafo trasportano ancora liquido separato.
+
+[Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md)

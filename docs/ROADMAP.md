@@ -50,6 +50,8 @@ coordination, including torque requests, sensors/actuators and recoverable fault
 Extend constant pump-loss, battery and valve/accumulator models when measured
 property/control data is available; supplied research values remain unverified.
 
+The pure-fuel compliant-vessel closure resolves liquid, vapor and coexistence with elastic storage. It is a local constitutive reference; graph-level pump and nozzle transport still require integration. [Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md)
+
 ## Studio and measured acceptance
 
 Set `POWER_UNITY_EDITOR` to the pinned Editor and run `unity-test`. Obtain actual

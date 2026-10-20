@@ -41,6 +41,8 @@ Todos los parámetros siguen `unverified`. EA211 DJS + DQ200 y PSA EC5 + AT8 con
 
 CLI `list-labs`, el descubrimiento de ejemplos MCP y la verificación serie comparten [un catálogo de laboratorios](../assets/labs/catalog.json). La verificación comprueba que cubra cada fuente de laboratorio.
 
+El cierre del recipiente flexible de combustible puro resuelve líquido, vapor y coexistencia con almacenamiento elástico. Es una referencia constitutiva local; falta integrar el transporte de bomba y boquilla en el grafo. [Referencia de volumen de combustible flexible](COMPLIANT_FUEL_VOLUME.es.md)
+
 ## Siguiente secuencia de desarrollo
 
 1. Resolver flujo cavitante bomba/riel y pérdidas locales de entrada, llenado/regulación medidos y actuación magnética/electrónica. Sustituye el límite declarado

@@ -27,6 +27,8 @@ Depois estenda ignição/controle, dinâmica de admissão/escape e perdas mecân
 
 Construa sobre o [grafo DCT de sete marchas à frente/ré](DUAL_CLUTCH_TRANSMISSION.pt-BR.md) com acionamento detalhado de sincronizador/garras/embreagem. Construa sobre o [grafo Ravigneaux](RAVIGNEAUX_TRANSMISSION.pt-BR.md) com [propriedades medidas dos planetas e comportamento de engrenamento](RESOLVED_PLANETS.pt-BR.md), [acionamento completo por pistão alimentado pela bomba](AT_HYDRAULIC_ACTUATION.pt-BR.md) e controle AT usando os primitivos acoplados de conversor, engrenagens, embreagens e hidráulica. Construa sobre o [controle DCT amostrado](DCT_CONTROL.pt-BR.md) em direção a trocas com mistura de torque e coordenação limitada de ECU/TCU, incluindo solicitações de torque, sensores/atuadores e falhas recuperáveis. Estenda os modelos de perda constante da bomba, bateria e válvula/acumulador quando houver dados medidos de propriedade/controle; os valores de pesquisa fornecidos continuam não verificados.
 
+O fechamento do recipiente complacente de combustível puro resolve líquido, vapor e coexistência com armazenamento elástico. É uma referência constitutiva local; o transporte de bomba e bocal no grafo ainda precisa de integração. [Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md)
+
 ## Estúdio e aceitação medida
 
 Defina `POWER_UNITY_EDITOR` com o Editor fixado e execute `unity-test`. Obtenha evidência real de importação/Play/renderização e, em seguida, evidência de Player/IL2CPP. Seleção geral de canais, edição de grafo e gravação continuam recursos separados do Studio. CLI, MCP e Unity precisam continuar consumindo a mesma semântica de modelo.

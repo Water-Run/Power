@@ -8,9 +8,13 @@ Der Tank löst endlichen Dampftransfer mit druckkorrigierten Potenzialen und get
 
 [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md)
 
+Der Abschluss des nachgiebigen Behälters für reinen Kraftstoff löst Flüssigkeit, Dampf und Koexistenz mit elastischem Speicher. Er ist eine lokale konstitutive Referenz; Pumpen- und Düsentransport im Graphen müssen noch integriert werden.
+
+[Referenz für ein nachgiebiges Kraftstoffvolumen](COMPLIANT_FUEL_VOLUME.de.md)
+
 ## Nächster Schritt
 
-Danach zweiphasige Strömung und lokale Einlassverluste mit expliziten Stoffwerten und erhaltender Volumen-, Impuls- und Arbeitskopplung lösen. Fehlende OEM-Messungen fehlen weiter. Zündung, Einlass/Auslass, mechanische Verluste und ECU/TCU separat fortsetzen.
+Diesen Abschluss an konservativen Zweiphasentransport in Pumpe und Rail anbinden, dann lokale Einlassverluste, Gemischimpuls und Düsenaustritt auflösen. Explizite Stoffdaten und vollständige Volumen-/Arbeitskopplung beibehalten. Fehlende OEM-Messungen bleiben fehlend. Zündung, Ansaugung/Abgas, mechanische Verluste und ECU/TCU-Koordination separat fortsetzen.
 
 ## Abnahme
 

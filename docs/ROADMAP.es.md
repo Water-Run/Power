@@ -50,6 +50,8 @@ incluidas solicitudes de par, sensores y actuadores, y fallos recuperables.
 Amplía los modelos de pérdida constante de bomba, de batería y de válvula o acumulador cuando haya datos
 medidos de propiedades y control; los valores de investigación suministrados siguen sin verificar.
 
+El cierre del recipiente flexible de combustible puro resuelve líquido, vapor y coexistencia con almacenamiento elástico. Es una referencia constitutiva local; falta integrar el transporte de bomba y boquilla en el grafo. [Referencia de volumen de combustible flexible](COMPLIANT_FUEL_VOLUME.es.md)
+
 ## Estudio y aceptación medida
 
 Asigna a `POWER_UNITY_EDITOR` el Editor fijado y ejecuta `unity-test`. Obtén evidencia real

@@ -52,6 +52,7 @@ flowchart LR
 | [タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md) | 剛体容量、有限気体の圧力仕事と明示的通気 |
 | [燃料の相平衡と液体供給の境界](FUEL_PHASE_EQUILIBRIUM.ja.md) | 可逆蒸発/凝縮、飽和圧力と液体供給の境界 |
 | [有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md) | 有限液体押しのけ、圧力補正蒸発/凝縮と蒸気通気 |
+| [弾性燃料容積の参照モデル](COMPLIANT_FUEL_VOLUME.ja.md) | 液体・蒸気平衡、弾性蓄積、保存的な有限熱浴との熱交換 |
 
 ## トランスミッション
 

@@ -8,9 +8,13 @@ The tank resolves finite-volume vapor transfer with pressure-corrected chemical 
 
 [Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)
 
+The pure-fuel compliant-vessel closure resolves liquid, vapor and coexistence with elastic storage. It is a local constitutive reference; graph-level pump and nozzle transport still require integration.
+
+[Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md)
+
 ## Next increment
 
-Next, resolve two-phase pump/rail flow and local inlet losses with explicit material properties and conservative volume, momentum and work coupling. Missing OEM measurements remain missing. Continue ignition, intake/exhaust, mechanical losses and ECU/TCU coordination separately.
+Connect this closure to conservative two-phase pump and rail transport, then resolve local inlet losses, mixture momentum and nozzle discharge. Keep explicit material properties and full volume/work coupling. Missing OEM measurements remain missing. Continue ignition, intake/exhaust, mechanical losses and ECU/TCU coordination separately.
 
 ## Acceptance
 

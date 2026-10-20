@@ -8,9 +8,13 @@ Il serbatoio risolve vapore a volume finito con potenziali corretti e aspirazion
 
 [Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)
 
+La chiusura del recipiente cedevole per carburante puro risolve liquido, vapore e coesistenza con accumulo elastico. È un riferimento costitutivo locale; il trasporto di pompa e ugello nel grafo richiede ancora integrazione.
+
+[Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md)
+
 ## Prossimo incremento
 
-Risolvere poi flusso bifase e perdite locali con proprietà esplicite e accoppiamento conservativo di volume, quantità di moto e lavoro. Conservare mancanti le misure OEM assenti. Continuare separatamente accensione, aspirazione/scarico, perdite meccaniche e ECU/TCU.
+Collegare la chiusura al trasporto bifase conservativo di pompa e rail, poi risolvere perdite locali d’ingresso, quantità di moto della miscela e scarico dell’ugello. Mantenere proprietà esplicite e pieno accoppiamento volume/lavoro. Le misure OEM mancanti restano mancanti. Proseguire separatamente accensione, aspirazione/scarico, perdite meccaniche e coordinamento ECU/TCU.
 
 ## Accettazione
 

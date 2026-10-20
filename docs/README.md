@@ -52,6 +52,7 @@ flowchart LR
 | [Geometric tank and finite headspace](TANK_HEADSPACE.md) | Rigid tank capacity, finite gas pressure work and explicit venting |
 | [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md) | Reversible evaporation/condensation, saturation pressure and liquid supply boundaries |
 | [Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md) | Finite liquid displacement, pressure-corrected evaporation/condensation and vapor-bearing vents |
+| [Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md) | Liquid/vapor equilibrium, elastic storage and conservative finite-bath heat |
 
 ## Transmission
 

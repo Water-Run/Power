@@ -2,6 +2,66 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · **Italiano** · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-20: Riferimento del volume di carburante cedevole
+
+La verifica seriale richiesta passa localmente su Windows x64/.NET 10.0.12. I nuovi controlli costitutivi coprono entrambi i target assembly. I controlli Standard sono ospitati su .NET 10; Unity Editor/Play/Player/IL2CPP effettivo resta non verificato.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 449/449 |
+| standard_checks_on_dotnet | 345/345 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| new_constitutive_groups_per_assembly | 9 |
+| roundtrip_states_per_assembly | 80 |
+| independent_entropy_maximum_states_per_assembly | 4 |
+| finite_bath_convergence_order | 1 |
+| finite_bath_reference_tolerance_j | 2e-6 |
+| heat_interval_energy_residual_tolerance_j | 5e-13 |
+| entropy_decrease_roundoff_j_k | 1e-13 |
+| entropy_maximum_tolerance_j_k | 1e-10 |
+| wall_expansion_roundoff_relative | 2.8421709430404007e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| graph_transport | separated_liquid_only |
+| verification_log_sha256 | f663d7d383b7961572c48cd6dd05e7e26c68313a44b6af02f196cf1d7caefcf7 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 70 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 50597595f1085bbe35b948d3826ded2832ad8a85 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | Value |
+|---|---|
+| duration_s | 6 |
+| step_counts | 32, 64, 128, 256 |
+| energy_errors_j | 1.313327615023411, 0.6450572281738829, 0.31948411040258407, 0.1589624951980113 |
+| error_ratios | 2.035986200389321, 2.019058873885909, 2.009808099732074 |
+
+Si confrontano potenziali chimici, pendenze di Clapeyron, derivate caloriche ed entropiche e Gibbs con accumulo elastico. Una massimizzazione indipendente dell’entropia vincolata non usa il solver di saturazione. Limiti di recipiente rigido, gas ideale e scala estensiva e raffinamento RK4 del bagno finito forniscono riferimenti indipendenti. Lo scambio conserva l’energia totale e converge al primo ordine con entropia totale non decrescente. Non dimostra validità misurata del carburante né accettazione Unity.
+
+La chiusura del recipiente cedevole per carburante puro risolve liquido, vapore e coesistenza con accumulo elastico. È un riferimento costitutivo locale; il trasporto di pompa e ugello nel grafo richiede ancora integrazione.
+
+- `artifacts/reports/compliant-volume-verify-2026-10-20.log`
+- `artifacts/reports/compliant-volume-evidence-2026-10-20.json`
+- `artifacts/reports/compliant-volume-baseline-replays-2026-10-20.json`
+- `artifacts/reports/compliant-volume-doc-audit-2026-10-20.json`
+- `src/Power.Core/CompliantFuelVolume.cs`
+- `tests/Power.Tests/CompliantFuelVolumeChecks.cs`
+
+[Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md)
+
+
 ## 2026-10-20: Equilibrio del serbatoio con volume liquido finito
 
 La verifica seriale richiesta supera localmente su Windows x64/.NET 10.0.12. Le verifiche Standard girano su .NET 10; Unity Editor/Play/Player/IL2CPP reale resta non verificato.

@@ -34,6 +34,8 @@ Tutti i parametri restano `unverified`. EA211 DJS + DQ200 e PSA EC5 + AT8 conser
 
 CLI `list-labs`, scoperta degli esempi MCP e verifica seriale condividono [un catalogo dei laboratori](../assets/labs/catalog.json). La verifica controlla che copra ogni sorgente di laboratorio.
 
+La chiusura del recipiente cedevole per carburante puro risolve liquido, vapore e coesistenza con accumulo elastico. È un riferimento costitutivo locale; il trasporto di pompa e ugello nel grafo richiede ancora integrazione. [Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md)
+
 ## Prossima sequenza di sviluppo
 
 1. Risolvere flusso cavitante pompa/rail e perdite locali d'ingresso, riempimento/regolazione misurati e azionamento magnetico/elettronico. Sostituisci il confine dichiarato di lavoro di spostamento esportato quando volume liquido finito e quantità di moto dello spray sono risolti. Tieni separatamente osservabili il liquido erogato, il carburante evaporato e la reazione, e conserva riferimenti indipendenti.

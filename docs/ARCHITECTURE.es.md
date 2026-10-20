@@ -552,3 +552,9 @@ El recipiente rígido contiene líquido incompresible y gas ideal de pseudoespec
 Un flash acotado a U,V constantes conserva combustible y energía térmica. Orificios explícitos transportan vapor, portador y energía química; enlaces térmicos intercambian con nodos finitos. Bomba/retorno intercambian trabajo de desplazamiento con el gas y luego el equilibrio redistribuye energía. `hydraulic_work` cuenta desplazamiento de bomba, excluyendo trabajo interno de fase.
 
 [Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md)
+
+## Referencia de volumen de combustible flexible
+
+`CompliantFuelVolume` es una referencia constitutiva inmutable del Core para combustible puro en un recipiente elástico. Resuelve líquido, vapor y coexistencia en equilibrio a partir de masa total y temperatura o energía almacenada. Proporciona el cierre para un futuro solver bifásico del riel; los rieles del grafo aún transportan líquido separado.
+
+[Referencia de volumen de combustible flexible](COMPLIANT_FUEL_VOLUME.es.md)

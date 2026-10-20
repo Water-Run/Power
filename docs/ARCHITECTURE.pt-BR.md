@@ -307,3 +307,9 @@ O recipiente rígido contém líquido incompressível e gás ideal de pseudoesp�
 Um flash limitado a U,V constantes conserva combustível e energia térmica. Orifícios explícitos carregam vapor, portador e energia química; ligações térmicas trocam com nós finitos. Bomba/retorno trocam trabalho de deslocamento com o gás e depois o equilíbrio redistribui energia. `hydraulic_work` conta deslocamento de bomba, excluindo trabalho interno de fase.
 
 [Equilíbrio do tanque com volume líquido finito](TANK_PHASE_EQUILIBRIUM.pt-BR.md)
+
+## Referência de volume de combustível complacente
+
+`CompliantFuelVolume` é uma referência constitutiva imutável do Core para combustível puro em um recipiente elástico. Resolve líquido, vapor e coexistência em equilíbrio por massa total e temperatura ou energia armazenada. Fornece o fechamento para o futuro solver bifásico do rail; os rails do grafo ainda transportam líquido separado.
+
+[Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md)

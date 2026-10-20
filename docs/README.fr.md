@@ -52,6 +52,7 @@ flowchart LR
 | [Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md) | Capacité rigide, travail du gaz fini et ventilation explicite |
 | [Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md) | Évaporation/condensation réversibles, saturation et limites d'alimentation liquide |
 | [Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md) | Déplacement liquide fini, phases corrigées en pression et évent avec vapeur |
+| [Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md) | Équilibre liquide/vapeur, stockage élastique et échange conservatif avec bain fini |
 
 ## Transmission
 

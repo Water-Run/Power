@@ -27,6 +27,8 @@ Poi estendi accensione/controllo, dinamica di aspirazione/scarico e perdite mecc
 
 Costruisci sul [grafo DCT a sette avanti/retromarcia](DUAL_CLUTCH_TRANSMISSION.it.md) con azionamento dettagliato di sincronizzatore, innesto a denti e frizione. Costruisci sul [grafo Ravigneaux](RAVIGNEAUX_TRANSMISSION.it.md) con [proprietà dei satelliti e comportamento di ingranamento misurati](RESOLVED_PLANETS.it.md), [azionamento completo a stantuffo alimentato dalla pompa](AT_HYDRAULIC_ACTUATION.it.md) e controllo AT usando i primitivi accoppiati di convertitore, ingranaggi, frizioni e idraulica. Costruisci sul [controllo DCT campionato](DCT_CONTROL.it.md) verso passaggi con coppia miscelata e coordinamento ECU/TCU limitato, comprese richieste di coppia, sensori/attuatori e guasti recuperabili. Estendi i modelli di perdita costante della pompa, di batteria e di valvola/accumulatore quando sono disponibili dati misurati di proprietà e di controllo; i valori di ricerca forniti restano `unverified`.
 
+La chiusura del recipiente cedevole per carburante puro risolve liquido, vapore e coesistenza con accumulo elastico. È un riferimento costitutivo locale; il trasporto di pompa e ugello nel grafo richiede ancora integrazione. [Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md)
+
 ## Studio e accettazione misurata
 
 Imposta `POWER_UNITY_EDITOR` sull'Editor fissato ed esegui `unity-test`. Ottieni evidenza reale di importazione/Play/rendering e poi evidenza Player/IL2CPP. Selezione generale dei canali, modifica del grafo e salvataggio restano funzionalità separate dello Studio. CLI, MCP e Unity devono continuare a consumare la stessa semantica di modello.

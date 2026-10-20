@@ -8,9 +8,13 @@ El tanque resuelve vapor de volumen finito con potenciales corregidos y toma de 
 
 [Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md)
 
+El cierre del recipiente flexible de combustible puro resuelve líquido, vapor y coexistencia con almacenamiento elástico. Es una referencia constitutiva local; falta integrar el transporte de bomba y boquilla en el grafo.
+
+[Referencia de volumen de combustible flexible](COMPLIANT_FUEL_VOLUME.es.md)
+
 ## Próximo incremento
 
-Resolver después flujo bifásico y pérdidas locales con propiedades explícitas y acoplamiento conservativo de volumen, momento y trabajo. Mantener ausentes las mediciones OEM faltantes. Continuar por separado encendido, admisión/escape, pérdidas mecánicas y ECU/TCU.
+Conectar este cierre al transporte bifásico conservativo de bomba y riel y resolver pérdidas locales de entrada, cantidad de movimiento de mezcla y descarga de boquilla. Mantener propiedades explícitas y acoplamiento completo volumen/trabajo. No suplir mediciones OEM ausentes. Continuar por separado encendido, admisión/escape, pérdidas mecánicas y coordinación ECU/TCU.
 
 ## Aceptación
 

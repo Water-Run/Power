@@ -552,3 +552,9 @@ The rigid vessel contains incompressible liquid and an ideal pseudo-species/carr
 A bounded constant-U,V flash conserves total fuel and thermal energy. Explicit gas orifices carry vapor, carrier gas and chemical energy; gas heat links exchange heat with finite thermal nodes. The pump/return solve exchanges displacement work with the gas, then phase equilibration redistributes internal energy. Its `hydraulic_work` channel records pump-displacement work, excluding internal phase-change work.
 
 [Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)
+
+## Compliant fuel volume reference
+
+`CompliantFuelVolume` is an immutable Core constitutive reference for pure fuel in an elastic vessel. It resolves liquid, vapor and equilibrium coexistence from total mass and temperature or stored energy. It supplies the closure for a future two-phase rail solver; existing graph rails still transport separated liquid.
+
+[Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md)

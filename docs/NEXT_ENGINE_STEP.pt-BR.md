@@ -8,9 +8,13 @@ O tanque resolve vapor de volume finito com potenciais corrigidos e captação l
 
 [Equilíbrio do tanque com volume líquido finito](TANK_PHASE_EQUILIBRIUM.pt-BR.md)
 
+O fechamento do recipiente complacente de combustível puro resolve líquido, vapor e coexistência com armazenamento elástico. É uma referência constitutiva local; o transporte de bomba e bocal no grafo ainda precisa de integração.
+
+[Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md)
+
 ## Próximo incremento
 
-Resolver depois fluxo bifásico e perdas locais com propriedades explícitas e acoplamento conservativo de volume, momento e trabalho. Manter ausentes as medições OEM faltantes. Continuar separadamente ignição, admissão/escape, perdas mecânicas e ECU/TCU.
+Conectar o fechamento ao transporte bifásico conservativo de bomba e rail e resolver perdas locais de entrada, quantidade de movimento da mistura e descarga do bocal. Manter propriedades explícitas e acoplamento completo volume/trabalho. Medidas OEM ausentes permanecem ausentes. Continuar separadamente ignição, admissão/escape, perdas mecânicas e coordenação ECU/TCU.
 
 ## Aceitação
 

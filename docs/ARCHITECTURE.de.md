@@ -309,3 +309,9 @@ Der starre Behälter enthält inkompressible Flüssigkeit und ideales Pseudospez
 Ein begrenzter Flash bei konstantem U,V erhält Kraftstoff und Wärmeenergie. Explizite Gasdrosseln transportieren Dampf, Träger und chemische Energie; Wärmewege koppeln endliche Knoten. Pumpe/Rücklauf tauschen Verdrängungsarbeit mit dem Gas, danach verteilt das Gleichgewicht Innenenergie. `hydraulic_work` zählt Pumpenverdrängung ohne interne Phasenarbeit.
 
 [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md)
+
+## Referenz für ein nachgiebiges Kraftstoffvolumen
+
+`CompliantFuelVolume` ist eine unveränderliche konstitutive Core-Referenz für reinen Kraftstoff in einem elastischen Behälter. Sie bestimmt Flüssigkeit, Dampf und Gleichgewichtskoexistenz aus Gesamtmasse und Temperatur oder gespeicherter Energie. Sie liefert den Abschluss für einen künftigen Zweiphasen-Railsolver; bestehende Graph-Rails transportieren weiterhin getrennte Flüssigkeit.
+
+[Referenz für ein nachgiebiges Kraftstoffvolumen](COMPLIANT_FUEL_VOLUME.de.md)

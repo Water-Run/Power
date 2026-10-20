@@ -27,6 +27,8 @@
 
 [일곱 전진/후진 DCT 그래프](DUAL_CLUTCH_TRANSMISSION.ko.md) 위에 상세 싱크로나이저/도그/클러치 구동을 쌓습니다. [Ravigneaux 그래프](RAVIGNEAUX_TRANSMISSION.ko.md) 위에 [실측 유성 물성과 물림 거동](RESOLVED_PLANETS.ko.md), 완전한 [펌프 공급 피스톤 구동](AT_HYDRAULIC_ACTUATION.ko.md), 그리고 결합 컨버터, 기어, 클러치, 유압 원시 요소를 쓰는 AT 제어를 쌓습니다. [샘플링 DCT 제어](DCT_CONTROL.ko.md) 위에서 토크 블렌딩 변속과 유계 ECU/TCU 조율로 나아갑니다. 토크 요청, 센서/액추에이터, 복구 가능한 결함을 포함합니다. 실측 물성/제어 데이터가 있을 때 일정 펌프 손실, 배터리, 밸브/어큐뮬레이터 모델을 확장합니다. 제공된 연구 값은 검증되지 않은 상태로 남습니다.
 
+순수 연료 탄성 용기 폐쇄 관계는 액체, 증기 및 탄성 저장을 동반한 공존을 풉니다. 국소 구성 관계 참조이며 그래프의 펌프 및 노즐 수송에는 통합이 필요합니다. [탄성 연료 체적 참조 모델](COMPLIANT_FUEL_VOLUME.ko.md)
+
 ## 스튜디오와 실측 수용
 
 `POWER_UNITY_EDITOR`를 고정된 편집기로 설정하고 `unity-test`를 실행합니다. 실제 가져오기/Play/렌더링 증거를 얻은 뒤 Player/IL2CPP 증거를 얻습니다. 일반 채널 선택, 그래프 편집, 저장은 별도의 스튜디오 기능으로 남습니다. CLI, MCP, Unity는 계속 같은 모델 의미론을 소비해야 합니다.

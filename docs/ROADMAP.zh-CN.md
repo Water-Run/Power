@@ -27,6 +27,8 @@
 
 在 [七前进/倒挡 DCT 图](DUAL_CLUTCH_TRANSMISSION.zh-CN.md) 上构建详细的同步器/接合齿/离合器执行。在 [Ravigneaux 图](RAVIGNEAUX_TRANSMISSION.zh-CN.md) 上结合 [实测行星属性与啮合行为](RESOLVED_PLANETS.zh-CN.md)、完整的 [泵驱动活塞执行](AT_HYDRAULIC_ACTUATION.zh-CN.md),并用耦合的变矩器、齿轮、离合器与液压原语做 AT 控制。在 [采样 DCT 控制](DCT_CONTROL.zh-CN.md) 上走向扭矩混合换挡与有界 ECU/TCU 协调,包括扭矩请求、传感器/执行器与可恢复故障。有实测属性/控制数据时,再扩展恒定泵损耗、电池与阀门/蓄能器模型;所给研究值仍为未核实。
 
+纯燃料柔性容器闭合关系已求解液态、蒸气及带弹性储能的两相共存。它是局部本构参考，图级泵与喷嘴输运仍需接入。 [柔性燃料容积参考模型](COMPLIANT_FUEL_VOLUME.zh-CN.md)
+
 ## 工作室与实测验收
 
 把 `POWER_UNITY_EDITOR` 设为锁定的编辑器并运行 `unity-test`。先取得真实的导入/Play/渲染证据,再取得 Player/IL2CPP 证据。通用通道选择、图编辑与保存仍是单独的工作室功能。CLI、MCP 与 Unity 必须继续使用同一套模型语义。

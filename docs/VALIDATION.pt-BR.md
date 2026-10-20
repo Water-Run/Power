@@ -2,6 +2,66 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · **Português**
 
+## 2026-10-20: Referência de volume de combustível complacente
+
+A verificação serial exigida passa localmente em Windows x64/.NET 10.0.12. Os novos testes constitutivos cobrem os dois destinos de assembly. Os testes Standard são hospedados em .NET 10; Unity Editor/Play/Player/IL2CPP real segue sem verificação.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 449/449 |
+| standard_checks_on_dotnet | 345/345 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| new_constitutive_groups_per_assembly | 9 |
+| roundtrip_states_per_assembly | 80 |
+| independent_entropy_maximum_states_per_assembly | 4 |
+| finite_bath_convergence_order | 1 |
+| finite_bath_reference_tolerance_j | 2e-6 |
+| heat_interval_energy_residual_tolerance_j | 5e-13 |
+| entropy_decrease_roundoff_j_k | 1e-13 |
+| entropy_maximum_tolerance_j_k | 1e-10 |
+| wall_expansion_roundoff_relative | 2.8421709430404007e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| graph_transport | separated_liquid_only |
+| verification_log_sha256 | f663d7d383b7961572c48cd6dd05e7e26c68313a44b6af02f196cf1d7caefcf7 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 70 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 50597595f1085bbe35b948d3826ded2832ad8a85 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | Value |
+|---|---|
+| duration_s | 6 |
+| step_counts | 32, 64, 128, 256 |
+| energy_errors_j | 1.313327615023411, 0.6450572281738829, 0.31948411040258407, 0.1589624951980113 |
+| error_ratios | 2.035986200389321, 2.019058873885909, 2.009808099732074 |
+
+Os testes comparam potenciais químicos, inclinações de Clapeyron, derivadas calóricas e entrópicas e Gibbs com armazenamento elástico. A maximização independente da entropia restrita não usa o solver de saturação. Limites de recipiente rígido, gás ideal e escala extensiva e refinamento RK4 do banho finito fornecem referências independentes. A troca preserva energia total e refina em primeira ordem com entropia total não decrescente. Não comprova propriedades medidas de combustível nem aceitação Unity.
+
+O fechamento do recipiente complacente de combustível puro resolve líquido, vapor e coexistência com armazenamento elástico. É uma referência constitutiva local; o transporte de bomba e bocal no grafo ainda precisa de integração.
+
+- `artifacts/reports/compliant-volume-verify-2026-10-20.log`
+- `artifacts/reports/compliant-volume-evidence-2026-10-20.json`
+- `artifacts/reports/compliant-volume-baseline-replays-2026-10-20.json`
+- `artifacts/reports/compliant-volume-doc-audit-2026-10-20.json`
+- `src/Power.Core/CompliantFuelVolume.cs`
+- `tests/Power.Tests/CompliantFuelVolumeChecks.cs`
+
+[Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md)
+
+
 ## 2026-10-20: Equilíbrio do tanque com volume líquido finito
 
 A verificação serial exigida passa localmente em Windows x64/.NET 10.0.12. As verificações Standard rodam no .NET 10; Unity Editor/Play/Player/IL2CPP real continua não verificado.

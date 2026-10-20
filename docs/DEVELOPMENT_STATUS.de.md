@@ -41,6 +41,8 @@ Alle Parameter bleiben `unverified`. EA211 DJS + DQ200 und PSA EC5 + AT8 bewahre
 
 CLI `list-labs`, MCP-Beispieldiscovery und serielle Prüfung nutzen [einen Laborkatalog](../assets/labs/catalog.json). Die Prüfung verlangt die Abdeckung jeder Laborquelldatei.
 
+Der Abschluss des nachgiebigen Behälters für reinen Kraftstoff löst Flüssigkeit, Dampf und Koexistenz mit elastischem Speicher. Er ist eine lokale konstitutive Referenz; Pumpen- und Düsentransport im Graphen müssen noch integriert werden. [Referenz für ein nachgiebiges Kraftstoffvolumen](COMPLIANT_FUEL_VOLUME.de.md)
+
 ## Nächste Entwicklungsfolge
 
 1. Kavitierende Pumpen/Rail-Strömung und lokale Einlassverluste, gemessene Füllung/Regelung und verfeinerte magnetische/elektronische Ansteuerung auflösen. Die erklärte

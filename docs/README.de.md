@@ -52,6 +52,7 @@ flowchart LR
 | [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md) | Starre Kapazität, endliche Gasdruckarbeit und explizite Entlüftung |
 | [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md) | Reversible Verdampfung/Kondensation, Sättigung und Flüssigkeitsgrenzen |
 | [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md) | Endliche Flüssigkeitsverdrängung, Druckkorrektur und dampfführende Entlüftung |
+| [Referenz für ein nachgiebiges Kraftstoffvolumen](COMPLIANT_FUEL_VOLUME.de.md) | Flüssigkeit/Dampf-Gleichgewicht, elastischer Speicher und konservativer Wärmeaustausch mit endlichem Bad |
 
 ## Getriebe
 

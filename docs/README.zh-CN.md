@@ -52,6 +52,7 @@ flowchart LR
 | [油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md) | 刚性油箱容量、有限气体压力功与显式通气 |
 | [燃油相平衡与液体供给边界](FUEL_PHASE_EQUILIBRIUM.zh-CN.md) | 可逆蒸发/冷凝、饱和压力与液体供给边界 |
 | [有限体积油箱相平衡](TANK_PHASE_EQUILIBRIUM.zh-CN.md) | 有限液体位移、压力修正蒸发/冷凝与含蒸气通气 |
+| [柔性燃料容积参考模型](COMPLIANT_FUEL_VOLUME.zh-CN.md) | 液/汽相平衡、弹性储能与守恒有限热浴传热 |
 
 ## 变速器
 

@@ -41,6 +41,8 @@ All parameters remain `unverified`. EA211 DJS + DQ200 and PSA EC5 + AT8 retain c
 
 CLI `list-labs`, MCP example discovery and serial verification share [one laboratory catalog](../assets/labs/catalog.json). Verification checks that it covers every laboratory source.
 
+The pure-fuel compliant-vessel closure resolves liquid, vapor and coexistence with elastic storage. It is a local constitutive reference; graph-level pump and nozzle transport still require integration. [Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md)
+
 ## Next development sequence
 
 1. Resolve cavitating pump/rail flow and local inlet losses, measured filling/regulation and refined magnetic/electronic actuation. Replace the declared
