@@ -26,7 +26,7 @@ A `fuel_check_valve` uses declared conductance in `m3_s_pa` and optional fractio
 
 Request `equilibrium-fuel-pump` or `electric-equilibrium-fuel-pump` through MCP, or run their JSON through CLI. Read chamber-node mass, temperature, pressure, vapor fractions and energy beside valve delivery and shaft speed. Component `volume` is geometric reference volume; node `volume` includes wall expansion. Chamber `torque`, `hydraulic_power` and `hydraulic_work` expose the internal shaft exchange.
 
-Independent liquid pressure/work, ideal-vapor adiabats and two-phase entropy inversion check the constitutive relation. Closed-liquid shaft motion demonstrates second-order refinement; the complete phase-changing filling/delivery experiment demonstrates first-order refinement against an independently inverted RK4 reference. Inlet starvation, full liquid supply, electric drive, gear/hydraulic/clutch composition, exact replay, rollback and allocation checks cover the integration. Asset v35 stores geometry and reads v1-v34. Actual Unity Editor/Play/Player/IL2CPP remains unverified.
+Independent liquid pressure/work, ideal-vapor adiabats and two-phase entropy inversion check the constitutive relation. Closed-liquid shaft motion demonstrates second-order refinement; the complete phase-changing filling/delivery experiment demonstrates first-order refinement against an independently inverted RK4 reference. Inlet starvation, full liquid supply, electric drive, gear/hydraulic/clutch composition, exact replay, rollback and allocation checks cover the integration. Asset v36 stores geometry and reads v1-v35. Actual Unity Editor/Play/Player/IL2CPP remains unverified.
 
 ## Remaining work
 

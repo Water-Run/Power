@@ -44,6 +44,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     };
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
+        ["density"] = Field.Density, ["sound_speed"] = Field.SoundSpeed, ["mass_at_a"] = Field.MassAtA, ["mass_at_b"] = Field.MassAtB,
         ["jet_kinetic_energy"] = Field.JetKineticEnergy, ["jet_impulse"] = Field.JetImpulse, ["throat_pressure"] = Field.ThroatPressure,
         ["exit_temperature"] = Field.ExitTemperature, ["exit_velocity"] = Field.ExitVelocity, ["choked"] = Field.Choked,
         ["forward_volume"] = Field.ForwardVolume, ["reverse_volume"] = Field.ReverseVolume, ["kinetic_energy"] = Field.KineticEnergy, ["energy_at_a"] = Field.EnergyAtA, ["energy_at_b"] = Field.EnergyAtB,
@@ -131,13 +132,14 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
         if (Text(root.GetProperty("schema")) != "power.model.v1") throw new ArgumentException("Unsupported schema.");
         var nodes = Array(root.GetProperty("nodes"), CompiledModel.MaxNodes, 1).Select(n =>
         {
-            Object(n, ["id", "domain", "initial"], "storage", "position", "gas", "battery", "fuel");
+            Object(n, ["id", "domain", "initial"], "storage", "position", "gas", "battery", "fuel", "initial_velocity");
             var domain = Text(n.GetProperty("domain")) switch
             {
-                "rotational" => Domain.Rotational, "thermal" => Domain.Thermal, "gas" => Domain.Gas, "hydraulic" => Domain.Hydraulic, "battery" => Domain.Battery, "translational" => Domain.Translational, "fuel" => Domain.Fuel,
+                "rotational" => Domain.Rotational, "thermal" => Domain.Thermal, "gas" => Domain.Gas, "hydraulic" => Domain.Hydraulic, "battery" => Domain.Battery, "translational" => Domain.Translational, "fuel" => Domain.Fuel, "compressible_fuel" => Domain.CompressibleFuel,
                 _ => throw new ArgumentException("Unknown node domain.")
             };
-            if (domain is Domain.Rotational or Domain.Gas or Domain.Battery or Domain.Translational or Domain.Fuel && !n.TryGetProperty("position", out _))
+            if(domain==Domain.CompressibleFuel) Object(n,["id","domain","storage","initial","position","fuel","initial_velocity"]);
+            if (domain is Domain.Rotational or Domain.Gas or Domain.Battery or Domain.Translational or Domain.Fuel or Domain.CompressibleFuel && !n.TryGetProperty("position", out _))
                 throw new ArgumentException("Rotational position and gas pressure must be explicit.");
             if (domain != Domain.Gas && !n.TryGetProperty("storage", out _))
                 throw new ArgumentException("Rotational inertia and thermal capacity must be explicit.");
@@ -146,10 +148,10 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             EquilibriumFuelDefinition? fuel = null;
             if (n.TryGetProperty("fuel", out var sourceFuel))
             {
-                Object(sourceFuel, ["compliance", "liquid_density", "maximum_pressure", "gas_constant", "vapor_specific_heat", "liquid_specific_heat", "reference_temperature", "latent_internal_energy", "reference_pressure", "minimum_temperature", "maximum_temperature", "lower_heating_value"]);
+                Object(sourceFuel, [domain == Domain.CompressibleFuel ? "liquid_bulk_modulus" : "compliance", "liquid_density", "maximum_pressure", "gas_constant", "vapor_specific_heat", "liquid_specific_heat", "reference_temperature", "latent_internal_energy", "reference_pressure", "minimum_temperature", "maximum_temperature", "lower_heating_value"]);
                 fuel = new()
                 {
-                    Compliance = Quantity(sourceFuel.GetProperty("compliance")), LiquidDensity = Quantity(sourceFuel.GetProperty("liquid_density")), MaximumPressure = Quantity(sourceFuel.GetProperty("maximum_pressure")),
+                    Compliance = domain == Domain.CompressibleFuel ? default : Quantity(sourceFuel.GetProperty("compliance")), LiquidBulkModulus = domain == Domain.CompressibleFuel ? Quantity(sourceFuel.GetProperty("liquid_bulk_modulus")) : default, LiquidDensity = Quantity(sourceFuel.GetProperty("liquid_density")), MaximumPressure = Quantity(sourceFuel.GetProperty("maximum_pressure")),
                     GasConstant = Quantity(sourceFuel.GetProperty("gas_constant")), VaporSpecificHeat = Quantity(sourceFuel.GetProperty("vapor_specific_heat")), LiquidSpecificHeat = Quantity(sourceFuel.GetProperty("liquid_specific_heat")),
                     ReferenceTemperature = Quantity(sourceFuel.GetProperty("reference_temperature")), LatentInternalEnergy = Quantity(sourceFuel.GetProperty("latent_internal_energy")), ReferencePressure = Quantity(sourceFuel.GetProperty("reference_pressure")),
                     MinimumTemperature = Quantity(sourceFuel.GetProperty("minimum_temperature")), MaximumTemperature = Quantity(sourceFuel.GetProperty("maximum_temperature")), LowerHeatingValue = Quantity(sourceFuel.GetProperty("lower_heating_value"))
@@ -179,7 +181,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 gas = new() { GasConstant = Quantity(composition.GetProperty("gas_constant")), Gamma = Number(composition.GetProperty("gamma")), Premixed = premixed };
             }
             return new NodeDefinition(Id(n, "id"), domain, n.TryGetProperty("storage", out var storage) ? Quantity(storage) : default, Quantity(n.GetProperty("initial")),
-                n.TryGetProperty("position", out var p) ? Quantity(p) : default) { Gas = gas, Battery = battery, Fuel = fuel };
+                n.TryGetProperty("position", out var p) ? Quantity(p) : default) { Gas = gas, Battery = battery, Fuel = fuel, InitialVelocity = domain == Domain.CompressibleFuel || n.TryGetProperty("initial_velocity", out _) ? Quantity(n.GetProperty("initial_velocity")) : default };
         }).ToArray();
         var components = Array(root.GetProperty("components"), CompiledModel.MaxComponents).Select(c =>
         {
@@ -188,7 +190,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             {
                 "fuel_chamber" => ComponentKind.FuelChamber, "fuel_check_valve" => ComponentKind.FuelCheckValve, "fuel_restriction" => ComponentKind.FuelRestriction, "fuel_heat_link" => ComponentKind.FuelHeatLink,
                 "fuel_discharge" => ComponentKind.FuelDischarge, "finite_fuel_film" => ComponentKind.FiniteFuelFilm,
-                "fuel_inertial_pipe" => ComponentKind.FuelInertialPipe,
+                "fuel_inertial_pipe" => ComponentKind.FuelInertialPipe, "equilibrium_fuel_duct" => ComponentKind.EquilibriumFuelDuct,
                 "hydraulic_resistance" => ComponentKind.HydraulicResistance, "hydraulic_orifice" => ComponentKind.HydraulicOrifice,
                 "hydraulic_clutch" => ComponentKind.HydraulicClutch,
                 "hydraulic_pump" => ComponentKind.HydraulicPump, "hydraulic_relief" => ComponentKind.HydraulicRelief,
@@ -207,7 +209,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             if (kind is ComponentKind.FuelRestriction or ComponentKind.FuelCheckValve) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel");
             else if (kind == ComponentKind.FuelDischarge) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel", "valve_timing");
             else if (kind is ComponentKind.FuelHeatLink or ComponentKind.FuelChamber) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
-            else if (kind == ComponentKind.FuelInertialPipe) Object(c, ["id", "kind", "node_a", "node_b", "heat_node", "parameters"]);
+            else if (kind is ComponentKind.FuelInertialPipe or ComponentKind.EquilibriumFuelDuct) Object(c, ["id", "kind", "node_a", "node_b", "heat_node", "parameters"]);
             else if (kind == ComponentKind.IdealGear) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind is ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) Object(c, ["id", "kind", "node_a", "node_b", "node_c", "parameters"]);
             else if (kind == ComponentKind.TorqueConverter) Object(c, ["id", "kind", "node_a", "node_b", "parameters"], "heat_node");
@@ -243,6 +245,12 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 InputChannel = c.TryGetProperty("input_channel", out var channel) ? Integer(channel, long.MaxValue) : 0,
                 InitialInput = c.TryGetProperty("initial_input", out var initial) ? Quantity(initial) : default
             };
+            if(kind==ComponentKind.EquilibriumFuelDuct)
+            {
+                var duct=c.GetProperty("parameters");Object(duct,["cells","area","linear_resistance","quadratic_resistance","fluid_heat_fraction"]);
+                return result with{FuelDuct=new(){Cells=Array(duct.GetProperty("cells"),24,1).Select(x=>(uint)Integer(x,uint.MaxValue,1)).ToArray(),Area=Quantity(duct.GetProperty("area")),
+                    LinearResistance=Quantity(duct.GetProperty("linear_resistance")),QuadraticResistance=Quantity(duct.GetProperty("quadratic_resistance")),FluidHeatFraction=Quantity(duct.GetProperty("fluid_heat_fraction"))}};
+            }
             if (kind == ComponentKind.FuelInertialPipe)
             {
                 var pipe = c.GetProperty("parameters");

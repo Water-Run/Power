@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — headless experiments"]
     mcp["Power.Mcp — 12 stdio MCP tools"]
-    assets["Power.Assets — .powerasset v35"]
+    assets["Power.Assets — .powerasset v36"]
     unity["Unity 6.6 studio — 3D laboratories"]
 
     model --> core
@@ -119,7 +119,7 @@ The service exposes twelve tools with input and output schemas:
 |---|---|
 | `get_capabilities` | Discover models, limits, time and revision conventions. Start here. |
 | `get_model_schema` | JSON Schema 2020-12 for `power.model.v1` |
-| `get_example_model` | Get an editable synthetic model and experiment (55 examples) |
+| `get_example_model` | Get an editable synthetic model and experiment (57 examples) |
 | `validate_model` | Validate a model without running it; structured repair diagnostics |
 | `run_experiment` | Bounded headless run with batch replay, KPIs, and provenance |
 | `export_model_asset` | Export a portable `.powerasset` |
@@ -147,14 +147,16 @@ A four-range Ravigneaux research graph adds compound planetary paths and a conve
 > [!NOTE]
 > All sample parameters are `unverified` — research values, not calibrated measurements.
 
-The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v35`, with readers for earlier assets retained.
+The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v36`, with readers for earlier assets retained.
 
 The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse. [Frozen-quality fuel discharge and finite receivers](docs/FUEL_DISCHARGE.md) [Shaft-driven phase-resolving fuel pump](docs/FUEL_CHAMBER_PUMP.md)
 
 A `fuel_inertial_pipe` connects two finite fuel nodes and a finite thermal wall. Its rigid horizontal line owns liquid mass, caloric energy and kinetic energy, in addition to the inventories of both vessels. The line has constant density and a well-mixed variable temperature. Both ports and the entire line must remain liquid; the existing quasi-static links retain their separate two-phase behavior. [Finite liquid fuel line momentum](docs/FUEL_INERTIAL_PIPE.md)
 
+An `equilibrium_fuel_duct` transports mass, momentum and total energy through explicit `compressible_fuel` cells. The liquid is compressible and the vapor is ideal; both phases share pressure, temperature and velocity. Local equilibrium permits condensation and flashing. Two finite stationary reservoirs and a finite thermal wall close the balances. [Compressible equilibrium fuel ducts](docs/EQUILIBRIUM_FUEL_DUCT.md)
+
 <details>
-<summary>Available laboratories (56)</summary>
+<summary>Available laboratories (58)</summary>
 
 | Example name (`get_example_model`) | Laboratory | What it exercises |
 |---|---|---|
@@ -214,6 +216,8 @@ A `fuel_inertial_pipe` connects two finite fuel nodes and a finite thermal wall.
 | `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Frozen-quality choking, finite liquid displacement and physical pump/needle firing |
 | `inertial-fuel-line` | `assets/labs/inertial-fuel-line.power.json` | Finite liquid inventory, dynamic flow, thermal mixing and conserving line work |
 | `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | Finite liquid inventory, dynamic flow, thermal mixing and conserving line work |
+| `equilibrium-fuel-condensing-duct` | `assets/labs/equilibrium-fuel-condensing-duct.power.json` | Finite liquid supply condenses a wet duct inventory |
+| `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | Liquid duct inventory flashes into finite wet reservoirs |
 
 </details>
 

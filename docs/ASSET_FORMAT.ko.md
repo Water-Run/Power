@@ -14,7 +14,36 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 35
+## 현재 버전 36
+
+`equilibrium_fuel_duct`는 명시적인 `compressible_fuel` 셀을 통해 질량, 운동량, 총에너지를 수송합니다. 액체는 압축성이며 증기는 이상기체이고 두 상은 압력, 온도, 속도를 공유합니다. 국소 평형으로 응축과 플래시 증발을 계산합니다. 유한한 정지 저장조 2개와 유한 열벽이 수지를 닫습니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| compressible_fuel_material_first_quantity | liquid_bulk_modulus replaces compliance |
+| compressible_fuel_material_appended_quantity | initial_velocity |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| fuel_duct_cell_count | 1..24 |
+| fuel_duct_record_order | component_index, cell_count, area, linear_resistance, quadratic_resistance, fluid_heat_fraction, cells |
+| fuel_duct_record_count | count(component.kind == equilibrium_fuel_duct) |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112 density; 113 sound_speed; 114 mass_at_a; 115 mass_at_b |
+| retained_asset_readers | power.asset.v1..v35 |
+
+[압축성 평형 연료 덕트](EQUILIBRIUM_FUEL_DUCT.ko.md)
+
+
+## 보존 버전 35
 
 `fuel_inertial_pipe`는 두 유한 연료 노드와 유한 열벽을 연결합니다. 수평 강체 관로는 양 용기 외에 자체 액체 질량, 열 내부에너지와 운동에너지를 갖습니다. 밀도는 일정하고 온도는 완전 혼합으로 변합니다. 포트와 관로 전체가 액체여야 하며 기존 준정적 연결은 별도 2상 거동을 유지합니다.
 

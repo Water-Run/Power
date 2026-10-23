@@ -14,7 +14,36 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione attuale 35
+## Versione attuale 36
+
+Un `equilibrium_fuel_duct` trasporta massa, quantità di moto ed energia totale attraverso celle esplicite `compressible_fuel`. Il liquido è comprimibile e il vapore ideale; le due fasi condividono pressione, temperatura e velocità. L’equilibrio locale permette condensazione e vaporizzazione istantanea. Due serbatoi finiti fermi e una parete termica finita chiudono i bilanci.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| compressible_fuel_material_first_quantity | liquid_bulk_modulus replaces compliance |
+| compressible_fuel_material_appended_quantity | initial_velocity |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| fuel_duct_cell_count | 1..24 |
+| fuel_duct_record_order | component_index, cell_count, area, linear_resistance, quadratic_resistance, fluid_heat_fraction, cells |
+| fuel_duct_record_count | count(component.kind == equilibrium_fuel_duct) |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112 density; 113 sound_speed; 114 mass_at_a; 115 mass_at_b |
+| retained_asset_readers | power.asset.v1..v35 |
+
+[Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md)
+
+
+## Versione conservata 35
 
 Un `fuel_inertial_pipe` collega due nodi finiti di carburante e una parete termica finita. La linea orizzontale rigida possiede massa liquida, energia calorica e cinetica proprie oltre ai serbatoi. Densità costante, temperatura variabile e miscelata. Porte e linea restano liquide; i collegamenti quasi statici mantengono il modello bifase separato.
 

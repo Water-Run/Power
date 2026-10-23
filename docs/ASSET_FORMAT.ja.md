@@ -14,7 +14,36 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現行バージョン 35
+## 現在のバージョン 36
+
+`equilibrium_fuel_duct` は明示的な `compressible_fuel` セル間で質量、運動量、全エネルギーを輸送します。液体は圧縮性、蒸気は理想気体で、両相の圧力、温度、速度は共通です。局所平衡により凝縮とフラッシュ蒸発が生じます。有限の静止貯槽 2 個と有限熱壁が収支を閉じます。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| compressible_fuel_material_first_quantity | liquid_bulk_modulus replaces compliance |
+| compressible_fuel_material_appended_quantity | initial_velocity |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| fuel_duct_cell_count | 1..24 |
+| fuel_duct_record_order | component_index, cell_count, area, linear_resistance, quadratic_resistance, fluid_heat_fraction, cells |
+| fuel_duct_record_count | count(component.kind == equilibrium_fuel_duct) |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112 density; 113 sound_speed; 114 mass_at_a; 115 mass_at_b |
+| retained_asset_readers | power.asset.v1..v35 |
+
+[圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md)
+
+
+## 保持バージョン 35
 
 `fuel_inertial_pipe` は二つの有限燃料ノードと有限熱壁を接続します。水平剛体管は両容器に加えて独自の液体質量、熱内部エネルギー、運動エネルギーを持ちます。密度一定で温度は完全混合により変化します。ポートと管路全体が液相である必要があり、既存の準静的リンクは別の二相挙動を保ちます。
 

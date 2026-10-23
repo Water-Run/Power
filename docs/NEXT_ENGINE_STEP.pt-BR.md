@@ -12,15 +12,17 @@ A bomba do domínio de combustível agora alimenta agulha física e descarga de 
 
 Um `fuel_inertial_pipe` conecta dois nós finitos de combustível e uma parede térmica finita. A linha horizontal rígida possui massa líquida, energia calórica e cinética próprias além dos vasos. Densidade constante e temperatura variável perfeitamente misturada. Portas e linha ficam líquidas; conexões quase estáticas mantêm seu modelo bifásico separado. [Quantidade de movimento da linha finita de combustível líquido](FUEL_INERTIAL_PIPE.pt-BR.md)
 
+Um `equilibrium_fuel_duct` transporta massa, quantidade de movimento e energia total por células explícitas `compressible_fuel`. O líquido é compressível e o vapor ideal; as fases compartilham pressão, temperatura e velocidade. O equilíbrio local permite condensação e vaporização súbita. Dois reservatórios finitos estacionários e uma parede térmica finita fecham os balanços. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
+
 ## Próximo incremento
 
-Estender movimento a densidade variável e mudança de fase com fechamento energético/entrópico compatível antes de afirmar entrada cavitante. Continuar relaxação/deslizamento, ignição, admissão/escape, perdas, transmissão e ECU/TCU. Calibração medida e Unity real seguem separados. [Quantidade de movimento da linha finita de combustível líquido](FUEL_INERTIAL_PIPE.pt-BR.md)
+Conecte dutos compressíveis a câmaras acionadas por eixo e fronteiras de agulha/bocal compatíveis, com trabalho de pressão e hipóteses de fase explícitos. Depois avance relaxação/deslizamento, ignição, admissão/escape, perdas mecânicas e coordenação ECU/TCU. Calibração medida e aceitação real no Unity permanecem separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
 
 ## Aceitação
 
 Exigir referências analíticas/limite independentes, balanços completos de massa/energia e refinamento apropriado. Preservar rollback do lote, cancelamento, ramos, canais estáveis, replay portável e leitores antigos. Continuar depois ignição, admissão/escape, perdas mecânicas, transmissão e coordenação ECU/TCU.
 
-Os parâmetros seguem `unverified`. Respeite temperaturas declaradas, volume gasoso positivo e domínio de vapor diluído. Faltam inércia local de entrada, nucleação finita, deslizamento de fases, spray resolvido, comportamento crítico real e calibração medida. Combustão prescrita não comprova equilíbrio químico ou entropia de reação. Continue entrada, ignição, admissão/escape, perdas e coordenação ECU/TCU.
+Os parâmetros continuam `unverified`. Respeite as faixas declaradas de temperatura e pressão, entalpia latente positiva, volumes de coexistência separados e vapor diluído. O duto é rígido, horizontal, de seção constante e equilíbrio homogêneo instantâneo. Não inclui nucleação com taxa finita, deslizamento, tensão superficial, gravidade, elasticidade ou comportamento crítico real. A difusão de primeira ordem pode alargar frentes; conservação e reprodução não demonstram precisão espacial nem validade de hardware medido. A aceitação real no Unity permanece pendente.
 
 [DEVELOPMENT_STATUS.pt-BR.md](DEVELOPMENT_STATUS.pt-BR.md) · [ROADMAP.pt-BR.md](ROADMAP.pt-BR.md) · [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md)
 

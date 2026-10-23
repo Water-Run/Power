@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: 圧縮性平衡燃料ダクト
+
+`equilibrium_fuel_duct` は明示的な `compressible_fuel` セル間で質量、運動量、全エネルギーを輸送します。液体は圧縮性、蒸気は理想気体で、両相の圧力、温度、速度は共通です。局所平衡により凝縮とフラッシュ蒸発が生じます。有限の静止貯槽 2 個と有限熱壁が収支を閉じます。
+
+`equilibrium-fuel-condensing-duct` または `equilibrium-fuel-flashing-duct` を実行します。各セルの密度、速度、相分率、音速、温度、エネルギーを取得できます。ポートの質量・エネルギー、壁への力積、全在庫も観測可能です。独立検証は液体圧縮仕事、理想蒸気極限、化学ポテンシャル一致、Clapeyron と Gibbs の関係、エントロピー反転による音速、質量エネルギー反転、保存、有限壁の摩擦を扱います。セル平均の音響誤差は 8、16、24 セルで減少します。完全再生、ロールバック、取消、分岐、割り当てなしのステップ、可搬 asset、実 MCP は別々に検証し、詳細は検証証拠に記録します。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 526/526 |
+| standard_checks_on_dotnet | 412/412 |
+| actual_mcp_groups | 62/62 |
+| laboratories | 58 |
+| agent_examples | 57 |
+| unchanged_laboratories | 56 |
+| identical_complete_sample_boundaries | 7531 |
+| all_sample_boundaries | 7553 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_method_order | 1 |
+| empirical_convergence_order_claimed | false |
+| asset_version | power.asset.v36 |
+| agent_api_version | 0.41.0 |
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_fuel_material_record_bytes | 160 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| cell_count_bounds | 1..24 |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112-115 |
+| v35_fixture_sha256 | a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4 |
+| verification_log_sha256 | f5620c5c36fb62b0f527ee4c6fd0d46608d7e6dfa1037c115d3b763133a8c0c0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 58 |
+| schema_negative_cases | 16 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | cell_counts | normalized_cell_average_errors |
+|---|---|---|
+| linear_vapor_acoustics | 8, 16, 24 | 0.09390287687165255, 0.0630137934898812, 0.04692764998969021 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | initial_first_cell_vapor_fraction | final_first_cell_vapor_fraction |
+|---|---|---|---|---|---|---|
+| equilibrium-fuel-condensing-duct | 2552e69b3a50eb9f | a74c5bd9f4c25940 | 11 | 1.1175870895385742e-08 | 0.1 | 0.00036893825719500376 |
+| equilibrium-fuel-flashing-duct | 040a92e35b2df96c | 45e5ec071dd06e39 | 11 | 1.1641532182693481e-10 | 0 | 0.0023026749474771954 |
+
+- `artifacts/reports/equilibrium-duct-final-2026-10-23.log`
+- `artifacts/reports/equilibrium-duct-verify-exit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-evidence-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-baseline-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-schema-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-provenance-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-doc-audit-2026-10-23.json`
+
+保存形 Rusanov フラックスは同じサブステップ状態から全界面を更新します。速度上限は最大絶対速度と物性の音速上限の和です。CFL 制限は最小ポート体積の 0.2 倍を断面積と速度で割った値で、区間当たり最大 4096 サブステップです。輸送と局所的な厳密抵抗減衰は一次分割です。数値拡散は全エントロピー変化に含まれ、報告する摩擦熱とは区別します。静止境界が機械仕事ゼロで貯槽の運動量を受け、流入運動エネルギーは有限貯槽内で内部エネルギーになります。不正状態または丸め誤差を超えるエントロピー減少はバッチ全体を拒否します。刻みを小さくし、物性範囲とセル解像度を確認してください。
+
+パラメータは `unverified` のままです。指定温度・圧力範囲、正の潜エンタルピー、分離した共存比体積、希薄蒸気の条件を守ってください。剛体・等断面・水平管で瞬時均質平衡を仮定します。有限速度の核生成、相間滑り、表面張力、重力、管弾性、実流体の臨界挙動は含みません。一次数値拡散は相変化と音響の前線をぼかします。保存と再生だけでは空間精度や実測機器への妥当性を証明できません。実 Unity の受入検証は未完了です。
+
 ## 2026-10-23: 有限液体燃料管路の運動量
 
 `fuel_inertial_pipe` は二つの有限燃料ノードと有限熱壁を接続します。水平剛体管は両容器に加えて独自の液体質量、熱内部エネルギー、運動エネルギーを持ちます。密度一定で温度は完全混合により変化します。ポートと管路全体が液相である必要があり、既存の準静的リンクは別の二相挙動を保ちます。

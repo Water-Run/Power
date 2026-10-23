@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · **Русский** · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: Сжимаемые равновесные топливные каналы
+
+`equilibrium_fuel_duct` переносит массу, импульс и полную энергию через явные ячейки `compressible_fuel`. Жидкость сжимаема, пар идеален; обе фазы имеют общие давление, температуру и скорость. Локальное равновесие допускает конденсацию и вскипание. Два конечных неподвижных резервуара и конечная тепловая стенка замыкают балансы.
+
+Запустите `equilibrium-fuel-condensing-duct` или `equilibrium-fuel-flashing-duct`. Каждая ячейка выдаёт плотность, скорость, долю фазы, скорость звука, температуру и энергию. Наблюдаемы масса и энергия портов, импульс стенки и полные запасы. Независимые проверки охватывают работу сжатия, предел идеального пара, равенство химических потенциалов, соотношения Клапейрона и Гиббса, звук через обращение энтропии, обращение массы и энергии, сохранение и трение с конечной стенкой. Ошибки средних акустических значений уменьшаются на 8, 16 и 24 ячейках. Точное воспроизведение, откат, отмена, ветви, шаги без выделений, переносимые assets и реальный MCP проверяются отдельно; подробности находятся в доказательствах валидации.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 526/526 |
+| standard_checks_on_dotnet | 412/412 |
+| actual_mcp_groups | 62/62 |
+| laboratories | 58 |
+| agent_examples | 57 |
+| unchanged_laboratories | 56 |
+| identical_complete_sample_boundaries | 7531 |
+| all_sample_boundaries | 7553 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_method_order | 1 |
+| empirical_convergence_order_claimed | false |
+| asset_version | power.asset.v36 |
+| agent_api_version | 0.41.0 |
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_fuel_material_record_bytes | 160 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| cell_count_bounds | 1..24 |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112-115 |
+| v35_fixture_sha256 | a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4 |
+| verification_log_sha256 | f5620c5c36fb62b0f527ee4c6fd0d46608d7e6dfa1037c115d3b763133a8c0c0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 58 |
+| schema_negative_cases | 16 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | cell_counts | normalized_cell_average_errors |
+|---|---|---|
+| linear_vapor_acoustics | 8, 16, 24 | 0.09390287687165255, 0.0630137934898812, 0.04692764998969021 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | initial_first_cell_vapor_fraction | final_first_cell_vapor_fraction |
+|---|---|---|---|---|---|---|
+| equilibrium-fuel-condensing-duct | 2552e69b3a50eb9f | a74c5bd9f4c25940 | 11 | 1.1175870895385742e-08 | 0.1 | 0.00036893825719500376 |
+| equilibrium-fuel-flashing-duct | 040a92e35b2df96c | 45e5ec071dd06e39 | 11 | 1.1641532182693481e-10 | 0 | 0.0023026749474771954 |
+
+- `artifacts/reports/equilibrium-duct-final-2026-10-23.log`
+- `artifacts/reports/equilibrium-duct-verify-exit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-evidence-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-baseline-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-schema-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-provenance-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-doc-audit-2026-10-23.json`
+
+Консервативный поток Русанова обновляет все грани из одного состояния подшага. Верхняя оценка скорости складывает максимальную абсолютную скорость и акустическую границу материала. Ограничение CFL равно 0.2 минимального объёма портов, делённого на площадь и скорость; допускается до 4096 подшагов на интервал. Перенос и точное локальное затухание от сопротивления расщеплены с первым порядком. Численная диффузия входит в изменение полной энтропии отдельно от тепла трения. Неподвижные границы поглощают импульс без механической работы; входящая кинетическая энергия переходит во внутреннюю энергию конечного резервуара. Недопустимое состояние или уменьшение энтропии сверх округления отклоняет весь пакет. Уменьшите шаг и проверьте границы материала и разрешение сетки.
+
+Параметры остаются `unverified`. Соблюдайте пределы температуры и давления, положительную скрытую энтальпию, раздельные объёмы сосуществования и разреженный пар. Это жёсткий горизонтальный канал постоянного сечения с мгновенным однородным равновесием. Не учитываются конечная скорость зародышеобразования, скольжение фаз, поверхностное натяжение, тяжесть, упругость стенки и реальная критическая область. Диффузия первого порядка размывает фронты; сохранение и воспроизведение не доказывают пространственную точность или соответствие измеренному оборудованию. Проверка в Unity ещё требуется.
+
 ## 2026-10-23: Импульс конечной линии жидкого топлива
 
 `fuel_inertial_pipe` соединяет два конечных топливных узла и конечную тепловую стенку. Горизонтальная жёсткая линия имеет собственные массу жидкости, калорическую и кинетическую энергии сверх запасов сосудов. Плотность постоянна, температура переменна при полном смешении. Порты и линия остаются жидкими; квазистатические связи сохраняют отдельную двухфазную модель.

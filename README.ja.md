@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — ヘッドレス実験"]
     mcp["Power.Mcp — 12 個の stdio MCP ツール"]
-    assets["Power.Assets — .powerasset v35"]
+    assets["Power.Assets — .powerasset v36"]
     unity["Unity 6.6 スタジオ — 3D ラボラトリー"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | モデル・制限・時間とリビジョンの規約を検索。ここから始めてください。 |
 | `get_model_schema` | `power.model.v1` の JSON Schema 2020-12 |
-| `get_example_model` | 編集可能な合成モデルと実験を取得(55 例) |
+| `get_example_model` | 編集可能な合成モデルと実験を取得(57 例) |
 | `validate_model` | 実行せずにモデルを検証。構造化された修復診断 |
 | `run_experiment` | 境界付きヘッドレス実行。バッチリプレイ・KPI・来歴付き |
 | `export_model_asset` | 移植可能な `.powerasset` をエクスポート |
@@ -147,14 +147,16 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > すべてのサンプルパラメーターは `unverified` です。研究値であり、キャリブレーション測定ではありません。
 
-以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v35` を使い、旧アセットのリーダーは保持されます。
+以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v36` を使い、旧アセットのリーダーは保持されます。
 
 燃料域ポンプは物理ニードルと凍結蒸気質量分率の流出を介して、有限液体体積の燃焼受容室へ供給します。全在庫に相変化、排除仕事、噴流運動エネルギー、静止壁力積を含みます。 [蒸気質量分率を凍結した燃料流出と有限受容室](docs/FUEL_DISCHARGE.ja.md) [軸駆動の相変化燃料ポンプ](docs/FUEL_CHAMBER_PUMP.ja.md)
 
 `fuel_inertial_pipe` は二つの有限燃料ノードと有限熱壁を接続します。水平剛体管は両容器に加えて独自の液体質量、熱内部エネルギー、運動エネルギーを持ちます。密度一定で温度は完全混合により変化します。ポートと管路全体が液相である必要があり、既存の準静的リンクは別の二相挙動を保ちます。 [有限液体燃料管路の運動量](docs/FUEL_INERTIAL_PIPE.ja.md)
 
+`equilibrium_fuel_duct` は明示的な `compressible_fuel` セル間で質量、運動量、全エネルギーを輸送します。液体は圧縮性、蒸気は理想気体で、両相の圧力、温度、速度は共通です。局所平衡により凝縮とフラッシュ蒸発が生じます。有限の静止貯槽 2 個と有限熱壁が収支を閉じます。 [圧縮性平衡燃料ダクト](docs/EQUILIBRIUM_FUEL_DUCT.ja.md)
+
 <details>
-<summary>利用可能なラボラトリー(56)</summary>
+<summary>利用可能なラボラトリー(58)</summary>
 
 | 例名(`get_example_model`) | ラボラトリー | 検証内容 |
 |---|---|---|
@@ -214,6 +216,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | 凍結蒸気分率のチョーク、有限液体排除、物理ポンプ/ニードル燃焼 |
 | `inertial-fuel-line` | `assets/labs/inertial-fuel-line.power.json` | 有限液体在庫、動的流量、熱混合、保存的管路仕事 |
 | `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | 有限液体在庫、動的流量、熱混合、保存的管路仕事 |
+| `equilibrium-fuel-condensing-duct` | `assets/labs/equilibrium-fuel-condensing-duct.power.json` | 有限液体供給による管内湿り混合物の凝縮 |
+| `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | 管内液体が有限二相貯槽へフラッシュ蒸発 |
 
 </details>
 

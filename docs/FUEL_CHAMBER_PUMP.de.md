@@ -26,7 +26,7 @@ Der geschlossene mechanische Teilschritt hält Masse und Entropie fest. Speicher
 
 `equilibrium-fuel-pump` oder `electric-equilibrium-fuel-pump` per MCP anfordern oder JSON per CLI ausführen. Kammermasse, Temperatur, Druck, Dampfanteile und Energie neben Ventilförderung und Wellendrehzahl lesen. Komponenten-`volume` ist geometrisch; Knoten-`volume` enthält Wandausdehnung. `torque`, `hydraulic_power` und `hydraulic_work` zeigen den inneren Wellenaustausch.
 
-Unabhängige Flüssigkeitsdruck-/Arbeitsreferenz, Idealdampfadiabaten und Zweiphasen-Entropieinversion prüfen den Abschluss. Geschlossene Flüssigkeitsmechanik verfeinert zweiter Ordnung; phasenwechselnde Füllung/Förderung erster Ordnung gegen unabhängig invertierte RK4-Referenz. Einlassmangel, volle Flüssigkeitszufuhr, Elektroantrieb, Getriebe-/Hydraulik-/Kupplungskomposition, Replay, Rollback und Allokationen prüfen die Integration. Asset v35 speichert Geometrie und liest v1-v34. Tatsächliches Unity Editor/Play/Player/IL2CPP bleibt ungeprüft.
+Unabhängige Flüssigkeitsdruck-/Arbeitsreferenz, Idealdampfadiabaten und Zweiphasen-Entropieinversion prüfen den Abschluss. Geschlossene Flüssigkeitsmechanik verfeinert zweiter Ordnung; phasenwechselnde Füllung/Förderung erster Ordnung gegen unabhängig invertierte RK4-Referenz. Einlassmangel, volle Flüssigkeitszufuhr, Elektroantrieb, Getriebe-/Hydraulik-/Kupplungskomposition, Replay, Rollback und Allokationen prüfen die Integration. Asset v36 speichert Geometrie und liest v1-v35. Tatsächliches Unity Editor/Play/Player/IL2CPP bleibt ungeprüft.
 
 ## Verbleibende Arbeit
 

@@ -33,7 +33,7 @@ U_eq(T) = (M_c + m_v) cv T + (M_f - m_v) u_l(T)
 
 ## 証拠
 
-`equilibrium-fuel-cell` は凝縮、通気による蒸発、再凝縮を示します。`equilibrium-injected-cylinder` は通気タンクエンジンに可逆相平衡と供給余裕を加えます。独立したエントロピー最大化、解析的極限、連立 ODE 収束、完全再生、ロールバックと割当を検証します。アセット v35 は物性を保持し v1-v34 を読みます。
+`equilibrium-fuel-cell` は凝縮、通気による蒸発、再凝縮を示します。`equilibrium-injected-cylinder` は通気タンクエンジンに可逆相平衡と供給余裕を加えます。独立したエントロピー最大化、解析的極限、連立 ODE 収束、完全再生、ロールバックと割当を検証します。アセット v36 は物性を保持し v1-v35 を読みます。
 
 パラメーターは `unverified` です。実測ガソリン物性、多成分または有限速度の相変化、分解液体押しのけ/噴霧、OEM 較正は提供しません。実際の Unity Editor/Play/Player/IL2CPP 受け入れは未完了です。
 

@@ -33,7 +33,7 @@ Il confronto ammette solo arrotondamento binary64: `64 * epsilon * max(p, p_sat)
 
 ## Evidenza
 
-`equilibrium-fuel-cell` mostra condensazione, evaporazione da sfiato e nuova condensazione. `equilibrium-injected-cylinder` aggiunge equilibrio reversibile del ricevitore e margini al motore con serbatoio ventilato. Si verificano massimo d'entropia indipendente, limiti analitici, raffinamento ODE simultaneo, replay completo, rollback e allocazioni. Asset v35 conserva le proprietà e legge v1-v34.
+`equilibrium-fuel-cell` mostra condensazione, evaporazione da sfiato e nuova condensazione. `equilibrium-injected-cylinder` aggiunge equilibrio reversibile del ricevitore e margini al motore con serbatoio ventilato. Si verificano massimo d'entropia indipendente, limiti analitici, raffinamento ODE simultaneo, replay completo, rollback e allocazioni. Asset v36 conserva le proprietà e legge v1-v35.
 
 Parametri `unverified`. Non sono fornite proprietà misurate della benzina, cinetica multicomponente o a velocità finita, spostamento liquido/spray risolti o calibrazione OEM. L'accettazione reale Unity Editor/Play/Player/IL2CPP resta in attesa.
 

@@ -12,7 +12,7 @@ Lire `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_heat
 
 ## Preuves et limites
 
-`recirculating-liquid-cylinder` et `recirculating-needle-cylinder` gardent carburant fini, injection réelle, évaporation et aiguille facultative. v35 conserve liens et fraction et lit v1-v34. Chaque retour ajoute 8 états dans les mêmes bornes.
+`recirculating-liquid-cylinder` et `recirculating-needle-cylinder` gardent carburant fini, injection réelle, évaporation et aiguille facultative. v36 conserve liens et fraction et lit v1-v35. Chaque retour ajoute 8 états dans les mêmes bornes.
 
 Décroissance/travail indépendants, raffinement mécanique/pression/thermique simultané, fractions, voies multiples, frontières externes, replay, rollback et allocations passent. Ébullition ou intervalle de transport non résolu fait échouer tout le lot.
 

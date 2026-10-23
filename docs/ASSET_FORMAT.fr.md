@@ -14,7 +14,36 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version actuelle 35
+## Version actuelle 36
+
+Un `equilibrium_fuel_duct` transporte masse, quantité de mouvement et énergie totale dans des cellules explicites `compressible_fuel`. Le liquide est compressible et la vapeur idéale ; les phases partagent pression, température et vitesse. L’équilibre local permet condensation et vaporisation éclair. Deux réservoirs stationnaires finis et une paroi thermique finie ferment les bilans.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| compressible_fuel_material_first_quantity | liquid_bulk_modulus replaces compliance |
+| compressible_fuel_material_appended_quantity | initial_velocity |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| fuel_duct_cell_count | 1..24 |
+| fuel_duct_record_order | component_index, cell_count, area, linear_resistance, quadratic_resistance, fluid_heat_fraction, cells |
+| fuel_duct_record_count | count(component.kind == equilibrium_fuel_duct) |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112 density; 113 sound_speed; 114 mass_at_a; 115 mass_at_b |
+| retained_asset_readers | power.asset.v1..v35 |
+
+[Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md)
+
+
+## Version conservée 35
 
 Un `fuel_inertial_pipe` relie deux nœuds de carburant finis et une paroi thermique finie. La ligne horizontale rigide possède masse liquide, énergie calorique et cinétique propres, en plus des réservoirs. Sa densité est constante, sa température variable et parfaitement mélangée. Les ports et toute la ligne restent liquides ; les liens quasi statiques gardent leur comportement diphasique séparé.
 

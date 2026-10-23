@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — esperimenti senza interfaccia"]
     mcp["Power.Mcp — 12 strumenti MCP via stdio"]
-    assets["Power.Assets — .powerasset v35"]
+    assets["Power.Assets — .powerasset v36"]
     unity["Studio Unity 6.6 — laboratori 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Il servizio espone dodici strumenti con schemi di input e output:
 |---|---|
 | `get_capabilities` | Scopre modelli, limiti e convenzioni di tempo e revisione. Inizia qui. |
 | `get_model_schema` | JSON Schema 2020-12 per `power.model.v1` |
-| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (55 esempi) |
+| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (57 esempi) |
 | `validate_model` | Valida un modello senza eseguirlo; diagnostica di riparazione strutturata |
 | `run_experiment` | Esecuzione senza interfaccia e limitata, con replay batch, KPI e provenienza |
 | `export_model_asset` | Esporta un `.powerasset` portabile |
@@ -147,14 +147,16 @@ Un grafo di ricerca Ravigneaux a quattro gamme aggiunge percorsi planetari compo
 > [!NOTE]
 > Tutti i parametri di esempio sono `unverified`: valori di ricerca, non misure calibrate.
 
-I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v35`, mantenendo i lettori per gli asset precedenti.
+I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v36`, mantenendo i lettori per gli asset precedenti.
 
 La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo congelato in un ricevitore acceso con volume liquido finito. Gli inventari comprendono cambio fase, lavoro di spostamento, energia cinetica del getto e impulso sulla parete ferma. [Scarico carburante a titolo congelato e ricevitori finiti](docs/FUEL_DISCHARGE.it.md) [Pompa carburante a cambio di fase azionata da albero](docs/FUEL_CHAMBER_PUMP.it.md)
 
 Un `fuel_inertial_pipe` collega due nodi finiti di carburante e una parete termica finita. La linea orizzontale rigida possiede massa liquida, energia calorica e cinetica proprie oltre ai serbatoi. Densità costante, temperatura variabile e miscelata. Porte e linea restano liquide; i collegamenti quasi statici mantengono il modello bifase separato. [Quantità di moto della linea finita di carburante liquido](docs/FUEL_INERTIAL_PIPE.it.md)
 
+Un `equilibrium_fuel_duct` trasporta massa, quantità di moto ed energia totale attraverso celle esplicite `compressible_fuel`. Il liquido è comprimibile e il vapore ideale; le due fasi condividono pressione, temperatura e velocità. L’equilibrio locale permette condensazione e vaporizzazione istantanea. Due serbatoi finiti fermi e una parete termica finita chiudono i bilanci. [Condotti di combustibile comprimibile in equilibrio](docs/EQUILIBRIUM_FUEL_DUCT.it.md)
+
 <details>
-<summary>Laboratori disponibili (56)</summary>
+<summary>Laboratori disponibili (58)</summary>
 
 | Nome esempio (`get_example_model`) | Laboratorio | Cosa esercita |
 |---|---|---|
@@ -214,6 +216,8 @@ Un `fuel_inertial_pipe` collega due nodi finiti di carburante e una parete termi
 | `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Strozzamento a titolo congelato, spostamento liquido finito e pompa/ago fisici in combustione |
 | `inertial-fuel-line` | `assets/labs/inertial-fuel-line.power.json` | Inventario liquido finito, portata dinamica, miscela termica e lavoro conservativo |
 | `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | Inventario liquido finito, portata dinamica, miscela termica e lavoro conservativo |
+| `equilibrium-fuel-condensing-duct` | `assets/labs/equilibrium-fuel-condensing-duct.power.json` | Una fornitura liquida finita condensa la miscela umida nel condotto |
+| `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | Il liquido del condotto vaporizza verso serbatoi bifase finiti |
 
 </details>
 

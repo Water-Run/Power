@@ -14,7 +14,36 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 35
+## Текущая версия 36
+
+`equilibrium_fuel_duct` переносит массу, импульс и полную энергию через явные ячейки `compressible_fuel`. Жидкость сжимаема, пар идеален; обе фазы имеют общие давление, температуру и скорость. Локальное равновесие допускает конденсацию и вскипание. Два конечных неподвижных резервуара и конечная тепловая стенка замыкают балансы.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| compressible_fuel_material_first_quantity | liquid_bulk_modulus replaces compliance |
+| compressible_fuel_material_appended_quantity | initial_velocity |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| fuel_duct_cell_count | 1..24 |
+| fuel_duct_record_order | component_index, cell_count, area, linear_resistance, quadratic_resistance, fluid_heat_fraction, cells |
+| fuel_duct_record_count | count(component.kind == equilibrium_fuel_duct) |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112 density; 113 sound_speed; 114 mass_at_a; 115 mass_at_b |
+| retained_asset_readers | power.asset.v1..v35 |
+
+[Сжимаемые равновесные топливные каналы](EQUILIBRIUM_FUEL_DUCT.ru.md)
+
+
+## Сохранённая версия 35
 
 `fuel_inertial_pipe` соединяет два конечных топливных узла и конечную тепловую стенку. Горизонтальная жёсткая линия имеет собственные массу жидкости, калорическую и кинетическую энергии сверх запасов сосудов. Плотность постоянна, температура переменна при полном смешении. Порты и линия остаются жидкими; квазистатические связи сохраняют отдельную двухфазную модель.
 

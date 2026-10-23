@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · **Italiano** · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: Condotti di combustibile comprimibile in equilibrio
+
+Un `equilibrium_fuel_duct` trasporta massa, quantità di moto ed energia totale attraverso celle esplicite `compressible_fuel`. Il liquido è comprimibile e il vapore ideale; le due fasi condividono pressione, temperatura e velocità. L’equilibrio locale permette condensazione e vaporizzazione istantanea. Due serbatoi finiti fermi e una parete termica finita chiudono i bilanci.
+
+Eseguire `equilibrium-fuel-condensing-duct` o `equilibrium-fuel-flashing-duct`. Ogni cella espone densità, velocità, frazione di fase, velocità del suono, temperatura ed energia. Sono osservabili massa/energia alle porte, impulso della parete e inventari completi. Le verifiche indipendenti coprono lavoro di compressione, limite del vapore ideale, uguaglianza dei potenziali chimici, relazioni di Clapeyron e Gibbs, suono tramite inversione dell’entropia, inversione massa-energia, conservazione e attrito con parete finita. Gli errori acustici medi di cella diminuiscono con 8, 16 e 24 celle. Riproduzione esatta, rollback, annullamento, rami, passi senza allocazioni, asset portabili e MCP reale sono verificati separatamente; i risultati dettagliati sono nelle prove di validazione.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 526/526 |
+| standard_checks_on_dotnet | 412/412 |
+| actual_mcp_groups | 62/62 |
+| laboratories | 58 |
+| agent_examples | 57 |
+| unchanged_laboratories | 56 |
+| identical_complete_sample_boundaries | 7531 |
+| all_sample_boundaries | 7553 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_method_order | 1 |
+| empirical_convergence_order_claimed | false |
+| asset_version | power.asset.v36 |
+| agent_api_version | 0.41.0 |
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_fuel_material_record_bytes | 160 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| cell_count_bounds | 1..24 |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112-115 |
+| v35_fixture_sha256 | a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4 |
+| verification_log_sha256 | f5620c5c36fb62b0f527ee4c6fd0d46608d7e6dfa1037c115d3b763133a8c0c0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 58 |
+| schema_negative_cases | 16 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | cell_counts | normalized_cell_average_errors |
+|---|---|---|
+| linear_vapor_acoustics | 8, 16, 24 | 0.09390287687165255, 0.0630137934898812, 0.04692764998969021 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | initial_first_cell_vapor_fraction | final_first_cell_vapor_fraction |
+|---|---|---|---|---|---|---|
+| equilibrium-fuel-condensing-duct | 2552e69b3a50eb9f | a74c5bd9f4c25940 | 11 | 1.1175870895385742e-08 | 0.1 | 0.00036893825719500376 |
+| equilibrium-fuel-flashing-duct | 040a92e35b2df96c | 45e5ec071dd06e39 | 11 | 1.1641532182693481e-10 | 0 | 0.0023026749474771954 |
+
+- `artifacts/reports/equilibrium-duct-final-2026-10-23.log`
+- `artifacts/reports/equilibrium-duct-verify-exit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-evidence-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-baseline-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-schema-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-provenance-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-doc-audit-2026-10-23.json`
+
+Il flusso conservativo di Rusanov aggiorna tutte le facce dallo stesso stato di sottopasso. Il limite di velocità somma la massima velocità assoluta e il limite acustico del materiale. Il vincolo CFL è 0.2 volte il volume minimo delle porte diviso per area e velocità; ogni intervallo ammette al massimo 4096 sottopassi. Trasporto e decadimento locale esatto per attrito sono separati al primo ordine. La diffusione numerica contribuisce alla variazione totale di entropia, distinta dal calore d’attrito riportato. I confini fermi assorbono quantità di moto senza lavoro meccanico; l’energia cinetica entrante si termalizza nell’inventario finito. Stati invalidi o diminuzione d’entropia oltre l’arrotondamento rifiutano l’intero lotto. Ridurre il passo e controllare limiti del materiale e risoluzione.
+
+I parametri restano `unverified`. Rispettare gli intervalli dichiarati di temperatura e pressione, entalpia latente positiva, volumi di coesistenza separati e vapore diluito. Il condotto è rigido, orizzontale, a sezione costante e con equilibrio omogeneo istantaneo. Esclude nucleazione a velocità finita, scorrimento tra fasi, tensione superficiale, gravità, elasticità e comportamento critico reale. La diffusione di primo ordine può allargare i fronti; conservazione e riproduzione non dimostrano accuratezza spaziale o validità hardware misurata. L’accettazione Unity effettiva è ancora aperta.
+
 ## 2026-10-23: Quantità di moto della linea finita di carburante liquido
 
 Un `fuel_inertial_pipe` collega due nodi finiti di carburante e una parete termica finita. La linea orizzontale rigida possiede massa liquida, energia calorica e cinetica proprie oltre ai serbatoi. Densità costante, temperatura variabile e miscelata. Porte e linea restano liquide; i collegamenti quasi statici mantengono il modello bifase separato.

@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · **Português**
 
+## 2026-10-23: Dutos de combustível compressível em equilíbrio
+
+Um `equilibrium_fuel_duct` transporta massa, quantidade de movimento e energia total por células explícitas `compressible_fuel`. O líquido é compressível e o vapor ideal; as fases compartilham pressão, temperatura e velocidade. O equilíbrio local permite condensação e vaporização súbita. Dois reservatórios finitos estacionários e uma parede térmica finita fecham os balanços.
+
+Execute `equilibrium-fuel-condensing-duct` ou `equilibrium-fuel-flashing-duct`. Cada célula expõe densidade, velocidade, fração de fase, velocidade do som, temperatura e energia. Massa/energia nas portas, impulso da parede e inventários completos são observáveis. Verificações independentes abrangem trabalho de compressão, limite do vapor ideal, igualdade dos potenciais químicos, relações de Clapeyron e Gibbs, som por inversão da entropia, inversão massa-energia, conservação e atrito com parede finita. Os erros acústicos médios de célula diminuem com 8, 16 e 24 células. Reprodução exata, reversão, cancelamento, ramificações, passos sem alocação, assets portáveis e MCP real são verificados separadamente; detalhes constam nas evidências de validação.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 526/526 |
+| standard_checks_on_dotnet | 412/412 |
+| actual_mcp_groups | 62/62 |
+| laboratories | 58 |
+| agent_examples | 57 |
+| unchanged_laboratories | 56 |
+| identical_complete_sample_boundaries | 7531 |
+| all_sample_boundaries | 7553 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_method_order | 1 |
+| empirical_convergence_order_claimed | false |
+| asset_version | power.asset.v36 |
+| agent_api_version | 0.41.0 |
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_fuel_material_record_bytes | 160 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| cell_count_bounds | 1..24 |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112-115 |
+| v35_fixture_sha256 | a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4 |
+| verification_log_sha256 | f5620c5c36fb62b0f527ee4c6fd0d46608d7e6dfa1037c115d3b763133a8c0c0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 58 |
+| schema_negative_cases | 16 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | cell_counts | normalized_cell_average_errors |
+|---|---|---|
+| linear_vapor_acoustics | 8, 16, 24 | 0.09390287687165255, 0.0630137934898812, 0.04692764998969021 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | initial_first_cell_vapor_fraction | final_first_cell_vapor_fraction |
+|---|---|---|---|---|---|---|
+| equilibrium-fuel-condensing-duct | 2552e69b3a50eb9f | a74c5bd9f4c25940 | 11 | 1.1175870895385742e-08 | 0.1 | 0.00036893825719500376 |
+| equilibrium-fuel-flashing-duct | 040a92e35b2df96c | 45e5ec071dd06e39 | 11 | 1.1641532182693481e-10 | 0 | 0.0023026749474771954 |
+
+- `artifacts/reports/equilibrium-duct-final-2026-10-23.log`
+- `artifacts/reports/equilibrium-duct-verify-exit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-evidence-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-baseline-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-schema-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-provenance-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-doc-audit-2026-10-23.json`
+
+O fluxo conservativo de Rusanov avança todas as faces a partir do mesmo estado de subpasso. O limite de velocidade soma a maior velocidade absoluta e o limite acústico do material. O limite CFL é 0.2 vezes o menor volume de porta dividido por área e velocidade; cada intervalo permite até 4096 subpassos. Transporte e decaimento local exato por arrasto são separados em primeira ordem. A difusão numérica contribui para a variação total de entropia, distinta do calor de atrito informado. Fronteiras estacionárias absorvem impulso sem trabalho mecânico; a energia cinética que entra se termaliza no inventário finito. Estados inválidos ou queda de entropia além do arredondamento rejeitam todo o lote. Reduza o passo e examine limites do material e resolução.
+
+Os parâmetros continuam `unverified`. Respeite as faixas declaradas de temperatura e pressão, entalpia latente positiva, volumes de coexistência separados e vapor diluído. O duto é rígido, horizontal, de seção constante e equilíbrio homogêneo instantâneo. Não inclui nucleação com taxa finita, deslizamento, tensão superficial, gravidade, elasticidade ou comportamento crítico real. A difusão de primeira ordem pode alargar frentes; conservação e reprodução não demonstram precisão espacial nem validade de hardware medido. A aceitação real no Unity permanece pendente.
+
 ## 2026-10-23: Quantidade de movimento da linha finita de combustível líquido
 
 Um `fuel_inertial_pipe` conecta dois nós finitos de combustível e uma parede térmica finita. A linha horizontal rígida possui massa líquida, energia calórica e cinética próprias além dos vasos. Densidade constante e temperatura variável perfeitamente misturada. Portas e linha ficam líquidas; conexões quase estáticas mantêm seu modelo bifásico separado.

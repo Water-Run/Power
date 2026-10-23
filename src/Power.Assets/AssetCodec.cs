@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 35, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v35";
+    public const int FormatVersion = 36, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v36";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -53,15 +53,17 @@ public static class AssetCodec
         int liquidFeeds=asset.Components.Count(c=>c.LiquidRailFeed is not null);
         int liquidTanks=asset.Components.Count(c=>c.LiquidFuelTank is not null);
         int liquidReturns=asset.Components.Count(c=>c.LiquidRailReturn is not null);
-        int fuelVolumes = asset.Nodes.Count(n => n.Domain == Domain.Fuel);
+        int fuelVolumes = asset.Nodes.Count(n => n.Domain is Domain.Fuel or Domain.CompressibleFuel);
         int fuelChambers = asset.Components.Count(c => c.Kind == ComponentKind.FuelChamber);
         int finiteFilms = asset.Components.Count(c => c.Kind == ComponentKind.FiniteFuelFilm);
         int discharges = asset.Components.Count(c => c.Kind == ComponentKind.FuelDischarge);
         int fuelPipes = asset.Components.Count(c => c.Kind == ComponentKind.FuelInertialPipe);
+        int compressible = asset.Nodes.Count(n => n.Domain == Domain.CompressibleFuel);
+        long ductBytes = asset.Components.Sum(c => c.FuelDuct is null ? 0L : 56L + 4L * c.FuelDuct.Cells.Count);
         long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 40 * 4 +
             44L * asset.Nodes.Count + 156L * asset.Components.Count + 116L * cylinders + 24L * gases + 36L * orifices +
             72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 100L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + 40L * needleDrivers + 104L * dctControllers + 208L * atControllers + 12L * atRoutes + 28L * liquidFeeds + 52L * liquidTanks + 24L * liquidReturns + 148L * fuelVolumes + 40L * fuelChambers + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
-        size += 12L * finiteFilms + 52L * discharges + 88L * fuelPipes;
+        size += 12L * finiteFilms + 52L * discharges + 88L * fuelPipes + 12L * compressible + ductBytes;
         if (size > MaxBytes) throw new AssetFormatException("Asset exceeds 1 MiB.");
         using var stream = new MemoryStream((int)size);
         using var writer = new BinaryWriter(stream, Utf8, true);
@@ -249,9 +251,10 @@ public static class AssetCodec
         for (int i = 0; i < asset.Nodes.Count; ++i)
             if (asset.Nodes[i].Fuel is { } fuel)
             {
-                writer.Write(i); Quantity(fuel.Compliance); Quantity(fuel.LiquidDensity); Quantity(fuel.MaximumPressure); Quantity(fuel.GasConstant);
+                writer.Write(i); Quantity(asset.Nodes[i].Domain == Domain.CompressibleFuel ? fuel.LiquidBulkModulus : fuel.Compliance); Quantity(fuel.LiquidDensity); Quantity(fuel.MaximumPressure); Quantity(fuel.GasConstant);
                 Quantity(fuel.VaporSpecificHeat); Quantity(fuel.LiquidSpecificHeat); Quantity(fuel.ReferenceTemperature); Quantity(fuel.LatentInternalEnergy);
                 Quantity(fuel.ReferencePressure); Quantity(fuel.MinimumTemperature); Quantity(fuel.MaximumTemperature); Quantity(fuel.LowerHeatingValue);
+                if (asset.Nodes[i].Domain == Domain.CompressibleFuel) Quantity(asset.Nodes[i].InitialVelocity);
             }
         for (int i = 0; i < asset.Components.Count; ++i)
             if (asset.Components[i].FuelChamber is { } chamber)
@@ -268,6 +271,9 @@ public static class AssetCodec
                 writer.Write(i); Quantity(pipe.Length); Quantity(pipe.Area); Quantity(pipe.LinearResistance); Quantity(pipe.QuadraticResistance);
                 Quantity(pipe.InitialFlow); Quantity(pipe.InitialTemperature); Quantity(pipe.FluidHeatFraction);
             }
+        for(int i=0;i<asset.Components.Count;++i)
+            if(asset.Components[i].FuelDuct is { } duct)
+            {writer.Write(i);writer.Write(duct.Cells.Count);Quantity(duct.Area);Quantity(duct.LinearResistance);Quantity(duct.QuadraticResistance);Quantity(duct.FluidHeatFraction);foreach(uint cell in duct.Cells)writer.Write(cell);}
         foreach (var input in asset.Inputs) { writer.Write(input.TimeNanoseconds); writer.Write(input.Channel); writer.Write(input.Value); }
         foreach (var c in asset.Checks)
         {
@@ -342,7 +348,9 @@ public static class AssetCodec
             Quantity Quantity() => new(reader.ReadDouble(), (Unit)reader.ReadInt32());
             var ns = new NodeDefinition[nodes]; var cs = new ComponentDefinition[components];
             for (int i = 0; i < nodes; ++i) ns[i] = new(reader.ReadUInt32(), (Domain)reader.ReadInt32(), Quantity(), Quantity(), Quantity());
-            int fuelVolumes = ns.Count(n => n.Domain == Domain.Fuel);
+            int fuelVolumes = ns.Count(n => n.Domain is Domain.Fuel or Domain.CompressibleFuel);
+            int compressible = ns.Count(n => n.Domain == Domain.CompressibleFuel);
+            if (version < 36 && compressible != 0) throw new AssetFormatException("Compressible fuel nodes require version 36.");
             if (version < 32 && fuelVolumes != 0) throw new AssetFormatException("Equilibrium fuel nodes require version 32.");
             for (int i = 0; i < components; ++i)
                 cs[i] = new()
@@ -356,12 +364,15 @@ public static class AssetCodec
             int fuelChambers = cs.Count(c => c.Kind == ComponentKind.FuelChamber);
             int finiteFilms = cs.Count(c => c.Kind == ComponentKind.FiniteFuelFilm), discharges = cs.Count(c => c.Kind == ComponentKind.FuelDischarge);
             int fuelPipes = cs.Count(c => c.Kind == ComponentKind.FuelInertialPipe);
+            int ducts = cs.Count(c => c.Kind == ComponentKind.EquilibriumFuelDuct);
+            if(version<36&&ducts!=0)throw new AssetFormatException("Equilibrium fuel ducts require version 36.");
             if (version < 35 && fuelPipes != 0) throw new AssetFormatException("Inertial liquid fuel lines require version 35.");
             if (version < 34 && (finiteFilms != 0 || discharges != 0)) throw new AssetFormatException("Finite-displacement receivers and fuel discharge require version 34.");
             if (version < 33 && (fuelChambers != 0 || cs.Any(c => c.Kind == ComponentKind.FuelCheckValve)))
                 throw new AssetFormatException("Moving fuel chambers and check valves require version 33.");
-            if (stream.Length - tableStart != declaredTableBytes + 148L * fuelVolumes + 40L * fuelChambers + 12L * finiteFilms + 52L * discharges + 88L * fuelPipes)
-                throw new AssetFormatException("Asset length does not match its counts and typed fuel records.");
+            long extra = stream.Length - tableStart - (declaredTableBytes + 148L * fuelVolumes + 12L * compressible + 40L * fuelChambers + 12L * finiteFilms + 52L * discharges + 88L * fuelPipes);
+            if (ducts == 0 ? extra != 0 : extra < 60L * ducts || extra > 152L * ducts)
+                throw new AssetFormatException("Asset length does not match its counts and bounded fuel records.");
             if (version < 32 && cs.Any(c => c.Kind is ComponentKind.FuelRestriction or ComponentKind.FuelHeatLink))
                 throw new AssetFormatException("Equilibrium fuel links require version 32.");
             if(version<28&&cs.Any(c=>c.Kind==ComponentKind.LiquidRailReturn))throw new AssetFormatException("Liquid return paths require version 28.");
@@ -727,14 +738,16 @@ public static class AssetCodec
             for (int i = 0; i < fuelVolumes; ++i)
             {
                 int index = reader.ReadInt32();
-                if (index < 0 || index >= nodes || ns[index].Domain != Domain.Fuel || ns[index].Fuel is not null)
+                if (index < 0 || index >= nodes || ns[index].Domain is not (Domain.Fuel or Domain.CompressibleFuel) || ns[index].Fuel is not null)
                     throw new AssetFormatException("Fuel material record must reference a distinct fuel node.");
+                var stiffness = Quantity();
                 ns[index] = ns[index] with { Fuel = new()
                 {
-                    Compliance = Quantity(), LiquidDensity = Quantity(), MaximumPressure = Quantity(), GasConstant = Quantity(),
+                    Compliance = ns[index].Domain == Domain.Fuel ? stiffness : default, LiquidBulkModulus = ns[index].Domain == Domain.CompressibleFuel ? stiffness : default, LiquidDensity = Quantity(), MaximumPressure = Quantity(), GasConstant = Quantity(),
                     VaporSpecificHeat = Quantity(), LiquidSpecificHeat = Quantity(), ReferenceTemperature = Quantity(), LatentInternalEnergy = Quantity(),
                     ReferencePressure = Quantity(), MinimumTemperature = Quantity(), MaximumTemperature = Quantity(), LowerHeatingValue = Quantity()
                 } };
+                if(ns[index].Domain==Domain.CompressibleFuel)ns[index]=ns[index] with{InitialVelocity=Quantity()};
             }
             for (int i = 0; i < fuelChambers; ++i)
             {
@@ -762,6 +775,13 @@ public static class AssetCodec
                 cs[index] = cs[index] with { FuelPipe = new() { Length = Quantity(), Area = Quantity(), LinearResistance = Quantity(), QuadraticResistance = Quantity(),
                     InitialFlow = Quantity(), InitialTemperature = Quantity(), FluidHeatFraction = Quantity() } };
             }
+            for(int i=0;i<ducts;++i)
+            {
+                int index=reader.ReadInt32();if(index<0||index>=components||cs[index].Kind!=ComponentKind.EquilibriumFuelDuct||cs[index].FuelDuct is not null)throw new AssetFormatException("Duct record must reference a distinct equilibrium fuel duct.");
+                int count=Count(24,1);var area=Quantity();var linear=Quantity();var quadratic=Quantity();var fraction=Quantity();var cells=new uint[count];for(int j=0;j<count;++j)cells[j]=reader.ReadUInt32();
+                cs[index]=cs[index] with{FuelDuct=new(){Cells=Array.AsReadOnly(cells),Area=area,LinearResistance=linear,QuadraticResistance=quadratic,FluidHeatFraction=fraction}};
+            }
+            if(stream.Length-stream.Position!=24L*inputs+33L*checks)throw new AssetFormatException("Fuel record lengths do not match the bounded table.");
             for (int i = 0; i < inputs; ++i) schedule[i] = new(reader.ReadUInt64(), reader.ReadUInt64(), reader.ReadDouble());
             var conditions = new AssetCheck[checks];
             for (int i = 0; i < checks; ++i)

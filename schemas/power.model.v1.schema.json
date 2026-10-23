@@ -47,6 +47,9 @@
           },
           {
             "$ref": "#/$defs/fuel"
+          },
+          {
+            "$ref": "#/$defs/compressible_fuel"
           }
         ]
       },
@@ -200,6 +203,9 @@
           },
           {
             "$ref": "#/$defs/fuel_inertial_pipe"
+          },
+          {
+            "$ref": "#/$defs/equilibrium_fuel_duct"
           }
         ]
       },
@@ -964,7 +970,11 @@
             "reverse_volume",
             "kinetic_energy",
             "energy_at_a",
-            "energy_at_b"
+            "energy_at_b",
+            "density",
+            "sound_speed",
+            "mass_at_a",
+            "mass_at_b"
           ]
         },
         "min": {
@@ -7861,6 +7871,487 @@
                     "fraction"
                   ]
                 }
+              }
+            }
+          }
+        }
+      }
+    },
+    "compressible_fuel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "domain",
+        "storage",
+        "initial",
+        "position",
+        "fuel",
+        "initial_velocity"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "domain": {
+          "const": "compressible_fuel"
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "m3",
+                "l"
+              ]
+            }
+          }
+        },
+        "initial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "k"
+              ]
+            }
+          }
+        },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "kg"
+              ]
+            }
+          }
+        },
+        "fuel": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "liquid_bulk_modulus",
+            "liquid_density",
+            "maximum_pressure",
+            "gas_constant",
+            "vapor_specific_heat",
+            "liquid_specific_heat",
+            "reference_temperature",
+            "latent_internal_energy",
+            "reference_pressure",
+            "minimum_temperature",
+            "maximum_temperature",
+            "lower_heating_value"
+          ],
+          "properties": {
+            "liquid_density": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "kg_m3"
+                  ]
+                }
+              }
+            },
+            "maximum_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "gas_constant": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "vapor_specific_heat": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "liquid_specific_heat": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "reference_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "latent_internal_energy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg"
+                  ]
+                }
+              }
+            },
+            "reference_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "minimum_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "maximum_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "lower_heating_value": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg"
+                  ]
+                }
+              }
+            },
+            "liquid_bulk_modulus": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "initial_velocity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "m_s"
+              ]
+            }
+          }
+        }
+      },
+      "description": "Homogeneous pure fuel in an elastic vessel. Position is total fuel mass; caloric and elastic energy share the phase flash. Parameters remain unverified."
+    },
+    "equilibrium_fuel_duct": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "heat_node",
+        "parameters"
+      ],
+      "description": "Conservative homogeneous-equilibrium fuel transport with explicit compressible fluid cells and finite stationary reservoirs. Cold compression energy, phase equilibrium and equilibrium sound speed share one thermodynamic potential.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "equilibrium_fuel_duct"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "heat_node": {
+          "$ref": "#/$defs/id"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cells",
+            "area",
+            "linear_resistance",
+            "quadratic_resistance",
+            "fluid_heat_fraction"
+          ],
+          "properties": {
+            "area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "linear_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa_s_m3"
+                  ]
+                }
+              }
+            },
+            "quadratic_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa_s2_m6"
+                  ]
+                }
+              }
+            },
+            "fluid_heat_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
+                  ]
+                }
+              }
+            },
+            "cells": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 24,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/id"
               }
             }
           }

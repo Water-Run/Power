@@ -331,3 +331,15 @@ SHA-256: `51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587`.
 `FuelPipeAssetChecks` verifies the authentic digest and every original/upgraded
 replay boundary. Keep these original bytes. The Power! GPL license and Unity
 Linking Exception apply.
+
+## Inertial pump-fed cylinder v35
+
+`inertial-pump-fed-cylinder-v35.powerasset` retains the v35 writer output
+from commit `02c547866dea045eebc70424bbb60091c17082fd`, copied before changing
+the encoder on 2026-10-23. It preserves the liquid-only inertial line, pump,
+physical needle and finite receiver before compressible equilibrium duct records.
+
+SHA-256: `a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4`.
+`EquilibriumDuctAssetChecks` verifies the authentic digest and every original
+and upgraded replay boundary. Keep these original bytes. The Power! GPL license
+and Unity Linking Exception apply.

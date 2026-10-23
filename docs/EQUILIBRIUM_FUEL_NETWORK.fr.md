@@ -32,7 +32,7 @@ La thermodynamique compatible et une conductance positive entraînée par la pre
 
 Demander `equilibrium-fuel-network` ou `electrothermal-fuel-network` par MCP, ou exécuter le même JSON par CLI. Lire `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy` et `specific_enthalpy` par récipient. Ici `internal_energy` comprend la paroi élastique ; l'énergie chimique est séparée. Les liens exposent débits signés, masse cumulée, `transport_energy` et variation d'entropie de paire.
 
-Les laboratoires couvrent décharge liquide vers coexistence, inversion, changements d'ouverture et couplage thermique fini/électromécanique. Une exponentielle indépendante de pression liquide, une EDO simultanée diphasique masse/enthalpie/chaleur, l'inversion par chauffage et la capture spéculative d'embrayage vérifient précision et composition. Assets et MCP réel conservent chaque valeur et hash échantillonnés. L'asset v35 conserve les propriétés et lit v1-v34. Unity Editor/Play/Player/IL2CPP réel reste non vérifié.
+Les laboratoires couvrent décharge liquide vers coexistence, inversion, changements d'ouverture et couplage thermique fini/électromécanique. Une exponentielle indépendante de pression liquide, une EDO simultanée diphasique masse/enthalpie/chaleur, l'inversion par chauffage et la capture spéculative d'embrayage vérifient précision et composition. Assets et MCP réel conservent chaque valeur et hash échantillonnés. L'asset v36 conserve les propriétés et lit v1-v35. Unity Editor/Play/Player/IL2CPP réel reste non vérifié.
 
 ## Travail restant
 

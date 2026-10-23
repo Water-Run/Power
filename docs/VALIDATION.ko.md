@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: 압축성 평형 연료 덕트
+
+`equilibrium_fuel_duct`는 명시적인 `compressible_fuel` 셀을 통해 질량, 운동량, 총에너지를 수송합니다. 액체는 압축성이며 증기는 이상기체이고 두 상은 압력, 온도, 속도를 공유합니다. 국소 평형으로 응축과 플래시 증발을 계산합니다. 유한한 정지 저장조 2개와 유한 열벽이 수지를 닫습니다.
+
+`equilibrium-fuel-condensing-duct` 또는 `equilibrium-fuel-flashing-duct`를 실행합니다. 각 셀은 밀도, 속도, 상분율, 음속, 온도, 에너지를 제공합니다. 포트 질량과 에너지, 벽 충격량, 전체 재고도 관측합니다. 독립 검사는 액체 압축 일, 이상증기 극한, 화학 퍼텐셜 일치, Clapeyron 및 Gibbs 관계, 엔트로피 역산 음속, 질량에너지 역산, 보존, 유한 벽 마찰을 다룹니다. 셀 평균 음향 오차는 8, 16, 24개 셀에서 감소합니다. 정확한 재생, 롤백, 취소, 분기, 할당 없는 스텝, 이식 가능한 asset, 실제 MCP는 따로 검증하며 자세한 결과는 검증 증거에 기록합니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 526/526 |
+| standard_checks_on_dotnet | 412/412 |
+| actual_mcp_groups | 62/62 |
+| laboratories | 58 |
+| agent_examples | 57 |
+| unchanged_laboratories | 56 |
+| identical_complete_sample_boundaries | 7531 |
+| all_sample_boundaries | 7553 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_method_order | 1 |
+| empirical_convergence_order_claimed | false |
+| asset_version | power.asset.v36 |
+| agent_api_version | 0.41.0 |
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_fuel_material_record_bytes | 160 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| cell_count_bounds | 1..24 |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112-115 |
+| v35_fixture_sha256 | a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4 |
+| verification_log_sha256 | f5620c5c36fb62b0f527ee4c6fd0d46608d7e6dfa1037c115d3b763133a8c0c0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 58 |
+| schema_negative_cases | 16 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | cell_counts | normalized_cell_average_errors |
+|---|---|---|
+| linear_vapor_acoustics | 8, 16, 24 | 0.09390287687165255, 0.0630137934898812, 0.04692764998969021 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | initial_first_cell_vapor_fraction | final_first_cell_vapor_fraction |
+|---|---|---|---|---|---|---|
+| equilibrium-fuel-condensing-duct | 2552e69b3a50eb9f | a74c5bd9f4c25940 | 11 | 1.1175870895385742e-08 | 0.1 | 0.00036893825719500376 |
+| equilibrium-fuel-flashing-duct | 040a92e35b2df96c | 45e5ec071dd06e39 | 11 | 1.1641532182693481e-10 | 0 | 0.0023026749474771954 |
+
+- `artifacts/reports/equilibrium-duct-final-2026-10-23.log`
+- `artifacts/reports/equilibrium-duct-verify-exit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-evidence-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-baseline-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-schema-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-provenance-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-doc-audit-2026-10-23.json`
+
+보존형 Rusanov 플럭스는 동일한 하위 스텝 상태에서 모든 면을 갱신합니다. 속도 상한은 최대 절대속도와 물성 음속 상한의 합입니다. CFL 한계는 최소 포트 체적의 0.2배를 면적과 속도로 나눈 값이며 구간당 최대 4096 하위 스텝입니다. 수송과 국소 정확 저항 감쇠는 1차 분할을 사용합니다. 수치 확산은 총 엔트로피 변화에 포함하며 보고된 마찰열과 구분합니다. 정지 경계는 기계적 일 없이 저장조 운동량을 흡수하고 유입 운동에너지는 유한 저장조의 내부에너지로 바뀝니다. 잘못된 상태나 반올림 오차를 넘는 엔트로피 감소는 전체 배치를 거부합니다. 시간 간격을 줄이고 물성 범위와 셀 해상도를 확인하십시오.
+
+매개변수는 `unverified` 상태입니다. 선언된 온도와 압력 범위, 양의 잠재 엔탈피, 분리된 공존 비체적, 희박 증기 조건을 지켜야 합니다. 순간 균질 평형을 가정한 강체 등단면 수평 덕트입니다. 유한 속도 핵생성, 상간 미끄럼, 표면장력, 중력, 관 탄성, 실제 유체 임계 거동은 제외합니다. 1차 수치 확산은 상변화와 음향 전면을 흐리게 할 수 있습니다. 보존과 재생은 공간 정확도나 실측 하드웨어 타당성을 입증하지 않습니다. 실제 Unity 인수 검증은 남아 있습니다.
+
 ## 2026-10-23: 유한 액체 연료 관로 운동량
 
 `fuel_inertial_pipe`는 두 유한 연료 노드와 유한 열벽을 연결합니다. 수평 강체 관로는 양 용기 외에 자체 액체 질량, 열 내부에너지와 운동에너지를 갖습니다. 밀도는 일정하고 온도는 완전 혼합으로 변합니다. 포트와 관로 전체가 액체여야 하며 기존 준정적 연결은 별도 2상 거동을 유지합니다.

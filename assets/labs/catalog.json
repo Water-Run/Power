@@ -336,6 +336,18 @@
       "asset_name": "InertialPumpFedCylinder",
       "display_name": "Inertial inlet pump-fed cylinder laboratory",
       "agent_example": true
+    },
+    {
+      "name": "equilibrium-fuel-condensing-duct",
+      "asset_name": "EquilibriumFuelCondensingDuct",
+      "display_name": "Equilibrium fuel condensing duct laboratory",
+      "agent_example": true
+    },
+    {
+      "name": "equilibrium-fuel-flashing-duct",
+      "asset_name": "EquilibriumFuelFlashingDuct",
+      "display_name": "Equilibrium fuel flashing duct laboratory",
+      "agent_example": true
     }
   ]
 }

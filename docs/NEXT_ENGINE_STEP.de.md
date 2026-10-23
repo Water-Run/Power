@@ -12,15 +12,17 @@ Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampf
 
 Ein `fuel_inertial_pipe` verbindet zwei endliche Kraftstoffknoten und eine endliche Wärmewand. Die waagerechte starre Leitung besitzt zusätzlich Flüssigkeitsmasse, kalorische und kinetische Energie. Ihre Dichte bleibt konstant, ihre vollständig gemischte Temperatur ändert sich. Ports und gesamte Leitung bleiben flüssig; quasistatische Verbindungen behalten ihr separates Zweiphasenverhalten. [Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md)
 
+Ein `equilibrium_fuel_duct` transportiert Masse, Impuls und Gesamtenergie durch explizite `compressible_fuel`-Zellen. Die Flüssigkeit ist kompressibel, der Dampf ideal; beide Phasen teilen Druck, Temperatur und Geschwindigkeit. Lokales Gleichgewicht erlaubt Kondensation und Entspannungsverdampfung. Zwei endliche ruhende Behälter und eine endliche thermische Wand schließen die Bilanzen. [Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md)
+
 ## Nächster Schritt
 
-Leitungsimpuls mit passender Energie-/Entropieschließung auf veränderliche Dichte und Phasenwechsel erweitern, bevor kavitierende Einlassdynamik beansprucht wird. Dann Relaxation/Schlupf, Zündung, Gaswechsel, Verluste, Getriebebetätigung und ECU/TCU fortführen. Messkalibrierung und tatsächliche Unity-Abnahme sind separat. [Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md)
+Kompressible Kanäle mit kompatiblen wellengetriebenen Kammern und Nadel-/Düsengrenzen verbinden; Druckarbeit und Phasenannahmen explizit behandeln. Danach Relaxation/Schlupf, Zündung, Ein-/Auslass, mechanische Verluste und ECU/TCU-Koordination bearbeiten. Messkalibrierung und tatsächliche Unity-Abnahme bleiben getrennt. [Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md)
 
 ## Abnahme
 
 Unabhängige analytische/Grenzreferenzen, vollständige Masse/Energie und passende Schrittverfeinerung verlangen. Batch-Rollback, Abbruch, Zweige, stabile Kanäle, portables Replay und alte Leser erhalten. Danach Zündung, Einlass/Auslass, mechanische Verluste, Getriebeaktuation und ECU/TCU-Koordination fortsetzen.
 
-Parameter bleiben `unverified`. Temperaturgrenzen, positives Gasvolumen und verdünnter Dampf gelten. Lokale Einlassträgheit, endliche Keimbildung, Phasenschlupf, aufgelöster Spray, reales kritisches Verhalten und Messkalibrierung fehlen. Vorgegebene Verbrennung bestätigt weder chemisches Gleichgewicht noch Reaktionsentropie. Weiter mit Einlassdynamik, Zündung, Gaswechsel, Verlusten und ECU/TCU-Koordination.
+Parameter bleiben `unverified`. Temperatur- und Druckgrenzen, positive latente Enthalpie, getrennte Koexistenzvolumina und verdünnter Dampf sind einzuhalten. Der Kanal ist starr, horizontal und querschnittskonstant mit sofortigem homogenem Gleichgewicht. Endliche Keimbildungsrate, Phasenschlupf, Oberflächenspannung, Schwerkraft, Rohrelastizität und reales kritisches Verhalten fehlen. Diffusion erster Ordnung kann Fronten verschmieren; Erhaltung und Wiedergabe belegen weder räumliche Genauigkeit noch gemessene Hardwaregültigkeit. Tatsächliche Unity-Abnahme steht aus.
 
 [DEVELOPMENT_STATUS.de.md](DEVELOPMENT_STATUS.de.md) · [ROADMAP.de.md](ROADMAP.de.md) · [VALIDATION.de.md](VALIDATION.de.md)
 

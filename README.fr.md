@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — expériences sans interface"]
     mcp["Power.Mcp — 12 outils MCP sur stdio"]
-    assets["Power.Assets — .powerasset v35"]
+    assets["Power.Assets — .powerasset v36"]
     unity["Studio Unity 6.6 — laboratoires 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Le service expose douze outils avec schémas d'entrée et de sortie :
 |---|---|
 | `get_capabilities` | Découvrir les modèles, les limites, les conventions de temps et de révision. Commencez ici. |
 | `get_model_schema` | JSON Schema 2020-12 pour `power.model.v1` |
-| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (55 exemples) |
+| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (57 exemples) |
 | `validate_model` | Valider un modèle sans l'exécuter ; diagnostics de réparation structurés |
 | `run_experiment` | Exécution sans interface bornée, avec rejeu par lots, KPI et provenance |
 | `export_model_asset` | Exporter un `.powerasset` portable |
@@ -147,14 +147,16 @@ Un graphe de recherche Ravigneaux à quatre plages ajoute des chemins planétair
 > [!NOTE]
 > Tous les paramètres d'exemple sont `unverified` — des valeurs de recherche, pas des mesures calibrées.
 
-Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v35`, avec conservation des lecteurs pour les assets antérieurs.
+Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v36`, avec conservation des lecteurs pour les assets antérieurs.
 
 La pompe du domaine carburant alimente désormais une aiguille physique et une décharge à titre figé dans un récepteur allumé à volume liquide fini. Les inventaires incluent changement de phase, travail de déplacement, énergie cinétique du jet et impulsion à la paroi immobile. [Décharge de carburant à titre figé et récepteurs finis](docs/FUEL_DISCHARGE.fr.md) [Pompe carburant diphasique entraînée par arbre](docs/FUEL_CHAMBER_PUMP.fr.md)
 
 Un `fuel_inertial_pipe` relie deux nœuds de carburant finis et une paroi thermique finie. La ligne horizontale rigide possède masse liquide, énergie calorique et cinétique propres, en plus des réservoirs. Sa densité est constante, sa température variable et parfaitement mélangée. Les ports et toute la ligne restent liquides ; les liens quasi statiques gardent leur comportement diphasique séparé. [Quantité de mouvement d'une ligne finie de carburant liquide](docs/FUEL_INERTIAL_PIPE.fr.md)
 
+Un `equilibrium_fuel_duct` transporte masse, quantité de mouvement et énergie totale dans des cellules explicites `compressible_fuel`. Le liquide est compressible et la vapeur idéale ; les phases partagent pression, température et vitesse. L’équilibre local permet condensation et vaporisation éclair. Deux réservoirs stationnaires finis et une paroi thermique finie ferment les bilans. [Conduites de carburant compressible à l’équilibre](docs/EQUILIBRIUM_FUEL_DUCT.fr.md)
+
 <details>
-<summary>Laboratoires disponibles (56)</summary>
+<summary>Laboratoires disponibles (58)</summary>
 
 | Nom d'exemple (`get_example_model`) | Laboratoire | Ce qu'il exerce |
 |---|---|---|
@@ -214,6 +216,8 @@ Un `fuel_inertial_pipe` relie deux nœuds de carburant finis et une paroi thermi
 | `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Étranglement à titre figé, déplacement liquide fini et combustion avec pompe/aiguille physiques |
 | `inertial-fuel-line` | `assets/labs/inertial-fuel-line.power.json` | Inventaire liquide fini, débit dynamique, mélange thermique et travail conservatif |
 | `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | Inventaire liquide fini, débit dynamique, mélange thermique et travail conservatif |
+| `equilibrium-fuel-condensing-duct` | `assets/labs/equilibrium-fuel-condensing-duct.power.json` | Une alimentation liquide finie condense le mélange humide de la conduite |
+| `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | Le liquide de la conduite se vaporise vers des réservoirs diphasiques finis |
 
 </details>
 

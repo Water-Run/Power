@@ -8,6 +8,7 @@ namespace Power.Core;
 public sealed record EquilibriumFuelDefinition
 {
     public Quantity Compliance { get; init; }
+    public Quantity LiquidBulkModulus { get; init; }
     public Quantity LiquidDensity { get; init; }
     public Quantity MaximumPressure { get; init; }
     public Quantity GasConstant { get; init; }
@@ -94,6 +95,7 @@ public sealed partial class CompiledModel
         {
             if (Nodes[i].Domain != Domain.Fuel) continue;
             var n = Nodes[i]; var d = definitions[i].Fuel!;
+            Require(d.LiquidBulkModulus == default, DiagnosticCode.Schema, n.Id, "fuel.liquid_bulk_modulus", "Bulk modulus applies only to compressible_fuel nodes.");
             double Q(Quantity q, Unit unit, string field) => Convert(q, unit, n.Id, "fuel." + field);
             double cv = Q(d.VaporSpecificHeat, Unit.JoulePerKilogramKelvin, "vapor_specific_heat"),
                 cl = Q(d.LiquidSpecificHeat, Unit.JoulePerKilogramKelvin, "liquid_specific_heat"),

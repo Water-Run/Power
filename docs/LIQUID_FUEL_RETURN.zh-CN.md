@@ -12,7 +12,7 @@
 
 ## 证据与限制
 
-`recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v35 保留回流连接与热比例，并读取 v1-v34。每条回流在原有模型边界内增加 8 个状态。
+`recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v36 保留回流连接与热比例，并读取 v1-v35。每条回流在原有模型边界内增加 8 个状态。
 
 独立泄压衰减/压力功、机械/压力/热联立细化、热比例、多条路径、外部边界、每边界重放、回滚与分配检查均通过。 液体沸腾和未充分解析的输运区间会使整批失败。
 

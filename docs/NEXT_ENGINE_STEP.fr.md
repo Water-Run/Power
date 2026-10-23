@@ -12,15 +12,17 @@ La pompe du domaine carburant alimente désormais une aiguille physique et une d
 
 Un `fuel_inertial_pipe` relie deux nœuds de carburant finis et une paroi thermique finie. La ligne horizontale rigide possède masse liquide, énergie calorique et cinétique propres, en plus des réservoirs. Sa densité est constante, sa température variable et parfaitement mélangée. Les ports et toute la ligne restent liquides ; les liens quasi statiques gardent leur comportement diphasique séparé. [Quantité de mouvement d'une ligne finie de carburant liquide](FUEL_INERTIAL_PIPE.fr.md)
 
+Un `equilibrium_fuel_duct` transporte masse, quantité de mouvement et énergie totale dans des cellules explicites `compressible_fuel`. Le liquide est compressible et la vapeur idéale ; les phases partagent pression, température et vitesse. L’équilibre local permet condensation et vaporisation éclair. Deux réservoirs stationnaires finis et une paroi thermique finie ferment les bilans. [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md)
+
 ## Prochaine étape
 
-Étendre le mouvement aux états à densité variable et changement de phase avec fermeture énergie/entropie compatible avant de revendiquer une entrée cavitante. Poursuivre relaxation/glissement, allumage, admission/échappement, pertes, transmission et ECU/TCU coordonnés. Calibration mesurée et Unity réel restent séparés. [Quantité de mouvement d'une ligne finie de carburant liquide](FUEL_INERTIAL_PIPE.fr.md)
+Relier les conduites compressibles à des chambres entraînées par arbre et à des frontières aiguille/buse compatibles, avec travail de pression et hypothèses de phase explicites. Poursuivre relaxation/glissement, allumage, admission/échappement, pertes mécaniques et coordination ECU/TCU. Étalonnage mesuré et acceptation Unity réelle restent distincts. [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md)
 
 ## Acceptation
 
 Exiger références analytiques ou limites indépendantes, bilans complets masse/énergie et raffinement du pas adapté. Préserver retour arrière complet, annulation, branches, canaux stables, rejeu portable et anciens lecteurs. Continuer ensuite allumage, admission/échappement, pertes mécaniques, transmission et coordination ECU/TCU.
 
-Les paramètres restent `unverified`. Respecter températures déclarées, volume gazeux positif et domaine vapeur diluée. Inertie locale d'entrée, nucléation à vitesse finie, glissement, spray résolu, comportement critique réel et calibration mesurée sont omis. La combustion prescrite ne valide pas l'équilibre chimique ni l'entropie réactionnelle. Poursuivre entrée, allumage, admission/échappement, pertes et coordination ECU/TCU.
+Les paramètres restent `unverified`. Respecter les bornes de température et pression, une enthalpie latente positive, des volumes de coexistence séparés et une vapeur diluée. La conduite est horizontale, rigide, de section constante et à équilibre homogène instantané. Nucléation à vitesse finie, glissement, tension superficielle, gravité, élasticité et comportement critique réel sont omis. La diffusion du premier ordre peut étaler les fronts ; conservation et relecture ne prouvent ni précision spatiale ni validité matérielle mesurée. L’acceptation Unity réelle reste à réaliser.
 
 [DEVELOPMENT_STATUS.fr.md](DEVELOPMENT_STATUS.fr.md) · [ROADMAP.fr.md](ROADMAP.fr.md) · [VALIDATION.fr.md](VALIDATION.fr.md)
 

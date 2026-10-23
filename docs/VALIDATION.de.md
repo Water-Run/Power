@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · **Deutsch** · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: Kompressible Kraftstoffkanäle im Gleichgewicht
+
+Ein `equilibrium_fuel_duct` transportiert Masse, Impuls und Gesamtenergie durch explizite `compressible_fuel`-Zellen. Die Flüssigkeit ist kompressibel, der Dampf ideal; beide Phasen teilen Druck, Temperatur und Geschwindigkeit. Lokales Gleichgewicht erlaubt Kondensation und Entspannungsverdampfung. Zwei endliche ruhende Behälter und eine endliche thermische Wand schließen die Bilanzen.
+
+`equilibrium-fuel-condensing-duct` oder `equilibrium-fuel-flashing-duct` ausführen. Jede Zelle zeigt Dichte, Geschwindigkeit, Phasenanteil, Schallgeschwindigkeit, Temperatur und Energie. Anschlussmasse/-energie, Wandimpuls und vollständige Bestände sind beobachtbar. Unabhängige Prüfungen umfassen Kompressionsarbeit, idealen Dampf, gleiche chemische Potenziale, Clapeyron- und Gibbs-Beziehungen, Schallgeschwindigkeit durch Entropieinversion, Masse-Energie-Inversion, Erhaltung und Reibung an endlicher Wand. Akustische Zellmittelwertfehler sinken bei 8, 16 und 24 Zellen. Exakte Wiedergabe, Rücknahme, Abbruch, Zweige, allokationsfreie Schritte, portable Assets und tatsächliches MCP werden gesondert geprüft; Einzelheiten stehen in den Validierungsnachweisen.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 526/526 |
+| standard_checks_on_dotnet | 412/412 |
+| actual_mcp_groups | 62/62 |
+| laboratories | 58 |
+| agent_examples | 57 |
+| unchanged_laboratories | 56 |
+| identical_complete_sample_boundaries | 7531 |
+| all_sample_boundaries | 7553 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_method_order | 1 |
+| empirical_convergence_order_claimed | false |
+| asset_version | power.asset.v36 |
+| agent_api_version | 0.41.0 |
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_fuel_material_record_bytes | 160 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| cell_count_bounds | 1..24 |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112-115 |
+| v35_fixture_sha256 | a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4 |
+| verification_log_sha256 | f5620c5c36fb62b0f527ee4c6fd0d46608d7e6dfa1037c115d3b763133a8c0c0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 58 |
+| schema_negative_cases | 16 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | cell_counts | normalized_cell_average_errors |
+|---|---|---|
+| linear_vapor_acoustics | 8, 16, 24 | 0.09390287687165255, 0.0630137934898812, 0.04692764998969021 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | initial_first_cell_vapor_fraction | final_first_cell_vapor_fraction |
+|---|---|---|---|---|---|---|
+| equilibrium-fuel-condensing-duct | 2552e69b3a50eb9f | a74c5bd9f4c25940 | 11 | 1.1175870895385742e-08 | 0.1 | 0.00036893825719500376 |
+| equilibrium-fuel-flashing-duct | 040a92e35b2df96c | 45e5ec071dd06e39 | 11 | 1.1641532182693481e-10 | 0 | 0.0023026749474771954 |
+
+- `artifacts/reports/equilibrium-duct-final-2026-10-23.log`
+- `artifacts/reports/equilibrium-duct-verify-exit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-evidence-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-baseline-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-schema-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-provenance-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-doc-audit-2026-10-23.json`
+
+Der konservative Rusanov-Fluss aktualisiert alle Flächen aus demselben Teilschrittzustand. Die Geschwindigkeitsgrenze addiert maximale Absolutgeschwindigkeit und akustische Stoffgrenze. Die CFL-Grenze beträgt 0.2 mal minimales Anschlussvolumen geteilt durch Fläche und Geschwindigkeit; höchstens 4096 Teilschritte je Intervall. Transport und lokal exakter Reibungsabfall werden in erster Ordnung aufgeteilt. Numerische Diffusion trägt zur gesamten Entropieänderung bei, getrennt von ausgewiesener Reibungswärme. Ruhende Grenzen absorbieren Behälterimpuls ohne mechanische Arbeit; einströmende kinetische Energie wird im endlichen Bestand thermalisiert. Ungültige Zustände oder Entropieabnahme über Rundung hinaus verwerfen den ganzen Stapel. Zeitschritt verkleinern und Stoffgrenzen sowie Zellauflösung prüfen.
+
+Parameter bleiben `unverified`. Temperatur- und Druckgrenzen, positive latente Enthalpie, getrennte Koexistenzvolumina und verdünnter Dampf sind einzuhalten. Der Kanal ist starr, horizontal und querschnittskonstant mit sofortigem homogenem Gleichgewicht. Endliche Keimbildungsrate, Phasenschlupf, Oberflächenspannung, Schwerkraft, Rohrelastizität und reales kritisches Verhalten fehlen. Diffusion erster Ordnung kann Fronten verschmieren; Erhaltung und Wiedergabe belegen weder räumliche Genauigkeit noch gemessene Hardwaregültigkeit. Tatsächliche Unity-Abnahme steht aus.
+
 ## 2026-10-23: Impuls einer endlichen Flüssigkraftstoffleitung
 
 Ein `fuel_inertial_pipe` verbindet zwei endliche Kraftstoffknoten und eine endliche Wärmewand. Die waagerechte starre Leitung besitzt zusätzlich Flüssigkeitsmasse, kalorische und kinetische Energie. Ihre Dichte bleibt konstant, ihre vollständig gemischte Temperatur ändert sich. Ports und gesamte Leitung bleiben flüssig; quasistatische Verbindungen behalten ihr separates Zweiphasenverhalten.
