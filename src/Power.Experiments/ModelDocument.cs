@@ -29,6 +29,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
         ["c"] = Unit.Coulomb, ["ah"] = Unit.AmpereHour, ["f"] = Unit.Farad,
         ["fraction_pa"] = Unit.FractionPerPascal, ["fraction_pa_s"] = Unit.FractionPerPascalSecond,
         ["m_s"] = Unit.MeterPerSecond, ["n_m"] = Unit.NewtonPerMeter, ["n_s_m"] = Unit.NewtonSecondPerMeter, ["n_s"] = Unit.NewtonSecond,
+        ["pa_s_m3"] = Unit.PascalSecondPerCubicMeter, ["pa_s2_m6"] = Unit.PascalSecondSquaredPerCubicMeterSquared,
         ["m3_rad"] = Unit.CubicMeterPerRadian, ["m3_pa"] = Unit.CubicMeterPerPascal, ["m3_s_pa"] = Unit.CubicMeterPerSecondPascal,
         ["m3_s_sqrt_pa"] = Unit.CubicMeterPerSecondSqrtPascal, ["m3_s"] = Unit.CubicMeterPerSecond, ["n"] = Unit.Newton,
         ["nm_s2_rad2"] = Unit.NewtonMeterSecondSquaredPerRadianSquared, ["none"] = Unit.None, ["kg_m2"] = Unit.KilogramMeterSquared, ["rad"] = Unit.Radian,
@@ -45,6 +46,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     {
         ["jet_kinetic_energy"] = Field.JetKineticEnergy, ["jet_impulse"] = Field.JetImpulse, ["throat_pressure"] = Field.ThroatPressure,
         ["exit_temperature"] = Field.ExitTemperature, ["exit_velocity"] = Field.ExitVelocity, ["choked"] = Field.Choked,
+        ["forward_volume"] = Field.ForwardVolume, ["reverse_volume"] = Field.ReverseVolume, ["kinetic_energy"] = Field.KineticEnergy, ["energy_at_a"] = Field.EnergyAtA, ["energy_at_b"] = Field.EnergyAtB,
         ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault, ["lockup_state"] = Field.LockupState,
         ["actuator_integral_a"] = Field.ActuatorIntegralA, ["actuator_integral_b"] = Field.ActuatorIntegralB, ["actuator_integral_c"] = Field.ActuatorIntegralC, ["actuator_integral_d"] = Field.ActuatorIntegralD, ["actuator_integral_e"] = Field.ActuatorIntegralE, ["actuator_integral_f"] = Field.ActuatorIntegralF, ["tank_state"] = Field.TankState, ["fill_fraction"] = Field.FillFraction,
         ["vapor_mass"] = Field.VaporMass, ["vapor_mass_fraction"] = Field.VaporMassFraction, ["vapor_volume_fraction"] = Field.VaporVolumeFraction, ["elastic_energy"] = Field.ElasticEnergy, ["entropy"] = Field.Entropy, ["specific_enthalpy"] = Field.SpecificEnthalpy, ["transport_energy"] = Field.TransportEnergy, ["entropy_produced"] = Field.EntropyProduced,
@@ -186,6 +188,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             {
                 "fuel_chamber" => ComponentKind.FuelChamber, "fuel_check_valve" => ComponentKind.FuelCheckValve, "fuel_restriction" => ComponentKind.FuelRestriction, "fuel_heat_link" => ComponentKind.FuelHeatLink,
                 "fuel_discharge" => ComponentKind.FuelDischarge, "finite_fuel_film" => ComponentKind.FiniteFuelFilm,
+                "fuel_inertial_pipe" => ComponentKind.FuelInertialPipe,
                 "hydraulic_resistance" => ComponentKind.HydraulicResistance, "hydraulic_orifice" => ComponentKind.HydraulicOrifice,
                 "hydraulic_clutch" => ComponentKind.HydraulicClutch,
                 "hydraulic_pump" => ComponentKind.HydraulicPump, "hydraulic_relief" => ComponentKind.HydraulicRelief,
@@ -204,6 +207,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             if (kind is ComponentKind.FuelRestriction or ComponentKind.FuelCheckValve) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel");
             else if (kind == ComponentKind.FuelDischarge) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel", "valve_timing");
             else if (kind is ComponentKind.FuelHeatLink or ComponentKind.FuelChamber) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
+            else if (kind == ComponentKind.FuelInertialPipe) Object(c, ["id", "kind", "node_a", "node_b", "heat_node", "parameters"]);
             else if (kind == ComponentKind.IdealGear) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind is ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) Object(c, ["id", "kind", "node_a", "node_b", "node_c", "parameters"]);
             else if (kind == ComponentKind.TorqueConverter) Object(c, ["id", "kind", "node_a", "node_b", "parameters"], "heat_node");
@@ -239,6 +243,14 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 InputChannel = c.TryGetProperty("input_channel", out var channel) ? Integer(channel, long.MaxValue) : 0,
                 InitialInput = c.TryGetProperty("initial_input", out var initial) ? Quantity(initial) : default
             };
+            if (kind == ComponentKind.FuelInertialPipe)
+            {
+                var pipe = c.GetProperty("parameters");
+                Object(pipe, ["length", "area", "linear_resistance", "quadratic_resistance", "initial_flow", "initial_temperature", "fluid_heat_fraction"]);
+                return result with { FuelPipe = new() { Length = Quantity(pipe.GetProperty("length")), Area = Quantity(pipe.GetProperty("area")),
+                    LinearResistance = Quantity(pipe.GetProperty("linear_resistance")), QuadraticResistance = Quantity(pipe.GetProperty("quadratic_resistance")),
+                    InitialFlow = Quantity(pipe.GetProperty("initial_flow")), InitialTemperature = Quantity(pipe.GetProperty("initial_temperature")), FluidHeatFraction = Quantity(pipe.GetProperty("fluid_heat_fraction")) } };
+            }
             if (kind is ComponentKind.TorqueSource or ComponentKind.ForceSource)
             {
                 if (c.TryGetProperty("parameters", out var empty)) Object(empty, []);

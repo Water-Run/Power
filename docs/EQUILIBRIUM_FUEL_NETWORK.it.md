@@ -32,7 +32,7 @@ Termodinamica compatibile e conduttanza positiva guidata dalla pressione danno p
 
 Richiedere `equilibrium-fuel-network` o `electrothermal-fuel-network` via MCP oppure eseguire lo stesso JSON con CLI. Leggere `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy`, `specific_enthalpy`. Qui `internal_energy` include la parete elastica e l’energia chimica è separata. I collegamenti mostrano portate con segno, massa cumulativa, `transport_energy` e variazione di entropia della coppia.
 
-I laboratori coprono scarico liquido in coesistenza, flusso inverso, aperture e calore finito/elettromeccanico. Esponenziale indipendente della pressione liquida, ODE bifase simultanea massa/entalpia/calore, inversione termica e cattura speculativa della frizione verificano accuratezza e composizione. Asset e MCP effettivo mantengono tutti i campioni e gli hash. Asset v34 conserva proprietà e legge v1-v33. Unity Editor/Play/Player/IL2CPP effettivo resta non verificato.
+I laboratori coprono scarico liquido in coesistenza, flusso inverso, aperture e calore finito/elettromeccanico. Esponenziale indipendente della pressione liquida, ODE bifase simultanea massa/entalpia/calore, inversione termica e cattura speculativa della frizione verificano accuratezza e composizione. Asset e MCP effettivo mantengono tutti i campioni e gli hash. Asset v35 conserva proprietà e legge v1-v34. Unity Editor/Play/Player/IL2CPP effettivo resta non verificato.
 
 ## Lavoro rimanente
 

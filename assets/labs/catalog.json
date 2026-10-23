@@ -324,6 +324,18 @@
       "asset_name": "PumpFedFiniteVolumeCylinder",
       "display_name": "Pump-fed finite-volume cylinder laboratory",
       "agent_example": true
+    },
+    {
+      "name": "inertial-fuel-line",
+      "asset_name": "InertialFuelLine",
+      "display_name": "Inertial liquid fuel line laboratory",
+      "agent_example": true
+    },
+    {
+      "name": "inertial-pump-fed-cylinder",
+      "asset_name": "InertialPumpFedCylinder",
+      "display_name": "Inertial inlet pump-fed cylinder laboratory",
+      "agent_example": true
     }
   ]
 }

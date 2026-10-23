@@ -908,4 +908,30 @@ foreach (var (name, channel) in new[] { ("finite-volume-fuel-discharge", "100"),
     await Call("close_session", new() { ["session_id"] = dischargeSession, ["expected_revision"] = "0" });
     PassGroup("MCP " + name + " / frozen choked discharge finite receiver and every portable boundary with independent admission branches");
 }
+foreach (var (name, channel, opening) in new[] { ("inertial-fuel-line", "100", 1d), ("inertial-pump-fed-cylinder", "1100", 0d) })
+{
+    var pipeDocument = (await Call("get_example_model", new() { ["name"] = name })).GetProperty("data");
+    Require(capabilities.GetProperty("fuel_inertial_pipe").GetProperty("component").GetString() == "fuel_inertial_pipe", "Inertial fuel contract is missing");
+    var pipeReport = (await Call("run_experiment", new() { ["document"] = pipeDocument, ["include_samples"] = true })).GetProperty("data");
+    Require(pipeReport.GetProperty("passed").GetBoolean() && pipeReport.GetProperty("model").GetProperty("fidelity").GetString() == "liquid_inertial_fuel_network", "Inertial pipe experiment failed");
+    var pipeExport = (await Call("export_model_asset", new() { ["document"] = pipeDocument })).GetProperty("data");
+    var pipeAsset = AssetCodec.Decode(Convert.FromBase64String(pipeExport.GetProperty("content").GetString()!));
+    Require(pipeAsset.Model.HasFuelPipes, "Inertial line was lost");
+    var pipePlayback = pipeAsset.CreatePlayback(); var pipeValues = new Power.Core.Scalar[pipeAsset.Model.OutputCount];
+    foreach (var pipeSample in pipeReport.GetProperty("samples").EnumerateArray())
+    {
+        ulong at = pipeSample.GetProperty("time_ns").GetUInt64();
+        while (pipePlayback.TimeNanoseconds < at) Require(pipePlayback.Advance(Math.Min(257 * pipeAsset.Model.StepNanoseconds, at - pipePlayback.TimeNanoseconds)) == Power.Core.SimulationStatus.Ok, "Inertial pipe playback failed");
+        Require(pipePlayback.ReadSnapshot(pipeValues).StateHash.ToString("x16") == pipeSample.GetProperty("state_hash").GetString() &&
+            pipeValues.All(value => value.Value == pipeSample.GetProperty("values").GetProperty(value.Channel.ToString()).GetDouble()), "Inertial pipe replay differs");
+    }
+    string pipeSession = (await Call("create_session", new() { ["document"] = pipeDocument })).GetProperty("data").GetProperty("session_id").GetString()!;
+    string pipeChild = (await Call("fork_session", new() { ["session_id"] = pipeSession, ["expected_revision"] = "0" })).GetProperty("data").GetProperty("session_id").GetString()!;
+    await Call("set_inputs", new() { ["session_id"] = pipeChild, ["expected_revision"] = "0", ["values"] = new[] { new { channel, value = opening } } });
+    await Call("step_session", new() { ["session_id"] = pipeChild, ["expected_revision"] = "1", ["delta_ns"] = "1000000" });
+    Require((await Call("read_snapshot", new() { ["session_id"] = pipeSession })).GetProperty("data").GetProperty("revision").GetString() == "0", "Inertial pipe branch changed parent");
+    await Call("close_session", new() { ["session_id"] = pipeChild, ["expected_revision"] = "2" });
+    await Call("close_session", new() { ["session_id"] = pipeSession, ["expected_revision"] = "0" });
+    PassGroup("MCP " + name + " / finite line mass thermal momentum histories and every portable boundary with independent branches");
+}
 Console.WriteLine($"{groupsPassed}/{groupsPassed} MCP integration groups passed against an actual child server process.");

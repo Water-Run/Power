@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione attuale 34
+## Versione attuale 35
+
+Un `fuel_inertial_pipe` collega due nodi finiti di carburante e una parete termica finita. La linea orizzontale rigida possiede massa liquida, energia calorica e cinetica proprie oltre ai serbatoi. Densità costante, temperatura variabile e miscelata. Porte e linea restano liquide; i collegamenti quasi statici mantengono il modello bifase separato.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[Quantità di moto della linea finita di carburante liquido](FUEL_INERTIAL_PIPE.it.md)
+
+
+## Versione conservata 34
 
 Un `fuel_discharge` collega una sorgente finita del dominio carburante al nodo gas di un `finite_fuel_film`. Dichiarare `phase_mode` come `frozen`: il titolo massico del vapore resta fisso nell'ugello mentre i volumi alle estremità tornano in equilibrio. Le fasi omogenee condividono temperatura e velocità; liquido incomprimibile e vapore come pseudospecie ideale. Proprietà e densità devono coincidere.
 

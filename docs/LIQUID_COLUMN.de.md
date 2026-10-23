@@ -37,6 +37,6 @@ Unabhängige verlustfreie Beschleunigung, exponentielle lineare und hyperbolisch
 
 Parameter bleiben `unverified`. Die Druckuntergrenze ist eine deklarierte Flüssigkeitsgrenze des Aufrufers, keine Dampfdrück- oder NPSH-Vorhersage. Kompressibilität, Akustik, Schwerkraft, bewegte Geometrie, Wärmespeicherung, Kavitation, Phasenschlupf und Relaxation fehlen. Zweiphasige Kraftstoffverbindungen bleiben quasistatisch. Tatsächliche Unity-Abnahme und Messkalibrierung sind separat.
 
-Flüssigkeitsimpuls mit explizitem Leitungsenergieinventar und passenden Portenthalpien an das endliche Kraftstoffnetz koppeln. Veränderliche Dichte und Phasenwechsel prüfen, bevor kavitierende Einlassdynamik beansprucht wird. Weiter mit Relaxation, Zündung, Gaswechsel, Verlusten und ECU/TCU-Koordination.
+Ein `fuel_inertial_pipe` verbindet zwei endliche Kraftstoffknoten und eine endliche Wärmewand. Die waagerechte starre Leitung besitzt zusätzlich Flüssigkeitsmasse, kalorische und kinetische Energie. Ihre Dichte bleibt konstant, ihre vollständig gemischte Temperatur ändert sich. Ports und gesamte Leitung bleiben flüssig; quasistatische Verbindungen behalten ihr separates Zweiphasenverhalten. [Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: pipe flow models](https://doc.modelica.org/om/Modelica.Fluid.Pipes.BaseClasses.FlowModels.html) · [VALIDATION.md](VALIDATION.md)

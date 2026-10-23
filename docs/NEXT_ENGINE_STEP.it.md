@@ -10,9 +10,11 @@ La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo conge
 
 `LiquidColumn` è un riferimento C# autonomo per tubo orizzontale rigido con sezione, velocità uniforme, densità liquida e temperatura costanti. Le pressioni assolute sono prescritte nell'intervallo. Resistenze lineari e quadratiche sono input di ricerca espliciti. Non è un componente del grafo e non cambia rete o ugello. [Riferimento della quantità di moto all'ingresso liquido](LIQUID_COLUMN.it.md)
 
+Un `fuel_inertial_pipe` collega due nodi finiti di carburante e una parete termica finita. La linea orizzontale rigida possiede massa liquida, energia calorica e cinetica proprie oltre ai serbatoi. Densità costante, temperatura variabile e miscelata. Porte e linea restano liquide; i collegamenti quasi statici mantengono il modello bifase separato. [Quantità di moto della linea finita di carburante liquido](FUEL_INERTIAL_PIPE.it.md)
+
 ## Prossimo incremento
 
-Collegare il riferimento di quantità di moto alla rete finita con inventario energetico della linea ed entalpie compatibili espliciti. Stabilire validità di densità variabile e cambio fase prima di dichiarare ingresso cavitante. Proseguire rilassamento, accensione, aspirazione/scarico, perdite ed ECU/TCU coordinati. [Riferimento della quantità di moto all'ingresso liquido](LIQUID_COLUMN.it.md)
+Estendere il moto a densità variabile e cambio fase con chiusura energetica/entropica compatibile prima di dichiarare ingresso cavitante. Proseguire rilassamento/scorrimento, accensione, aspirazione/scarico, perdite, trasmissione ed ECU/TCU. Calibrazione misurata e Unity reale sono separati. [Quantità di moto della linea finita di carburante liquido](FUEL_INERTIAL_PIPE.it.md)
 
 ## Accettazione
 

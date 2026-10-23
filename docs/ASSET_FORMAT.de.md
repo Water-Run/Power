@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 34
+## Aktuelle Version 35
+
+Ein `fuel_inertial_pipe` verbindet zwei endliche Kraftstoffknoten und eine endliche Wärmewand. Die waagerechte starre Leitung besitzt zusätzlich Flüssigkeitsmasse, kalorische und kinetische Energie. Ihre Dichte bleibt konstant, ihre vollständig gemischte Temperatur ändert sich. Ports und gesamte Leitung bleiben flüssig; quasistatische Verbindungen behalten ihr separates Zweiphasenverhalten.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md)
+
+
+## Beibehaltene Version 34
 
 Ein `fuel_discharge` verbindet eine endliche Kraftstoffquelle mit dem Gasknoten eines `finite_fuel_film`. `phase_mode` muss `frozen` sein: Der Dampfmassenanteil bleibt im Düsendurchgang konstant, beide Endvolumina stellen sich erneut ins Gleichgewicht. Die homogenen Phasen teilen Temperatur und Geschwindigkeit; Flüssigkeit ist inkompressibel, Dampf eine ideale Pseudospezies. Stoffdaten und Flüssigkeitsdichte müssen übereinstimmen.
 

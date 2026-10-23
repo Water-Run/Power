@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 34
+## Current version 35
+
+A `fuel_inertial_pipe` connects two finite fuel nodes and a finite thermal wall. Its rigid horizontal line owns liquid mass, caloric energy and kinetic energy, in addition to the inventories of both vessels. The line has constant density and a well-mixed variable temperature. Both ports and the entire line must remain liquid; the existing quasi-static links retain their separate two-phase behavior.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[Finite liquid fuel line momentum](FUEL_INERTIAL_PIPE.md)
+
+
+## Retained version 34
 
 A `fuel_discharge` connects a finite fuel-domain source to the gas node of a `finite_fuel_film`. Declare `phase_mode` as `frozen`: vapor mass quality stays fixed during nozzle transit, while both bulk endpoints re-equilibrate. The homogeneous phases share temperature and velocity; liquid is incompressible and vapor is an ideal pseudo-species. Source and receiver material properties and liquid density must agree.
 

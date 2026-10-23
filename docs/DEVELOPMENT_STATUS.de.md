@@ -19,7 +19,7 @@ abgenommene Unity-Desktop-Anwendung bleiben unfertig.
 | Hydraulik | Nachgiebige Volumina, Drosseln, Pumpen mit expliziter Leckage und Schlepp, Druckbegrenzung, dynamische Kolben, dosierte Schieber und Gasakkumulatoren endlicher Energie | Gemessene Ventil-, Akkumulator- und Pumpenkennfelder, Dichtungsreibung, Kavitation und vollständige Getriebehydraulik |
 | Elektrik | RL-Motoren, reziproke Solenoide variabler Induktivität, Batterie endlicher Ladung, Widerstands- und RC-Polarisation, gemittelte Wandlung des Tastverhältnisses und Zusatzverbraucher | Gemessenes chemisches und thermisches Verhalten, BMS, Stromregelung und vollständige Versorgungsintegration |
 | Regelungen | Abgetasteter Druck-PI, Nadeldosierung/Schließregelung, gestufte DCT-Übergabe und AT-Druckrückkopplung mit physischer Verriegelungsbestätigung | ECU-/TCU-Momentenabstimmung, Sensoren, Stellglieder und Fehlerbehandlung |
-| Dokumente und Assets | 54 JSON/CLI-Labore, 53 MCP-Beispiele, Asset v34 und Leser für v1-v33 | Workbench-Bearbeitung/Speicherung und kalibrierte Modellsammlungen |
+| Dokumente und Assets | 56 JSON/CLI-Labore, 55 MCP-Beispiele, Asset v35 und Leser für v1-v34 | Workbench-Bearbeitung/Speicherung und kalibrierte Modellsammlungen |
 | Agenten | Zwölf schema-definierte MCP-Werkzeuge; kompakte Nachweise, Revisionsprüfungen und handlungsfähige Diagnosen | Vollständige Abläufe für den verbleibenden physikalischen und Regelumfang |
 | Unity | Modellimport, Wiedergabe auf exakten Ticks, schematische 3D-Komponenten, Steuerungen, Zurücksetzen und vorbereitete Lebenszyklustests | Tatsächliche Editor-/Play-Abnahme, wählbare Diagramme, Graphbearbeitung und -Speichern sowie Player/IL2CPP |
 | Natives Archiv | Forschungsprototypen in Zig 0.15.2, erhaltenes ABI und ursprüngliche Quellenherkunft | Historische Referenz; die verwaltete Migration bleibt von der vollen Funktionalität getrennt |
@@ -30,6 +30,8 @@ C# 9. Unity lädt die Standard-Assemblies, die das externe SDK baut; es kompilie
 keinen Quelltext für .NET 10 oder C# 14.
 
 `LiquidColumn` ist eine eigenständige C#-Referenz für ein waagerechtes starres Rohr mit konstantem Querschnitt, gleichförmiger Geschwindigkeit, Flüssigkeitsdichte und Temperatur. Absolute Portdrücke sind je Intervall vorgegeben. Lineare und quadratische Widerstände sind explizite Forschungswerte. Es ist keine Graphkomponente; Netzwerk und Düsen bleiben unverändert. [Referenz für den Impuls am Flüssigkeitseinlass](LIQUID_COLUMN.de.md)
+
+Ein `fuel_inertial_pipe` verbindet zwei endliche Kraftstoffknoten und eine endliche Wärmewand. Die waagerechte starre Leitung besitzt zusätzlich Flüssigkeitsmasse, kalorische und kinetische Energie. Ihre Dichte bleibt konstant, ihre vollständig gemischte Temperatur ändert sich. Ports und gesamte Leitung bleiben flüssig; quasistatische Verbindungen behalten ihr separates Zweiphasenverhalten. [Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md)
 
 ## Nachweise und Grenzen
 

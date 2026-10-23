@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, conferir a impressão digital]
 ```
 
-## Versão atual 34
+## Versão atual 35
+
+Um `fuel_inertial_pipe` conecta dois nós finitos de combustível e uma parede térmica finita. A linha horizontal rígida possui massa líquida, energia calórica e cinética próprias além dos vasos. Densidade constante e temperatura variável perfeitamente misturada. Portas e linha ficam líquidas; conexões quase estáticas mantêm seu modelo bifásico separado.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[Quantidade de movimento da linha finita de combustível líquido](FUEL_INERTIAL_PIPE.pt-BR.md)
+
+
+## Versão preservada 34
 
 Um `fuel_discharge` conecta uma fonte finita do domínio de combustível ao nó gasoso de um `finite_fuel_film`. Declare `phase_mode` como `frozen`: o título mássico de vapor fica fixo na passagem pelo bocal, enquanto os volumes das extremidades voltam ao equilíbrio. As fases homogêneas compartilham temperatura e velocidade; líquido incompressível e vapor como pseudoespécie ideal. Propriedades e densidade devem coincidir.
 

@@ -10,9 +10,11 @@ La pompe du domaine carburant alimente désormais une aiguille physique et une d
 
 `LiquidColumn` est une référence C# autonome pour un tube horizontal rigide à section, vitesse uniforme, masse volumique liquide et température constantes. Les pressions absolues aux ports sont prescrites pendant chaque intervalle. Les résistances linéaire et quadratique sont des entrées de recherche explicites. Ce n'est pas un composant du graphe ; les équations du réseau et de la tuyère restent inchangées. [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md)
 
+Un `fuel_inertial_pipe` relie deux nœuds de carburant finis et une paroi thermique finie. La ligne horizontale rigide possède masse liquide, énergie calorique et cinétique propres, en plus des réservoirs. Sa densité est constante, sa température variable et parfaitement mélangée. Les ports et toute la ligne restent liquides ; les liens quasi statiques gardent leur comportement diphasique séparé. [Quantité de mouvement d'une ligne finie de carburant liquide](FUEL_INERTIAL_PIPE.fr.md)
+
 ## Prochaine étape
 
-Relier la référence de quantité de mouvement au réseau fini avec inventaire énergétique de ligne explicite et enthalpies compatibles. Établir la validité à densité variable et changement de phase avant de revendiquer une entrée cavitante. Poursuivre relaxation, allumage, admission/échappement, pertes et ECU/TCU coordonnés. [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md)
+Étendre le mouvement aux états à densité variable et changement de phase avec fermeture énergie/entropie compatible avant de revendiquer une entrée cavitante. Poursuivre relaxation/glissement, allumage, admission/échappement, pertes, transmission et ECU/TCU coordonnés. Calibration mesurée et Unity réel restent séparés. [Quantité de mouvement d'une ligne finie de carburant liquide](FUEL_INERTIAL_PIPE.fr.md)
 
 ## Acceptation
 

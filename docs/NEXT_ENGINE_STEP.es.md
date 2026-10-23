@@ -10,9 +10,11 @@ La bomba del dominio de combustible alimenta ahora una aguja física y descarga 
 
 `LiquidColumn` es una referencia C# independiente de un tubo horizontal rígido con sección, velocidad uniforme, densidad líquida y temperatura constantes. Las presiones absolutas se prescriben por intervalo. Las resistencias lineal y cuadrática son entradas de investigación explícitas. No es un componente del grafo ni cambia las ecuaciones de red o tobera. [Referencia de cantidad de movimiento en la entrada líquida](LIQUID_COLUMN.es.md)
 
+Un `fuel_inertial_pipe` conecta dos nodos finitos de combustible y una pared térmica finita. La línea horizontal rígida posee masa líquida, energía calórica y cinética propias, además de los recipientes. Densidad constante y temperatura variable perfectamente mezclada. Puertos y línea deben permanecer líquidos; los enlaces cuasiestáticos conservan su modelo bifásico separado. [Cantidad de movimiento en una línea finita de combustible líquido](FUEL_INERTIAL_PIPE.es.md)
+
 ## Próximo incremento
 
-Conectar la referencia de cantidad de movimiento a la red finita con inventario energético de línea y entalpías compatibles explícitos. Establecer validez de densidad variable y cambio de fase antes de afirmar dinámica cavitante de entrada. Continuar relajación, encendido, admisión/escape, pérdidas y ECU/TCU coordinados. [Referencia de cantidad de movimiento en la entrada líquida](LIQUID_COLUMN.es.md)
+Extender el movimiento a densidad variable y cambio de fase con cierre energético/entrópico compatible antes de afirmar entrada cavitante. Continuar relajación/deslizamiento, encendido, admisión/escape, pérdidas, transmisión y ECU/TCU. Calibración medida y Unity real siguen separados. [Cantidad de movimiento en una línea finita de combustible líquido](FUEL_INERTIAL_PIPE.es.md)
 
 ## Aceptación
 

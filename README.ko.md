@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 헤드리스 실험"]
     mcp["Power.Mcp — stdio MCP 도구 12개"]
-    assets["Power.Assets — .powerasset v34"]
+    assets["Power.Assets — .powerasset v35"]
     unity["Unity 6.6 스튜디오 — 3D 실험실"]
 
     model --> core
@@ -147,12 +147,14 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 모든 샘플 매개변수는 `unverified`입니다. 연구 값이지 교정 측정값이 아닙니다.
 
-아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v34`를 사용하며 이전 자산의 판독기는 유지됩니다.
+아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v35`를 사용하며 이전 자산의 판독기는 유지됩니다.
 
 연료 도메인 펌프는 이제 물리 니들과 증기 질량분율 동결 토출을 통해 유한 액체 체적 연소 수용실에 공급합니다. 전체 재고에는 상변화, 배제 일, 제트 운동에너지 및 정지 벽 충격량이 포함됩니다. [증기 질량분율 동결 연료 토출과 유한 수용실](docs/FUEL_DISCHARGE.ko.md) [축 구동 상변화 연료 펌프](docs/FUEL_CHAMBER_PUMP.ko.md)
 
+`fuel_inertial_pipe`는 두 유한 연료 노드와 유한 열벽을 연결합니다. 수평 강체 관로는 양 용기 외에 자체 액체 질량, 열 내부에너지와 운동에너지를 갖습니다. 밀도는 일정하고 온도는 완전 혼합으로 변합니다. 포트와 관로 전체가 액체여야 하며 기존 준정적 연결은 별도 2상 거동을 유지합니다. [유한 액체 연료 관로 운동량](docs/FUEL_INERTIAL_PIPE.ko.md)
+
 <details>
-<summary>사용 가능한 실험실 (54)</summary>
+<summary>사용 가능한 실험실 (56)</summary>
 
 | 예제 이름(`get_example_model`) | 실험실 | 다루는 내용 |
 |---|---|---|
@@ -210,6 +212,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | 직류 모터 구동, 충분한 액체 충전 및 유한 모터 벽 열교환 |
 | `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | 증기 질량분율 동결 연료 토출과 유한 수용실 |
 | `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | 증기 분율 동결 초크, 유한 액체 배제 및 물리 펌프/니들 연소 |
+| `inertial-fuel-line` | `assets/labs/inertial-fuel-line.power.json` | 유한 액체 재고, 동적 유량, 열 혼합과 보존 관로 일 |
+| `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | 유한 액체 재고, 동적 유량, 열 혼합과 보존 관로 일 |
 
 </details>
 

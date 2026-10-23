@@ -2,6 +2,77 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: 유한 액체 연료 관로 운동량
+
+`fuel_inertial_pipe`는 두 유한 연료 노드와 유한 열벽을 연결합니다. 수평 강체 관로는 양 용기 외에 자체 액체 질량, 열 내부에너지와 운동에너지를 갖습니다. 밀도는 일정하고 온도는 완전 혼합으로 변합니다. 포트와 관로 전체가 액체여야 하며 기존 준정적 연결은 별도 2상 거동을 유지합니다.
+
+독립 유한 컴플라이언스 조화해와 별도 비선형 운동량·온도 RK4로 정확도와 1차 세분화를 확인합니다. 열 분배, 쌍 엔트로피, 역전, 전체 원장, 클러치 시험 구간, 무할당, 롤백, 취소와 독립 분기를 검사합니다. 이식 자산과 실제 MCP가 모든 경계를 검사합니다. 실측 보정이나 실제 Unity 합격은 아닙니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 513/513 |
+| standard_checks_on_dotnet | 401/401 |
+| actual_mcp_groups | 60/60 |
+| laboratories | 56 |
+| agent_examples | 55 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| all_sample_boundaries | 7531 |
+| new_core_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_steps | 10000, 20000 |
+| asset_version | power.asset.v35 |
+| agent_api_version | 0.40.0 |
+| fingerprint_tag | 40 |
+| fuel_pipe_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_quantity_fields | 7 |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| v34_fixture_sha256 | 51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587 |
+| verification_log_sha256 | b766d0d57f17dbc37d5565d0b33d528e075c2b4f0aa4a3452b6ac9047a613e07 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 56 |
+| schema_negative_cases | 12 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| finite_compliance_harmonic | 2000000, 1000000, 500000, 250000 | 0.0013357399212237996, 0.0006672710470717257, 0.0003334847696376677, 0.0001667045683679429 |
+| nonlinear_thermal | 200000, 100000, 50000, 25000 | 1.5209877863320287e-05, 7.53194873812646e-06, 3.7476001908842706e-06, 1.8691907269996478e-06 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| inertial-fuel-line | 9b7f2a6b6b3cb7b7 | 549f8d1c054b2b3f | 71 | 1.1641532182693481e-10 |
+| inertial-pump-fed-cylinder | 3ff9ef7bd3e02dfb | 3e16e08ae5051507 | 81 | 1.2129731885579531e-08 |
+
+- `artifacts/reports/fuel-pipe-final-2026-10-23.log`
+- `artifacts/reports/fuel-pipe-evidence-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-baseline-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-schema-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-provenance-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-doc-audit-2026-10-23.json`
+
+운동량은 중점 유량과 수용된 최종 압력을 사용합니다. 포트 에너지와 혼합은 후진 오일러이므로 전체 결합은 1차입니다. 무마찰에서도 최종 압력 이산화가 진동 일부를 수치 열로 바꾸지만 물리 마찰에는 포함하지 않습니다. 쌍 엔트로피는 혼합·시간 이산화를 포함합니다. 영유량 이벤트는 정·역방향 이력을 분리합니다.
+
+매개변수는 `unverified`입니다. 재료 온도·압력 범위와 압력 보정 액상 안정성을 지킵니다. 실패 구간은 전체 롤백되며 틱을 줄이고 공급 고갈·압력·상을 확인합니다. 변밀도 2상 운동량, 공동현상, 음파, 중력, 이동 관 형상과 열 전선 해상은 제외합니다. 규정 연소는 상세 화학평형·반응 엔트로피 정확도를 입증하지 않습니다.
+
 ## 2026-10-20: 액체 입구 운동량 기준 모델
 
 `LiquidColumn`은 단면적, 균일 속도, 액체 밀도와 온도가 일정한 수평 강체 관의 독립 C# 기준입니다. 각 국소 구간의 절대 포트 압력이 주어집니다. 선형·이차 저항은 명시적 연구 입력입니다. 그래프 컴포넌트가 아니며 기존 연료 네트워크와 노즐 방정식을 바꾸지 않습니다.

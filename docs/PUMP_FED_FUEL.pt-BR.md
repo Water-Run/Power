@@ -12,7 +12,7 @@ A energia de pressão é armazenada uma única vez no nó hidráulico. Vazão e 
 
 ## Evidências e limites
 
-v34 preserva conexões e temperatura da fonte e lê v1-v33. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v35 preserva conexões e temperatura da fonte e lê v1-v34. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 

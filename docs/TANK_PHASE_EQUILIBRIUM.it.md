@@ -27,7 +27,7 @@ Un flash limitato a U,V costanti conserva combustibile ed energia termica. Orifi
 
 ## Evidenza e limiti
 
-`equilibrium-tank-supply` verifica inversione pompa, sfiato con combustibile e parete calda finita. `equilibrium-tank-fired-cylinder` connette tale sorgente a un motore acceso. Si verificano massimo indipendente d'entropia, potenziali, derivate caloriche, raffinamento ODE, bilanci, replay, rollback e allocazioni. Asset v34 conserva il flag e legge v1-v33.
+`equilibrium-tank-supply` verifica inversione pompa, sfiato con combustibile e parete calda finita. `equilibrium-tank-fired-cylinder` connette tale sorgente a un motore acceso. Si verificano massimo indipendente d'entropia, potenziali, derivate caloriche, raffinamento ODE, bilanci, replay, rollback e allocazioni. Asset v35 conserva il flag e legge v1-v34.
 
 Casi accoppiati pompa/calore/sfiato mostrano il primo ordine. Entrambe le fasi sorgente restano nell'intervallo dichiarato e la densità totale sotto quella liquida con margine binary64. Densità/proprietà costanti, equilibrio istantaneo e interfaccia piana sono approssimazioni di ricerca. Miscele reali, tensione superficiale, sloshing, cinetica finita, calibrazione misurata e Unity Editor/Play/Player/IL2CPP reale restano non verificati.
 

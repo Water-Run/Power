@@ -197,6 +197,9 @@
           },
           {
             "$ref": "#/$defs/fuel_discharge"
+          },
+          {
+            "$ref": "#/$defs/fuel_inertial_pipe"
           }
         ]
       },
@@ -956,7 +959,12 @@
             "throat_pressure",
             "exit_temperature",
             "exit_velocity",
-            "choked"
+            "choked",
+            "forward_volume",
+            "reverse_volume",
+            "kinetic_energy",
+            "energy_at_a",
+            "energy_at_b"
           ]
         },
         "min": {
@@ -7656,6 +7664,186 @@
               "const": "frozen"
             },
             "wall_kinetic_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "fuel_inertial_pipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "heat_node",
+        "parameters"
+      ],
+      "description": "Always-open rigid liquid line with its own fixed liquid mass, caloric energy and kinetic energy. Liquid-only finite fuel ports, constant density, well-mixed line temperature and a finite friction wall; not a cavitating or acoustic pipe.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "fuel_inertial_pipe"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "heat_node": {
+          "$ref": "#/$defs/id"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "length",
+            "area",
+            "linear_resistance",
+            "quadratic_resistance",
+            "initial_flow",
+            "initial_temperature",
+            "fluid_heat_fraction"
+          ],
+          "properties": {
+            "length": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "linear_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa_s_m3"
+                  ]
+                }
+              }
+            },
+            "quadratic_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa_s2_m6"
+                  ]
+                }
+              }
+            },
+            "initial_flow": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m3_s"
+                  ]
+                }
+              }
+            },
+            "initial_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "fluid_heat_fraction": {
               "type": "object",
               "additionalProperties": false,
               "required": [

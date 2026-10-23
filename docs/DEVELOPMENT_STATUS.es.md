@@ -19,7 +19,7 @@ aplicación de escritorio de Unity aceptada.
 | Hidráulica | Volúmenes flexibles, restricciones, bombas con fugas y arrastre explícitos, alivio, pistones dinámicos, correderas dosificadas y acumuladores de gas de energía finita | Mapas medidos de válvulas, acumuladores y bombas, fricción de juntas, cavitación e hidráulica completa de transmisión |
 | Eléctrica | Motores RL, solenoides recíprocos de inductancia variable, batería de carga finita, polarización por resistencia y RC, conversión de ciclo de trabajo promediada y accesorios | Comportamiento químico y térmico medido, BMS, control de corriente e integración completa de la alimentación |
 | Controles | PI de presión muestreado, dosis/cierre de aguja, relevo DCT escalonado y cambios AT por realimentación de presión con confirmación física de bloqueo | Coordinación de par de ECU/TCU, sensores, actuadores y tratamiento de fallos |
-| Documentos y assets | 54 laboratorios JSON/CLI, 53 ejemplos MCP, asset v34 y lectores v1-v33 | Edición/guardado y colecciones de modelos calibrados |
+| Documentos y assets | 56 laboratorios JSON/CLI, 55 ejemplos MCP, asset v35 y lectores v1-v34 | Edición/guardado y colecciones de modelos calibrados |
 | Agentes | Doce herramientas MCP definidas por esquema; evidencia compacta, comprobaciones de revisión y diagnósticos accionables | Flujos completos para el alcance físico y de control restante |
 | Unity | Importación de modelos, reproducción en ticks exactos, componentes 3D esquemáticos, controles, reinicio y pruebas de ciclo de vida preparadas | Aceptación real de Editor/Play, gráficas seleccionables, edición y guardado de grafos, y Player/IL2CPP |
 | Archivo nativo | Prototipos de investigación en Zig 0.15.2, ABI conservado y procedencia original de las fuentes | Referencia histórica; la migración gestionada sigue separada de la funcionalidad completa |
@@ -30,6 +30,8 @@ C# 9. Unity carga los ensamblados Standard compilados por el SDK externo; no
 compila fuente de .NET 10 ni de C# 14.
 
 `LiquidColumn` es una referencia C# independiente de un tubo horizontal rígido con sección, velocidad uniforme, densidad líquida y temperatura constantes. Las presiones absolutas se prescriben por intervalo. Las resistencias lineal y cuadrática son entradas de investigación explícitas. No es un componente del grafo ni cambia las ecuaciones de red o tobera. [Referencia de cantidad de movimiento en la entrada líquida](LIQUID_COLUMN.es.md)
+
+Un `fuel_inertial_pipe` conecta dos nodos finitos de combustible y una pared térmica finita. La línea horizontal rígida posee masa líquida, energía calórica y cinética propias, además de los recipientes. Densidad constante y temperatura variable perfectamente mezclada. Puertos y línea deben permanecer líquidos; los enlaces cuasiestáticos conservan su modelo bifásico separado. [Cantidad de movimiento en una línea finita de combustible líquido](FUEL_INERTIAL_PIPE.es.md)
 
 ## Evidencia y límites
 

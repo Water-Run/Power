@@ -37,6 +37,6 @@ SI の形状、密度、抵抗、温度、最小絶対圧力を明示して `Liq
 
 パラメーターは `unverified` です。最低圧力は呼出側が宣言する液相有効境界で、蒸気圧や NPSH を予測しません。圧縮性、音波、重力、移動形状、熱蓄積、キャビテーション、相間滑り、相緩和は対象外です。二相燃料リンクは準静的のままです。実 Unity 受け入れと実測校正は別です。
 
-明示した管路エネルギー在庫と整合するポートエンタルピーで、液体運動量参照を有限燃料ネットワークへ結合します。キャビテーション入口を主張する前に変密度・相変化の有効性を確立します。相緩和、点火、吸排気、損失、ECU/TCU 協調を続けます。
+`fuel_inertial_pipe` は二つの有限燃料ノードと有限熱壁を接続します。水平剛体管は両容器に加えて独自の液体質量、熱内部エネルギー、運動エネルギーを持ちます。密度一定で温度は完全混合により変化します。ポートと管路全体が液相である必要があり、既存の準静的リンクは別の二相挙動を保ちます。 [有限液体燃料管路の運動量](FUEL_INERTIAL_PIPE.ja.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: pipe flow models](https://doc.modelica.org/om/Modelica.Fluid.Pipes.BaseClasses.FlowModels.html) · [VALIDATION.md](VALIDATION.md)

@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, comprobar la huella]
 ```
 
-## Versión actual 34
+## Versión actual 35
+
+Un `fuel_inertial_pipe` conecta dos nodos finitos de combustible y una pared térmica finita. La línea horizontal rígida posee masa líquida, energía calórica y cinética propias, además de los recipientes. Densidad constante y temperatura variable perfectamente mezclada. Puertos y línea deben permanecer líquidos; los enlaces cuasiestáticos conservan su modelo bifásico separado.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[Cantidad de movimiento en una línea finita de combustible líquido](FUEL_INERTIAL_PIPE.es.md)
+
+
+## Versión conservada 34
 
 Un `fuel_discharge` conecta una fuente finita del dominio de combustible al nodo gaseoso de un `finite_fuel_film`. Declare `phase_mode` como `frozen`: la fracción másica de vapor queda fija durante el paso por la tobera y ambos volúmenes vuelven al equilibrio. Las fases homogéneas comparten temperatura y velocidad; el líquido es incompresible y el vapor una pseudoespecie ideal. Propiedades y densidad deben coincidir.
 

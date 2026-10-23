@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 34, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v34";
+    public const int FormatVersion = 35, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v35";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -57,10 +57,11 @@ public static class AssetCodec
         int fuelChambers = asset.Components.Count(c => c.Kind == ComponentKind.FuelChamber);
         int finiteFilms = asset.Components.Count(c => c.Kind == ComponentKind.FiniteFuelFilm);
         int discharges = asset.Components.Count(c => c.Kind == ComponentKind.FuelDischarge);
+        int fuelPipes = asset.Components.Count(c => c.Kind == ComponentKind.FuelInertialPipe);
         long size = 8 + 4 + 8 + 8 + 8 + 8 + 2 + Utf8.GetByteCount(asset.Name) + 32 + 40 * 4 +
             44L * asset.Nodes.Count + 156L * asset.Components.Count + 116L * cylinders + 24L * gases + 36L * orifices +
             72L * moving + 44L * valves + 40L * mixtures + 20L * reservoirMixtures + 56L * burners + 28L * clutches + 8L * gears + 20L * converters + 28L * points + 40L * hydraulicRestrictions + 64L * hydraulicClutches + 32L * pumps + 16L * reliefs + 80L * controllers + 68L * batteries + 80L * dutyControllers + 104L * pistons + 40L * pistonClutches + 32L * spools + 56L * gasPistons + 56L * injectors + 100L * films + 120L * liquidInjectors + 28L * solenoids + 40L * stops + 32L * needles + 40L * needleDrivers + 104L * dctControllers + 208L * atControllers + 12L * atRoutes + 28L * liquidFeeds + 52L * liquidTanks + 24L * liquidReturns + 148L * fuelVolumes + 40L * fuelChambers + 24L * asset.Inputs.Count + 33L * asset.Checks.Count + 32;
-        size += 12L * finiteFilms + 52L * discharges;
+        size += 12L * finiteFilms + 52L * discharges + 88L * fuelPipes;
         if (size > MaxBytes) throw new AssetFormatException("Asset exceeds 1 MiB.");
         using var stream = new MemoryStream((int)size);
         using var writer = new BinaryWriter(stream, Utf8, true);
@@ -261,6 +262,12 @@ public static class AssetCodec
                 writer.Write(i); writer.Write(discharge.FilmComponent); writer.Write((int)discharge.PhaseModel); Quantity(discharge.WallKineticFraction);
                 writer.Write(discharge.Needle?.NeedleNode ?? 0); Quantity(discharge.Needle?.ClosedPosition ?? default); Quantity(discharge.Needle?.FullOpenPosition ?? default);
             }
+        for (int i = 0; i < asset.Components.Count; ++i)
+            if (asset.Components[i].FuelPipe is { } pipe)
+            {
+                writer.Write(i); Quantity(pipe.Length); Quantity(pipe.Area); Quantity(pipe.LinearResistance); Quantity(pipe.QuadraticResistance);
+                Quantity(pipe.InitialFlow); Quantity(pipe.InitialTemperature); Quantity(pipe.FluidHeatFraction);
+            }
         foreach (var input in asset.Inputs) { writer.Write(input.TimeNanoseconds); writer.Write(input.Channel); writer.Write(input.Value); }
         foreach (var c in asset.Checks)
         {
@@ -348,10 +355,12 @@ public static class AssetCodec
                 };
             int fuelChambers = cs.Count(c => c.Kind == ComponentKind.FuelChamber);
             int finiteFilms = cs.Count(c => c.Kind == ComponentKind.FiniteFuelFilm), discharges = cs.Count(c => c.Kind == ComponentKind.FuelDischarge);
+            int fuelPipes = cs.Count(c => c.Kind == ComponentKind.FuelInertialPipe);
+            if (version < 35 && fuelPipes != 0) throw new AssetFormatException("Inertial liquid fuel lines require version 35.");
             if (version < 34 && (finiteFilms != 0 || discharges != 0)) throw new AssetFormatException("Finite-displacement receivers and fuel discharge require version 34.");
             if (version < 33 && (fuelChambers != 0 || cs.Any(c => c.Kind == ComponentKind.FuelCheckValve)))
                 throw new AssetFormatException("Moving fuel chambers and check valves require version 33.");
-            if (stream.Length - tableStart != declaredTableBytes + 148L * fuelVolumes + 40L * fuelChambers + 12L * finiteFilms + 52L * discharges)
+            if (stream.Length - tableStart != declaredTableBytes + 148L * fuelVolumes + 40L * fuelChambers + 12L * finiteFilms + 52L * discharges + 88L * fuelPipes)
                 throw new AssetFormatException("Asset length does not match its counts and typed fuel records.");
             if (version < 32 && cs.Any(c => c.Kind is ComponentKind.FuelRestriction or ComponentKind.FuelHeatLink))
                 throw new AssetFormatException("Equilibrium fuel links require version 32.");
@@ -744,6 +753,14 @@ public static class AssetCodec
                 if (needle == 0 && (closed != default || open != default)) throw new AssetFormatException("Needle positions require a needle node.");
                 cs[index] = cs[index] with { FuelDischarge = new() { FilmComponent = film, PhaseModel = phase, WallKineticFraction = fraction,
                     Needle = needle == 0 ? null : new() { NeedleNode = needle, ClosedPosition = closed, FullOpenPosition = open } } };
+            }
+            for (int i = 0; i < fuelPipes; ++i)
+            {
+                int index = reader.ReadInt32();
+                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.FuelInertialPipe || cs[index].FuelPipe is not null)
+                    throw new AssetFormatException("Inertial pipe record must reference a distinct fuel pipe.");
+                cs[index] = cs[index] with { FuelPipe = new() { Length = Quantity(), Area = Quantity(), LinearResistance = Quantity(), QuadraticResistance = Quantity(),
+                    InitialFlow = Quantity(), InitialTemperature = Quantity(), FluidHeatFraction = Quantity() } };
             }
             for (int i = 0; i < inputs; ++i) schedule[i] = new(reader.ReadUInt64(), reader.ReadUInt64(), reader.ReadDouble());
             var conditions = new AssetCheck[checks];

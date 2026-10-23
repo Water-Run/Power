@@ -2,6 +2,77 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · **Français** · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: Quantité de mouvement d'une ligne finie de carburant liquide
+
+Un `fuel_inertial_pipe` relie deux nœuds de carburant finis et une paroi thermique finie. La ligne horizontale rigide possède masse liquide, énergie calorique et cinétique propres, en plus des réservoirs. Sa densité est constante, sa température variable et parfaitement mélangée. Les ports et toute la ligne restent liquides ; les liens quasi statiques gardent leur comportement diphasique séparé.
+
+Une solution harmonique indépendante à compliance finie et une RK4 indépendante du mouvement/température non linéaires vérifient exactitude et premier ordre. Les contrôles couvrent chaleur, entropie, inversion, bilans complets, intervalles spéculatifs d'embrayage, allocations, rollback, annulation et branches indépendantes. Assets portables et MCP réel vérifient chaque frontière. Cela ne valide ni matériel calibré ni Unity réel.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 513/513 |
+| standard_checks_on_dotnet | 401/401 |
+| actual_mcp_groups | 60/60 |
+| laboratories | 56 |
+| agent_examples | 55 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| all_sample_boundaries | 7531 |
+| new_core_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_steps | 10000, 20000 |
+| asset_version | power.asset.v35 |
+| agent_api_version | 0.40.0 |
+| fingerprint_tag | 40 |
+| fuel_pipe_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_quantity_fields | 7 |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| v34_fixture_sha256 | 51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587 |
+| verification_log_sha256 | b766d0d57f17dbc37d5565d0b33d528e075c2b4f0aa4a3452b6ac9047a613e07 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 56 |
+| schema_negative_cases | 12 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| finite_compliance_harmonic | 2000000, 1000000, 500000, 250000 | 0.0013357399212237996, 0.0006672710470717257, 0.0003334847696376677, 0.0001667045683679429 |
+| nonlinear_thermal | 200000, 100000, 50000, 25000 | 1.5209877863320287e-05, 7.53194873812646e-06, 3.7476001908842706e-06, 1.8691907269996478e-06 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| inertial-fuel-line | 9b7f2a6b6b3cb7b7 | 549f8d1c054b2b3f | 71 | 1.1641532182693481e-10 |
+| inertial-pump-fed-cylinder | 3ff9ef7bd3e02dfb | 3e16e08ae5051507 | 81 | 1.2129731885579531e-08 |
+
+- `artifacts/reports/fuel-pipe-final-2026-10-23.log`
+- `artifacts/reports/fuel-pipe-evidence-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-baseline-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-schema-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-provenance-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-doc-audit-2026-10-23.json`
+
+La quantité de mouvement utilise le débit médian et les pressions finales acceptées. Énergie des ports et mélange utilisent Euler implicite ; le couplage complet converge au premier ordre. Même sans friction, la discrétisation des pressions transforme une partie de l'oscillation en chaleur numérique, non comptée comme friction physique. L'entropie inclut mélange et discrétisation. Les événements de débit nul séparent les historiques directs et inverses.
+
+Les paramètres restent `unverified`. Respecter les plages de température/pression et la stabilité liquide corrigée en pression. Un intervalle échoué est entièrement annulé ; réduire le pas et vérifier épuisement, pression et phase. Densité variable diphasique, cavitation, acoustique, gravité, géométrie mobile et fronts thermiques résolus sont omis. La combustion prescrite ne valide pas chimie d'équilibre ni entropie réactionnelle détaillées.
+
 ## 2026-10-20: Référence de quantité de mouvement à l'entrée liquide
 
 `LiquidColumn` est une référence C# autonome pour un tube horizontal rigide à section, vitesse uniforme, masse volumique liquide et température constantes. Les pressions absolues aux ports sont prescrites pendant chaque intervalle. Les résistances linéaire et quadratique sont des entrées de recherche explicites. Ce n'est pas un composant du graphe ; les équations du réseau et de la tuyère restent inchangées.

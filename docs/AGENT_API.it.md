@@ -42,7 +42,7 @@ Windows usa lo stesso comando `dotnet` e un percorso assoluto alla DLL. Una conn
 
 ## Strumenti e risultati
 
-Nell'API agente versione 0.39.0, `get_example_model` accetta un `name` facoltativo, predefinito `electrothermal`. `get_capabilities.examples` elenca tutti i 53 esempi, inclusi serbatoi finiti e ricircolo. CLI `list-labs` restituisce i 54 laboratori come JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` è riservato alla CLI per progettazione. Le capacità dichiarano anche componenti, fedeltà, limiti del solver e ingressi. Gli export usano `power.asset.v34` con lettori v1-v33 conservati. Validazione e creazione della sessione restituiscono canali e unità. KPI superati non attestano un powertrain completo o calibrato.
+Nell'API agente versione 0.40.0, `get_example_model` accetta un `name` facoltativo, predefinito `electrothermal`. `get_capabilities.examples` elenca tutti i 55 esempi, inclusi serbatoi finiti e ricircolo. CLI `list-labs` restituisce i 56 laboratori come JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` è riservato alla CLI per progettazione. Le capacità dichiarano anche componenti, fedeltà, limiti del solver e ingressi. Gli export usano `power.asset.v35` con lettori v1-v34 conservati. Validazione e creazione della sessione restituiscono canali e unità. KPI superati non attestano un powertrain completo o calibrato.
 
 | Strumento | Scopo |
 |---|---|
@@ -98,7 +98,7 @@ Per ispezionare il modello in Unity, chiama `export_model_asset({"document": ...
 
 Le revisioni partono da 0. Ogni commit di input riuscito e ogni passo riuscito aggiunge 1. Un'operazione obsoleta, non valida o annullata non aggiunge una revisione. Un fork lascia invariata la revisione del genitore. Dopo qualsiasi interruzione di trasporto, leggi l'istantanea e usa quella revisione. Non reinviare una scrittura che porta ancora la revisione vecchia.
 
-`time_ns`, `revision` e gli ID dei canali in un'istantanea di sessione sono stringhe, così restano esatti oltre il limite intero di JavaScript. Il tempo di esperimento in un documento di modello è al massimo un'ora. I canali di input del modello oggi sono interi. Scegli ID non più grandi di `2^53-1` se un altro client JSON deve mantenerli esatti. Gli ID di namespace alto negli output restano stringhe, invariati.
+`time_ns`, `revision` e gli ID dei canali in un'istantanea di sessione sono stringhe, così restano esatti oltre il limite intero di JavaScript. Il tempo di esperimento in un documento di modello è al massimo un'ora. I canali di input del modello oggi sono interi. Scegli ID non più grandi di `2^55-1` se un altro client JSON deve mantenerli esatti. Gli ID di namespace alto negli output restano stringhe, invariati.
 
 `channels` su `read_snapshot` è un array di stringhe di ID di output. Omettilo per restituire ogni output. I canali di input e i campi duplicati sono rifiutati. `include_samples=true` è ciò che fa restituire a un esperimento ogni confine di campionamento.
 
@@ -292,7 +292,7 @@ I report conservano pressione di linea/camera, corsa, capacità di contatto, lav
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v34 conserva percorsi, guadagni e clock e legge v1-v33.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v35 conserva percorsi, guadagni e clock e legge v1-v34.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -302,7 +302,7 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v34 conserva collegamenti e temperatura sorgente e legge v1-v33. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v35 conserva collegamenti e temperatura sorgente e legge v1-v34. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
@@ -342,7 +342,7 @@ L'opzione `fuel_film.parameters.phase_equilibrium` dichiara `reference_pressure`
 
 L'alimentazione predefinita respinge liquido sotto saturazione. Il serbatoio finito opzionale risolve il vapore sorgente con potenziali corretti. Rail e aspirazione trasportano ancora liquido separato; bolle e flusso cavitante richiedono altra fisica.
 
-Il confronto ammette solo arrotondamento binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-54`. Il margine riportato non viene limitato. È un controllo di saturazione globale; perdite locali e NPSH della pompa richiedono un modello di flusso risolto. Le verifiche indipendenti richiedono inoltre entropia totale non decrescente nel flash adiabatico e nello scambio con parete finita.
+Il confronto ammette solo arrotondamento binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-56`. Il margine riportato non viene limitato. È un controllo di saturazione globale; perdite locali e NPSH della pompa richiedono un modello di flusso risolto. Le verifiche indipendenti richiedono inoltre entropia totale non decrescente nel flash adiabatico e nello scambio con parete finita.
 
 [Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md)
 

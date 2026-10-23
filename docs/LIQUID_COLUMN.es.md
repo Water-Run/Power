@@ -37,6 +37,6 @@ Aceleración sin pérdidas, exponencial lineal y tangente hiperbólica cuadráti
 
 Los parámetros siguen `unverified`. El mínimo de presión es un límite líquido declarado por el usuario, no predicción de presión de vapor o NPSH. Compresibilidad, acústica, gravedad, geometría móvil, almacenamiento térmico, cavitación, deslizamiento y relajación quedan fuera. Los enlaces bifásicos siguen cuasiestáticos. Unity real y calibración medida son independientes.
 
-Conectar la referencia de cantidad de movimiento a la red finita con inventario energético de línea y entalpías compatibles explícitos. Establecer validez de densidad variable y cambio de fase antes de afirmar dinámica cavitante de entrada. Continuar relajación, encendido, admisión/escape, pérdidas y ECU/TCU coordinados.
+Un `fuel_inertial_pipe` conecta dos nodos finitos de combustible y una pared térmica finita. La línea horizontal rígida posee masa líquida, energía calórica y cinética propias, además de los recipientes. Densidad constante y temperatura variable perfectamente mezclada. Puertos y línea deben permanecer líquidos; los enlaces cuasiestáticos conservan su modelo bifásico separado. [Cantidad de movimiento en una línea finita de combustible líquido](FUEL_INERTIAL_PIPE.es.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: pipe flow models](https://doc.modelica.org/om/Modelica.Fluid.Pipes.BaseClasses.FlowModels.html) · [VALIDATION.md](VALIDATION.md)

@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — experimentos sin interfaz"]
     mcp["Power.Mcp — 12 herramientas MCP por stdio"]
-    assets["Power.Assets — .powerasset v34"]
+    assets["Power.Assets — .powerasset v35"]
     unity["Estudio Unity 6.6 — laboratorios 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ El servicio expone doce herramientas con esquemas de entrada y salida:
 |---|---|
 | `get_capabilities` | Descubrir modelos, límites y convenciones de tiempo y revisión. Empieza aquí. |
 | `get_model_schema` | JSON Schema 2020-12 para `power.model.v1` |
-| `get_example_model` | Obtener un modelo sintético editable y su experimento (53 ejemplos) |
+| `get_example_model` | Obtener un modelo sintético editable y su experimento (55 ejemplos) |
 | `validate_model` | Validar un modelo sin ejecutarlo; diagnóstico de reparación estructurado |
 | `run_experiment` | Ejecución sin interfaz y acotada, con repetición por lotes, KPIs y procedencia |
 | `export_model_asset` | Exportar un `.powerasset` portátil |
@@ -147,12 +147,14 @@ Un grafo de investigación Ravigneaux de cuatro rangos añade caminos planetario
 > [!NOTE]
 > Todos los parámetros de ejemplo son `unverified`: valores de investigación, no mediciones calibradas.
 
-Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v34`, con lectores para assets anteriores conservados.
+Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v35`, con lectores para assets anteriores conservados.
 
 La bomba del dominio de combustible alimenta ahora una aguja física y descarga con calidad congelada en un receptor encendido con volumen líquido finito. Los inventarios completos incluyen cambio de fase, trabajo de desplazamiento, energía cinética e impulso sobre pared inmóvil. [Descarga de combustible con calidad congelada y receptores finitos](docs/FUEL_DISCHARGE.es.md) [Bomba de combustible con cambio de fase impulsada por eje](docs/FUEL_CHAMBER_PUMP.es.md)
 
+Un `fuel_inertial_pipe` conecta dos nodos finitos de combustible y una pared térmica finita. La línea horizontal rígida posee masa líquida, energía calórica y cinética propias, además de los recipientes. Densidad constante y temperatura variable perfectamente mezclada. Puertos y línea deben permanecer líquidos; los enlaces cuasiestáticos conservan su modelo bifásico separado. [Cantidad de movimiento en una línea finita de combustible líquido](docs/FUEL_INERTIAL_PIPE.es.md)
+
 <details>
-<summary>Laboratorios disponibles (54)</summary>
+<summary>Laboratorios disponibles (56)</summary>
 
 | Nombre de ejemplo (`get_example_model`) | Laboratorio | Qué ejercita |
 |---|---|---|
@@ -210,6 +212,8 @@ La bomba del dominio de combustible alimenta ahora una aguja física y descarga 
 | `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | motor CC, llenado líquido alimentado y calor finito de pared del motor |
 | `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | Descarga de combustible con calidad congelada y receptores finitos |
 | `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Estrangulamiento de calidad congelada, desplazamiento finito y combustión con bomba/aguja físicas |
+| `inertial-fuel-line` | `assets/labs/inertial-fuel-line.power.json` | Inventario líquido finito, caudal dinámico, mezcla térmica y trabajo conservativo |
+| `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | Inventario líquido finito, caudal dinámico, mezcla térmica y trabajo conservativo |
 
 </details>
 

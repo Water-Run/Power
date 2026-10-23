@@ -37,6 +37,6 @@ Accelerazione senza perdite, esponenziale lineare e tangente iperbolica quadrati
 
 I parametri restano `unverified`. La pressione minima è un confine liquido dichiarato dal chiamante, non una previsione di tensione di vapore o NPSH. Comprimibilità, acustica, gravità, geometria mobile, accumulo termico, cavitazione, scorrimento e rilassamento sono esclusi. I collegamenti bifase restano quasi statici. Unity reale e calibrazione misurata sono separati.
 
-Collegare il riferimento di quantità di moto alla rete finita con inventario energetico della linea ed entalpie compatibili espliciti. Stabilire validità di densità variabile e cambio fase prima di dichiarare ingresso cavitante. Proseguire rilassamento, accensione, aspirazione/scarico, perdite ed ECU/TCU coordinati.
+Un `fuel_inertial_pipe` collega due nodi finiti di carburante e una parete termica finita. La linea orizzontale rigida possiede massa liquida, energia calorica e cinetica proprie oltre ai serbatoi. Densità costante, temperatura variabile e miscelata. Porte e linea restano liquide; i collegamenti quasi statici mantengono il modello bifase separato. [Quantità di moto della linea finita di carburante liquido](FUEL_INERTIAL_PIPE.it.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: pipe flow models](https://doc.modelica.org/om/Modelica.Fluid.Pipes.BaseClasses.FlowModels.html) · [VALIDATION.md](VALIDATION.md)

@@ -46,7 +46,7 @@ internal static class FuelDischargeIntegrationChecks
     private static void Sessions()
     {
         var capability = Data(AgentWorkspace.Capabilities()); Require(capability.GetProperty("fuel_discharge").GetProperty("phase_mode").GetString() == "frozen");
-        Require(capability.GetProperty("readable_asset_formats").GetArrayLength() == 34);
+        Require(capability.GetProperty("readable_asset_formats").GetArrayLength() == AssetCodec.FormatVersion);
         var example = Data(AgentWorkspace.ExampleModel("finite-volume-fuel-discharge")); var workspace = new AgentWorkspace();
         string parent = Data(workspace.CreateSession(example)).GetProperty("session_id").GetString()!, child = Data(workspace.ForkSession(parent, "0")).GetProperty("session_id").GetString()!;
         Data(workspace.SetInputs(child, "0", [new("100", 0)])); Data(workspace.StepSession(child, "1", "1000000"));

@@ -31,8 +31,9 @@ flowchart LR
 | ドキュメント | 内容 |
 |---|---|
 | [エージェント API](AGENT_API.ja.md) | MCP ツール、リビジョン、エラー、操作シーケンス |
-| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v34 と、v1 から v33 までのリーダー |
+| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v35 と、v1 から v34 までのリーダー |
 | [蒸気質量分率を凍結した燃料流出と有限受容室](FUEL_DISCHARGE.ja.md) | 凍結蒸気分率のチョーク、有限液体排除、物理ポンプ/ニードル燃焼 |
+| [有限液体燃料管路の運動量](FUEL_INERTIAL_PIPE.ja.md) | 有限液体在庫、動的流量、熱混合、保存的管路仕事 |
 | [液体入口の運動量参照](LIQUID_COLUMN.ja.md) | 単相入口慣性、摩擦熱、独立検証した二次運動量 |
 | [ネイティブ Zig 境界](NATIVE_ZIG.ja.md) | 保管された Zig プロトタイプと、バージョン付き ABI |
 

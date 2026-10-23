@@ -37,6 +37,6 @@ S_produced = H_friction / T
 
 매개변수는 `unverified`입니다. 압력 하한은 호출자가 선언한 액상 유효 경계이며 증기압이나 NPSH 예측이 아닙니다. 압축성, 음파, 중력, 이동 형상, 열 저장, 공동현상, 상간 미끄럼과 상 완화는 범위 밖입니다. 2상 연료 연결은 준정적입니다. 실제 Unity 수용과 실측 보정은 별도입니다.
 
-명시적 관로 에너지 재고와 호환 포트 엔탈피로 액체 운동량 기준을 유한 연료 네트워크에 연결합니다. 공동현상 입구를 주장하기 전에 변밀도·상변화 유효성을 확립합니다. 상 완화, 점화, 흡배기, 손실과 ECU/TCU 협조를 계속합니다.
+`fuel_inertial_pipe`는 두 유한 연료 노드와 유한 열벽을 연결합니다. 수평 강체 관로는 양 용기 외에 자체 액체 질량, 열 내부에너지와 운동에너지를 갖습니다. 밀도는 일정하고 온도는 완전 혼합으로 변합니다. 포트와 관로 전체가 액체여야 하며 기존 준정적 연결은 별도 2상 거동을 유지합니다. [유한 액체 연료 관로 운동량](FUEL_INERTIAL_PIPE.ko.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: pipe flow models](https://doc.modelica.org/om/Modelica.Fluid.Pipes.BaseClasses.FlowModels.html) · [VALIDATION.md](VALIDATION.md)

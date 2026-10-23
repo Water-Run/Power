@@ -19,7 +19,7 @@ accepted Unity desktop application remain unfinished.
 | Hydraulics | Compliant volumes, restrictions, pumps with explicit leakage/drag, relief, dynamic pistons, metered spools and finite-energy gas accumulators | Measured valve/accumulator/pump maps, seal friction, cavitation and complete transmission hydraulics |
 | Electrical | RL motors, reciprocal variable-inductance solenoids, finite-charge battery, resistance/RC polarization, averaged duty conversion and accessories | Measured chemistry/thermal behavior, BMS, current control and complete supply integration |
 | Controls | Sampled pressure PI, needle dose/closure control, staged DCT handoff and pressure-feedback AT shifts with physical lock confirmation | ECU/TCU torque coordination, sensors, actuators and fault handling |
-| Documents and assets | 54 JSON/CLI laboratories, 53 MCP examples, asset v34 with v1-v33 readers | Workbench editing/saving and calibrated model collections |
+| Documents and assets | 56 JSON/CLI laboratories, 55 MCP examples, asset v35 with v1-v34 readers | Workbench editing/saving and calibrated model collections |
 | Agents | Twelve schema-defined MCP tools; compact evidence, revision checks and actionable diagnostics | Complete workflows for the remaining physical/control scope |
 | Unity | Model import, exact-tick playback, schematic 3D components, controls, reset and prepared lifecycle tests | Actual Editor/Play acceptance, selectable plots, graph editing/saving and Player/IL2CPP |
 | Native archive | Zig 0.15.2 research prototypes, preserved ABI and original source provenance | Historical reference; managed migration remains separate from full functionality |
@@ -30,6 +30,8 @@ C# 9. Unity loads the Standard assemblies built by the external SDK; it doesn't
 compile .NET 10/C# 14 source.
 
 `LiquidColumn` is a standalone C# reference for a horizontal rigid pipe with constant area, uniform velocity, constant liquid density and constant temperature. Absolute port pressures are prescribed during each local interval. Linear and quadratic resistance coefficients are explicit research inputs. It is not a graph component, and it does not change the existing fuel network or nozzle equations. [Liquid inlet momentum reference](LIQUID_COLUMN.md)
+
+A `fuel_inertial_pipe` connects two finite fuel nodes and a finite thermal wall. Its rigid horizontal line owns liquid mass, caloric energy and kinetic energy, in addition to the inventories of both vessels. The line has constant density and a well-mixed variable temperature. Both ports and the entire line must remain liquid; the existing quasi-static links retain their separate two-phase behavior. [Finite liquid fuel line momentum](FUEL_INERTIAL_PIPE.md)
 
 ## Evidence and limits
 

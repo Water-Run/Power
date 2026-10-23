@@ -2,6 +2,77 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: 有限液体燃料管路の運動量
+
+`fuel_inertial_pipe` は二つの有限燃料ノードと有限熱壁を接続します。水平剛体管は両容器に加えて独自の液体質量、熱内部エネルギー、運動エネルギーを持ちます。密度一定で温度は完全混合により変化します。ポートと管路全体が液相である必要があり、既存の準静的リンクは別の二相挙動を保ちます。
+
+独立した有限コンプライアンス調和解と非線形運動量・温度 RK4 で精度と一次収束を検査します。熱配分、対エントロピー、逆流、全収支、クラッチ試行区間、無割り当て、巻戻し、取消、独立分岐を確認します。可搬資産と実 MCP が全標本境界を確認します。実測校正や実 Unity 合格ではありません。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 513/513 |
+| standard_checks_on_dotnet | 401/401 |
+| actual_mcp_groups | 60/60 |
+| laboratories | 56 |
+| agent_examples | 55 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| all_sample_boundaries | 7531 |
+| new_core_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_steps | 10000, 20000 |
+| asset_version | power.asset.v35 |
+| agent_api_version | 0.40.0 |
+| fingerprint_tag | 40 |
+| fuel_pipe_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_quantity_fields | 7 |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| v34_fixture_sha256 | 51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587 |
+| verification_log_sha256 | b766d0d57f17dbc37d5565d0b33d528e075c2b4f0aa4a3452b6ac9047a613e07 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 56 |
+| schema_negative_cases | 12 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| finite_compliance_harmonic | 2000000, 1000000, 500000, 250000 | 0.0013357399212237996, 0.0006672710470717257, 0.0003334847696376677, 0.0001667045683679429 |
+| nonlinear_thermal | 200000, 100000, 50000, 25000 | 1.5209877863320287e-05, 7.53194873812646e-06, 3.7476001908842706e-06, 1.8691907269996478e-06 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| inertial-fuel-line | 9b7f2a6b6b3cb7b7 | 549f8d1c054b2b3f | 71 | 1.1641532182693481e-10 |
+| inertial-pump-fed-cylinder | 3ff9ef7bd3e02dfb | 3e16e08ae5051507 | 81 | 1.2129731885579531e-08 |
+
+- `artifacts/reports/fuel-pipe-final-2026-10-23.log`
+- `artifacts/reports/fuel-pipe-evidence-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-baseline-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-schema-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-provenance-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-doc-audit-2026-10-23.json`
+
+運動量は中点流量と採用終端圧力を使います。ポートエネルギーと混合は後退オイラーなので連成全体は一次収束です。無摩擦でも終端圧力離散化が振動の一部を数値熱に変えますが、物理摩擦には計上しません。対エントロピーは混合と時間離散化を含みます。ゼロ流量イベントで正逆輸送履歴を分離します。
+
+パラメーターは `unverified` です。材料の温度・圧力範囲と圧力補正した液相安定性を守ります。失敗区間は全て戻り、刻みを減らして供給枯渇・圧力・相を確認します。変密度二相運動量、キャビテーション、音波、重力、移動管形、解像熱前線は含みません。規定燃焼は詳細な化学平衡や反応エントロピー精度を示しません。
+
 ## 2026-10-20: 液体入口の運動量参照
 
 `LiquidColumn` は水平剛体管の独立 C# 参照です。断面積、均一速度、液体密度、温度を一定とし、各局所区間の絶対ポート圧力を指定します。線形・二次抵抗は明示した研究入力です。グラフコンポーネントではなく、燃料ネットワークやノズル方程式を変更しません。

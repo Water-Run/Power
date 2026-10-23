@@ -26,7 +26,7 @@ Le sous-pas mécanique fermé conserve masse et entropie. L'énergie comprend fl
 
 Demander `equilibrium-fuel-pump` ou `electric-equilibrium-fuel-pump` par MCP, ou exécuter leur JSON par CLI. Lire masse, température, pression, vapeur et énergie avec livraison des clapets et vitesse d'arbre. Le `volume` du composant est géométrique ; le `volume` du nœud inclut la dilatation de paroi. `torque`, `hydraulic_power` et `hydraulic_work` exposent l'échange interne d'arbre.
 
-Pression/travail du liquide, adiabates de vapeur idéale et inversion indépendante de l'entropie diphasique vérifient la fermeture. Le mouvement liquide fermé montre l'ordre deux ; remplissage/livraison avec changement de phase montre l'ordre un face à une référence RK4 inversée indépendamment. Sous-alimentation, apport liquide complet, moteur électrique, composition engrenages/hydraulique/embrayage, rejeu, rollback et allocations couvrent l'intégration. L'asset v34 stocke la géométrie et lit v1-v33. Unity Editor/Play/Player/IL2CPP réel reste non vérifié.
+Pression/travail du liquide, adiabates de vapeur idéale et inversion indépendante de l'entropie diphasique vérifient la fermeture. Le mouvement liquide fermé montre l'ordre deux ; remplissage/livraison avec changement de phase montre l'ordre un face à une référence RK4 inversée indépendamment. Sous-alimentation, apport liquide complet, moteur électrique, composition engrenages/hydraulique/embrayage, rejeu, rollback et allocations couvrent l'intégration. L'asset v35 stocke la géométrie et lit v1-v34. Unity Editor/Play/Player/IL2CPP réel reste non vérifié.
 
 ## Travail restant
 

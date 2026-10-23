@@ -31,8 +31,9 @@ flowchart LR
 | Document | De quoi il s'agit |
 |---|---|
 | [API agent](AGENT_API.fr.md) | Outils MCP, révisions, erreurs et la séquence d'opérations |
-| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v34 et les lecteurs de v1 à v33 |
+| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v35 et les lecteurs de v1 à v34 |
 | [Décharge de carburant à titre figé et récepteurs finis](FUEL_DISCHARGE.fr.md) | Étranglement à titre figé, déplacement liquide fini et combustion avec pompe/aiguille physiques |
+| [Quantité de mouvement d'une ligne finie de carburant liquide](FUEL_INERTIAL_PIPE.fr.md) | Inventaire liquide fini, débit dynamique, mélange thermique et travail conservatif |
 | [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md) | Inertie d'entrée monophasique, chaleur de friction et quantité de mouvement au second ordre vérifiée |
 | [Frontière Zig native](NATIVE_ZIG.fr.md) | Les prototypes Zig archivés et l'ABI versionnée |
 

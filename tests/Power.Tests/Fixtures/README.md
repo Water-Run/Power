@@ -319,3 +319,15 @@ displacement and frozen-quality nozzle records. Keep these authentic bytes.
 SHA-256: `3e3804c7277baea26c330c47a319669c5f61142486fb73f127679e56192fe9ba`.
 `FuelDischargeAssetChecks` checks the digest and every original/upgraded replay
 boundary. The Power! GPL license and Unity Linking Exception apply.
+
+## Pump-fed finite-volume cylinder v34
+
+`pump-fed-finite-volume-cylinder-v34.powerasset` retains the v34 writer output
+from commit `529542e047a52d1a5b3a1096a01b9774421b347a`, copied before changing
+the encoder on 2026-10-23. It preserves pump, physical needle, frozen-quality
+discharge and finite receiver records before the inertial liquid line extension.
+
+SHA-256: `51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587`.
+`FuelPipeAssetChecks` verifies the authentic digest and every original/upgraded
+replay boundary. Keep these original bytes. The Power! GPL license and Unity
+Linking Exception apply.

@@ -10,9 +10,11 @@ The fuel-domain pump now feeds a physical needle and frozen-quality discharge in
 
 `LiquidColumn` is a standalone C# reference for a horizontal rigid pipe with constant area, uniform velocity, constant liquid density and constant temperature. Absolute port pressures are prescribed during each local interval. Linear and quadratic resistance coefficients are explicit research inputs. It is not a graph component, and it does not change the existing fuel network or nozzle equations. [Liquid inlet momentum reference](LIQUID_COLUMN.md)
 
+A `fuel_inertial_pipe` connects two finite fuel nodes and a finite thermal wall. Its rigid horizontal line owns liquid mass, caloric energy and kinetic energy, in addition to the inventories of both vessels. The line has constant density and a well-mixed variable temperature. Both ports and the entire line must remain liquid; the existing quasi-static links retain their separate two-phase behavior. [Finite liquid fuel line momentum](FUEL_INERTIAL_PIPE.md)
+
 ## Next increment
 
-Connect the liquid momentum reference to the finite fuel network with an explicit line energy inventory and compatible port enthalpy. Establish variable-density and phase-change validity before claiming cavitating inlet dynamics. Continue phase relaxation, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. [Liquid inlet momentum reference](LIQUID_COLUMN.md)
+Extend line momentum to variable-density and phase-changing states with a compatible energy/entropy closure before claiming cavitating inlet dynamics. Then continue phase relaxation/slip, ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Finite liquid fuel line momentum](FUEL_INERTIAL_PIPE.md)
 
 ## Acceptance
 

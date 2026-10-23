@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 34
+## Текущая версия 35
+
+`fuel_inertial_pipe` соединяет два конечных топливных узла и конечную тепловую стенку. Горизонтальная жёсткая линия имеет собственные массу жидкости, калорическую и кинетическую энергии сверх запасов сосудов. Плотность постоянна, температура переменна при полном смешении. Порты и линия остаются жидкими; квазистатические связи сохраняют отдельную двухфазную модель.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[Импульс конечной линии жидкого топлива](FUEL_INERTIAL_PIPE.ru.md)
+
+
+## Сохранённая версия 34
 
 `fuel_discharge` связывает конечный источник топливного домена с газовым узлом `finite_fuel_film`. Задайте `phase_mode` как `frozen`: массовая доля пара постоянна в сопле, а объёмы на концах вновь уравновешиваются. Однородные фазы имеют общие температуру и скорость; жидкость несжимаема, пар — идеальная псевдокомпонента. Свойства и плотность жидкости должны совпадать.
 

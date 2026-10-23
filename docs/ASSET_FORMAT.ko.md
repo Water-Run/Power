@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 34
+## 현재 버전 35
+
+`fuel_inertial_pipe`는 두 유한 연료 노드와 유한 열벽을 연결합니다. 수평 강체 관로는 양 용기 외에 자체 액체 질량, 열 내부에너지와 운동에너지를 갖습니다. 밀도는 일정하고 온도는 완전 혼합으로 변합니다. 포트와 관로 전체가 액체여야 하며 기존 준정적 연결은 별도 2상 거동을 유지합니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[유한 액체 연료 관로 운동량](FUEL_INERTIAL_PIPE.ko.md)
+
+
+## 보존 버전 34
 
 `fuel_discharge`는 유한 연료 도메인 공급원을 `finite_fuel_film`의 기체 노드에 연결합니다. `phase_mode`를 `frozen`으로 선언하면 노즐 통과 중 증기 질량분율은 고정되고 양쪽 벌크는 다시 평형화됩니다. 균질 두 상은 온도와 속도를 공유합니다. 액체는 비압축성이고 증기는 이상 의사 종입니다. 재료 특성과 액체 밀도가 같아야 합니다.
 

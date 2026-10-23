@@ -15,7 +15,7 @@ Power! a un cœur de simulation managé, des documents de modèle partagés et d
 | Hydraulique | Volumes souples, restrictions, pompes avec fuites/traînée explicites, décharge, pistons dynamiques, coulisseaux dosés et accumulateurs à gaz à énergie finie | Cartes mesurées de vanne/accumulateur/pompe, frottement de joint, cavitation et hydraulique de transmission complète |
 | Électrique | Moteurs RL, solénoïdes à inductance variable réciproques, batterie à charge finie, polarisation résistance/RC, conversion de rapport cyclique moyennée et accessoires | Comportement chimique/thermique mesuré, BMS, contrôle de courant et intégration complète de l'alimentation |
 | Contrôles | PI de pression échantillonné, dosage/fermeture d'aiguille, transfert DCT étagé et changements AT par retour de pression avec confirmation physique du verrouillage | Coordination de couple ECU/TCU, capteurs, actionneurs et traitement des défauts |
-| Documents et assets | 54 laboratoires JSON/CLI, 53 exemples MCP, asset v34 et lecteurs v1-v33 | Édition/enregistrement et collections de modèles calibrés |
+| Documents et assets | 56 laboratoires JSON/CLI, 55 exemples MCP, asset v35 et lecteurs v1-v34 | Édition/enregistrement et collections de modèles calibrés |
 | Agents | Douze outils MCP définis par schéma ; preuves compactes, contrôles de révision et diagnostics actionnables | Flux complets pour le périmètre physique/contrôle restant |
 | Unity | Import de modèle, rejeu à tick exact, composants 3D schématiques, contrôles, réinitialisation et tests de cycle de vie préparés | Acceptation réelle Editor/Play, tracés sélectionnables, édition/enregistrement de graphe et Player/IL2CPP |
 | Archive native | Prototypes de recherche Zig 0.15.2, ABI préservée et provenance des sources d'origine | Référence historique ; la migration managée reste séparée de la fonctionnalité complète |
@@ -23,6 +23,8 @@ Power! a un cœur de simulation managé, des documents de modèle partagés et d
 Core et Assets ciblent à la fois `net10.0` et `netstandard2.1` ; le Core n'a aucune dépendance Unity, de transport, de fournisseur de modèle ou tierce. Les scripts Unity Assets utilisent C# 9. Unity charge les assemblys Standard construits par le SDK externe ; il ne compile pas de source .NET 10/C# 14.
 
 `LiquidColumn` est une référence C# autonome pour un tube horizontal rigide à section, vitesse uniforme, masse volumique liquide et température constantes. Les pressions absolues aux ports sont prescrites pendant chaque intervalle. Les résistances linéaire et quadratique sont des entrées de recherche explicites. Ce n'est pas un composant du graphe ; les équations du réseau et de la tuyère restent inchangées. [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md)
+
+Un `fuel_inertial_pipe` relie deux nœuds de carburant finis et une paroi thermique finie. La ligne horizontale rigide possède masse liquide, énergie calorique et cinétique propres, en plus des réservoirs. Sa densité est constante, sa température variable et parfaitement mélangée. Les ports et toute la ligne restent liquides ; les liens quasi statiques gardent leur comportement diphasique séparé. [Quantité de mouvement d'une ligne finie de carburant liquide](FUEL_INERTIAL_PIPE.fr.md)
 
 ## Preuves et limites
 

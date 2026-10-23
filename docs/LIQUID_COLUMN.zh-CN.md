@@ -37,6 +37,6 @@ S_produced = H_friction / T
 
 参数保持 `unverified`。压力下限是调用方声明的液态有效边界，不是预测的蒸汽压或 NPSH 裕量。可压缩性、声波、重力、运动几何、热储存、空化、相间滑移和相变弛豫动力学不在本参考范围。现有两相燃油连接仍为准静态。实际 Unity 验收与实测硬件标定分别进行。
 
-将液体动量参考接入有限燃油网络，显式记入管路能量库存并匹配端口焓。在宣称空化入口动力学前建立变密度和相变有效性。继续相变弛豫、点火、进排气、机械损失及 ECU/TCU 协调控制。
+`fuel_inertial_pipe` 连接两个有限燃油节点和有限热壁面。水平刚性管路拥有独立的液体质量、热内能与动能，不替代两端容器库存。管内密度恒定，温度随完全混合库存变化。端口及整条管路必须保持液态；现有准静态连接保留各自的两相行为。 [有限液体燃油管路动量](FUEL_INERTIAL_PIPE.zh-CN.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: pipe flow models](https://doc.modelica.org/om/Modelica.Fluid.Pipes.BaseClasses.FlowModels.html) · [VALIDATION.md](VALIDATION.md)

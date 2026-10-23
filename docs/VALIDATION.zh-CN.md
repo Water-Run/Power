@@ -2,6 +2,77 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: 有限液体燃油管路动量
+
+`fuel_inertial_pipe` 连接两个有限燃油节点和有限热壁面。水平刚性管路拥有独立的液体质量、热内能与动能，不替代两端容器库存。管内密度恒定，温度随完全混合库存变化。端口及整条管路必须保持液态；现有准静态连接保留各自的两相行为。
+
+独立有限柔性谐振解及单独的非线性动量/温度 RK4 积分验证精度与一阶细化。检查覆盖摩擦热分配、成对熵、物理反转、完整能量/质量/燃油账本、离合器试探区间、无分配步进、回滚、取消及独立分支。便携资产和实际 MCP 检查每个采样边界。这不证明硬件标定或实际 Unity 验收。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 513/513 |
+| standard_checks_on_dotnet | 401/401 |
+| actual_mcp_groups | 60/60 |
+| laboratories | 56 |
+| agent_examples | 55 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| all_sample_boundaries | 7531 |
+| new_core_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_steps | 10000, 20000 |
+| asset_version | power.asset.v35 |
+| agent_api_version | 0.40.0 |
+| fingerprint_tag | 40 |
+| fuel_pipe_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_quantity_fields | 7 |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| v34_fixture_sha256 | 51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587 |
+| verification_log_sha256 | b766d0d57f17dbc37d5565d0b33d528e075c2b4f0aa4a3452b6ac9047a613e07 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 56 |
+| schema_negative_cases | 12 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| finite_compliance_harmonic | 2000000, 1000000, 500000, 250000 | 0.0013357399212237996, 0.0006672710470717257, 0.0003334847696376677, 0.0001667045683679429 |
+| nonlinear_thermal | 200000, 100000, 50000, 25000 | 1.5209877863320287e-05, 7.53194873812646e-06, 3.7476001908842706e-06, 1.8691907269996478e-06 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| inertial-fuel-line | 9b7f2a6b6b3cb7b7 | 549f8d1c054b2b3f | 71 | 1.1641532182693481e-10 |
+| inertial-pump-fed-cylinder | 3ff9ef7bd3e02dfb | 3e16e08ae5051507 | 81 | 1.2129731885579531e-08 |
+
+- `artifacts/reports/fuel-pipe-final-2026-10-23.log`
+- `artifacts/reports/fuel-pipe-evidence-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-baseline-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-schema-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-provenance-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-doc-audit-2026-10-23.json`
+
+动量方程采用中点流量及接受的末态压力；端口能量与管内混合采用后向欧拉，因此完整耦合为一阶收敛。即使没有摩擦，末态压力离散也会将部分压力/动能振荡转为数值显热；该部分不记作物理摩擦。成对熵变化包含混合与时间离散。零流量事件分别保留正反向输运历史。
+
+参数保持 `unverified`。遵守材料温压区间与压力修正的液态稳定条件。失败区间完整回滚；减小节拍并检查源耗尽、压力及相态边界。模型不包含变密度两相动量、空化、声波、重力、运动管形及解析热前沿。规定燃烧不证明详细化学平衡或反应熵准确性。
+
 ## 2026-10-20: 液体入口动量参考
 
 `LiquidColumn` 是独立 C# 参考模型，描述水平刚性管中的恒定截面、均匀流速、恒定液体密度与恒定温度。每个局部区间内给定绝对端口压力。线性和二次阻力系数是显式研究输入。它不是图元件，不改变现有燃油网络或喷嘴方程。

@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — эксперименты без интерфейса"]
     mcp["Power.Mcp — 12 инструментов MCP через stdio"]
-    assets["Power.Assets — .powerasset v34"]
+    assets["Power.Assets — .powerasset v35"]
     unity["Студия Unity 6.6 — 3D-лаборатории"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | Узнать модели, ограничения, соглашения о времени и ревизиях. Начните отсюда. |
 | `get_model_schema` | JSON Schema 2020-12 для `power.model.v1` |
-| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (53 примера) |
+| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (55 примера) |
 | `validate_model` | Проверить модель без запуска; структурированная диагностика исправлений |
 | `run_experiment` | Ограниченный запуск без интерфейса с пакетным повтором, KPI и происхождением |
 | `export_model_asset` | Экспортировать переносимый `.powerasset` |
@@ -147,12 +147,14 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > Все параметры образцов — `unverified`: исследовательские значения, а не калиброванные измерения.
 
-Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v34`, читатели прежних активов сохранены.
+Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v35`, читатели прежних активов сохранены.
 
 Насос топливного домена теперь питает физическую иглу и сопло с замороженным паросодержанием в работающий цилиндр с конечным объёмом жидкости. Полные запасы включают фазовый переход, работу вытеснения, кинетическую энергию и импульс неподвижной стенке. [Подача топлива с замороженным паросодержанием в конечный приёмник](docs/FUEL_DISCHARGE.ru.md) [Фазоразрешающий топливный насос с приводом от вала](docs/FUEL_CHAMBER_PUMP.ru.md)
 
+`fuel_inertial_pipe` соединяет два конечных топливных узла и конечную тепловую стенку. Горизонтальная жёсткая линия имеет собственные массу жидкости, калорическую и кинетическую энергии сверх запасов сосудов. Плотность постоянна, температура переменна при полном смешении. Порты и линия остаются жидкими; квазистатические связи сохраняют отдельную двухфазную модель. [Импульс конечной линии жидкого топлива](docs/FUEL_INERTIAL_PIPE.ru.md)
+
 <details>
-<summary>Доступные лаборатории (54)</summary>
+<summary>Доступные лаборатории (56)</summary>
 
 | Имя образца (`get_example_model`) | Лаборатория | Что проверяет |
 |---|---|---|
@@ -210,6 +212,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | двигатель постоянного тока, жидкостное наполнение и конечное тепло стенки мотора |
 | `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | Подача топлива с замороженным паросодержанием в конечный приёмник |
 | `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Критический поток с замороженным паросодержанием, конечное вытеснение и физический насос/игла |
+| `inertial-fuel-line` | `assets/labs/inertial-fuel-line.power.json` | Конечная жидкость, динамический расход, тепловое смешение и сохраняющая работа |
+| `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | Конечная жидкость, динамический расход, тепловое смешение и сохраняющая работа |
 
 </details>
 

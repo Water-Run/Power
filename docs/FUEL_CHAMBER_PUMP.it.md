@@ -26,7 +26,7 @@ Il sottopasso meccanico chiuso conserva massa ed entropia. L’energia include f
 
 Richiedere `equilibrium-fuel-pump` o `electric-equilibrium-fuel-pump` tramite MCP o eseguire JSON in CLI. Leggere massa, temperatura, pressione, vapore ed energia insieme a erogazione valvole e velocità dell’albero. `volume` del componente è geometrico; `volume` del nodo include dilatazione della parete. `torque`, `hydraulic_power`, `hydraulic_work` espongono lo scambio interno.
 
-Pressione/lavoro liquidi, adiabatiche di vapore ideale e inversione indipendente dell’entropia bifase verificano la chiusura. Il moto liquido chiuso raffina al secondo ordine; riempimento/erogazione con fase al primo contro RK4 invertito indipendentemente. Ingresso insufficiente e pieno, motore elettrico, ingranaggi/idraulica/frizione, replay, rollback e allocazioni coprono l’integrazione. Asset v34 salva geometria e legge v1-v33. Unity Editor/Play/Player/IL2CPP effettivo resta non verificato.
+Pressione/lavoro liquidi, adiabatiche di vapore ideale e inversione indipendente dell’entropia bifase verificano la chiusura. Il moto liquido chiuso raffina al secondo ordine; riempimento/erogazione con fase al primo contro RK4 invertito indipendentemente. Ingresso insufficiente e pieno, motore elettrico, ingranaggi/idraulica/frizione, replay, rollback e allocazioni coprono l’integrazione. Asset v35 salva geometria e legge v1-v34. Unity Editor/Play/Player/IL2CPP effettivo resta non verificato.
 
 ## Lavoro rimanente
 

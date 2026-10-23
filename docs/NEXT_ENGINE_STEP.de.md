@@ -10,9 +10,11 @@ Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampf
 
 `LiquidColumn` ist eine eigenständige C#-Referenz für ein waagerechtes starres Rohr mit konstantem Querschnitt, gleichförmiger Geschwindigkeit, Flüssigkeitsdichte und Temperatur. Absolute Portdrücke sind je Intervall vorgegeben. Lineare und quadratische Widerstände sind explizite Forschungswerte. Es ist keine Graphkomponente; Netzwerk und Düsen bleiben unverändert. [Referenz für den Impuls am Flüssigkeitseinlass](LIQUID_COLUMN.de.md)
 
+Ein `fuel_inertial_pipe` verbindet zwei endliche Kraftstoffknoten und eine endliche Wärmewand. Die waagerechte starre Leitung besitzt zusätzlich Flüssigkeitsmasse, kalorische und kinetische Energie. Ihre Dichte bleibt konstant, ihre vollständig gemischte Temperatur ändert sich. Ports und gesamte Leitung bleiben flüssig; quasistatische Verbindungen behalten ihr separates Zweiphasenverhalten. [Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md)
+
 ## Nächster Schritt
 
-Flüssigkeitsimpuls mit explizitem Leitungsenergieinventar und passenden Portenthalpien an das endliche Kraftstoffnetz koppeln. Veränderliche Dichte und Phasenwechsel prüfen, bevor kavitierende Einlassdynamik beansprucht wird. Weiter mit Relaxation, Zündung, Gaswechsel, Verlusten und ECU/TCU-Koordination. [Referenz für den Impuls am Flüssigkeitseinlass](LIQUID_COLUMN.de.md)
+Leitungsimpuls mit passender Energie-/Entropieschließung auf veränderliche Dichte und Phasenwechsel erweitern, bevor kavitierende Einlassdynamik beansprucht wird. Dann Relaxation/Schlupf, Zündung, Gaswechsel, Verluste, Getriebebetätigung und ECU/TCU fortführen. Messkalibrierung und tatsächliche Unity-Abnahme sind separat. [Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md)
 
 ## Abnahme
 
