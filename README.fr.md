@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — expériences sans interface"]
     mcp["Power.Mcp — 12 outils MCP sur stdio"]
-    assets["Power.Assets — .powerasset v24"]
+    assets["Power.Assets — .powerasset v36"]
     unity["Studio Unity 6.6 — laboratoires 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Le service expose douze outils avec schémas d'entrée et de sortie :
 |---|---|
 | `get_capabilities` | Découvrir les modèles, les limites, les conventions de temps et de révision. Commencez ici. |
 | `get_model_schema` | JSON Schema 2020-12 pour `power.model.v1` |
-| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (33 exemples) |
+| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (57 exemples) |
 | `validate_model` | Valider un modèle sans l'exécuter ; diagnostics de réparation structurés |
 | `run_experiment` | Exécution sans interface bornée, avec rejeu par lots, KPI et provenance |
 | `export_model_asset` | Exporter un `.powerasset` portable |
@@ -147,10 +147,16 @@ Un graphe de recherche Ravigneaux à quatre plages ajoute des chemins planétair
 > [!NOTE]
 > Tous les paramètres d'exemple sont `unverified` — des valeurs de recherche, pas des mesures calibrées.
 
-Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v24`, avec conservation des lecteurs pour les assets antérieurs.
+Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v36`, avec conservation des lecteurs pour les assets antérieurs.
+
+La pompe du domaine carburant alimente désormais une aiguille physique et une décharge à titre figé dans un récepteur allumé à volume liquide fini. Les inventaires incluent changement de phase, travail de déplacement, énergie cinétique du jet et impulsion à la paroi immobile. [Décharge de carburant à titre figé et récepteurs finis](docs/FUEL_DISCHARGE.fr.md) [Pompe carburant diphasique entraînée par arbre](docs/FUEL_CHAMBER_PUMP.fr.md)
+
+Un `fuel_inertial_pipe` relie deux nœuds de carburant finis et une paroi thermique finie. La ligne horizontale rigide possède masse liquide, énergie calorique et cinétique propres, en plus des réservoirs. Sa densité est constante, sa température variable et parfaitement mélangée. Les ports et toute la ligne restent liquides ; les liens quasi statiques gardent leur comportement diphasique séparé. [Quantité de mouvement d'une ligne finie de carburant liquide](docs/FUEL_INERTIAL_PIPE.fr.md)
+
+Un `equilibrium_fuel_duct` transporte masse, quantité de mouvement et énergie totale dans des cellules explicites `compressible_fuel`. Le liquide est compressible et la vapeur idéale ; les phases partagent pression, température et vitesse. L’équilibre local permet condensation et vaporisation éclair. Deux réservoirs stationnaires finis et une paroi thermique finie ferment les bilans. [Conduites de carburant compressible à l’équilibre](docs/EQUILIBRIUM_FUEL_DUCT.fr.md)
 
 <details>
-<summary>Laboratoires disponibles (34)</summary>
+<summary>Laboratoires disponibles (58)</summary>
 
 | Nom d'exemple (`get_example_model`) | Laboratoire | Ce qu'il exerce |
 |---|---|---|
@@ -188,8 +194,38 @@ Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI
 | `ravigneaux-transmission` | `assets/labs/ravigneaux-transmission.power.json` | passations montée/descente planétaires composées à quatre plages |
 | `fired-ravigneaux-converter` | `assets/labs/fired-ravigneaux-converter.power.json` | moteur allumé, convertisseur/verrouillage et transmission composée |
 | `controlled-fired-dual-clutch` | `assets/labs/controlled-fired-dual-clutch.power.json` | moteur allumé avec contrôle DCT échantillonné et preuves complètes |
+| `controlled-hydraulic-ravigneaux` | `assets/labs/controlled-hydraulic-ravigneaux.power.json` | régulation échantillonnée de pression et confirmation du rapport/verrouillage réel |
+| `controlled-fired-hydraulic-ravigneaux` | `assets/labs/controlled-fired-hydraulic-ravigneaux.power.json` | moteur allumé avec changements AT hydrauliques en boucle fermée |
+| `pump-fed-liquid-cylinder` | `assets/labs/pump-fed-liquid-cylinder.power.json` | remplissage de rampe par l'arbre, mélange calorique et bilans complets |
+| `pump-fed-needle-cylinder` | `assets/labs/pump-fed-needle-cylinder.power.json` | rampe alimentée par pompe avec aiguille physique et dosage |
+| `finite-tank-liquid-cylinder` | `assets/labs/finite-tank-liquid-cylinder.power.json` | épuisement du réservoir fini, pompage à sec et transfert interne |
+| `finite-tank-needle-cylinder` | `assets/labs/finite-tank-needle-cylinder.power.json` | alimentation finie avec aiguille physique et évaporation |
+| `equilibrium-tank-supply` | `assets/labs/equilibrium-tank-supply.power.json` | inversion de pompe, phases à densité finie, chauffage et évent avec carburant |
+| `equilibrium-tank-fired-cylinder` | `assets/labs/equilibrium-tank-fired-cylinder.power.json` | moteur avec équilibre du réservoir fini et aspiration liquide conservative |
+| `equilibrium-fuel-cell` | `assets/labs/equilibrium-fuel-cell.power.json` | condensation avec paroi finie, évaporation par ventilation et bilans de phase |
+| `equilibrium-injected-cylinder` | `assets/labs/equilibrium-injected-cylinder.power.json` | alimentation en équilibre, combustion vapeur seule et marges entrée/rail |
+| `vented-tank-liquid-cylinder` | `assets/labs/vented-tank-liquid-cylinder.power.json` | espace gazeux fini, travail de pression interne et ventilation contrôlée |
+| `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | espace gazeux et ventilation avec dynamique physique de l’aiguille |
+| `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | retour de décharge, mélange simultané réservoir/rampe et chaleur des pertes |
+| `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | carburant recirculé avec aiguille physique et rejeu complet |
+| `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | décharge liquide vers coexistence, événements de vanne et chaleur de paroi finie |
+| `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | transport inverse du mélange et couplage thermique à un laboratoire électromécanique |
+| `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | sous-alimentation, vapeur volumique et livraison par arbre en roue libre |
+| `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | moteur CC, remplissage liquide alimenté et chaleur de paroi moteur finie |
+| `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | Décharge de carburant à titre figé et récepteurs finis |
+| `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Étranglement à titre figé, déplacement liquide fini et combustion avec pompe/aiguille physiques |
+| `inertial-fuel-line` | `assets/labs/inertial-fuel-line.power.json` | Inventaire liquide fini, débit dynamique, mélange thermique et travail conservatif |
+| `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | Inventaire liquide fini, débit dynamique, mélange thermique et travail conservatif |
+| `equilibrium-fuel-condensing-duct` | `assets/labs/equilibrium-fuel-condensing-duct.power.json` | Une alimentation liquide finie condense le mélange humide de la conduite |
+| `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | Le liquide de la conduite se vaporise vers des réservoirs diphasiques finis |
 
 </details>
+
+Lister tous les laboratoires en JSON :
+
+```sh
+dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll list-labs
+```
 
 Demandez `get_example_model` avec un `name`, ou exécutez directement :
 
@@ -203,7 +239,7 @@ La construction exporte un `.powerasset` correspondant pour chaque laboratoire. 
 
 Des groupes motopropulseurs complets sont l'objectif, pas l'état actuel. Encore ouvert :
 
-- Comportement moteur complet : modélisation admission/échappement, pompage/ravitaillement liquide, comportement magnétique/électronique/pulvérisation affiné, phases dépendant de la pression, thermochimie plus riche et contrôle d'allumage.
+- Comportement moteur complet : ballottement/forme hydrostatique, transport diphasique pompe/rail et cavitation, remplissage/régulation de pompe mesurés, magnétisme/électronique/pulvérisation affinés, allumage, admission/échappement, pertes mécaniques et thermochimie plus riche.
 - Actionnement DCT complet, topologie AT et contrôles de transmission (ECU/TCU).
 - Cartes mesurées de pertes et de contrôle de pompe, chimie de batterie et BMS mesurés, dynamiques mesurées de vannes/accumulateurs.
 - Groupes motopropulseurs calibrés.
@@ -219,7 +255,7 @@ La recherche OEM pour EA211 DJS + DQ200 et PSA EC5 + AT8 reste dans [assets/samp
 | Projet | [Architecture](docs/ARCHITECTURE.fr.md) · [Feuille de route](docs/ROADMAP.fr.md) · [État du développement](docs/DEVELOPMENT_STATUS.fr.md) · [Registre de validation](docs/VALIDATION.fr.md) · [Notes de reprise moteur](docs/NEXT_ENGINE_STEP.fr.md) |
 | Interfaces | [API agent](docs/AGENT_API.fr.md) · [Format d'asset](docs/ASSET_FORMAT.fr.md) · [Frontière Zig native](docs/NATIVE_ZIG.fr.md) |
 | Moteur et gaz | [Cylindre fermé](docs/SEALED_CYLINDER.fr.md) · [Réseau gazeux](docs/GAS_NETWORK.fr.md) · [Échange gazeux](docs/GAS_EXCHANGE.fr.md) · [Cylindre mobile](docs/MOVING_CYLINDER.fr.md) · [Calage des soupapes](docs/VALVE_TIMING.fr.md) · [Combustion prémélangée](docs/PREMIXED_COMBUSTION.fr.md) |
-| Carburant et injection | [Dosage carburant](docs/FUEL_METERING.fr.md) · [Film carburant](docs/FUEL_FILM.fr.md) · [Injection liquide](docs/LIQUID_FUEL_INJECTION.fr.md) · [Actionnement d'aiguille](docs/NEEDLE_ACTUATION.fr.md) · [Prédiction de fermeture](docs/CLOSURE_PREDICTION.fr.md) |
+| Carburant et injection | [Dosage carburant](docs/FUEL_METERING.fr.md) · [Film carburant](docs/FUEL_FILM.fr.md) · [Injection liquide](docs/LIQUID_FUEL_INJECTION.fr.md) · [Actionnement d'aiguille](docs/NEEDLE_ACTUATION.fr.md) · [Prédiction de fermeture](docs/CLOSURE_PREDICTION.fr.md) · [Géométrie du réservoir et espace gazeux fini](docs/TANK_HEADSPACE.fr.md) · [Équilibre des phases du carburant et limites d'alimentation](docs/FUEL_PHASE_EQUILIBRIUM.fr.md) · [Équilibre du réservoir à volume fini](docs/TANK_PHASE_EQUILIBRIUM.fr.md) |
 | Transmission | [Réseau d'embrayages](docs/CLUTCH_NETWORK.fr.md) · [Physique d'embrayage](docs/CLUTCH_PHYSICS.fr.md) · [Réseau d'engrenages](docs/GEAR_NETWORK.fr.md) · [Engrenages idéaux](docs/IDEAL_GEARS.fr.md) · [Convertisseur](docs/CONVERTER_NETWORK.fr.md) · [Transmission double embrayage](docs/DUAL_CLUTCH_TRANSMISSION.fr.md) · [Contrôle DCT](docs/DCT_CONTROL.fr.md) · [Transmission Ravigneaux](docs/RAVIGNEAUX_TRANSMISSION.fr.md) · [Planétaires résolus](docs/RESOLVED_PLANETS.fr.md) |
 | Hydraulique | [Réseau hydraulique](docs/HYDRAULIC_NETWORK.fr.md) · [Pompe](docs/HYDRAULIC_PUMP.fr.md) · [Piston](docs/HYDRAULIC_PISTON.fr.md) · [Coulisseau](docs/HYDRAULIC_SPOOL.fr.md) · [Accumulateur à gaz](docs/GAS_PISTON.fr.md) · [Actionnement AT](docs/AT_HYDRAULIC_ACTUATION.fr.md) |
 

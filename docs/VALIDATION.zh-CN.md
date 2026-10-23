@@ -2,6 +2,990 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: 可压缩平衡燃料管路
+
+`equilibrium_fuel_duct` 通过显式的 `compressible_fuel` 单元输运质量、动量和总能量。液体可压缩，蒸气为理想气体；两相共享压力、温度和速度。局部平衡允许凝结与闪蒸。两个有限静止储罐和一个有限热壁面闭合各项收支。
+
+运行 `equilibrium-fuel-condensing-duct` 或 `equilibrium-fuel-flashing-duct`。每个单元提供密度、速度、相分数、声速、温度和能量通道，可观测端口质量与能量、壁面冲量及完整库存。独立检查覆盖液体压缩功、理想蒸气极限、化学势相等、Clapeyron 与 Gibbs 关系、通过熵反演得到的声速、质量能量反演、守恒与有限壁面摩擦。声波单元平均误差在 8、16、24 个单元上依次减小。精确回放、回滚、取消、分支、无分配步进、可移植资产与实际 MCP 分别验证；详细结果保存在验证证据中。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 526/526 |
+| standard_checks_on_dotnet | 412/412 |
+| actual_mcp_groups | 62/62 |
+| laboratories | 58 |
+| agent_examples | 57 |
+| unchanged_laboratories | 56 |
+| identical_complete_sample_boundaries | 7531 |
+| all_sample_boundaries | 7553 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_method_order | 1 |
+| empirical_convergence_order_claimed | false |
+| asset_version | power.asset.v36 |
+| agent_api_version | 0.41.0 |
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_fuel_material_record_bytes | 160 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| cell_count_bounds | 1..24 |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112-115 |
+| v35_fixture_sha256 | a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4 |
+| verification_log_sha256 | f5620c5c36fb62b0f527ee4c6fd0d46608d7e6dfa1037c115d3b763133a8c0c0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 58 |
+| schema_negative_cases | 16 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | cell_counts | normalized_cell_average_errors |
+|---|---|---|
+| linear_vapor_acoustics | 8, 16, 24 | 0.09390287687165255, 0.0630137934898812, 0.04692764998969021 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | initial_first_cell_vapor_fraction | final_first_cell_vapor_fraction |
+|---|---|---|---|---|---|---|
+| equilibrium-fuel-condensing-duct | 2552e69b3a50eb9f | a74c5bd9f4c25940 | 11 | 1.1175870895385742e-08 | 0.1 | 0.00036893825719500376 |
+| equilibrium-fuel-flashing-duct | 040a92e35b2df96c | 45e5ec071dd06e39 | 11 | 1.1641532182693481e-10 | 0 | 0.0023026749474771954 |
+
+- `artifacts/reports/equilibrium-duct-final-2026-10-23.log`
+- `artifacts/reports/equilibrium-duct-verify-exit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-evidence-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-baseline-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-schema-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-provenance-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-doc-audit-2026-10-23.json`
+
+守恒 Rusanov 通量使用同一子步状态推进所有界面。速度上界取最大速度绝对值加材料声速上界。CFL 限制为 0.2 乘最小端口体积再除以截面积和速度，每个积分区间最多 4096 个子步。输运与局部精确阻力衰减采用一阶分裂。数值扩散计入总熵变，与单独报告的摩擦热区分。静止边界吸收储罐动量，机械功为零；流入动能在有限储罐内转化为内能。无效状态或超过舍入误差的熵减会拒绝整个批次。拒绝后应减小时间步，并检查材料边界与单元分辨率。
+
+参数仍为 `unverified`。须处于声明的温压范围内，并满足潜焓为正、两相共存比容分离及稀薄蒸气条件。这是采用瞬时均相平衡的刚性等截面水平管路，未包含有限速率成核、相间滑移、表面张力、重力、管壁弹性或真实流体临界行为。一阶数值扩散会抹平相变及声波前沿；守恒与回放不能证明空间精度或实测硬件有效性。实际 Unity 验收仍待完成。
+
+## 2026-10-23: 有限液体燃油管路动量
+
+`fuel_inertial_pipe` 连接两个有限燃油节点和有限热壁面。水平刚性管路拥有独立的液体质量、热内能与动能，不替代两端容器库存。管内密度恒定，温度随完全混合库存变化。端口及整条管路必须保持液态；现有准静态连接保留各自的两相行为。
+
+独立有限柔性谐振解及单独的非线性动量/温度 RK4 积分验证精度与一阶细化。检查覆盖摩擦热分配、成对熵、物理反转、完整能量/质量/燃油账本、离合器试探区间、无分配步进、回滚、取消及独立分支。便携资产和实际 MCP 检查每个采样边界。这不证明硬件标定或实际 Unity 验收。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 513/513 |
+| standard_checks_on_dotnet | 401/401 |
+| actual_mcp_groups | 60/60 |
+| laboratories | 56 |
+| agent_examples | 55 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| all_sample_boundaries | 7531 |
+| new_core_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_steps | 10000, 20000 |
+| asset_version | power.asset.v35 |
+| agent_api_version | 0.40.0 |
+| fingerprint_tag | 40 |
+| fuel_pipe_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_quantity_fields | 7 |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| v34_fixture_sha256 | 51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587 |
+| verification_log_sha256 | b766d0d57f17dbc37d5565d0b33d528e075c2b4f0aa4a3452b6ac9047a613e07 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 56 |
+| schema_negative_cases | 12 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| finite_compliance_harmonic | 2000000, 1000000, 500000, 250000 | 0.0013357399212237996, 0.0006672710470717257, 0.0003334847696376677, 0.0001667045683679429 |
+| nonlinear_thermal | 200000, 100000, 50000, 25000 | 1.5209877863320287e-05, 7.53194873812646e-06, 3.7476001908842706e-06, 1.8691907269996478e-06 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| inertial-fuel-line | 9b7f2a6b6b3cb7b7 | 549f8d1c054b2b3f | 71 | 1.1641532182693481e-10 |
+| inertial-pump-fed-cylinder | 3ff9ef7bd3e02dfb | 3e16e08ae5051507 | 81 | 1.2129731885579531e-08 |
+
+- `artifacts/reports/fuel-pipe-final-2026-10-23.log`
+- `artifacts/reports/fuel-pipe-evidence-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-baseline-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-schema-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-provenance-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-doc-audit-2026-10-23.json`
+
+动量方程采用中点流量及接受的末态压力；端口能量与管内混合采用后向欧拉，因此完整耦合为一阶收敛。即使没有摩擦，末态压力离散也会将部分压力/动能振荡转为数值显热；该部分不记作物理摩擦。成对熵变化包含混合与时间离散。零流量事件分别保留正反向输运历史。
+
+参数保持 `unverified`。遵守材料温压区间与压力修正的液态稳定条件。失败区间完整回滚；减小节拍并检查源耗尽、压力及相态边界。模型不包含变密度两相动量、空化、声波、重力、运动管形及解析热前沿。规定燃烧不证明详细化学平衡或反应熵准确性。
+
+## 2026-10-20: 液体入口动量参考
+
+`LiquidColumn` 是独立 C# 参考模型，描述水平刚性管中的恒定截面、均匀流速、恒定液体密度与恒定温度。每个局部区间内给定绝对端口压力。线性和二次阻力系数是显式研究输入。它不是图元件，不改变现有燃油网络或喷嘴方程。
+
+独立的无损加速、线性阻力指数解与二次阻力双曲正切解检查极限。独立积分的变压 RK4 参考验证包含反转的平滑二阶细化。测试还覆盖被动衰减、稳态流动、完整能量平衡、非负熵产、压力及粗步长拒绝、不可变共享使用，以及两个程序集目标上的分配。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 502/502 |
+| standard_checks_on_dotnet | 392/392 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| new_core_groups | 6 |
+| convergence_order | 2 |
+| independent_rk4_steps | 20000, 40000 |
+| maximum_internal_intervals | 2 |
+| graph_component | false |
+| asset_format | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| verification_log_sha256 | ca5b2d46919c411d5b781b315b152bd906f6d0839e894e7257bbd53a943bd3b8 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| documentation_locales | 10 |
+| documentation_files | 60 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | interval_counts | normalized_errors |
+|---|---|---|
+| linear | 10, 20, 40, 80 | 5.1713882833185263e-05, 1.2927512993845731e-05, 3.231818398890559e-06, 8.079508596700909e-07 |
+| quadratic | 10, 20, 40, 80 | 0.0005959789277412566, 0.00014891933866423854, 3.722512036997342e-05, 9.305985415002721e-06 |
+| changing-pressure | 100, 200, 400, 800 | 7.556351839870537e-06, 1.8960140672276058e-06, 4.757354594406252e-07, 1.1881904671850701e-07 |
+
+- `artifacts/reports/liquid-column-final-2026-10-20.log`
+- `artifacts/reports/liquid-column-evidence-2026-10-20.json`
+- `artifacts/reports/liquid-column-baseline-2026-10-20.json`
+- `artifacts/reports/liquid-column-doc-audit-2026-10-20.json`
+
+参数保持 `unverified`。压力下限是调用方声明的液态有效边界，不是预测的蒸汽压或 NPSH 裕量。可压缩性、声波、重力、运动几何、热储存、空化、相间滑移和相变弛豫动力学不在本参考范围。现有两相燃油连接仍为准静态。实际 Unity 验收与实测硬件标定分别进行。
+
+## 2026-10-20: 冻结汽相质量分数的燃油喷流与有限体积接收腔
+
+燃油域泵现在可向物理针阀和冻结汽相质量分数喷嘴供油，并进入有限液体体积的燃烧接收腔。完整库存包括相变、排量功、射流动能和静止壁面冲量。
+
+独立伯努利和理想气体极限、单独的混合物通量极值求解、能量/熵检查及独立积分的液体喷嘴/接收腔 ODE 验证方程。时间细化为一阶。便携资产重放、实际 MCP、回滚、取消、独立分支和分配检查覆盖集成。实际 Unity Editor/Play/Player/IL2CPP 尚未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 496/496 |
+| standard_checks_on_dotnet | 386/386 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 52 |
+| identical_complete_sample_boundaries | 7287 |
+| all_sample_boundaries | 7379 |
+| new_core_groups | 7 |
+| new_constitutive_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_reference_steps | 1000, 2000 |
+| asset_version | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| fingerprint_tags | 38, 39 |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| additional_reported_states_per_discharge | 11 |
+| v33_fixture_sha256 | 3e3804c7277baea26c330c47a319669c5f61142486fb73f127679e56192fe9ba |
+| verification_log_sha256 | b39f7313ca8f90d028a0b76ade58d950dfddcaf73750de7891c62d0026042b2d |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 54 |
+| schema_negative_cases | 11 |
+| documentation_locales | 10 |
+| documentation_files | 200 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| step_ns | normalized_error |
+|---|---|
+| 200000 | 9.43999202748097e-05 |
+| 100000 | 4.716734258499583e-05 |
+| 50000 | 2.356437988192822e-05 |
+| 25000 | 1.1782714233986302e-05 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| finite-volume-fuel-discharge | 53190b5628ca0ab4 | 82f9e4a926d43249 | 11 | 2.2737367544323206e-13 |
+| pump-fed-finite-volume-cylinder | e4225e412bfa9802 | a4d2b9f5703c79d8 | 81 | 1.6226408661168534e-08 |
+
+- `artifacts/reports/fuel-discharge-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-final-2026-10-20.log`
+- `artifacts/reports/fuel-discharge-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-doc-audit-2026-10-20.json`
+
+参数保持 `unverified`。执行声明的温度边界、正气体体积和稀薄蒸汽材料域。模型省略局部入口惯性、有限速率成核、相间滑移、解析喷雾、真实流体临界行为和实测硬件标定。规定燃烧不能证明化学平衡或反应熵准确性。继续入口动力学、点火、进排气、机械损失及 ECU/TCU 协调控制。
+
+## 2026-10-20: 轴驱动相变燃料泵
+
+必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。新增燃料泵检查覆盖两个程序集目标。Standard 程序集检查由 .NET 10 托管，实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 478/478 |
+| standard_checks_on_dotnet | 370/370 |
+| actual_mcp_groups | 56/56 |
+| laboratories | 52 |
+| agent_examples | 51 |
+| unchanged_laboratories | 50 |
+| identical_complete_sample_boundaries | 7085 |
+| all_sample_boundaries | 7287 |
+| new_core_groups | 8 |
+| new_constitutive_groups | 4 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| closed_liquid_convergence_order | 2 |
+| phase_changing_pump_convergence_order | 1 |
+| independent_rk4_reference_step_counts | 16000, 32000 |
+| independent_rk4_refinement_difference | 7.3033901113193e-09 |
+| asset_version | power.asset.v33 |
+| agent_api_version | 0.38.0 |
+| fingerprint_tag | 37 |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| additional_reported_states_per_chamber | 3 |
+| v32_fixture_sha256 | dc53c55f9ed58503a4e37d3b9a57ace52e5aac8196fdb5707bb555c47f3a593e |
+| verification_log_sha256 | 81b64552d28447704043ee7b253aad25486200a94f06e1a3a601ea09fc602b8e |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 52 |
+| audited_documents | 200 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 904b97a95df5e08dbbc838a648d363a16ac07d56 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-pump | electric-equilibrium-fuel-pump |
+|---|---|---|
+| boundaries | 101 | 101 |
+| state_count | 21 | 28 |
+| fingerprint | 30f8057b21ff5860 | faa54f82c2b83d52 |
+| source_sha256 | f07afca1eeb49e9a462366a6458985b3396c8bd319c67799c6b44c78c64265fa | 4cdd4d0eab90afb2e7d0092316a4a1cedd86ec1a91f1943a8d0ae8a390dc6878 |
+| report_sha256 | 8cf56eb4a84b5ff27db280470a03ee5264e47679ec9603394e7f4402c9738eff | f4589b23ef386cf53ff9b0f5d0760c7d342660bf066255cf6fc8e5f0b7d73873 |
+| final_state_hash | 99856e5951328734 | 63199f094da67091 |
+| max_sampled_energy_residual_j | 1.862645149230957e-09 | 1.8570620735625099e-09 |
+| max_sampled_mass_residual_kg | 6.911788849595091e-18 | 6.667843360785852e-18 |
+| max_sampled_fuel_residual_kg | 6.911788849595091e-18 | 6.667843360785852e-18 |
+| maximum_sampled_vapor_kg | 5.177782452991471e-08 | 0 |
+| final_delivered_kg | 7.361187328902878e-05 | 0.0004189649656093893 |
+| final_chamber_work_j | 0.026875072320387147 | 0.16071542089376198 |
+| final_shaft_speed_rad_s | 99.73088716821476 | 100.37362340296784 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| closed_liquid | 7.017638564699169e-07, 1.7544040498140845e-07, 4.386006580148205e-08, 1.0965013230723741e-08 | 4.000012748171001, 4.000003232450241, 4.000001174516329 |
+| phase_changing_pump | 2.488428192603582e-05, 1.2876657736742689e-05, 6.204988735247702e-06, 3.007042341865784e-06 | 1.9325109383803978, 2.0752104937106957, 2.0634856546109304 |
+
+| inlet_conductance_m3_s_pa | delivered_kg | maximum_vapor_kg |
+|---|---|---|
+| 1e-11 | 7.361187328902878e-05 | 5.177782452991471e-08 |
+| 3e-10 | 0.00041896562499261326 | 0.0 |
+
+独立液体压力/功、理想蒸气绝热关系和两相熵反演检查本构关系。封闭液体轴运动验证二阶细化；完整相变充填/排出实验相对独立反演的 RK4 参考验证一阶细化。入口不足、充分液体供给、电驱动、齿轮/液压/离合器组合、精确回放、回滚和分配检查覆盖集成。资产 v33 保存几何并读取 v1-v32。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+参数保持 `unverified`。整个循环均遵守物性温度、压力及可分辨体积边界。模型假设不可压缩液体、理想伪组分蒸气、瞬时共同温度平衡及零外部壳体压力。局部入口惯性/NPSH、临界流、成核延迟、阀惯性/滞回、真实燃料混合物及实测标定仍待实现。物理喷油器交接与接收端排量/动能功耦合仍是独立要求。
+
+- `artifacts/reports/fuel-pump-final-2026-10-20.log`
+- `artifacts/reports/fuel-pump-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-pump-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-pump-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-pump-doc-audit-2026-10-20.json`
+- `artifacts/reports/fuel-pump-provenance-audit-2026-10-20.json`
+- `tests/Power.Tests/Fixtures/equilibrium-fuel-network-v32.powerasset`
+- `artifacts/reports/equilibrium-fuel-pump.json`
+- `artifacts/reports/electric-equilibrium-fuel-pump.json`
+
+[轴驱动相变燃料泵](FUEL_CHAMBER_PUMP.zh-CN.md)
+
+
+## 2026-10-20: 相平衡燃料输运网络
+
+必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。新增燃料网络检查覆盖两个程序集目标。Standard 程序集检查由 .NET 10 托管，实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 462/462 |
+| standard_checks_on_dotnet | 356/356 |
+| actual_mcp_groups | 54/54 |
+| laboratories | 50 |
+| agent_examples | 49 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| all_sample_boundaries | 7085 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_convergence_order | 1 |
+| asset_version | power.asset.v32 |
+| agent_api_version | 0.37.0 |
+| mcp_suite_timeout_seconds | 1800 |
+| mcp_operation_timeout_seconds | 600 |
+| fuel_domain | 7 |
+| fuel_restriction_kind | 42 |
+| fuel_heat_link_kind | 43 |
+| fingerprint_tag | 36 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| fuel_material_quantity_fields | 12 |
+| additional_states_per_fuel_node | 2 |
+| additional_states_per_fuel_link | 5 |
+| accepted_near_capacity_states | 124 |
+| rejected_capacity_states | 129 |
+| nonfinite_normalized_flow | NumericalFailure / complete rollback |
+| v31_fixture_sha256 | 8042d65c3171a71cd79eaa0b49ba733a232a805bd4ed429d23a93e5821016349 |
+| verification_log_sha256 | f1ad1804f19f54932590bced69e4c7d319ae3bc045b4acece7a718e9aa3ffd89 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 50 |
+| audited_documents | 190 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | d36f416c882925474dbfb2d25f81e39bd70e0211 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-network | electrothermal-fuel-network |
+|---|---|---|
+| boundaries | 22 | 21 |
+| state_count | 15 | 21 |
+| fingerprint | e27805e1a2c808d1 | e07bad65ca9c3215 |
+| source_sha256 | d9c4b378d6a5080fb456bac71569cd2c0e564ddcf8fd03bcd15bfd594e857ef7 | 9af1e5d35e821ba314c512eab452b325d4f3652787dab8f23365f5f3b2ec1090 |
+| report_sha256 | 34c3bde1599613b896ccc4e054d19b854369b791a72137b524a329dd98bef44f | 0558728552240dc70a69a3a4c46417012df1cfdc2e662341c09ddc403ba872ca |
+| final_state_hash | 61b040af166ad9c7 | 675bb21a911fc936 |
+| max_sampled_energy_residual_j | 1.0913936421275139e-10 | 6.9003007752144185e-09 |
+| max_sampled_mass_residual_kg | 5.421010862427522e-20 | 5.421010862427522e-20 |
+| max_sampled_fuel_residual_kg | 5.421010862427522e-20 | 5.421010862427522e-20 |
+| final_donor_vapor_kg | 6.354078034825645e-08 | 6.85091337500224e-08 |
+| final_link_entropy_j_k | 0.004268953263094927 | 0.005100906194149379 |
+| final_heat_entropy_j_k | 0.008489760659647926 | 5.323274810960101e-05 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| liquid | 0.00035614510680141416, 0.00017889748238547338, 8.965668828815983e-05, 4.488054760116941e-05 | 1.9907776345003132, 1.9953612586100706, 1.9976736711167877 |
+| two_phase_wall | 0.00016997336466461097, 8.49514500003881e-05, 4.263682568381033e-05, 2.134770042729958e-05 | 2.0008294698187545, 1.9924431201885908, 1.9972561367446433 |
+
+实验覆盖液体排出并进入共存区、反向流、开度变化及有限壁/机电热耦合。独立液体压力指数解、同时求解两相质量/焓/传热的 ODE、热驱动反流及离合器试探捕获检查精度与组合。资产和实际 MCP 保持每个采样值及哈希一致。资产 v32 保存新物性记录并读取 v1-v31。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+本构闭合关系的物性及可分辨壁变形边界仍适用。参数保持 `unverified`。泵充填与轴功、喷油器交接、局部流体惯性、临界流、成核延迟、相间滑移及真实混合物测量仍需单独推进。现有泵供油喷油器燃轨在完成这些耦合前仍沿用分离液体路径。
+
+- `artifacts/reports/fuel-network-final-2026-10-20.log`
+- `artifacts/reports/fuel-network-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-network-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-network-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-doc-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-overflow-before-2026-10-20.log`
+- `artifacts/reports/fuel-network-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-overflow-after-2026-10-20.log`
+- `tests/Power.Tests/Fixtures/equilibrium-tank-supply-v31.powerasset`
+- `artifacts/reports/equilibrium-fuel-network.json`
+- `artifacts/reports/electrothermal-fuel-network.json`
+
+[相平衡燃料输运网络](EQUILIBRIUM_FUEL_NETWORK.zh-CN.md)
+
+
+## 2026-10-20: 柔性燃料容积参考模型
+
+必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。新增本构检查覆盖两个程序集目标。Standard 程序集检查由 .NET 10 托管，实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 449/449 |
+| standard_checks_on_dotnet | 345/345 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| new_constitutive_groups_per_assembly | 9 |
+| roundtrip_states_per_assembly | 80 |
+| independent_entropy_maximum_states_per_assembly | 4 |
+| finite_bath_convergence_order | 1 |
+| finite_bath_reference_tolerance_j | 2e-6 |
+| heat_interval_energy_residual_tolerance_j | 5e-13 |
+| entropy_decrease_roundoff_j_k | 1e-13 |
+| entropy_maximum_tolerance_j_k | 1e-10 |
+| wall_expansion_roundoff_relative | 2.8421709430404007e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| graph_transport | separated_liquid_only |
+| verification_log_sha256 | f663d7d383b7961572c48cd6dd05e7e26c68313a44b6af02f196cf1d7caefcf7 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 70 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 50597595f1085bbe35b948d3826ded2832ad8a85 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | Value |
+|---|---|
+| duration_s | 6 |
+| step_counts | 32, 64, 128, 256 |
+| energy_errors_j | 1.313327615023411, 0.6450572281738829, 0.31948411040258407, 0.1589624951980113 |
+| error_ratios | 2.035986200389321, 2.019058873885909, 2.009808099732074 |
+
+检查比较化学势、Clapeyron 斜率、热量与熵导数，以及包含弹性储能的 Gibbs 关系。独立约束熵最大化不使用饱和求解器。刚性容器、理想气体与广延缩放极限及有限热浴 RK4 细化提供独立参考。热交换保持总能量守恒，并在总熵不减条件下呈现一阶收敛。这些证据不等于实测燃料有效性或 Unity 验收。
+
+纯燃料柔性容器闭合关系已求解液态、蒸气及带弹性储能的两相共存。它是局部本构参考，图级泵与喷嘴输运仍需接入。
+
+- `artifacts/reports/compliant-volume-verify-2026-10-20.log`
+- `artifacts/reports/compliant-volume-evidence-2026-10-20.json`
+- `artifacts/reports/compliant-volume-baseline-replays-2026-10-20.json`
+- `artifacts/reports/compliant-volume-doc-audit-2026-10-20.json`
+- `src/Power.Core/CompliantFuelVolume.cs`
+- `tests/Power.Tests/CompliantFuelVolumeChecks.cs`
+
+[柔性燃料容积参考模型](COMPLIANT_FUEL_VOLUME.zh-CN.md)
+
+
+## 2026-10-20: 有限体积油箱相平衡
+
+规定的串行验证在本地 Windows x64/.NET 10.0.12 上通过。Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 440/440 |
+| standard_checks_on_dotnet | 336/336 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 46 |
+| matching_sample_boundaries | 6936 |
+| physical_transaction_groups | 9 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| coupled_convergence_order | 1 |
+| entropy_tolerance_j_k | 1e-10 |
+| density_roundoff_relative | 1.4210854715202004e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+| v30_fixture_sha256 | c246723026ac3cbdd69b3e0015b29a161d15c85865e94f3054507cd9c7bc2335 |
+| verification_log_sha256 | 6196f11e31d3c548f283d29d418511d894c33f8d87acaa006eb3e43f3b497526 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| json_schema_laboratories | 48 |
+| audited_documents | 170 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | b91662388d1f09d72455531097bd88844c89f138 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-tank-supply | equilibrium-tank-fired-cylinder |
+|---|---|---|
+| duration_s | 0.2 | 0.6 |
+| boundaries | 41 | 65 |
+| states | 53 | 66 |
+| step_ns | 50000 | 50000 |
+| fingerprint | 6b0e2b783c7a15f0 | 728ba5f64eee747d |
+| final_state_hash | ac64c4b2775b90be | 5091b6a989d113d0 |
+| source_sha256 | 2af17736879d3aa414fb9c8b315395ecbc10705ca7824d00757f1bd1f1e53a0c | a326896a2961c136cd8a768761654eae929798f02bbbd65792d3853fe097be5d |
+| report_sha256 | a77fea120565de9e1c3cd91201197722bd5fd31c8635b6042abb0faafd2931b3 | bb1e7fa5174d155e910b93098036e1f789f6278efbd1f6076dba3286bb6962d2 |
+| max_sampled_energy_j | 6.318146006378811e-11 | 1.5166961020440795e-09 |
+| max_sampled_mass_kg | 1.5459798853462949e-18 | 1.6805133673525319e-18 |
+| max_sampled_fuel_kg | 1.5458351287390981e-18 | 1.7957098481791167e-18 |
+| max_sampled_hydraulic_volume_m3 | 2.2515856273693413e-21 | 1.885971796620903e-21 |
+| final_evaporated_mass_kg | 4.117877458589608e-09 | 1.1639868253621372e-08 |
+| final_condensed_mass_kg | 3.838295431368862e-09 | 9.507104670266502e-09 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| pump | 1.184041877877462e-08, 5.923758976678073e-09, 2.9627648245877937e-09, 1.4816043858445482e-09 | 1.9988015760584663, 1.9994023580667557, 1.9997003605648416 |
+| vent_wall | 9.169745130691354e-05, 5.2209148699944306e-05, 2.6098838144434922e-05, 1.304798024250431e-05 | 1.7563483333910663, 2.000439575547807, 2.00022054443468 |
+
+`equilibrium-tank-supply` 演练泵反转、含燃料通气和有限热壁。`equilibrium-tank-fired-cylinder` 将同类供给接入点火发动机。验证涵盖独立熵最大化、化学势及热容导数、联立 ODE 细化、完整账本、回放、回滚与分配检查。资产 v31 保留该标志，并读取 v1-v30。
+
+- `artifacts/reports/tank-phase-verified-2026-10-20.log`
+- `artifacts/reports/tank-phase-evidence-2026-10-20.json`
+- `artifacts/reports/tank-phase-baseline-replays-2026-10-20.json`
+- `artifacts/reports/tank-phase-schema-audit-2026-10-20.json`
+- `artifacts/reports/tank-phase-doc-audit-2026-10-20.json`
+- `artifacts/reports/equilibrium-tank-supply.json`
+- `artifacts/reports/equilibrium-tank-fired-cylinder.json`
+- `tests/Power.Tests/Fixtures/equilibrium-injected-cylinder-v30.powerasset`
+
+泵、传热及通气耦合算例验证了一阶收敛。供给端两相均保持在声明温度区间内，总密度与液体密度之间保留 binary64 舍入裕量。常密度/共用气体属性、瞬时平衡和平面界面是研究近似。真实混合物、表面张力、晃动、有限速率动力学、实测标定与实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+[TANK_PHASE_EQUILIBRIUM.zh-CN.md](TANK_PHASE_EQUILIBRIUM.zh-CN.md)
+
+## 2026-10-13: 燃油相平衡与液体供给边界
+
+规定的串行验证在本地 Windows x64/.NET 10.0.12 上通过。Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 426/426 |
+| standard_checks_on_dotnet | 325/325 |
+| actual_mcp_groups | 50/50 |
+| laboratories | 46 |
+| agent_examples | 45 |
+| json_schema_laboratories | 46 |
+| unchanged_laboratories | 44 |
+| matching_sample_boundaries | 6810 |
+| physical_transaction_groups | 10 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| coupled_convergence_order | 1 |
+| entropy_tolerance_j_k | 1e-10 |
+| pressure_roundoff_relative | 1.4210854715202004e-14 |
+| reported_margin_clamp | false |
+| asset_version | power.asset.v30 |
+| agent_api_version | 0.35.0 |
+| fuel_film_record_bytes | 100 |
+| v29_fixture_sha256 | e7f48291b8c9817af7d2eec61b989854d5200130cd4a0987f42e49c21d36d16d |
+| verification_log_sha256 | 211a53a32d601f06d4d406b08661c86ac3e28d94256d42ebbc9041a285eabdec |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 160 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | ca443cbd218bd678a1de6e579ddfe99826659555 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-cell | equilibrium-injected-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 61 | 65 |
+| states | 12 | 59 |
+| step_ns | 1000000 | 50000 |
+| fingerprint | f72fab4a491d9c86 | 74c05089a700aca4 |
+| final_state_hash | 4bace9fd4482fca9 | 94a0b3f991564b01 |
+| source_sha256 | 5c4a0742ea5c315c2b626e27f8d7ebc3f841d668b4ba4bae5da8daee628d5e98 | c32bc066cecd3783464c2c24d8182ee9897fb20d86325623e3faf8e547d58949 |
+| report_sha256 | 8dbb4841d14e147fea6f7a36a00c5d80e5fcd168a6a20463b53d136add38f1d1 | 6a6c3f8bf270a096bdc698e05b4d3835102e78c4fe60bde61607ada5188238c3 |
+| max_sampled_energy_j | 4.5656634029001e-10 | 1.7261072571272962e-09 |
+| max_sampled_mass_kg | 1.2414114874959026e-17 | 2.5478751053409354e-18 |
+| max_sampled_fuel_kg | 1.021860547567588e-17 | 2.4445370857759108e-18 |
+| final_evaporated_mass_kg | 7.740915788733479e-06 | 2.7999999999999996e-05 |
+| final_condensed_mass_kg | 2.322468550648195e-05 | 0 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| vent_hot | 3.0010550752308518e-05, 1.4974238709442034e-05, 7.4793589965338466e-06, 3.7377392527560005e-06 | 2.004145341518117, 2.002075139912596, 2.0010381920084406 |
+| vent_cold | 4.5548939344257636e-05, 2.2750721204261026e-05, 1.136942354094117e-05, 5.68322752030781e-06 | 2.00208771121184, 2.0010443908907014, 2.0005223264975656 |
+| moving_cylinder | 0.00013129782098744158, 6.581502863305389e-05, 3.2949002559945487e-05, 1.6484868202937264e-05 | 1.9949519693971638, 1.9974816692345656, 1.9987422498212424 |
+
+`equilibrium-fuel-cell` 展示冷凝、通气引起的蒸发及再次冷凝。`equilibrium-injected-cylinder` 在通气油箱发动机中加入接收端可逆相变与供给裕量。验证涵盖独立熵最大化、解析饱和及传热极限、联立 ODE 细化、完整回放、回滚和分配检查。资产 v30 保留这些属性，并读取 v1-v29。
+
+压力比较仅允许 binary64 舍入量：`64 * epsilon * max(p, p_sat)`，其中 `epsilon = 2^-52`；报告的裕量不作钳制。这是主体液体的饱和检查，局部压降与泵 NPSH 仍需分解流动模型。独立检查还要求绝热闪蒸和有限壁面换热的总熵不减少。
+
+- `artifacts/reports/phase-equilibrium-verified-2026-10-13.log`
+- `artifacts/reports/phase-equilibrium-evidence-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-baseline-replays-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-doc-audit-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-schema-audit-2026-10-13.json`
+- `artifacts/reports/equilibrium-fuel-cell.json`
+- `artifacts/reports/equilibrium-injected-cylinder.json`
+- `tests/Power.Tests/Fixtures/vented-tank-liquid-cylinder-v29.powerasset`
+
+参数仍为 `unverified`。模型未提供实测汽油属性、多组分或有限速率相变动力学、分解液体位移/喷雾及 OEM 标定。实际 Unity Editor/Play/Player/IL2CPP 验收仍待完成。
+
+[FUEL_PHASE_EQUILIBRIUM.zh-CN.md](FUEL_PHASE_EQUILIBRIUM.zh-CN.md)
+
+## 2026-10-08: 油箱几何与有限气相空间
+
+规定的串行验证在本地 Windows x64/.NET 10.0.12 上通过。Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 411/411 |
+| standard_checks_on_dotnet | 313/313 |
+| actual_mcp_groups | 48/48 |
+| laboratories | 44 |
+| agent_examples | 43 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| physical_transaction_groups | 6 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| initial_headspace_pressure_pa | 100000 |
+| tank_capacity_m3 | 2e-7 |
+| vent_input | 960 |
+| vent_close_ns | 200000000 |
+| vent_reopen_ns | 400000000 |
+| headspace_interval_volume_fraction | 0.25 |
+| asset_version | power.asset.v29 |
+| agent_api_version | 0.34.0 |
+| audited_documents | 140 |
+| documentation_locales | 10 |
+| v28_fixture_sha256 | 3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57 |
+| verification_log_sha256 | 5e043f1b2638849a1a0ec7d29e59ee98408cf507e92b0fdeba048be5d2980f27 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| acceptance_scope | local_windows_only |
+
+| Identifier | vented-tank-liquid-cylinder | vented-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 58 | 67 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 3e1af7af1d0de7c7 | eed5469fc995ca45 |
+| final_state_hash | f34b39e6adfe540d | 189ed72df2d82b75 |
+| source_sha256 | 033c2ea4594cec4a3e173e16e9ba806f74ae1ff211e524b520b62c212afaa573 | bb25d8f37bbde15acd2f5788b7d877abf37e1200dfbf25e72a77b1ed27442b57 |
+| report_sha256 | 1ededb11489f67f12dbde919c67b61d8fd6b481261c6369026c1e80bc5b3deab | 6e0b0dd64663278e2eb022409706d29e2b621c8bbcb48c6e5948b17eaa5d3904 |
+| max_sampled_energy_j | 9.768825748324161e-10 | 1.2995997167308815e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 8.944667923005412e-18 |
+| max_sampled_fuel_kg | 1.5754812818929986e-18 | 6.274820073259857e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.5617169965001163e-21 | 9.171778631987971e-21 |
+
+示例 `vented-tank-liquid-cylinder` 和 `vented-tank-needle-cylinder` 使用油箱 1513、气相 1520、通气输入 960。资产 v29 保留几何并读取 v1-v28。解析功及导数、独立联立 ODE 细化、完整账本、资产/MCP 回放、回滚和零分配推进检查通过。
+
+- `artifacts/reports/tank-headspace-closure-2026-10-08.log`
+- `artifacts/reports/tank-headspace-evidence-2026-10-08.json`
+- `artifacts/reports/tank-headspace-doc-audit-2026-10-08.json`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/vented-tank-liquid-cylinder.json`
+- `artifacts/reports/vented-tank-needle-cylinder.json`
+- `tests/Power.Tests/Fixtures/recirculating-liquid-cylinder-v28.powerasset`
+
+该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、气液相平衡、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
+
+[TANK_HEADSPACE.zh-CN.md](TANK_HEADSPACE.zh-CN.md)
+
+## 2026-10-08: 完整的实验室与元件发现
+
+规定的串行验证在本地 Windows x64/.NET 10.0.12 上通过。Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 400/400 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 46/46 |
+| laboratories | 42 |
+| agent_examples | 41 |
+| supported_components | 41 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| audited_documents | 50 |
+| documentation_locales | 10 |
+| catalog_schema_matches_cli | true |
+| asset_version | power.asset.v28 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| verification_log_sha256 | 5dbc2ef47f7ba1621f5e3ce09a2290acb770eeab97b090466c3d1c0d7bf20196 |
+| catalog_sha256 | a84748a97884ad9bdfea9f6e74ecd7bcc100d26fd4afb284c67aca2264675db4 |
+| catalog_schema_sha256 | d38c90471e424519c092e35f372834a32e26bccc6fac51ab56468ec8866be69a |
+| acceptance_scope | local_windows_only |
+
+CLI `list-labs`、MCP 示例、Unity 导出和串行验证共用实验室目录。所有源文件均被覆盖，每个声明的示例都通过实际 stdio 验证，声明的元件与完整模型 schema 一致。所有实验室指纹、源哈希和每个采样状态哈希均与基线一致。资产 v28 和先前读取器保持不变。
+
+文档审计覆盖全部十种语言的章节对应、单行语言切换和完整实验室表。目录文件与 CLI 响应符合 `power.laboratory_catalog.v1.schema.json`。
+
+- `artifacts/reports/development-review-baseline-2026-10-08.log`
+- `artifacts/reports/development-review-final-2026-10-08.log`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/development-review-evidence-2026-10-08.json`
+- `artifacts/reports/development-review-catalog-2026-10-08.json`
+
+油箱几何/顶部气体、更完整的发动机行为、ECU/TCU 协调、实测标定和实际 Unity 验收仍待完成。研究参数仍为 `unverified`。
+
+## 2026-10-05: 可追踪的燃油泄压回流
+
+必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。.NET Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 398/398 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 45/45 |
+| laboratories | 42 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| asset_version | power.asset.v28 |
+| v27_fixture_sha256 | ee344fad148d226c223145d610b18f84912060bc722fee980cae6515ceea3d62 |
+| verification_log_sha256 | ee5eb035556dd2ba0cd17baa274672ee3663a8572982b72bd23da881ab877e41 |
+| prior_ci_scope | preceding_revision_only |
+| prior_ci_revision | 85eebeb442b455304c5e88aebd86279c8347aad2 |
+
+| Identifier | recirculating-liquid-cylinder | recirculating-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 54 | 63 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 8c295e86019b787b | 354faf7fae4a338e |
+| final_state_hash | d4a612015c1623dc | 8554f5721f716a34 |
+| source_sha256 | f7e499c1b155869fad912df7a10ba443f62aa22af585147523d4527f9f8937a4 | 8de240be98f08a3ceb110337228a09a68c25f5f54fbefac159daf517cca0f827 |
+| report_sha256 | 4a5e68862dc626a09471d5964f0623652efcf3056f6b2417545713ed00c421aa | d2efe3cb35bfc6bda3e61c2ef668f276784ed0f450909976d1b8dffaee4b5612 |
+| max_sampled_energy_j | 1.412331585015636e-09 | 1.4023612493474502e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 5.3600244902252125e-18 |
+| max_sampled_fuel_kg | 3.1238575094738597e-18 | 5.834362940687621e-18 |
+| max_sampled_hydraulic_volume_m3 | 4.1689902872672595e-21 | 7.239484721064098e-21 |
+
+- `artifacts/reports/liquid-return-final-2026-10-05.log`
+- `artifacts/reports/liquid-return-evidence-2026-10-05.json`
+- `artifacts/reports/liquid-return-schema-audit-2026-10-05.json`
+
+独立泄压衰减/压力功、机械/压力/热联立细化、热比例、多条路径、外部边界、每边界重放、回滚与分配检查均通过。液体沸腾和未充分解析的输运区间会使整批失败。油箱几何/通气动力学、实测阀/泵、气蚀、喷雾、OEM 标定和实际 Unity Editor/Play/Player/IL2CPP 仍待完成。
+
+[CI 37273231730](https://github.com/Water-Run/Power/actions/runs/37273231730)
+
+[LIQUID_FUEL_RETURN.zh-CN.md](LIQUID_FUEL_RETURN.zh-CN.md)
+
+## 2026-10-05: 有限液体燃油箱
+
+必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。.NET Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 388/388 |
+| standard_checks_on_dotnet | 298/298 |
+| actual_mcp_groups | 43/43 |
+| laboratories | 40 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| asset_version | power.asset.v27 |
+| v26_fixture_sha256 | b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d |
+| verification_log_sha256 | 6c7b9ad52c6e4977b2817c6f6bdd9de4eaf6aeeb943efba255a2ad4956a27d70 |
+
+| Identifier | finite-tank-liquid-cylinder | finite-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 43 | 52 |
+| step_ns | 50000 | 10000 |
+| fingerprint | f7ee4872a034c885 | 8be53a56f175aeeb |
+| final_state_hash | 9fbab09b0d8fea77 | e77e6d4adaf785eb |
+| source_sha256 | 0a67c3eaaac79992b21b647efd6535d0c5c81159808006e5dde40552c3fd5934 | 508a8d163f965b2fc62c965d1984d9abd0e88011685a4099be110470c92baac6 |
+| report_sha256 | 038cbafab19f3e587b7e4a156c017e06531fd04cbaca8619240b81b8e14d6936 | ab18f538eae81bcead2a1a929ab97a0b6ef856a9b6058f1a375e2195d0747edc |
+| max_sampled_energy_j | 5.5981672630878165e-09 | 1.93150526683894e-08 |
+| max_sampled_mass_kg | 1.1926223897340549e-18 | 3.63207727782644e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 1.3137481011914198e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.2977429835191313e-21 | 1.826414792517085e-21 |
+
+- `artifacts/reports/finite-tank-integrated-2026-10-05.log`
+- `artifacts/reports/finite-tank-evidence-2026-10-05.json`
+- `artifacts/reports/finite-tank-schema-audit-2026-10-05.json`
+
+油箱质量和热能精确降至零；此后正向泵流量/反力为零，轴仍按真实动力学运行。反向回流按燃轨混合温度恢复液体库存。独立湿态解析交换、耗尽轴/压力能、完整回滚与分配检查均通过。
+
+化学边界能量包含排气带走的未燃燃料。油箱在模型内部传递燃料；集成检查比较化学库存总变化加已释放热量与净化学边界能量。
+
+几何容量、通气/顶部气体/晃动、气蚀、实测泵充液/效率/调压和分解喷雾仍待完成。参数为 `unverified`；实际 Unity Editor/Play/Player/IL2CPP 与 OEM 标定仍未验证。
+
+前一泵供给修订通过了 Windows、Linux 和 macOS CI。该运行不验证本次有限油箱变更。
+
+`144ac3d5d0f15d0eafefe713996f2b08d8ae3ea4` · [CI 37269218379](https://github.com/Water-Run/Power/actions/runs/37269218379)
+
+[LIQUID_FUEL_TANK.zh-CN.md](LIQUID_FUEL_TANK.zh-CN.md)
+
+## 2026-10-05: 泵送液体燃油轨
+
+必需的串行验证已在本地 Windows x64/.NET 10.0.12 通过。.NET Standard 程序集检查运行于 .NET 10；实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 378/378 |
+| standard_checks_on_dotnet | 291/291 |
+| actual_mcp_groups | 41/41 |
+| laboratories | 38 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v26 |
+| v25_fixture_sha256 | df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc |
+| verification_log_sha256 | 2a2c3aa19317c8251c970a4b98a169b402d1855838e7fb79831d273593bfdf29 |
+
+| Identifier | pump-fed-liquid-cylinder | pump-fed-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 39 | 48 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 22cbbe4a983098f4 | 782b15c21ad211c2 |
+| final_state_hash | 4004b74f7f1d8c22 | e322d7a4bd72088c |
+| source_sha256 | 1bc97e3f985567f93fd4ace4006307ab571d2e10850e1bd75a1537ed6f0954bb | 3a801026e05e9e6cb67d298145ac20aea9948ab28e2c4552f8dee0d4f1eb4cce |
+| report_sha256 | 9869c20db74d4bb1dd22f5b3a924402001ca29451acee7fcc72b9188f25bf437 | 16ac066d9f9e268b98d874aba37f75efeb6b1fa1034b6b06562899f20f67fbbb |
+| max_sampled_energy_j | 4.160256139584817e-09 | 2.0303104975027964e-08 |
+| max_sampled_mass_kg | 9.215718466126788e-19 | 2.439454888092385e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 2.825701912040346e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.523666688322677e-21 | 3.763671787116276e-21 |
+
+- `artifacts/reports/rail-feed-integrated-2026-10-05.log`
+- `artifacts/reports/rail-feed-evidence-2026-10-05.json`
+- `artifacts/reports/rail-feed-schema-audit-2026-10-05.json`
+
+六组物理/事务检查、两组资产检查、三组集成检查和两组真实 MCP 场景覆盖补给路径。流入燃料的热能/化学能与气体边界能量共同累加；压力储能仅计算一次。压力 KPI 使用纯泵解析上界 920541.8 Pa，而非初始压力。
+
+源是显式外部边界，不是已建模的有限燃料箱。油箱耗尽、泵效率/调压、管路损失、气蚀、压力相关物性和有限体积喷雾仍待完成。参数为 `unverified`；这不构成 OEM 标定或实际 Unity Editor/Play/Player/IL2CPP 验收。
+
+较早的 AT 检查点也在记录的修订上通过 Windows、Linux 和 macOS CI。该运行不验证本次燃料补给变更。
+
+`0d5a98583723b39e5a0b7723d06e988ebea1a425` · [CI 37259428892](https://github.com/Water-Run/Power/actions/runs/37259428892)
+
+[PUMP_FED_FUEL.zh-CN.md](PUMP_FED_FUEL.zh-CN.md)
+
+## 2026-10-05: 液压 AT 反馈与压力控制
+
+所要求的串行验证已在 Windows x64/.NET 10.0.12 上通过。Release 构建没有警告或错误。实际 Unity 与新的 Linux/macOS 验收仍未验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 367/367 |
+| standard_checks_on_dotnet | 283/283 |
+| actual_mcp_groups | 39/39 |
+| laboratories | 36 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v25 |
+| v24_fixture_sha256 | 6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc |
+
+| Identifier | controlled-hydraulic-ravigneaux | controlled-fired-hydraulic-ravigneaux |
+|---|---|---|
+| duration_s | 4.5 | 2.2 |
+| boundaries | 451 | 221 |
+| states | 99 | 122 |
+| confirmed_range | 1 | 4 |
+| fault | 0 | 0 |
+| lockup_state | 0 | 2 |
+| max_sampled_energy_j | 7.059115887386724e-7 | 2.7647047318168916e-7 |
+| max_sampled_hydraulic_volume_m3 | 1.7499700690273845e-18 | 2.7681036716270535e-18 |
+| fingerprint | ceb522c56530be00 | 9fa63e406ccae528 |
+| final_state_hash | 7ff1919e1f504740 | 958185fe86764b63 |
+| source_sha256 | 9cac20ed7a79a2b9dd30f630adf5c6b3ce1f5dbbe4fa837eba3f0465cf67855b | cd4bd02357168532793462903670f9ec59e0c47edcd24986adc71c27bb4e88af |
+
+- `artifacts/reports/at-control-final-2026-10-05.log`
+- `artifacts/reports/at-control-evidence-2026-10-05.json`
+- `artifacts/reports/at-control-schema-audit-2026-10-05.json`
+- `artifacts/reports/at-controller-probe-2026-10-05.log`
+
+8 组物理/事务检查覆盖所有前进挡与倒挡、真实压力/接触/锁定反馈、阀通道归属、采样时钟及 PI 边界。故障检查包括供压丢失、排油堵塞、接合/释放超时、移动方向互锁和已确认锁定丢失。2 组资产检查保留类型化支路并拒绝重签名降级。3 组组合检查与 2 个实际 MCP 场景逐项匹配所有标量和状态哈希。
+
+倒挡启动与故障恢复在 500 ms 时仍为 Applying，并在 800 ms 前于既定超时内完成确认。测试依据实际锁定而非固定延时。安全泄压命令不能消除物理堵塞。燃烧机/行星轮/执行器/控制组合保留 122 个状态，未改变 128 状态上限。
+
+参数仍为 `unverified`。协调 ECU 扭矩融合、详细传感器/阀行为、完整车辆故障、OEM 标定和实际 Editor/Play/Player/IL2CPP 验收仍待完成。
+
+[AT_CONTROL.zh-CN.md](AT_CONTROL.zh-CN.md)
+
+
 ## 2026-10-02:共享 AT 液压供油与动态活塞驱动
 
 要求的串行 `dotnet run --file tools/Build.cs -- verify` 在 Windows x64/.NET 10.0.12 上本地通过:**354/354** 项托管检查,**273/273** 项在 .NET 10 上托管运行的 Standard 程序集检查,**37/37** 组真实 MCP,**16/16** 项 Zig 测试以及六项原生模型 C# 检查。Release 构建报告零警告/错误。全部 **34** 个实验室通过,全部 **176** 个原始基线值精确匹配。C/C++/Lua 审计仍为空。实际 Unity 与新的 Linux/macOS 验收仍未验证。
@@ -1062,6 +2046,3 @@ dotnet run --file tools/Build.cs -- unity-test
 发布入口是 `Power.Studio.Editor.ProjectSetup.BuildPlayer`,使用所选桌面目标与 IL2CPP。它需要匹配的 Unity 平台构建模块。还没有已构建或已测试的 Player 包。
 
 当前每一个参数都是合成实验参数。完整的发动机与变速器、车辆标定、排放、声学、实时预算与长时间运行仍需要各自的实现与证据。这些检查不能确立那项工作。
-
-
-

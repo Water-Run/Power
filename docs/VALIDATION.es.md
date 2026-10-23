@@ -2,6 +2,990 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · **Español** · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: Conductos de combustible compresible en equilibrio
+
+Un `equilibrium_fuel_duct` transporta masa, cantidad de movimiento y energía total por celdas explícitas `compressible_fuel`. El líquido es compresible y el vapor ideal; ambas fases comparten presión, temperatura y velocidad. El equilibrio local permite condensación y vaporización súbita. Dos depósitos finitos estacionarios y una pared térmica finita cierran los balances.
+
+Ejecute `equilibrium-fuel-condensing-duct` o `equilibrium-fuel-flashing-duct`. Cada celda expone densidad, velocidad, fracción de fase, velocidad del sonido, temperatura y energía. Masa/energía en puertos, impulso de pared e inventarios completos son observables. Las pruebas independientes cubren trabajo de compresión, límite de vapor ideal, igualdad de potenciales químicos, relaciones de Clapeyron y Gibbs, sonido por inversión de entropía, inversión masa-energía, conservación y fricción con pared finita. Los errores acústicos medios de celda disminuyen con 8, 16 y 24 celdas. Reproducción exacta, reversión, cancelación, ramas, pasos sin asignaciones, assets portables y MCP real se verifican por separado; los resultados detallados están en la evidencia de validación.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 526/526 |
+| standard_checks_on_dotnet | 412/412 |
+| actual_mcp_groups | 62/62 |
+| laboratories | 58 |
+| agent_examples | 57 |
+| unchanged_laboratories | 56 |
+| identical_complete_sample_boundaries | 7531 |
+| all_sample_boundaries | 7553 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_method_order | 1 |
+| empirical_convergence_order_claimed | false |
+| asset_version | power.asset.v36 |
+| agent_api_version | 0.41.0 |
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_fuel_material_record_bytes | 160 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| cell_count_bounds | 1..24 |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112-115 |
+| v35_fixture_sha256 | a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4 |
+| verification_log_sha256 | f5620c5c36fb62b0f527ee4c6fd0d46608d7e6dfa1037c115d3b763133a8c0c0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 58 |
+| schema_negative_cases | 16 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | cell_counts | normalized_cell_average_errors |
+|---|---|---|
+| linear_vapor_acoustics | 8, 16, 24 | 0.09390287687165255, 0.0630137934898812, 0.04692764998969021 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | initial_first_cell_vapor_fraction | final_first_cell_vapor_fraction |
+|---|---|---|---|---|---|---|
+| equilibrium-fuel-condensing-duct | 2552e69b3a50eb9f | a74c5bd9f4c25940 | 11 | 1.1175870895385742e-08 | 0.1 | 0.00036893825719500376 |
+| equilibrium-fuel-flashing-duct | 040a92e35b2df96c | 45e5ec071dd06e39 | 11 | 1.1641532182693481e-10 | 0 | 0.0023026749474771954 |
+
+- `artifacts/reports/equilibrium-duct-final-2026-10-23.log`
+- `artifacts/reports/equilibrium-duct-verify-exit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-evidence-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-baseline-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-schema-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-provenance-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-doc-audit-2026-10-23.json`
+
+El flujo conservativo de Rusanov avanza todas las caras desde el mismo estado de subpaso. La cota de velocidad suma la máxima velocidad absoluta y la cota acústica del material. El límite CFL es 0.2 veces el volumen mínimo de puerto dividido por área y velocidad; cada intervalo admite hasta 4096 subpasos. Transporte y decaimiento local exacto por resistencia se separan a primer orden. La difusión numérica contribuye al cambio total de entropía, aparte del calor de fricción informado. Las fronteras estacionarias absorben impulso sin trabajo mecánico; la energía cinética entrante se termaliza en el inventario finito. Estados inválidos o una disminución de entropía superior al redondeo rechazan todo el lote. Reduzca el paso y revise límites materiales y resolución.
+
+Los parámetros siguen `unverified`. Respete los rangos declarados de temperatura y presión, entalpía latente positiva, volúmenes de coexistencia separados y vapor diluido. Es un conducto horizontal rígido de sección constante y equilibrio homogéneo instantáneo. Omite nucleación a velocidad finita, deslizamiento, tensión superficial, gravedad, elasticidad y comportamiento crítico real. La difusión de primer orden puede ensanchar frentes; conservación y reproducción no demuestran precisión espacial ni validez de hardware medido. La aceptación real de Unity está pendiente.
+
+## 2026-10-23: Cantidad de movimiento en una línea finita de combustible líquido
+
+Un `fuel_inertial_pipe` conecta dos nodos finitos de combustible y una pared térmica finita. La línea horizontal rígida posee masa líquida, energía calórica y cinética propias, además de los recipientes. Densidad constante y temperatura variable perfectamente mezclada. Puertos y línea deben permanecer líquidos; los enlaces cuasiestáticos conservan su modelo bifásico separado.
+
+Solución armónica independiente de flexibilidad finita y RK4 independiente de movimiento/temperatura no lineales verifican exactitud y primer orden. Se verifican calor, entropía, inversión, balances, intervalos especulativos de embrague, asignaciones, reversión, cancelación y ramas. Assets portables y MCP real comprueban cada frontera. Esto no acredita calibración ni Unity real.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 513/513 |
+| standard_checks_on_dotnet | 401/401 |
+| actual_mcp_groups | 60/60 |
+| laboratories | 56 |
+| agent_examples | 55 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| all_sample_boundaries | 7531 |
+| new_core_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_steps | 10000, 20000 |
+| asset_version | power.asset.v35 |
+| agent_api_version | 0.40.0 |
+| fingerprint_tag | 40 |
+| fuel_pipe_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_quantity_fields | 7 |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| v34_fixture_sha256 | 51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587 |
+| verification_log_sha256 | b766d0d57f17dbc37d5565d0b33d528e075c2b4f0aa4a3452b6ac9047a613e07 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 56 |
+| schema_negative_cases | 12 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| finite_compliance_harmonic | 2000000, 1000000, 500000, 250000 | 0.0013357399212237996, 0.0006672710470717257, 0.0003334847696376677, 0.0001667045683679429 |
+| nonlinear_thermal | 200000, 100000, 50000, 25000 | 1.5209877863320287e-05, 7.53194873812646e-06, 3.7476001908842706e-06, 1.8691907269996478e-06 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| inertial-fuel-line | 9b7f2a6b6b3cb7b7 | 549f8d1c054b2b3f | 71 | 1.1641532182693481e-10 |
+| inertial-pump-fed-cylinder | 3ff9ef7bd3e02dfb | 3e16e08ae5051507 | 81 | 1.2129731885579531e-08 |
+
+- `artifacts/reports/fuel-pipe-final-2026-10-23.log`
+- `artifacts/reports/fuel-pipe-evidence-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-baseline-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-schema-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-provenance-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-doc-audit-2026-10-23.json`
+
+El movimiento usa caudal medio y presiones finales aceptadas. Energía y mezcla usan Euler hacia atrás; el acoplamiento converge a primer orden. Incluso sin fricción, la discretización transforma parte de la oscilación en calor numérico, no registrado como fricción física. La entropía incluye mezcla y discretización. Los eventos de caudal cero separan transferencias directas e inversas.
+
+Los parámetros siguen `unverified`. Respete rangos materiales y estabilidad líquida corregida por presión. El fallo revierte todo el intervalo; reduzca paso e inspeccione agotamiento, presión y fase. Se omiten movimiento bifásico de densidad variable, cavitación, acústica, gravedad, geometría móvil y frentes térmicos. La combustión prescrita no prueba equilibrio químico ni entropía de reacción detallados.
+
+## 2026-10-20: Referencia de cantidad de movimiento en la entrada líquida
+
+`LiquidColumn` es una referencia C# independiente de un tubo horizontal rígido con sección, velocidad uniforme, densidad líquida y temperatura constantes. Las presiones absolutas se prescriben por intervalo. Las resistencias lineal y cuadrática son entradas de investigación explícitas. No es un componente del grafo ni cambia las ecuaciones de red o tobera.
+
+Aceleración sin pérdidas, exponencial lineal y tangente hiperbólica cuadrática independientes verifican límites. Una RK4 independiente con presión variable comprueba segundo orden con inversión. Se verifican decaimiento pasivo, equilibrio, energía completa, entropía no negativa, rechazos, uso inmutable y asignaciones en ambas compilaciones.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 502/502 |
+| standard_checks_on_dotnet | 392/392 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| new_core_groups | 6 |
+| convergence_order | 2 |
+| independent_rk4_steps | 20000, 40000 |
+| maximum_internal_intervals | 2 |
+| graph_component | false |
+| asset_format | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| verification_log_sha256 | ca5b2d46919c411d5b781b315b152bd906f6d0839e894e7257bbd53a943bd3b8 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| documentation_locales | 10 |
+| documentation_files | 60 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | interval_counts | normalized_errors |
+|---|---|---|
+| linear | 10, 20, 40, 80 | 5.1713882833185263e-05, 1.2927512993845731e-05, 3.231818398890559e-06, 8.079508596700909e-07 |
+| quadratic | 10, 20, 40, 80 | 0.0005959789277412566, 0.00014891933866423854, 3.722512036997342e-05, 9.305985415002721e-06 |
+| changing-pressure | 100, 200, 400, 800 | 7.556351839870537e-06, 1.8960140672276058e-06, 4.757354594406252e-07, 1.1881904671850701e-07 |
+
+- `artifacts/reports/liquid-column-final-2026-10-20.log`
+- `artifacts/reports/liquid-column-evidence-2026-10-20.json`
+- `artifacts/reports/liquid-column-baseline-2026-10-20.json`
+- `artifacts/reports/liquid-column-doc-audit-2026-10-20.json`
+
+Los parámetros siguen `unverified`. El mínimo de presión es un límite líquido declarado por el usuario, no predicción de presión de vapor o NPSH. Compresibilidad, acústica, gravedad, geometría móvil, almacenamiento térmico, cavitación, deslizamiento y relajación quedan fuera. Los enlaces bifásicos siguen cuasiestáticos. Unity real y calibración medida son independientes.
+
+## 2026-10-20: Descarga de combustible con calidad congelada y receptores finitos
+
+La bomba del dominio de combustible alimenta ahora una aguja física y descarga con calidad congelada en un receptor encendido con volumen líquido finito. Los inventarios completos incluyen cambio de fase, trabajo de desplazamiento, energía cinética e impulso sobre pared inmóvil.
+
+Límites independientes de Bernoulli y gas ideal, maximización separada del flujo de mezcla, energía/entropía y ODE independiente de tobera/receptor verifican las ecuaciones. El refinamiento temporal es de primer orden. Reproducción portable, MCP real, reversión, cancelación, ramas independientes y asignaciones verifican la integración. Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 496/496 |
+| standard_checks_on_dotnet | 386/386 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 52 |
+| identical_complete_sample_boundaries | 7287 |
+| all_sample_boundaries | 7379 |
+| new_core_groups | 7 |
+| new_constitutive_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_reference_steps | 1000, 2000 |
+| asset_version | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| fingerprint_tags | 38, 39 |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| additional_reported_states_per_discharge | 11 |
+| v33_fixture_sha256 | 3e3804c7277baea26c330c47a319669c5f61142486fb73f127679e56192fe9ba |
+| verification_log_sha256 | b39f7313ca8f90d028a0b76ade58d950dfddcaf73750de7891c62d0026042b2d |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 54 |
+| schema_negative_cases | 11 |
+| documentation_locales | 10 |
+| documentation_files | 200 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| step_ns | normalized_error |
+|---|---|
+| 200000 | 9.43999202748097e-05 |
+| 100000 | 4.716734258499583e-05 |
+| 50000 | 2.356437988192822e-05 |
+| 25000 | 1.1782714233986302e-05 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| finite-volume-fuel-discharge | 53190b5628ca0ab4 | 82f9e4a926d43249 | 11 | 2.2737367544323206e-13 |
+| pump-fed-finite-volume-cylinder | e4225e412bfa9802 | a4d2b9f5703c79d8 | 81 | 1.6226408661168534e-08 |
+
+- `artifacts/reports/fuel-discharge-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-final-2026-10-20.log`
+- `artifacts/reports/fuel-discharge-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-doc-audit-2026-10-20.json`
+
+Los parámetros siguen `unverified`. Se aplican temperaturas declaradas, volumen gaseoso positivo y dominio de vapor diluido. Se omiten inercia local de entrada, nucleación finita, deslizamiento, spray resuelto, comportamiento crítico real y calibración medida. La combustión prescrita no acredita equilibrio químico ni entropía de reacción. Continúe entrada, encendido, admisión/escape, pérdidas y coordinación ECU/TCU.
+
+## 2026-10-20: Bomba de combustible con cambio de fase impulsada por eje
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Los nuevos controles de bomba de combustible cubren ambos destinos de ensamblado. Los controles Standard se alojan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 478/478 |
+| standard_checks_on_dotnet | 370/370 |
+| actual_mcp_groups | 56/56 |
+| laboratories | 52 |
+| agent_examples | 51 |
+| unchanged_laboratories | 50 |
+| identical_complete_sample_boundaries | 7085 |
+| all_sample_boundaries | 7287 |
+| new_core_groups | 8 |
+| new_constitutive_groups | 4 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| closed_liquid_convergence_order | 2 |
+| phase_changing_pump_convergence_order | 1 |
+| independent_rk4_reference_step_counts | 16000, 32000 |
+| independent_rk4_refinement_difference | 7.3033901113193e-09 |
+| asset_version | power.asset.v33 |
+| agent_api_version | 0.38.0 |
+| fingerprint_tag | 37 |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| additional_reported_states_per_chamber | 3 |
+| v32_fixture_sha256 | dc53c55f9ed58503a4e37d3b9a57ace52e5aac8196fdb5707bb555c47f3a593e |
+| verification_log_sha256 | 81b64552d28447704043ee7b253aad25486200a94f06e1a3a601ea09fc602b8e |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 52 |
+| audited_documents | 200 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 904b97a95df5e08dbbc838a648d363a16ac07d56 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-pump | electric-equilibrium-fuel-pump |
+|---|---|---|
+| boundaries | 101 | 101 |
+| state_count | 21 | 28 |
+| fingerprint | 30f8057b21ff5860 | faa54f82c2b83d52 |
+| source_sha256 | f07afca1eeb49e9a462366a6458985b3396c8bd319c67799c6b44c78c64265fa | 4cdd4d0eab90afb2e7d0092316a4a1cedd86ec1a91f1943a8d0ae8a390dc6878 |
+| report_sha256 | 8cf56eb4a84b5ff27db280470a03ee5264e47679ec9603394e7f4402c9738eff | f4589b23ef386cf53ff9b0f5d0760c7d342660bf066255cf6fc8e5f0b7d73873 |
+| final_state_hash | 99856e5951328734 | 63199f094da67091 |
+| max_sampled_energy_residual_j | 1.862645149230957e-09 | 1.8570620735625099e-09 |
+| max_sampled_mass_residual_kg | 6.911788849595091e-18 | 6.667843360785852e-18 |
+| max_sampled_fuel_residual_kg | 6.911788849595091e-18 | 6.667843360785852e-18 |
+| maximum_sampled_vapor_kg | 5.177782452991471e-08 | 0 |
+| final_delivered_kg | 7.361187328902878e-05 | 0.0004189649656093893 |
+| final_chamber_work_j | 0.026875072320387147 | 0.16071542089376198 |
+| final_shaft_speed_rad_s | 99.73088716821476 | 100.37362340296784 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| closed_liquid | 7.017638564699169e-07, 1.7544040498140845e-07, 4.386006580148205e-08, 1.0965013230723741e-08 | 4.000012748171001, 4.000003232450241, 4.000001174516329 |
+| phase_changing_pump | 2.488428192603582e-05, 1.2876657736742689e-05, 6.204988735247702e-06, 3.007042341865784e-06 | 1.9325109383803978, 2.0752104937106957, 2.0634856546109304 |
+
+| inlet_conductance_m3_s_pa | delivered_kg | maximum_vapor_kg |
+|---|---|---|
+| 1e-11 | 7.361187328902878e-05 | 5.177782452991471e-08 |
+| 3e-10 | 0.00041896562499261326 | 0.0 |
+
+Trabajo/presión líquidos, adiabáticas de vapor ideal e inversión independiente de entropía bifásica verifican el cierre. El movimiento líquido cerrado refina a segundo orden; el llenado/entrega con fase a primer orden frente a RK4 invertido independientemente. Falta y suministro completo de entrada, accionamiento eléctrico, engranajes/hidráulica/embrague, replay, rollback y asignaciones verifican integración. Asset v33 guarda geometría y lee v1-v32. Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+Los parámetros siguen `unverified`. Temperatura, presión y volumen representable están limitados durante todo el ciclo. Se asumen líquido incompresible, vapor de pseudoespecie ideal, equilibrio instantáneo a temperatura común y presión exterior de carcasa cero. Inercia local/NPSH, flujo crítico, retraso de nucleación, inercia/histéresis de válvula, mezclas reales y calibración medida siguen abiertos. Inyector físico y trabajo de desplazamiento/cinética del receptor son requisitos separados.
+
+- `artifacts/reports/fuel-pump-final-2026-10-20.log`
+- `artifacts/reports/fuel-pump-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-pump-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-pump-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-pump-doc-audit-2026-10-20.json`
+- `artifacts/reports/fuel-pump-provenance-audit-2026-10-20.json`
+- `tests/Power.Tests/Fixtures/equilibrium-fuel-network-v32.powerasset`
+- `artifacts/reports/equilibrium-fuel-pump.json`
+- `artifacts/reports/electric-equilibrium-fuel-pump.json`
+
+[Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
+
+
+## 2026-10-20: Red de transporte de combustible en equilibrio
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Los nuevos controles de red de combustible cubren ambos destinos de ensamblado. Los controles Standard se alojan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 462/462 |
+| standard_checks_on_dotnet | 356/356 |
+| actual_mcp_groups | 54/54 |
+| laboratories | 50 |
+| agent_examples | 49 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| all_sample_boundaries | 7085 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_convergence_order | 1 |
+| asset_version | power.asset.v32 |
+| agent_api_version | 0.37.0 |
+| mcp_suite_timeout_seconds | 1800 |
+| mcp_operation_timeout_seconds | 600 |
+| fuel_domain | 7 |
+| fuel_restriction_kind | 42 |
+| fuel_heat_link_kind | 43 |
+| fingerprint_tag | 36 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| fuel_material_quantity_fields | 12 |
+| additional_states_per_fuel_node | 2 |
+| additional_states_per_fuel_link | 5 |
+| accepted_near_capacity_states | 124 |
+| rejected_capacity_states | 129 |
+| nonfinite_normalized_flow | NumericalFailure / complete rollback |
+| v31_fixture_sha256 | 8042d65c3171a71cd79eaa0b49ba733a232a805bd4ed429d23a93e5821016349 |
+| verification_log_sha256 | f1ad1804f19f54932590bced69e4c7d319ae3bc045b4acece7a718e9aa3ffd89 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 50 |
+| audited_documents | 190 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | d36f416c882925474dbfb2d25f81e39bd70e0211 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-network | electrothermal-fuel-network |
+|---|---|---|
+| boundaries | 22 | 21 |
+| state_count | 15 | 21 |
+| fingerprint | e27805e1a2c808d1 | e07bad65ca9c3215 |
+| source_sha256 | d9c4b378d6a5080fb456bac71569cd2c0e564ddcf8fd03bcd15bfd594e857ef7 | 9af1e5d35e821ba314c512eab452b325d4f3652787dab8f23365f5f3b2ec1090 |
+| report_sha256 | 34c3bde1599613b896ccc4e054d19b854369b791a72137b524a329dd98bef44f | 0558728552240dc70a69a3a4c46417012df1cfdc2e662341c09ddc403ba872ca |
+| final_state_hash | 61b040af166ad9c7 | 675bb21a911fc936 |
+| max_sampled_energy_residual_j | 1.0913936421275139e-10 | 6.9003007752144185e-09 |
+| max_sampled_mass_residual_kg | 5.421010862427522e-20 | 5.421010862427522e-20 |
+| max_sampled_fuel_residual_kg | 5.421010862427522e-20 | 5.421010862427522e-20 |
+| final_donor_vapor_kg | 6.354078034825645e-08 | 6.85091337500224e-08 |
+| final_link_entropy_j_k | 0.004268953263094927 | 0.005100906194149379 |
+| final_heat_entropy_j_k | 0.008489760659647926 | 5.323274810960101e-05 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| liquid | 0.00035614510680141416, 0.00017889748238547338, 8.965668828815983e-05, 4.488054760116941e-05 | 1.9907776345003132, 1.9953612586100706, 1.9976736711167877 |
+| two_phase_wall | 0.00016997336466461097, 8.49514500003881e-05, 4.263682568381033e-05, 2.134770042729958e-05 | 2.0008294698187545, 1.9924431201885908, 1.9972561367446433 |
+
+Los laboratorios cubren descarga líquida a coexistencia, flujo inverso, cambios de apertura y calor finito/electromecánico. Exponencial independiente de presión líquida, EDO bifásica simultánea de masa/entalpía/calor, inversión térmica y captura especulativa del embrague verifican precisión y composición. Assets y MCP real conservan todos los valores y hashes. Asset v32 guarda propiedades y lee v1-v31. Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+Siguen vigentes los límites de material y deformación representable del cierre. Los parámetros siguen `unverified`. Llenado de bomba y trabajo del eje, conexión de inyector, inercia local, flujo crítico, retraso de nucleación, deslizamiento y medidas de mezclas reales siguen pendientes. Los rieles de inyector alimentados por bomba conservan su ruta de líquido separado hasta integrarlos.
+
+- `artifacts/reports/fuel-network-final-2026-10-20.log`
+- `artifacts/reports/fuel-network-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-network-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-network-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-doc-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-overflow-before-2026-10-20.log`
+- `artifacts/reports/fuel-network-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-overflow-after-2026-10-20.log`
+- `tests/Power.Tests/Fixtures/equilibrium-tank-supply-v31.powerasset`
+- `artifacts/reports/equilibrium-fuel-network.json`
+- `artifacts/reports/electrothermal-fuel-network.json`
+
+[Red de transporte de combustible en equilibrio](EQUILIBRIUM_FUEL_NETWORK.es.md)
+
+
+## 2026-10-20: Referencia de volumen de combustible flexible
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Los nuevos controles constitutivos cubren ambos destinos de ensamblado. Los controles Standard se alojan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 449/449 |
+| standard_checks_on_dotnet | 345/345 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| new_constitutive_groups_per_assembly | 9 |
+| roundtrip_states_per_assembly | 80 |
+| independent_entropy_maximum_states_per_assembly | 4 |
+| finite_bath_convergence_order | 1 |
+| finite_bath_reference_tolerance_j | 2e-6 |
+| heat_interval_energy_residual_tolerance_j | 5e-13 |
+| entropy_decrease_roundoff_j_k | 1e-13 |
+| entropy_maximum_tolerance_j_k | 1e-10 |
+| wall_expansion_roundoff_relative | 2.8421709430404007e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| graph_transport | separated_liquid_only |
+| verification_log_sha256 | f663d7d383b7961572c48cd6dd05e7e26c68313a44b6af02f196cf1d7caefcf7 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 70 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 50597595f1085bbe35b948d3826ded2832ad8a85 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | Value |
+|---|---|
+| duration_s | 6 |
+| step_counts | 32, 64, 128, 256 |
+| energy_errors_j | 1.313327615023411, 0.6450572281738829, 0.31948411040258407, 0.1589624951980113 |
+| error_ratios | 2.035986200389321, 2.019058873885909, 2.009808099732074 |
+
+Los controles comparan potenciales químicos, pendientes de Clapeyron, derivadas calóricas y entrópicas y Gibbs con almacenamiento elástico. Una maximización independiente de entropía restringida no usa el solver de saturación. Los límites de recipiente rígido, gas ideal y escala extensiva y el refinamiento RK4 del baño finito aportan referencias independientes. El intercambio conserva energía total y refina a primer orden con entropía total no decreciente. No acredita combustible medido ni aceptación Unity.
+
+El cierre del recipiente flexible de combustible puro resuelve líquido, vapor y coexistencia con almacenamiento elástico. Es una referencia constitutiva local; falta integrar el transporte de bomba y boquilla en el grafo.
+
+- `artifacts/reports/compliant-volume-verify-2026-10-20.log`
+- `artifacts/reports/compliant-volume-evidence-2026-10-20.json`
+- `artifacts/reports/compliant-volume-baseline-replays-2026-10-20.json`
+- `artifacts/reports/compliant-volume-doc-audit-2026-10-20.json`
+- `src/Power.Core/CompliantFuelVolume.cs`
+- `tests/Power.Tests/CompliantFuelVolumeChecks.cs`
+
+[Referencia de volumen de combustible flexible](COMPLIANT_FUEL_VOLUME.es.md)
+
+
+## 2026-10-20: Equilibrio del tanque con volumen líquido finito
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Los controles Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 440/440 |
+| standard_checks_on_dotnet | 336/336 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 46 |
+| matching_sample_boundaries | 6936 |
+| physical_transaction_groups | 9 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| coupled_convergence_order | 1 |
+| entropy_tolerance_j_k | 1e-10 |
+| density_roundoff_relative | 1.4210854715202004e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+| v30_fixture_sha256 | c246723026ac3cbdd69b3e0015b29a161d15c85865e94f3054507cd9c7bc2335 |
+| verification_log_sha256 | 6196f11e31d3c548f283d29d418511d894c33f8d87acaa006eb3e43f3b497526 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| json_schema_laboratories | 48 |
+| audited_documents | 170 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | b91662388d1f09d72455531097bd88844c89f138 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-tank-supply | equilibrium-tank-fired-cylinder |
+|---|---|---|
+| duration_s | 0.2 | 0.6 |
+| boundaries | 41 | 65 |
+| states | 53 | 66 |
+| step_ns | 50000 | 50000 |
+| fingerprint | 6b0e2b783c7a15f0 | 728ba5f64eee747d |
+| final_state_hash | ac64c4b2775b90be | 5091b6a989d113d0 |
+| source_sha256 | 2af17736879d3aa414fb9c8b315395ecbc10705ca7824d00757f1bd1f1e53a0c | a326896a2961c136cd8a768761654eae929798f02bbbd65792d3853fe097be5d |
+| report_sha256 | a77fea120565de9e1c3cd91201197722bd5fd31c8635b6042abb0faafd2931b3 | bb1e7fa5174d155e910b93098036e1f789f6278efbd1f6076dba3286bb6962d2 |
+| max_sampled_energy_j | 6.318146006378811e-11 | 1.5166961020440795e-09 |
+| max_sampled_mass_kg | 1.5459798853462949e-18 | 1.6805133673525319e-18 |
+| max_sampled_fuel_kg | 1.5458351287390981e-18 | 1.7957098481791167e-18 |
+| max_sampled_hydraulic_volume_m3 | 2.2515856273693413e-21 | 1.885971796620903e-21 |
+| final_evaporated_mass_kg | 4.117877458589608e-09 | 1.1639868253621372e-08 |
+| final_condensed_mass_kg | 3.838295431368862e-09 | 9.507104670266502e-09 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| pump | 1.184041877877462e-08, 5.923758976678073e-09, 2.9627648245877937e-09, 1.4816043858445482e-09 | 1.9988015760584663, 1.9994023580667557, 1.9997003605648416 |
+| vent_wall | 9.169745130691354e-05, 5.2209148699944306e-05, 2.6098838144434922e-05, 1.304798024250431e-05 | 1.7563483333910663, 2.000439575547807, 2.00022054443468 |
+
+`equilibrium-tank-supply` prueba inversión de bomba, venteo con combustible y pared finita caliente. `equilibrium-tank-fired-cylinder` conecta esa fuente a un motor encendido. Se verifican máximo independiente de entropía, potenciales, derivadas calóricas, refinamiento ODE, balances, replay, rollback y asignaciones. Asset v31 conserva el indicador y lee v1-v30.
+
+- `artifacts/reports/tank-phase-verified-2026-10-20.log`
+- `artifacts/reports/tank-phase-evidence-2026-10-20.json`
+- `artifacts/reports/tank-phase-baseline-replays-2026-10-20.json`
+- `artifacts/reports/tank-phase-schema-audit-2026-10-20.json`
+- `artifacts/reports/tank-phase-doc-audit-2026-10-20.json`
+- `artifacts/reports/equilibrium-tank-supply.json`
+- `artifacts/reports/equilibrium-tank-fired-cylinder.json`
+- `tests/Power.Tests/Fixtures/equilibrium-injected-cylinder-v30.powerasset`
+
+Casos acoplados de bomba, calor y venteo demuestran primer orden. Ambas fases fuente permanecen en el intervalo declarado; la densidad total queda bajo la líquida con margen binary64. Densidad/propiedades constantes, equilibrio instantáneo e interfaz plana son aproximaciones de investigación. Mezclas reales, tensión superficial, oleaje, cinética finita, calibración medida y Unity Editor/Play/Player/IL2CPP real siguen sin verificar.
+
+[TANK_PHASE_EQUILIBRIUM.es.md](TANK_PHASE_EQUILIBRIUM.es.md)
+
+## 2026-10-13: Equilibrio de fases del combustible y límites de suministro
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Los controles Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 426/426 |
+| standard_checks_on_dotnet | 325/325 |
+| actual_mcp_groups | 50/50 |
+| laboratories | 46 |
+| agent_examples | 45 |
+| json_schema_laboratories | 46 |
+| unchanged_laboratories | 44 |
+| matching_sample_boundaries | 6810 |
+| physical_transaction_groups | 10 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| coupled_convergence_order | 1 |
+| entropy_tolerance_j_k | 1e-10 |
+| pressure_roundoff_relative | 1.4210854715202004e-14 |
+| reported_margin_clamp | false |
+| asset_version | power.asset.v30 |
+| agent_api_version | 0.35.0 |
+| fuel_film_record_bytes | 100 |
+| v29_fixture_sha256 | e7f48291b8c9817af7d2eec61b989854d5200130cd4a0987f42e49c21d36d16d |
+| verification_log_sha256 | 211a53a32d601f06d4d406b08661c86ac3e28d94256d42ebbc9041a285eabdec |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 160 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | ca443cbd218bd678a1de6e579ddfe99826659555 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-cell | equilibrium-injected-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 61 | 65 |
+| states | 12 | 59 |
+| step_ns | 1000000 | 50000 |
+| fingerprint | f72fab4a491d9c86 | 74c05089a700aca4 |
+| final_state_hash | 4bace9fd4482fca9 | 94a0b3f991564b01 |
+| source_sha256 | 5c4a0742ea5c315c2b626e27f8d7ebc3f841d668b4ba4bae5da8daee628d5e98 | c32bc066cecd3783464c2c24d8182ee9897fb20d86325623e3faf8e547d58949 |
+| report_sha256 | 8dbb4841d14e147fea6f7a36a00c5d80e5fcd168a6a20463b53d136add38f1d1 | 6a6c3f8bf270a096bdc698e05b4d3835102e78c4fe60bde61607ada5188238c3 |
+| max_sampled_energy_j | 4.5656634029001e-10 | 1.7261072571272962e-09 |
+| max_sampled_mass_kg | 1.2414114874959026e-17 | 2.5478751053409354e-18 |
+| max_sampled_fuel_kg | 1.021860547567588e-17 | 2.4445370857759108e-18 |
+| final_evaporated_mass_kg | 7.740915788733479e-06 | 2.7999999999999996e-05 |
+| final_condensed_mass_kg | 2.322468550648195e-05 | 0 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| vent_hot | 3.0010550752308518e-05, 1.4974238709442034e-05, 7.4793589965338466e-06, 3.7377392527560005e-06 | 2.004145341518117, 2.002075139912596, 2.0010381920084406 |
+| vent_cold | 4.5548939344257636e-05, 2.2750721204261026e-05, 1.136942354094117e-05, 5.68322752030781e-06 | 2.00208771121184, 2.0010443908907014, 2.0005223264975656 |
+| moving_cylinder | 0.00013129782098744158, 6.581502863305389e-05, 3.2949002559945487e-05, 1.6484868202937264e-05 | 1.9949519693971638, 1.9974816692345656, 1.9987422498212424 |
+
+`equilibrium-fuel-cell` muestra condensación, evaporación por venteo y nueva condensación. `equilibrium-injected-cylinder` añade equilibrio reversible del receptor y márgenes al motor con tanque ventilado. Se comprueban máximo de entropía independiente, límites analíticos, refinamiento ODE simultáneo, replay completo, rollback y asignaciones. Asset v30 conserva propiedades y lee v1-v29.
+
+La comparación solo admite redondeo binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-52`. El margen informado no se recorta. Es una comprobación de saturación global; pérdidas locales y NPSH de bomba requieren un modelo de flujo resuelto. Las comprobaciones independientes también exigen entropía total no decreciente en el flash adiabático y el intercambio con la pared finita.
+
+- `artifacts/reports/phase-equilibrium-verified-2026-10-13.log`
+- `artifacts/reports/phase-equilibrium-evidence-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-baseline-replays-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-doc-audit-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-schema-audit-2026-10-13.json`
+- `artifacts/reports/equilibrium-fuel-cell.json`
+- `artifacts/reports/equilibrium-injected-cylinder.json`
+- `tests/Power.Tests/Fixtures/vented-tank-liquid-cylinder-v29.powerasset`
+
+Parámetros `unverified`. No se aportan propiedades medidas de gasolina, cinética multicomponente o de velocidad finita, desplazamiento líquido/pulverización resueltos ni calibración OEM. La aceptación real Unity Editor/Play/Player/IL2CPP sigue pendiente.
+
+[FUEL_PHASE_EQUILIBRIUM.es.md](FUEL_PHASE_EQUILIBRIUM.es.md)
+
+## 2026-10-08: Geometría del tanque y espacio gaseoso finito
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Los controles Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 411/411 |
+| standard_checks_on_dotnet | 313/313 |
+| actual_mcp_groups | 48/48 |
+| laboratories | 44 |
+| agent_examples | 43 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| physical_transaction_groups | 6 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| initial_headspace_pressure_pa | 100000 |
+| tank_capacity_m3 | 2e-7 |
+| vent_input | 960 |
+| vent_close_ns | 200000000 |
+| vent_reopen_ns | 400000000 |
+| headspace_interval_volume_fraction | 0.25 |
+| asset_version | power.asset.v29 |
+| agent_api_version | 0.34.0 |
+| audited_documents | 140 |
+| documentation_locales | 10 |
+| v28_fixture_sha256 | 3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57 |
+| verification_log_sha256 | 5e043f1b2638849a1a0ec7d29e59ee98408cf507e92b0fdeba048be5d2980f27 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| acceptance_scope | local_windows_only |
+
+| Identifier | vented-tank-liquid-cylinder | vented-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 58 | 67 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 3e1af7af1d0de7c7 | eed5469fc995ca45 |
+| final_state_hash | f34b39e6adfe540d | 189ed72df2d82b75 |
+| source_sha256 | 033c2ea4594cec4a3e173e16e9ba806f74ae1ff211e524b520b62c212afaa573 | bb25d8f37bbde15acd2f5788b7d877abf37e1200dfbf25e72a77b1ed27442b57 |
+| report_sha256 | 1ededb11489f67f12dbde919c67b61d8fd6b481261c6369026c1e80bc5b3deab | 6e0b0dd64663278e2eb022409706d29e2b621c8bbcb48c6e5948b17eaa5d3904 |
+| max_sampled_energy_j | 9.768825748324161e-10 | 1.2995997167308815e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 8.944667923005412e-18 |
+| max_sampled_fuel_kg | 1.5754812818929986e-18 | 6.274820073259857e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.5617169965001163e-21 | 9.171778631987971e-21 |
+
+`vented-tank-liquid-cylinder` y `vented-tank-needle-cylinder` usan tanque 1513, gas 1520 y entrada de venteo 960. Asset v29 guarda geometría y lee v1-v28. Pasan trabajo/derivadas analíticos, convergencia ODE independiente, balances, replay portable/MCP, rollback y pasos sin asignación.
+
+- `artifacts/reports/tank-headspace-closure-2026-10-08.log`
+- `artifacts/reports/tank-headspace-evidence-2026-10-08.json`
+- `artifacts/reports/tank-headspace-doc-audit-2026-10-08.json`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/vented-tank-liquid-cylinder.json`
+- `artifacts/reports/vented-tank-needle-cylinder.json`
+- `tests/Power.Tests/Fixtures/recirculating-liquid-cylinder-v28.powerasset`
+
+Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, equilibrio de fases, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
+
+[TANK_HEADSPACE.es.md](TANK_HEADSPACE.es.md)
+
+## 2026-10-08: Descubrimiento completo de laboratorios y componentes
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Los controles Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 400/400 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 46/46 |
+| laboratories | 42 |
+| agent_examples | 41 |
+| supported_components | 41 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| audited_documents | 50 |
+| documentation_locales | 10 |
+| catalog_schema_matches_cli | true |
+| asset_version | power.asset.v28 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| verification_log_sha256 | 5dbc2ef47f7ba1621f5e3ce09a2290acb770eeab97b090466c3d1c0d7bf20196 |
+| catalog_sha256 | a84748a97884ad9bdfea9f6e74ecd7bcc100d26fd4afb284c67aca2264675db4 |
+| catalog_schema_sha256 | d38c90471e424519c092e35f372834a32e26bccc6fac51ab56468ec8866be69a |
+| acceptance_scope | local_windows_only |
+
+CLI `list-labs`, ejemplos MCP, exports Unity y verificación serie comparten el catálogo. Cada fuente está cubierta, cada ejemplo anunciado se valida por stdio real y los componentes coinciden con el esquema completo. Las huellas, hashes fuente y cada hash de estado muestreado coinciden con la base. Asset v28 y lectores anteriores no cambian.
+
+La auditoría documental cubre secciones correspondientes, una sola línea de idiomas y tablas completas en los diez idiomas. El catálogo y la respuesta CLI cumplen `power.laboratory_catalog.v1.schema.json`.
+
+- `artifacts/reports/development-review-baseline-2026-10-08.log`
+- `artifacts/reports/development-review-final-2026-10-08.log`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/development-review-evidence-2026-10-08.json`
+- `artifacts/reports/development-review-catalog-2026-10-08.json`
+
+Geometría/espacio gaseoso del tanque, motor más completo, coordinación ECU/TCU, calibración medida y aceptación Unity real siguen pendientes. Los parámetros de investigación siguen `unverified`.
+
+## 2026-10-05: Retorno de alivio de combustible trazado
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Las pruebas Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 398/398 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 45/45 |
+| laboratories | 42 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| asset_version | power.asset.v28 |
+| v27_fixture_sha256 | ee344fad148d226c223145d610b18f84912060bc722fee980cae6515ceea3d62 |
+| verification_log_sha256 | ee5eb035556dd2ba0cd17baa274672ee3663a8572982b72bd23da881ab877e41 |
+| prior_ci_scope | preceding_revision_only |
+| prior_ci_revision | 85eebeb442b455304c5e88aebd86279c8347aad2 |
+
+| Identifier | recirculating-liquid-cylinder | recirculating-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 54 | 63 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 8c295e86019b787b | 354faf7fae4a338e |
+| final_state_hash | d4a612015c1623dc | 8554f5721f716a34 |
+| source_sha256 | f7e499c1b155869fad912df7a10ba443f62aa22af585147523d4527f9f8937a4 | 8de240be98f08a3ceb110337228a09a68c25f5f54fbefac159daf517cca0f827 |
+| report_sha256 | 4a5e68862dc626a09471d5964f0623652efcf3056f6b2417545713ed00c421aa | d2efe3cb35bfc6bda3e61c2ef668f276784ed0f450909976d1b8dffaee4b5612 |
+| max_sampled_energy_j | 1.412331585015636e-09 | 1.4023612493474502e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 5.3600244902252125e-18 |
+| max_sampled_fuel_kg | 3.1238575094738597e-18 | 5.834362940687621e-18 |
+| max_sampled_hydraulic_volume_m3 | 4.1689902872672595e-21 | 7.239484721064098e-21 |
+
+- `artifacts/reports/liquid-return-final-2026-10-05.log`
+- `artifacts/reports/liquid-return-evidence-2026-10-05.json`
+- `artifacts/reports/liquid-return-schema-audit-2026-10-05.json`
+
+Pasan decaimiento/trabajo independiente, refinamiento mecánico/presión/térmico simultáneo, fracciones, rutas, fronteras externas, replay, rollback y asignaciones. Ebullición o intervalo sin resolver falla todo el lote. Geometría/ventilación, válvulas/bombas medidas, cavitación, spray, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos.
+
+[CI 37273231730](https://github.com/Water-Run/Power/actions/runs/37273231730)
+
+[LIQUID_FUEL_RETURN.es.md](LIQUID_FUEL_RETURN.es.md)
+
+## 2026-10-05: Tanque finito de combustible líquido
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Las pruebas Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 388/388 |
+| standard_checks_on_dotnet | 298/298 |
+| actual_mcp_groups | 43/43 |
+| laboratories | 40 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| asset_version | power.asset.v27 |
+| v26_fixture_sha256 | b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d |
+| verification_log_sha256 | 6c7b9ad52c6e4977b2817c6f6bdd9de4eaf6aeeb943efba255a2ad4956a27d70 |
+
+| Identifier | finite-tank-liquid-cylinder | finite-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 43 | 52 |
+| step_ns | 50000 | 10000 |
+| fingerprint | f7ee4872a034c885 | 8be53a56f175aeeb |
+| final_state_hash | 9fbab09b0d8fea77 | e77e6d4adaf785eb |
+| source_sha256 | 0a67c3eaaac79992b21b647efd6535d0c5c81159808006e5dde40552c3fd5934 | 508a8d163f965b2fc62c965d1984d9abd0e88011685a4099be110470c92baac6 |
+| report_sha256 | 038cbafab19f3e587b7e4a156c017e06531fd04cbaca8619240b81b8e14d6936 | ab18f538eae81bcead2a1a929ab97a0b6ef856a9b6058f1a375e2195d0747edc |
+| max_sampled_energy_j | 5.5981672630878165e-09 | 1.93150526683894e-08 |
+| max_sampled_mass_kg | 1.1926223897340549e-18 | 3.63207727782644e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 1.3137481011914198e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.2977429835191313e-21 | 1.826414792517085e-21 |
+
+- `artifacts/reports/finite-tank-integrated-2026-10-05.log`
+- `artifacts/reports/finite-tank-evidence-2026-10-05.json`
+- `artifacts/reports/finite-tank-schema-audit-2026-10-05.json`
+
+Masa y energía térmica llegan exactamente a cero; caudal/reacción adelante desaparecen mientras el eje conserva su dinámica real. El retorno restaura inventario líquido a temperatura mezclada del raíl. Pasan intercambio húmedo analítico, energía de eje/presión agotada, rollback completo y asignaciones.
+
+La energía química de frontera incluye combustible sin quemar que sale por escape. El tanque transfiere internamente; las pruebas integradas comparan cambio total de inventario químico más calor liberado con energía química neta de frontera.
+
+Capacidad geométrica, ventilación/espacio gaseoso/oleaje, cavitación, llenado/eficiencia/regulación medidos y spray resuelto siguen abiertos. Parámetros `unverified`; Unity Editor/Play/Player/IL2CPP real y calibración OEM siguen sin verificar.
+
+La revisión anterior pasa CI Windows, Linux y macOS. Esa ejecución no verifica este tanque finito.
+
+`144ac3d5d0f15d0eafefe713996f2b08d8ae3ea4` · [CI 37269218379](https://github.com/Water-Run/Power/actions/runs/37269218379)
+
+[LIQUID_FUEL_TANK.es.md](LIQUID_FUEL_TANK.es.md)
+
+## 2026-10-05: Raíl de combustible líquido alimentado por bomba
+
+La verificación serie requerida pasa localmente en Windows x64/.NET 10.0.12. Las pruebas Standard se ejecutan en .NET 10; Unity Editor/Play/Player/IL2CPP real sigue sin verificar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 378/378 |
+| standard_checks_on_dotnet | 291/291 |
+| actual_mcp_groups | 41/41 |
+| laboratories | 38 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v26 |
+| v25_fixture_sha256 | df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc |
+| verification_log_sha256 | 2a2c3aa19317c8251c970a4b98a169b402d1855838e7fb79831d273593bfdf29 |
+
+| Identifier | pump-fed-liquid-cylinder | pump-fed-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 39 | 48 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 22cbbe4a983098f4 | 782b15c21ad211c2 |
+| final_state_hash | 4004b74f7f1d8c22 | e322d7a4bd72088c |
+| source_sha256 | 1bc97e3f985567f93fd4ace4006307ab571d2e10850e1bd75a1537ed6f0954bb | 3a801026e05e9e6cb67d298145ac20aea9948ab28e2c4552f8dee0d4f1eb4cce |
+| report_sha256 | 9869c20db74d4bb1dd22f5b3a924402001ca29451acee7fcc72b9188f25bf437 | 16ac066d9f9e268b98d874aba37f75efeb6b1fa1034b6b06562899f20f67fbbb |
+| max_sampled_energy_j | 4.160256139584817e-09 | 2.0303104975027964e-08 |
+| max_sampled_mass_kg | 9.215718466126788e-19 | 2.439454888092385e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 2.825701912040346e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.523666688322677e-21 | 3.763671787116276e-21 |
+
+- `artifacts/reports/rail-feed-integrated-2026-10-05.log`
+- `artifacts/reports/rail-feed-evidence-2026-10-05.json`
+- `artifacts/reports/rail-feed-schema-audit-2026-10-05.json`
+
+Seis grupos físicos/transaccionales, dos de activos, tres integrados y dos escenarios MCP reales cubren la alimentación. Energía térmica/química entrante se acumula con la energía de frontera gaseosa; la presión se almacena una vez. El KPI usa la cota analítica de bomba de 920541.8 Pa en lugar de la presión inicial.
+
+La fuente es una frontera externa explícita, no un tanque finito modelado. Agotamiento, eficiencia/regulación de bomba, pérdidas de línea, cavitación, propiedades dependientes de presión y spray de volumen finito siguen abiertos. Parámetros `unverified`; no se acredita calibración OEM ni aceptación real Unity Editor/Play/Player/IL2CPP.
+
+El checkpoint AT anterior también pasa CI Windows, Linux y macOS en la revisión registrada. Esa ejecución no verifica estos cambios de alimentación.
+
+`0d5a98583723b39e5a0b7723d06e988ebea1a425` · [CI 37259428892](https://github.com/Water-Run/Power/actions/runs/37259428892)
+
+[PUMP_FED_FUEL.es.md](PUMP_FED_FUEL.es.md)
+
+## 2026-10-05: Realimentación AT hidráulica y control de presión
+
+La verificación serie requerida pasa en Windows x64/.NET 10.0.12. La compilación Release no tiene advertencias ni errores. La aceptación real de Unity y nuevas verificaciones Linux/macOS sigue sin confirmar.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 367/367 |
+| standard_checks_on_dotnet | 283/283 |
+| actual_mcp_groups | 39/39 |
+| laboratories | 36 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v25 |
+| v24_fixture_sha256 | 6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc |
+
+| Identifier | controlled-hydraulic-ravigneaux | controlled-fired-hydraulic-ravigneaux |
+|---|---|---|
+| duration_s | 4.5 | 2.2 |
+| boundaries | 451 | 221 |
+| states | 99 | 122 |
+| confirmed_range | 1 | 4 |
+| fault | 0 | 0 |
+| lockup_state | 0 | 2 |
+| max_sampled_energy_j | 7.059115887386724e-7 | 2.7647047318168916e-7 |
+| max_sampled_hydraulic_volume_m3 | 1.7499700690273845e-18 | 2.7681036716270535e-18 |
+| fingerprint | ceb522c56530be00 | 9fa63e406ccae528 |
+| final_state_hash | 7ff1919e1f504740 | 958185fe86764b63 |
+| source_sha256 | 9cac20ed7a79a2b9dd30f630adf5c6b3ce1f5dbbe4fa837eba3f0465cf67855b | cd4bd02357168532793462903670f9ec59e0c47edcd24986adc71c27bb4e88af |
+
+- `artifacts/reports/at-control-final-2026-10-05.log`
+- `artifacts/reports/at-control-evidence-2026-10-05.json`
+- `artifacts/reports/at-control-schema-audit-2026-10-05.json`
+- `artifacts/reports/at-controller-probe-2026-10-05.log`
+
+8 grupos físicos/transaccionales cubren todas las marchas adelante y atrás, presión/contacto/bloqueo reales, propiedad de válvulas, relojes y límites PI. Los fallos incluyen pérdida de alimentación, drenaje bloqueado, tiempo de aplicación/liberación, interbloqueo de dirección y pérdida de bloqueo confirmado. 2 grupos de assets conservan rutas tipadas y rechazan descensos firmados de nuevo. 3 grupos integrados y 2 escenarios MCP reales coinciden en cada escalar y hash de estado.
+
+El arranque en reversa y la recuperación siguen Applying a 500 ms y se confirman antes de 800 ms dentro del tiempo declarado. Las pruebas siguen el bloqueo real y no una demora fija. El vaciado seguro no elimina un bloqueo físico. El grafo motor/planetas/actuadores/control conserva 122 estados dentro del límite inalterado de 128.
+
+Los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo, calibración OEM y aceptación real Editor/Play/Player/IL2CPP siguen pendientes.
+
+[AT_CONTROL.es.md](AT_CONTROL.es.md)
+
+
 ## 2026-10-02: alimentación hidráulica AT compartida y actuación dinámica por pistón
 
 La verificación en serie exigida, `dotnet run --file tools/Build.cs -- verify`, pasa en local
@@ -2166,5 +3150,3 @@ Define primero `POWER_UNITY_EDITOR`. Los registros de Unity y los resultados XML
 La entrada de publicación es `Power.Studio.Editor.ProjectSetup.BuildPlayer`, con el destino de escritorio seleccionado e IL2CPP. Necesita el módulo de compilación de la plataforma Unity correspondiente. Aún no hay un paquete de Player compilado ni probado.
 
 Cada parámetro actual es un parámetro de experimento sintético. Un motor y una transmisión completos, la calibración del vehículo, las emisiones, la acústica, un presupuesto de tiempo real y las ejecuciones largas aún necesitan su propia implementación y su evidencia. Estas comprobaciones no establecen ese trabajo.
-
-

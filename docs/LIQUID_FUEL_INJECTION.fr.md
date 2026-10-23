@@ -10,9 +10,7 @@ restant et l'énergie de pression déterminent la livraison. Le film chauffe ens
 
 Cela relie la livraison, le changement de phase et la réaction, tout en gardant chaque inventaire
 et transfert d'énergie observable. C'est un modèle de recherche à masse volumique et compliance
-constantes. La pompe et la réalimentation de rampe, les propriétés mesurées, l'actionnement magnétique et électronique affiné,
-la pulvérisation et l'entraînement, la cavitation, l'allumage et l'ECU, ainsi que le matériel essence calibré,
-restent des travaux requis vers l'objectif de groupe motopropulseur complet.
+constantes. L'alimentation facultative par pompe utilise une frontière externe explicite de matière/chaleur. Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
 
 ```mermaid
 flowchart LR
@@ -28,6 +26,8 @@ flowchart LR
 La rampe a une masse volumique liquide constante `rho`, une compliance positive `C` en m3/Pa,
 une masse initiale `m0` et une pression absolue initiale `P0`. Son volume de référence
 à pression nulle doit être non négatif :
+
+Sans alimentation par pompe, la rampe suit ces équations et conserve sa température fournie.
 
 ```text
 V_reference = m0 / rho - C P0
@@ -181,13 +181,7 @@ la réaction prescrite entraînent le même modèle vilebrequin/charge que les a
 la CLI, les assets portables et le serveur MCP réel partagent ses définitions et ses bornes
 de rejeu. Tous les paramètres restent `unverified`.
 
-La décroissance et le travail de pression analytiques, la dose, l'inversion et l'épuisement, le raffinement couplé
-indépendant, les bilans complets source/film/constituants/énergie, les bornes d'allocation
-active et le rollback d'embrayage spéculatif sont contrôlés. [VALIDATION.fr.md](VALIDATION.fr.md)
-consigne les résultats observés. Les vues de rampe et de buse Unity préparées et les tests de cycle de vie
-exigent encore une preuve réelle d'Editor, de Play et de Player. La réalimentation et les pompes de rampe, la dynamique d'aiguille,
-la pulvérisation et le déplacement résolus, l'allumage et l'ECU, la transmission et le contrôle complets, ainsi que les
-groupes motopropulseurs mesurés, restent inachevés.
+Travail d'arbre, pression et stockage calorique mélangé ont des contrôles de conservation et ODE indépendants ; l'acceptation Unity réelle reste en attente. [VALIDATION.fr.md](VALIDATION.fr.md) Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
 
 ## Extension d'aiguille physique
 
@@ -197,3 +191,13 @@ mouvement. Dans ce mode, la dose demandée est une cible de contrôleur ; elle n
 pendant le retard de fermeture, le rebond ou l'inversion. Le chemin idéal limité par quota reste
 distinct et inchangé. Le comportement magnétique, de pilote et de pulvérisation affiné, ainsi que la calibration,
 restent ouverts.
+
+## Rampe de carburant liquide alimentée par pompe
+
+`liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
+
+Le format v27 conserve les liens et la température source et lit v1-v26. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+
+Capacité géométrique, évent/espace gazeux/ballottement, cavitation, remplissage/efficacité/régulation mesurés et spray résolu restent ouverts. Paramètres `unverified` ; Unity Editor/Play/Player/IL2CPP réel et calibration OEM restent non vérifiés.
+
+[PUMP_FED_FUEL.fr.md](PUMP_FED_FUEL.fr.md)

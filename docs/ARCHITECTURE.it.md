@@ -118,7 +118,7 @@ Le sessioni MCP vivono nel processo del server locale. Il limite è 16. Sono ril
 
 ## Che cosa è ancora aperto
 
-Scambio gas comprimibile, combustione premiscelata prescritta, frizioni, ingranaggi, un convertitore mappato e l'azionamento idraulico esistono ora come componenti con porte, stato e controlli di conservazione. Non completano il gruppo motopropulsore. Ancora aperti: pompa e rabbocco del binario, controllo dell'accensione, aspirazione e scarico dettagliati, perdite meccaniche, termochimica più ricca, cedevolezza di ingranamento, controllo completo di pressione e cambio AT, comportamento ECU/TCU coordinato e calibrazione misurata. Una nuova equazione ha ancora bisogno di una versione esplicita del modello, di dimensioni e di evidenza numerica. La semantica dei componenti esistenti non si estende cambiandola in silenzio.
+Scambio gas comprimibile, combustione premiscelata prescritta, frizioni, ingranaggi, un convertitore mappato e l'azionamento idraulico esistono ora come componenti con porte, stato e controlli di conservazione. Non completano il gruppo motopropulsore. Ancora aperti: riempimento e regolazione misurati della pompa, controllo dell'accensione, aspirazione e scarico dettagliati, perdite meccaniche, termochimica più ricca, cedevolezza di ingranamento, controllo completo di pressione e cambio AT, comportamento ECU/TCU coordinato e calibrazione misurata. Una nuova equazione ha ancora bisogno di una versione esplicita del modello, di dimensioni e di evidenza numerica. La semantica dei componenti esistenti non si estende cambiandola in silenzio.
 
 Un agente può generare una topologia e uno stato iniziale, proporre ipotesi sui parametri, scrivere candidati di componenti, costruire esperimenti e rileggere l'evidenza. Il nucleo di esecuzione possiede ancora i vincoli numerici e i controlli. Un giudizio di un modello linguistico non è un fatto fisico. La modifica del grafo in Unity, un thread di lavoro della simulazione e un backend di solver ad alte prestazioni sostituibile aspettano che il confine sia stabile. Niente qui afferma un solver non lineare generale, Burst o un solver su GPU.
 
@@ -245,3 +245,87 @@ Gli ingranamenti del portasatelliti supportano rapporti relativi con segno finit
 ## Assemblaggio condiviso di azionamento idraulico
 
 L'[assemblaggio di azionamento AT](AT_HYDRAULIC_ACTUATION.it.md) abbassa i bersagli di frizione dichiarati 1..6 in frizioni reali a stantuffo/contatto, restrizioni di riempimento/scarico e molle di richiamo alimentate da una pompa reversibile condivisa, trafilamento/trascinamento e scarico. Le aree esplicite anteriore/posteriore conservano l'inventario spazzato e il lavoro della pressione di riferimento. Le definizioni ordinarie immutabili conservano la soluzione congiunta esistente di pressione/moto/attrito, la semantica portabile v24 e lo stato atomico completo. Le programmazioni di valvole prescritte restano separate dalla retroazione/dal controllo AT e dall'accettazione misurata del corpo valvole.
+
+## Retroazione AT idraulica
+
+`at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v36 conserva percorsi, guadagni e clock e legge v1-v35.
+
+Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.it.md](AT_CONTROL.it.md)
+
+## Rail di combustibile liquido alimentato da pompa
+
+`liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
+
+v36 conserva collegamenti e temperatura sorgente e legge v1-v35. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
+
+[PUMP_FED_FUEL.it.md](PUMP_FED_FUEL.it.md)
+
+## Serbatoio finito di combustibile liquido
+
+`liquid_fuel_tank` conserva massa liquida finita ed energia termica con densità, riferimento termico del film e potere calorifico dell'iniettore associato. L'alimentazione lo seleziona con `tank_component` e omette `supply_temperature`. Ogni serbatoio appartiene a un'alimentazione compatibile.
+
+Energia termica e chimica del serbatoio entrano nello stoccaggio totale. Il trasferimento interno non aggiunge massa o energia chimica esterna. La pressione prescritta all'ingresso mantiene il confine di lavoro di pressione. Aspirazione/scarico gas possono ancora trasportare energia chimica.
+
+Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
+
+[LIQUID_FUEL_TANK.it.md](LIQUID_FUEL_TANK.it.md)
+
+## Ritorno di scarico carburante tracciato
+
+`liquid_rail_return` collega un'alimentazione a un `hydraulic_relief` unidirezionale esclusivo. La valvola collega il rail alla stessa pressione d'ingresso prescritta della pompa. Registrare ogni percorso; porte incompatibili, proprietà duplicate e percorsi non tracciati sono rifiutati.
+
+`fluid_heat_fraction` sceglie esplicitamente la quota [0,1] delle perdite portata dal carburante di ritorno. Il resto segue il percorso termico dichiarato. Miscelazione simultanea rail/serbatoio conserva massa, chimica, lavoro di pressione e calore. Il ritorno a sorgente esterna porta massa/energia oltre confine.
+
+[LIQUID_FUEL_RETURN.it.md](LIQUID_FUEL_RETURN.it.md)
+
+## Geometria del serbatoio e spazio gassoso finito
+
+`liquid_fuel_tank.parameters.headspace` dichiara `capacity` in `m3` o `l` e `gas_node`. Il gas omette `storage`: volume `capacity - liquid_mass / density`, un proprietario e volume positivo. Pompa e ritorno usano pressione prescritta nulla: il gas finito determina la pressione d'ingresso.
+
+Il solver accoppiato scambia lavoro di pressione fra albero, rail e gas senza fonte esterna. Orifizi gassosi e collegamenti termici forniscono sfiato/calore espliciti. Leggere `pressure`, `fill_fraction`, `hydraulic_work` cumulativo con segno e massa, energia, volume del gas. Dose, liquido, evaporazione e combustione restano separati.
+
+[Geometria del serbatoio e spazio gassoso finito](TANK_HEADSPACE.it.md)
+
+## Equilibrio di fase del carburante e limiti di alimentazione
+
+Il modello usa una pseudospecie ideale, la costante gassosa comune, calori specifici costanti e spostamento liquido trascurabile. L'uguaglianza dei potenziali chimici dà la saturazione seguente. A volume fisso, combustibile totale ed energia interna determinano temperatura e massa di vapore. L'inventario chimico si trasferisce internamente; la reazione consuma solo vapore.
+
+Una soluzione scalare limitata usa l'energia di equilibrio monotona. Il calore della parete usa Euler implicito. Trasporto e lavoro del cilindro mobile hanno evidenza di convergenza del primo ordine. La coesistenza liquida resta nell'intervallo dichiarato. Dopo completa evaporazione al suo interno il gas può surriscaldarsi senza estrapolare la curva.
+
+`mass_flow` è il trasferimento netto con segno del passo fisico completo. `evaporated_fuel_mass` e `condensed_fuel_mass` accumulano masse positive e negative senza contare due volte proiezioni che si annullano. `vapor_partial_pressure` indica la pressione parziale del carburante. I bilanci termici, di massa e chimici includono entrambe le fasi.
+
+[Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md)
+
+## Equilibrio del serbatoio con volume liquido finito
+
+Il recipiente rigido contiene liquido incomprimibile e gas ideale di pseudospecie/portante. Il volume liquido modifica quello gassoso. Il potenziale chimico liquido include `p/rho`, correggendo il riferimento `p_0(T)` a spostamento trascurabile. `reference_pressure` conserva tale significato e non diventa implicitamente la saturazione reale del fluido puro a densità finita.
+
+Un flash limitato a U,V costanti conserva combustibile ed energia termica. Orifizi espliciti trasportano vapore, portante ed energia chimica; collegamenti termici scambiano con nodi finiti. Pompa/ritorno scambiano lavoro di spostamento col gas, poi l'equilibrio ridistribuisce energia interna. `hydraulic_work` conta il lavoro di pompa escludendo quello interno di fase.
+
+[Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md)
+
+## Riferimento del volume di carburante cedevole
+
+`CompliantFuelVolume` fornisce la chiusura costitutiva della rete di carburante in equilibrio. Risolve liquido, vapore e coesistenza con accumulo elastico da massa totale e temperatura o energia. Il percorso iniettore alimentato da pompa richiede ancora l’estensione dell’accoppiamento. [Rete di trasporto del carburante in equilibrio](EQUILIBRIUM_FUEL_NETWORK.it.md)
+
+[Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md)
+
+## Rete di trasporto del carburante in equilibrio
+
+Il dominio `fuel` trasporta insieme liquido puro e vapore in recipienti elastici finiti. Ogni recipiente conserva massa totale ed energia calorica più elastica indipendenti; il flash determina temperatura, pressione e frazioni di vapore. `fuel_restriction` scambia fluido donatore omogeneo, `fuel_heat_link` scambia calore con un nodo termico finito. L’energia chimica del potere calorifico resta separata.
+
+[Rete di trasporto del carburante in equilibrio](EQUILIBRIUM_FUEL_NETWORK.it.md)
+
+## Pompa carburante a cambio di fase azionata da albero
+
+`fuel_chamber` accoppia un albero reale a una camera carburante finita. `fuel_check_valve` di ingresso e uscita forniscono riempimento ed erogazione per pressione. Liquido, vapore ed energia elastica usano la stessa chiusura. Con ingresso insufficiente la camera può evaporare in aspirazione; l’erogazione segue inventario e pressione calcolati.
+
+[Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)
+
+La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo congelato in un ricevitore acceso con volume liquido finito. Gli inventari comprendono cambio fase, lavoro di spostamento, energia cinetica del getto e impulso sulla parete ferma. [Scarico carburante a titolo congelato e ricevitori finiti](FUEL_DISCHARGE.it.md)

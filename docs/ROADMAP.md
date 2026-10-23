@@ -12,12 +12,12 @@ calibration and desktop acceptance each need their own evidence.
 | Milestone | Available foundation | Work still required |
 |---|---|---|
 | Managed core | Dual-target dependency-free physics, topology, units, integer time, replay and atomic transactions | Long-run integrated powertrain validation |
-| Agent interface | Schema-defined MCP tools, structured diagnostics, revisions, branches, cancellation and compact reports | Modeling/control workflows for the remaining full-powertrain scope |
+| Agent interface | Schema-defined MCP tools, structured diagnostics, revisions, branches, cancellation and compact reports; `list-labs` / `get_capabilities.examples` | Modeling/control workflows for the remaining full-powertrain scope |
 | Unity studio | Shared model import, laboratory playback, 3D schematic components and prepared tests | Actual Editor/Play/Player/IL2CPP evidence and desktop packaging |
-| Modeling workbench | Portable asset v24, v1-v23 readers and shared JSON/CLI/MCP definitions | Graph editing, saving and selectable channel plots |
-| Engine physics | Independent gas mass/energy, slider-crank work, timed valves, prescribed combustion, gaseous and liquid fuel metering, finite compliant rails, film evaporation and physical needle actuation | Rail pump/refill, refined magnetic/electronic/spray behavior, finite-liquid-volume coupling, ignition control, detailed intake/exhaust, mechanical losses, thermochemistry and measured calibration |
+| Modeling workbench | Portable asset v36, v1-v35 readers and shared JSON/CLI/MCP definitions | Graph editing, saving and selectable channel plots |
+| Engine physics | Independent gas mass/energy, slider-crank work, timed valves, prescribed combustion, gaseous and liquid fuel metering, finite compliant rails, film evaporation and physical needle actuation; [Pump-fed liquid fuel rail](PUMP_FED_FUEL.md); finite tanks and conserving relief returns; [Geometric tank and finite headspace](TANK_HEADSPACE.md); [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md); [Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md); [Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md); [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md) | Connect compressible ducts to compatible shaft-driven chambers and needle/nozzle boundaries, with explicit pressure work and phase assumptions. Then address phase relaxation/slip, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. |
 | Transmission | Coupled clutches, gears/planetaries, mapped converter/lockup, hydraulics and seven-forward/reverse DCT and four-forward/reverse Ravigneaux paths with resolved planet spin/orbital inertia | Mesh compliance/losses and load sharing, DCT actuation, complete AT pressure/shift control and measured routing, measured maps, valve/seal/cavitation behavior and richer converter dynamics |
-| Controls and electrical integration | Sampled pressure PI, needle closure control and sensor-confirmed staged DCT handoff, bounded voltage/duty, actuator ownership, battery equivalent circuit and accessories | Coordinated ECU/TCU cycles, sensors/actuators, torque requests, faults, BMS and measured thermal/electrical behavior |
+| Controls and electrical integration | Sampled pressure PI, needle closure control and sensor-confirmed staged DCT handoff, bounded voltage/duty, actuator ownership, battery equivalent circuit and accessories; [`at_controller`](AT_CONTROL.md) | Coordinated ECU/TCU cycles, sensors/actuators, torque requests, faults, BMS and measured thermal/electrical behavior |
 | Vehicle evidence and release | Research samples with complete boundaries and provenance | Two complete measured powertrains, uncertainty budgets, stability, desktop acceptance and distribution |
 
 Current numerical checkpoints, authentic asset fixtures and platform-specific
@@ -28,14 +28,7 @@ its recorded revision; new local changes need separate platform acceptance.
 
 ## Next managed work
 
-Continue the [liquid injection contract](LIQUID_FUEL_INJECTION.md) with rail
-pump/refill and refined magnetic/electronic actuation. Finite compliant source mass
-and pressure energy, actual needle motion, sampled dose feedback, film replenishment
-and evaporation are implemented. See [the needle contract](NEEDLE_ACTUATION.md) and [bounded closure prediction](CLOSURE_PREDICTION.md). The
-receiver still exports displacement pressure work under the declared negligible
-liquid volume boundary; resolved spray/displacement must replace it with verified
-geometry and momentum/work coupling. Keep delivery, vapor availability and
-prescribed reaction separate, and retain analytic/conservation/convergence evidence.
+Connect compressible ducts to compatible shaft-driven chambers and needle/nozzle boundaries, with explicit pressure work and phase assumptions. Then address phase relaxation/slip, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
 
 Then extend ignition/control, intake/exhaust dynamics and engine mechanical
 losses. The current Wiebe burn is prescribed and doesn't establish predictive
@@ -50,6 +43,8 @@ coupled converter, gears, clutches and hydraulic primitives. Build on [sampled D
 coordination, including torque requests, sensors/actuators and recoverable faults.
 Extend constant pump-loss, battery and valve/accumulator models when measured
 property/control data is available; supplied research values remain unverified.
+
+The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse. [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
 
 ## Studio and measured acceptance
 
@@ -69,3 +64,5 @@ It remains separate from the active C#/Unity application. Native migration doesn
 complete managed feature migration or powertrain acceptance. Introduce additional
 parallelism, sparse solving or Burst when measurements justify it and the core
 contracts remain stable.
+
+[Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md)

@@ -2,6 +2,990 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-23: 圧縮性平衡燃料ダクト
+
+`equilibrium_fuel_duct` は明示的な `compressible_fuel` セル間で質量、運動量、全エネルギーを輸送します。液体は圧縮性、蒸気は理想気体で、両相の圧力、温度、速度は共通です。局所平衡により凝縮とフラッシュ蒸発が生じます。有限の静止貯槽 2 個と有限熱壁が収支を閉じます。
+
+`equilibrium-fuel-condensing-duct` または `equilibrium-fuel-flashing-duct` を実行します。各セルの密度、速度、相分率、音速、温度、エネルギーを取得できます。ポートの質量・エネルギー、壁への力積、全在庫も観測可能です。独立検証は液体圧縮仕事、理想蒸気極限、化学ポテンシャル一致、Clapeyron と Gibbs の関係、エントロピー反転による音速、質量エネルギー反転、保存、有限壁の摩擦を扱います。セル平均の音響誤差は 8、16、24 セルで減少します。完全再生、ロールバック、取消、分岐、割り当てなしのステップ、可搬 asset、実 MCP は別々に検証し、詳細は検証証拠に記録します。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 526/526 |
+| standard_checks_on_dotnet | 412/412 |
+| actual_mcp_groups | 62/62 |
+| laboratories | 58 |
+| agent_examples | 57 |
+| unchanged_laboratories | 56 |
+| identical_complete_sample_boundaries | 7531 |
+| all_sample_boundaries | 7553 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_method_order | 1 |
+| empirical_convergence_order_claimed | false |
+| asset_version | power.asset.v36 |
+| agent_api_version | 0.41.0 |
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_fuel_material_record_bytes | 160 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| cell_count_bounds | 1..24 |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112-115 |
+| v35_fixture_sha256 | a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4 |
+| verification_log_sha256 | f5620c5c36fb62b0f527ee4c6fd0d46608d7e6dfa1037c115d3b763133a8c0c0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 58 |
+| schema_negative_cases | 16 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | cell_counts | normalized_cell_average_errors |
+|---|---|---|
+| linear_vapor_acoustics | 8, 16, 24 | 0.09390287687165255, 0.0630137934898812, 0.04692764998969021 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | initial_first_cell_vapor_fraction | final_first_cell_vapor_fraction |
+|---|---|---|---|---|---|---|
+| equilibrium-fuel-condensing-duct | 2552e69b3a50eb9f | a74c5bd9f4c25940 | 11 | 1.1175870895385742e-08 | 0.1 | 0.00036893825719500376 |
+| equilibrium-fuel-flashing-duct | 040a92e35b2df96c | 45e5ec071dd06e39 | 11 | 1.1641532182693481e-10 | 0 | 0.0023026749474771954 |
+
+- `artifacts/reports/equilibrium-duct-final-2026-10-23.log`
+- `artifacts/reports/equilibrium-duct-verify-exit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-evidence-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-baseline-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-schema-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-provenance-audit-2026-10-23.json`
+- `artifacts/reports/equilibrium-duct-doc-audit-2026-10-23.json`
+
+保存形 Rusanov フラックスは同じサブステップ状態から全界面を更新します。速度上限は最大絶対速度と物性の音速上限の和です。CFL 制限は最小ポート体積の 0.2 倍を断面積と速度で割った値で、区間当たり最大 4096 サブステップです。輸送と局所的な厳密抵抗減衰は一次分割です。数値拡散は全エントロピー変化に含まれ、報告する摩擦熱とは区別します。静止境界が機械仕事ゼロで貯槽の運動量を受け、流入運動エネルギーは有限貯槽内で内部エネルギーになります。不正状態または丸め誤差を超えるエントロピー減少はバッチ全体を拒否します。刻みを小さくし、物性範囲とセル解像度を確認してください。
+
+パラメータは `unverified` のままです。指定温度・圧力範囲、正の潜エンタルピー、分離した共存比体積、希薄蒸気の条件を守ってください。剛体・等断面・水平管で瞬時均質平衡を仮定します。有限速度の核生成、相間滑り、表面張力、重力、管弾性、実流体の臨界挙動は含みません。一次数値拡散は相変化と音響の前線をぼかします。保存と再生だけでは空間精度や実測機器への妥当性を証明できません。実 Unity の受入検証は未完了です。
+
+## 2026-10-23: 有限液体燃料管路の運動量
+
+`fuel_inertial_pipe` は二つの有限燃料ノードと有限熱壁を接続します。水平剛体管は両容器に加えて独自の液体質量、熱内部エネルギー、運動エネルギーを持ちます。密度一定で温度は完全混合により変化します。ポートと管路全体が液相である必要があり、既存の準静的リンクは別の二相挙動を保ちます。
+
+独立した有限コンプライアンス調和解と非線形運動量・温度 RK4 で精度と一次収束を検査します。熱配分、対エントロピー、逆流、全収支、クラッチ試行区間、無割り当て、巻戻し、取消、独立分岐を確認します。可搬資産と実 MCP が全標本境界を確認します。実測校正や実 Unity 合格ではありません。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 513/513 |
+| standard_checks_on_dotnet | 401/401 |
+| actual_mcp_groups | 60/60 |
+| laboratories | 56 |
+| agent_examples | 55 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| all_sample_boundaries | 7531 |
+| new_core_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_steps | 10000, 20000 |
+| asset_version | power.asset.v35 |
+| agent_api_version | 0.40.0 |
+| fingerprint_tag | 40 |
+| fuel_pipe_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_quantity_fields | 7 |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| v34_fixture_sha256 | 51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587 |
+| verification_log_sha256 | b766d0d57f17dbc37d5565d0b33d528e075c2b4f0aa4a3452b6ac9047a613e07 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 56 |
+| schema_negative_cases | 12 |
+| documentation_locales | 10 |
+| documentation_files | 210 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| finite_compliance_harmonic | 2000000, 1000000, 500000, 250000 | 0.0013357399212237996, 0.0006672710470717257, 0.0003334847696376677, 0.0001667045683679429 |
+| nonlinear_thermal | 200000, 100000, 50000, 25000 | 1.5209877863320287e-05, 7.53194873812646e-06, 3.7476001908842706e-06, 1.8691907269996478e-06 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| inertial-fuel-line | 9b7f2a6b6b3cb7b7 | 549f8d1c054b2b3f | 71 | 1.1641532182693481e-10 |
+| inertial-pump-fed-cylinder | 3ff9ef7bd3e02dfb | 3e16e08ae5051507 | 81 | 1.2129731885579531e-08 |
+
+- `artifacts/reports/fuel-pipe-final-2026-10-23.log`
+- `artifacts/reports/fuel-pipe-evidence-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-baseline-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-schema-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-provenance-audit-2026-10-23.json`
+- `artifacts/reports/fuel-pipe-doc-audit-2026-10-23.json`
+
+運動量は中点流量と採用終端圧力を使います。ポートエネルギーと混合は後退オイラーなので連成全体は一次収束です。無摩擦でも終端圧力離散化が振動の一部を数値熱に変えますが、物理摩擦には計上しません。対エントロピーは混合と時間離散化を含みます。ゼロ流量イベントで正逆輸送履歴を分離します。
+
+パラメーターは `unverified` です。材料の温度・圧力範囲と圧力補正した液相安定性を守ります。失敗区間は全て戻り、刻みを減らして供給枯渇・圧力・相を確認します。変密度二相運動量、キャビテーション、音波、重力、移動管形、解像熱前線は含みません。規定燃焼は詳細な化学平衡や反応エントロピー精度を示しません。
+
+## 2026-10-20: 液体入口の運動量参照
+
+`LiquidColumn` は水平剛体管の独立 C# 参照です。断面積、均一速度、液体密度、温度を一定とし、各局所区間の絶対ポート圧力を指定します。線形・二次抵抗は明示した研究入力です。グラフコンポーネントではなく、燃料ネットワークやノズル方程式を変更しません。
+
+独立した無損失加速、線形抵抗の指数解、二次抵抗の双曲正接解で極限を確認します。変動圧力の独立 RK4 は逆流を含む滑らかな二次収束を検証します。受動減衰、定常流、完全エネルギー収支、非負エントロピー、拒否、不変共有、割り当てを両アセンブリで検査します。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 502/502 |
+| standard_checks_on_dotnet | 392/392 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 54 |
+| identical_complete_sample_boundaries | 7379 |
+| new_core_groups | 6 |
+| convergence_order | 2 |
+| independent_rk4_steps | 20000, 40000 |
+| maximum_internal_intervals | 2 |
+| graph_component | false |
+| asset_format | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| verification_log_sha256 | ca5b2d46919c411d5b781b315b152bd906f6d0839e894e7257bbd53a943bd3b8 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| documentation_locales | 10 |
+| documentation_files | 60 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | interval_counts | normalized_errors |
+|---|---|---|
+| linear | 10, 20, 40, 80 | 5.1713882833185263e-05, 1.2927512993845731e-05, 3.231818398890559e-06, 8.079508596700909e-07 |
+| quadratic | 10, 20, 40, 80 | 0.0005959789277412566, 0.00014891933866423854, 3.722512036997342e-05, 9.305985415002721e-06 |
+| changing-pressure | 100, 200, 400, 800 | 7.556351839870537e-06, 1.8960140672276058e-06, 4.757354594406252e-07, 1.1881904671850701e-07 |
+
+- `artifacts/reports/liquid-column-final-2026-10-20.log`
+- `artifacts/reports/liquid-column-evidence-2026-10-20.json`
+- `artifacts/reports/liquid-column-baseline-2026-10-20.json`
+- `artifacts/reports/liquid-column-doc-audit-2026-10-20.json`
+
+パラメーターは `unverified` です。最低圧力は呼出側が宣言する液相有効境界で、蒸気圧や NPSH を予測しません。圧縮性、音波、重力、移動形状、熱蓄積、キャビテーション、相間滑り、相緩和は対象外です。二相燃料リンクは準静的のままです。実 Unity 受け入れと実測校正は別です。
+
+## 2026-10-20: 蒸気質量分率を凍結した燃料流出と有限受容室
+
+燃料域ポンプは物理ニードルと凍結蒸気質量分率の流出を介して、有限液体体積の燃焼受容室へ供給します。全在庫に相変化、排除仕事、噴流運動エネルギー、静止壁力積を含みます。
+
+独立したベルヌーイ・理想気体極限、別の混相流束最大化、エネルギー/エントロピー、独立積分したノズル/受容室 ODE で検証します。時間収束は一次です。可搬再生、実 MCP、ロールバック、キャンセル、独立分岐、割り当て検査が統合を確認します。実 Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 496/496 |
+| standard_checks_on_dotnet | 386/386 |
+| actual_mcp_groups | 58/58 |
+| laboratories | 54 |
+| agent_examples | 53 |
+| unchanged_laboratories | 52 |
+| identical_complete_sample_boundaries | 7287 |
+| all_sample_boundaries | 7379 |
+| new_core_groups | 7 |
+| new_constitutive_groups | 7 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| convergence_order | 1 |
+| independent_rk4_reference_steps | 1000, 2000 |
+| asset_version | power.asset.v34 |
+| agent_api_version | 0.39.0 |
+| fingerprint_tags | 38, 39 |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| additional_reported_states_per_discharge | 11 |
+| v33_fixture_sha256 | 3e3804c7277baea26c330c47a319669c5f61142486fb73f127679e56192fe9ba |
+| verification_log_sha256 | b39f7313ca8f90d028a0b76ade58d950dfddcaf73750de7891c62d0026042b2d |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 54 |
+| schema_negative_cases | 11 |
+| documentation_locales | 10 |
+| documentation_files | 200 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| step_ns | normalized_error |
+|---|---|
+| 200000 | 9.43999202748097e-05 |
+| 100000 | 4.716734258499583e-05 |
+| 50000 | 2.356437988192822e-05 |
+| 25000 | 1.1782714233986302e-05 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j |
+|---|---|---|---|---|
+| finite-volume-fuel-discharge | 53190b5628ca0ab4 | 82f9e4a926d43249 | 11 | 2.2737367544323206e-13 |
+| pump-fed-finite-volume-cylinder | e4225e412bfa9802 | a4d2b9f5703c79d8 | 81 | 1.6226408661168534e-08 |
+
+- `artifacts/reports/fuel-discharge-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-final-2026-10-20.log`
+- `artifacts/reports/fuel-discharge-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-discharge-doc-audit-2026-10-20.json`
+
+パラメーターは `unverified` です。宣言温度、正の気体体積、希薄蒸気領域を守ります。入口局所慣性、有限速度核生成、相間滑り、解像噴霧、実流体臨界挙動、実測校正を含みません。規定燃焼は化学平衡や反応エントロピーの精度を示しません。入口動特性、点火、吸排気、損失、ECU/TCU 協調へ進みます。
+
+## 2026-10-20: 軸駆動の相変化燃料ポンプ
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しました。新しい燃料ポンプ検証は両アセンブリ対象で実行します。Standard 検証は .NET 10 上でホストされ、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 478/478 |
+| standard_checks_on_dotnet | 370/370 |
+| actual_mcp_groups | 56/56 |
+| laboratories | 52 |
+| agent_examples | 51 |
+| unchanged_laboratories | 50 |
+| identical_complete_sample_boundaries | 7085 |
+| all_sample_boundaries | 7287 |
+| new_core_groups | 8 |
+| new_constitutive_groups | 4 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| closed_liquid_convergence_order | 2 |
+| phase_changing_pump_convergence_order | 1 |
+| independent_rk4_reference_step_counts | 16000, 32000 |
+| independent_rk4_refinement_difference | 7.3033901113193e-09 |
+| asset_version | power.asset.v33 |
+| agent_api_version | 0.38.0 |
+| fingerprint_tag | 37 |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| additional_reported_states_per_chamber | 3 |
+| v32_fixture_sha256 | dc53c55f9ed58503a4e37d3b9a57ace52e5aac8196fdb5707bb555c47f3a593e |
+| verification_log_sha256 | 81b64552d28447704043ee7b253aad25486200a94f06e1a3a601ea09fc602b8e |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 52 |
+| audited_documents | 200 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 904b97a95df5e08dbbc838a648d363a16ac07d56 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-pump | electric-equilibrium-fuel-pump |
+|---|---|---|
+| boundaries | 101 | 101 |
+| state_count | 21 | 28 |
+| fingerprint | 30f8057b21ff5860 | faa54f82c2b83d52 |
+| source_sha256 | f07afca1eeb49e9a462366a6458985b3396c8bd319c67799c6b44c78c64265fa | 4cdd4d0eab90afb2e7d0092316a4a1cedd86ec1a91f1943a8d0ae8a390dc6878 |
+| report_sha256 | 8cf56eb4a84b5ff27db280470a03ee5264e47679ec9603394e7f4402c9738eff | f4589b23ef386cf53ff9b0f5d0760c7d342660bf066255cf6fc8e5f0b7d73873 |
+| final_state_hash | 99856e5951328734 | 63199f094da67091 |
+| max_sampled_energy_residual_j | 1.862645149230957e-09 | 1.8570620735625099e-09 |
+| max_sampled_mass_residual_kg | 6.911788849595091e-18 | 6.667843360785852e-18 |
+| max_sampled_fuel_residual_kg | 6.911788849595091e-18 | 6.667843360785852e-18 |
+| maximum_sampled_vapor_kg | 5.177782452991471e-08 | 0 |
+| final_delivered_kg | 7.361187328902878e-05 | 0.0004189649656093893 |
+| final_chamber_work_j | 0.026875072320387147 | 0.16071542089376198 |
+| final_shaft_speed_rad_s | 99.73088716821476 | 100.37362340296784 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| closed_liquid | 7.017638564699169e-07, 1.7544040498140845e-07, 4.386006580148205e-08, 1.0965013230723741e-08 | 4.000012748171001, 4.000003232450241, 4.000001174516329 |
+| phase_changing_pump | 2.488428192603582e-05, 1.2876657736742689e-05, 6.204988735247702e-06, 3.007042341865784e-06 | 1.9325109383803978, 2.0752104937106957, 2.0634856546109304 |
+
+| inlet_conductance_m3_s_pa | delivered_kg | maximum_vapor_kg |
+|---|---|---|
+| 1e-11 | 7.361187328902878e-05 | 5.177782452991471e-08 |
+| 3e-10 | 0.00041896562499261326 | 0.0 |
+
+独立した液体圧力・仕事、理想蒸気断熱線、二相エントロピー反転で閉包を検証します。閉液体の軸運動は二次、相変化を伴う充填・排出は独立反転 RK4 参照に対して一次収束します。入口不足、十分な液体、電動、歯車・油圧・クラッチ組合せ、厳密再生、ロールバック、割当検証で統合を確認します。資産 v33 は幾何を保存し v1-v32 を読みます。実 Unity Editor/Play/Player/IL2CPP は未検証です。
+
+パラメーターは `unverified` です。温度、圧力、分解可能な体積限界は全サイクルで適用します。非圧縮液体、理想擬似成分蒸気、瞬時共通温度平衡、外部ケース圧力ゼロを仮定します。局所入口慣性/NPSH、チョーク流、核生成遅延、弁慣性・ヒステリシス、実混合燃料、実測校正は残ります。物理噴射器接続と受容側の排除体積・運動仕事も別要件です。
+
+- `artifacts/reports/fuel-pump-final-2026-10-20.log`
+- `artifacts/reports/fuel-pump-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-pump-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-pump-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-pump-doc-audit-2026-10-20.json`
+- `artifacts/reports/fuel-pump-provenance-audit-2026-10-20.json`
+- `tests/Power.Tests/Fixtures/equilibrium-fuel-network-v32.powerasset`
+- `artifacts/reports/equilibrium-fuel-pump.json`
+- `artifacts/reports/electric-equilibrium-fuel-pump.json`
+
+[軸駆動の相変化燃料ポンプ](FUEL_CHAMBER_PUMP.ja.md)
+
+
+## 2026-10-20: 相平衡燃料輸送ネットワーク
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しました。新しい燃料ネットワーク検証は両アセンブリ対象で実行します。Standard 検証は .NET 10 上でホストされ、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 462/462 |
+| standard_checks_on_dotnet | 356/356 |
+| actual_mcp_groups | 54/54 |
+| laboratories | 50 |
+| agent_examples | 49 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| all_sample_boundaries | 7085 |
+| new_core_groups | 9 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_convergence_order | 1 |
+| asset_version | power.asset.v32 |
+| agent_api_version | 0.37.0 |
+| mcp_suite_timeout_seconds | 1800 |
+| mcp_operation_timeout_seconds | 600 |
+| fuel_domain | 7 |
+| fuel_restriction_kind | 42 |
+| fuel_heat_link_kind | 43 |
+| fingerprint_tag | 36 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| fuel_material_quantity_fields | 12 |
+| additional_states_per_fuel_node | 2 |
+| additional_states_per_fuel_link | 5 |
+| accepted_near_capacity_states | 124 |
+| rejected_capacity_states | 129 |
+| nonfinite_normalized_flow | NumericalFailure / complete rollback |
+| v31_fixture_sha256 | 8042d65c3171a71cd79eaa0b49ba733a232a805bd4ed429d23a93e5821016349 |
+| verification_log_sha256 | f1ad1804f19f54932590bced69e4c7d319ae3bc045b4acece7a718e9aa3ffd89 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 50 |
+| audited_documents | 190 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | d36f416c882925474dbfb2d25f81e39bd70e0211 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-network | electrothermal-fuel-network |
+|---|---|---|
+| boundaries | 22 | 21 |
+| state_count | 15 | 21 |
+| fingerprint | e27805e1a2c808d1 | e07bad65ca9c3215 |
+| source_sha256 | d9c4b378d6a5080fb456bac71569cd2c0e564ddcf8fd03bcd15bfd594e857ef7 | 9af1e5d35e821ba314c512eab452b325d4f3652787dab8f23365f5f3b2ec1090 |
+| report_sha256 | 34c3bde1599613b896ccc4e054d19b854369b791a72137b524a329dd98bef44f | 0558728552240dc70a69a3a4c46417012df1cfdc2e662341c09ddc403ba872ca |
+| final_state_hash | 61b040af166ad9c7 | 675bb21a911fc936 |
+| max_sampled_energy_residual_j | 1.0913936421275139e-10 | 6.9003007752144185e-09 |
+| max_sampled_mass_residual_kg | 5.421010862427522e-20 | 5.421010862427522e-20 |
+| max_sampled_fuel_residual_kg | 5.421010862427522e-20 | 5.421010862427522e-20 |
+| final_donor_vapor_kg | 6.354078034825645e-08 | 6.85091337500224e-08 |
+| final_link_entropy_j_k | 0.004268953263094927 | 0.005100906194149379 |
+| final_heat_entropy_j_k | 0.008489760659647926 | 5.323274810960101e-05 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| liquid | 0.00035614510680141416, 0.00017889748238547338, 8.965668828815983e-05, 4.488054760116941e-05 | 1.9907776345003132, 1.9953612586100706, 1.9976736711167877 |
+| two_phase_wall | 0.00016997336466461097, 8.49514500003881e-05, 4.263682568381033e-05, 2.134770042729958e-05 | 2.0008294698187545, 1.9924431201885908, 1.9972561367446433 |
+
+実験は共存への液体排出、逆流、開度変更、有限壁と機電系の熱結合を扱います。独立した液体圧力指数解、同時二相質量・エンタルピー・熱 ODE、熱駆動逆流、クラッチ試行捕捉で精度と組合せを検証します。資産と実 MCP は全サンプル値とハッシュを保持します。資産 v32 は物性を保持し v1-v31 を読みます。実 Unity Editor/Play/Player/IL2CPP は未検証です。
+
+構成則の物性・分解可能な壁変形限界が引き続き適用されます。パラメーターは `unverified` です。ポンプ充填と軸仕事、噴射器接続、局所慣性、チョーク流、核生成遅延、相間滑り、実混合物測定は別途必要です。既存のポンプ供給噴射レールは接続実装まで分離液体経路を使います。
+
+- `artifacts/reports/fuel-network-final-2026-10-20.log`
+- `artifacts/reports/fuel-network-evidence-2026-10-20.json`
+- `artifacts/reports/fuel-network-baseline-2026-10-20.json`
+- `artifacts/reports/fuel-network-schema-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-doc-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-overflow-before-2026-10-20.log`
+- `artifacts/reports/fuel-network-provenance-audit-2026-10-20.json`
+- `artifacts/reports/fuel-network-overflow-after-2026-10-20.log`
+- `tests/Power.Tests/Fixtures/equilibrium-tank-supply-v31.powerasset`
+- `artifacts/reports/equilibrium-fuel-network.json`
+- `artifacts/reports/electrothermal-fuel-network.json`
+
+[相平衡燃料輸送ネットワーク](EQUILIBRIUM_FUEL_NETWORK.ja.md)
+
+
+## 2026-10-20: 弾性燃料容積の参照モデル
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しました。新しい構成則検証は両アセンブリ対象で実行します。Standard 検証は .NET 10 上でホストされ、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 449/449 |
+| standard_checks_on_dotnet | 345/345 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 48 |
+| identical_complete_sample_boundaries | 7042 |
+| new_constitutive_groups_per_assembly | 9 |
+| roundtrip_states_per_assembly | 80 |
+| independent_entropy_maximum_states_per_assembly | 4 |
+| finite_bath_convergence_order | 1 |
+| finite_bath_reference_tolerance_j | 2e-6 |
+| heat_interval_energy_residual_tolerance_j | 5e-13 |
+| entropy_decrease_roundoff_j_k | 1e-13 |
+| entropy_maximum_tolerance_j_k | 1e-10 |
+| wall_expansion_roundoff_relative | 2.8421709430404007e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| graph_transport | separated_liquid_only |
+| verification_log_sha256 | f663d7d383b7961572c48cd6dd05e7e26c68313a44b6af02f196cf1d7caefcf7 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 70 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | 50597595f1085bbe35b948d3826ded2832ad8a85 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | Value |
+|---|---|
+| duration_s | 6 |
+| step_counts | 32, 64, 128, 256 |
+| energy_errors_j | 1.313327615023411, 0.6450572281738829, 0.31948411040258407, 0.1589624951980113 |
+| error_ratios | 2.035986200389321, 2.019058873885909, 2.009808099732074 |
+
+化学ポテンシャル、Clapeyron 勾配、熱量・エントロピー導関数、弾性蓄積を含む Gibbs 関係を比較します。独立した拘束付きエントロピー最大化は飽和ソルバーを使いません。剛体容器、理想気体、示量性スケーリングの極限と有限熱浴 RK4 細分化が独立参照です。熱交換は総エネルギーを保存し、総エントロピー非減少で一次収束します。実測燃料妥当性や Unity 検証を意味しません。
+
+純燃料の弾性容器閉包は液体、蒸気、弾性蓄積を伴う共存を解決します。局所構成則参照であり、グラフのポンプとノズル輸送には接続が必要です。
+
+- `artifacts/reports/compliant-volume-verify-2026-10-20.log`
+- `artifacts/reports/compliant-volume-evidence-2026-10-20.json`
+- `artifacts/reports/compliant-volume-baseline-replays-2026-10-20.json`
+- `artifacts/reports/compliant-volume-doc-audit-2026-10-20.json`
+- `src/Power.Core/CompliantFuelVolume.cs`
+- `tests/Power.Tests/CompliantFuelVolumeChecks.cs`
+
+[弾性燃料容積の参照モデル](COMPLIANT_FUEL_VOLUME.ja.md)
+
+
+## 2026-10-20: 有限体積燃料タンクの相平衡
+
+必須の直列検証はローカルの Windows x64/.NET 10.0.12 で合格しました。Standard アセンブリ検証は .NET 10 上で実行しており、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 440/440 |
+| standard_checks_on_dotnet | 336/336 |
+| actual_mcp_groups | 52/52 |
+| laboratories | 48 |
+| agent_examples | 47 |
+| unchanged_laboratories | 46 |
+| matching_sample_boundaries | 6936 |
+| physical_transaction_groups | 9 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| coupled_convergence_order | 1 |
+| entropy_tolerance_j_k | 1e-10 |
+| density_roundoff_relative | 1.4210854715202004e-14 |
+| asset_version | power.asset.v31 |
+| agent_api_version | 0.36.0 |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+| v30_fixture_sha256 | c246723026ac3cbdd69b3e0015b29a161d15c85865e94f3054507cd9c7bc2335 |
+| verification_log_sha256 | 6196f11e31d3c548f283d29d418511d894c33f8d87acaa006eb3e43f3b497526 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| json_schema_laboratories | 48 |
+| audited_documents | 170 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | b91662388d1f09d72455531097bd88844c89f138 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-tank-supply | equilibrium-tank-fired-cylinder |
+|---|---|---|
+| duration_s | 0.2 | 0.6 |
+| boundaries | 41 | 65 |
+| states | 53 | 66 |
+| step_ns | 50000 | 50000 |
+| fingerprint | 6b0e2b783c7a15f0 | 728ba5f64eee747d |
+| final_state_hash | ac64c4b2775b90be | 5091b6a989d113d0 |
+| source_sha256 | 2af17736879d3aa414fb9c8b315395ecbc10705ca7824d00757f1bd1f1e53a0c | a326896a2961c136cd8a768761654eae929798f02bbbd65792d3853fe097be5d |
+| report_sha256 | a77fea120565de9e1c3cd91201197722bd5fd31c8635b6042abb0faafd2931b3 | bb1e7fa5174d155e910b93098036e1f789f6278efbd1f6076dba3286bb6962d2 |
+| max_sampled_energy_j | 6.318146006378811e-11 | 1.5166961020440795e-09 |
+| max_sampled_mass_kg | 1.5459798853462949e-18 | 1.6805133673525319e-18 |
+| max_sampled_fuel_kg | 1.5458351287390981e-18 | 1.7957098481791167e-18 |
+| max_sampled_hydraulic_volume_m3 | 2.2515856273693413e-21 | 1.885971796620903e-21 |
+| final_evaporated_mass_kg | 4.117877458589608e-09 | 1.1639868253621372e-08 |
+| final_condensed_mass_kg | 3.838295431368862e-09 | 9.507104670266502e-09 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| pump | 1.184041877877462e-08, 5.923758976678073e-09, 2.9627648245877937e-09, 1.4816043858445482e-09 | 1.9988015760584663, 1.9994023580667557, 1.9997003605648416 |
+| vent_wall | 9.169745130691354e-05, 5.2209148699944306e-05, 2.6098838144434922e-05, 1.304798024250431e-05 | 1.7563483333910663, 2.000439575547807, 2.00022054443468 |
+
+`equilibrium-tank-supply` は逆転、燃料を含む通気と有限加熱壁を検査します。`equilibrium-tank-fired-cylinder` は同じ供給を燃焼エンジンに接続します。独立エントロピー最大化、化学ポテンシャルと熱容量微分、連立 ODE 収束、全収支、再生、ロールバックと割当を検証します。アセット v31 はフラグを保存し v1-v30 を読みます。
+
+- `artifacts/reports/tank-phase-verified-2026-10-20.log`
+- `artifacts/reports/tank-phase-evidence-2026-10-20.json`
+- `artifacts/reports/tank-phase-baseline-replays-2026-10-20.json`
+- `artifacts/reports/tank-phase-schema-audit-2026-10-20.json`
+- `artifacts/reports/tank-phase-doc-audit-2026-10-20.json`
+- `artifacts/reports/equilibrium-tank-supply.json`
+- `artifacts/reports/equilibrium-tank-fired-cylinder.json`
+- `tests/Power.Tests/Fixtures/equilibrium-injected-cylinder-v30.powerasset`
+
+ポンプ・伝熱・通気連成例は一次収束を示します。供給の両相は物性温度区間内、総密度は binary64 丸め余裕を含め液体未満に保ちます。一定密度/共通気体物性、瞬時平衡、平面界面は研究近似です。実混合物、表面張力、スロッシング、有限速度、実測較正と実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+[TANK_PHASE_EQUILIBRIUM.ja.md](TANK_PHASE_EQUILIBRIUM.ja.md)
+
+## 2026-10-13: 燃料の相平衡と液体供給の境界
+
+必須の直列検証はローカルの Windows x64/.NET 10.0.12 で合格しました。Standard アセンブリ検証は .NET 10 上で実行しており、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 426/426 |
+| standard_checks_on_dotnet | 325/325 |
+| actual_mcp_groups | 50/50 |
+| laboratories | 46 |
+| agent_examples | 45 |
+| json_schema_laboratories | 46 |
+| unchanged_laboratories | 44 |
+| matching_sample_boundaries | 6810 |
+| physical_transaction_groups | 10 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| coupled_convergence_order | 1 |
+| entropy_tolerance_j_k | 1e-10 |
+| pressure_roundoff_relative | 1.4210854715202004e-14 |
+| reported_margin_clamp | false |
+| asset_version | power.asset.v30 |
+| agent_api_version | 0.35.0 |
+| fuel_film_record_bytes | 100 |
+| v29_fixture_sha256 | e7f48291b8c9817af7d2eec61b989854d5200130cd4a0987f42e49c21d36d16d |
+| verification_log_sha256 | 211a53a32d601f06d4d406b08661c86ac3e28d94256d42ebbc9041a285eabdec |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| audited_documents | 160 |
+| documentation_locales | 10 |
+| source_state | working_tree |
+| baseline_revision | ca443cbd218bd678a1de6e579ddfe99826659555 |
+| acceptance_scope | local_windows_only |
+
+| Identifier | equilibrium-fuel-cell | equilibrium-injected-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 61 | 65 |
+| states | 12 | 59 |
+| step_ns | 1000000 | 50000 |
+| fingerprint | f72fab4a491d9c86 | 74c05089a700aca4 |
+| final_state_hash | 4bace9fd4482fca9 | 94a0b3f991564b01 |
+| source_sha256 | 5c4a0742ea5c315c2b626e27f8d7ebc3f841d668b4ba4bae5da8daee628d5e98 | c32bc066cecd3783464c2c24d8182ee9897fb20d86325623e3faf8e547d58949 |
+| report_sha256 | 8dbb4841d14e147fea6f7a36a00c5d80e5fcd168a6a20463b53d136add38f1d1 | 6a6c3f8bf270a096bdc698e05b4d3835102e78c4fe60bde61607ada5188238c3 |
+| max_sampled_energy_j | 4.5656634029001e-10 | 1.7261072571272962e-09 |
+| max_sampled_mass_kg | 1.2414114874959026e-17 | 2.5478751053409354e-18 |
+| max_sampled_fuel_kg | 1.021860547567588e-17 | 2.4445370857759108e-18 |
+| final_evaporated_mass_kg | 7.740915788733479e-06 | 2.7999999999999996e-05 |
+| final_condensed_mass_kg | 2.322468550648195e-05 | 0 |
+
+| Identifier | Normalized errors | Error ratios |
+|---|---|---|
+| vent_hot | 3.0010550752308518e-05, 1.4974238709442034e-05, 7.4793589965338466e-06, 3.7377392527560005e-06 | 2.004145341518117, 2.002075139912596, 2.0010381920084406 |
+| vent_cold | 4.5548939344257636e-05, 2.2750721204261026e-05, 1.136942354094117e-05, 5.68322752030781e-06 | 2.00208771121184, 2.0010443908907014, 2.0005223264975656 |
+| moving_cylinder | 0.00013129782098744158, 6.581502863305389e-05, 3.2949002559945487e-05, 1.6484868202937264e-05 | 1.9949519693971638, 1.9974816692345656, 1.9987422498212424 |
+
+`equilibrium-fuel-cell` は凝縮、通気による蒸発、再凝縮を示します。`equilibrium-injected-cylinder` は通気タンクエンジンに可逆相平衡と供給余裕を加えます。独立したエントロピー最大化、解析的極限、連立 ODE 収束、完全再生、ロールバックと割当を検証します。アセット v30 は物性を保持し v1-v29 を読みます。
+
+圧力比較は binary64 の丸め幅 `64 * epsilon * max(p, p_sat)` のみを許容し、`epsilon = 2^-52` です。表示余裕はクランプしません。これはバルクの飽和検査で、局所圧力損失とポンプ NPSH には流れを解くモデルが必要です。独立検査では断熱フラッシュと有限壁熱交換の総エントロピーが減少しないことも求めます。
+
+- `artifacts/reports/phase-equilibrium-verified-2026-10-13.log`
+- `artifacts/reports/phase-equilibrium-evidence-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-baseline-replays-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-doc-audit-2026-10-13.json`
+- `artifacts/reports/phase-equilibrium-schema-audit-2026-10-13.json`
+- `artifacts/reports/equilibrium-fuel-cell.json`
+- `artifacts/reports/equilibrium-injected-cylinder.json`
+- `tests/Power.Tests/Fixtures/vented-tank-liquid-cylinder-v29.powerasset`
+
+パラメーターは `unverified` です。実測ガソリン物性、多成分または有限速度の相変化、分解液体押しのけ/噴霧、OEM 較正は提供しません。実際の Unity Editor/Play/Player/IL2CPP 受け入れは未完了です。
+
+[FUEL_PHASE_EQUILIBRIUM.ja.md](FUEL_PHASE_EQUILIBRIUM.ja.md)
+
+## 2026-10-08: タンク形状と有限ヘッドスペース
+
+必須の直列検証はローカルの Windows x64/.NET 10.0.12 で合格しました。Standard アセンブリ検証は .NET 10 上で実行しており、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 411/411 |
+| standard_checks_on_dotnet | 313/313 |
+| actual_mcp_groups | 48/48 |
+| laboratories | 44 |
+| agent_examples | 43 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| physical_transaction_groups | 6 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| initial_headspace_pressure_pa | 100000 |
+| tank_capacity_m3 | 2e-7 |
+| vent_input | 960 |
+| vent_close_ns | 200000000 |
+| vent_reopen_ns | 400000000 |
+| headspace_interval_volume_fraction | 0.25 |
+| asset_version | power.asset.v29 |
+| agent_api_version | 0.34.0 |
+| audited_documents | 140 |
+| documentation_locales | 10 |
+| v28_fixture_sha256 | 3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57 |
+| verification_log_sha256 | 5e043f1b2638849a1a0ec7d29e59ee98408cf507e92b0fdeba048be5d2980f27 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| acceptance_scope | local_windows_only |
+
+| Identifier | vented-tank-liquid-cylinder | vented-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 58 | 67 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 3e1af7af1d0de7c7 | eed5469fc995ca45 |
+| final_state_hash | f34b39e6adfe540d | 189ed72df2d82b75 |
+| source_sha256 | 033c2ea4594cec4a3e173e16e9ba806f74ae1ff211e524b520b62c212afaa573 | bb25d8f37bbde15acd2f5788b7d877abf37e1200dfbf25e72a77b1ed27442b57 |
+| report_sha256 | 1ededb11489f67f12dbde919c67b61d8fd6b481261c6369026c1e80bc5b3deab | 6e0b0dd64663278e2eb022409706d29e2b621c8bbcb48c6e5948b17eaa5d3904 |
+| max_sampled_energy_j | 9.768825748324161e-10 | 1.2995997167308815e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 8.944667923005412e-18 |
+| max_sampled_fuel_kg | 1.5754812818929986e-18 | 6.274820073259857e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.5617169965001163e-21 | 9.171778631987971e-21 |
+
+`vented-tank-liquid-cylinder` と `vented-tank-needle-cylinder` はタンク 1513、気体 1520、通気入力 960 を使います。アセット v29 は形状を保存し v1-v28 を読みます。解析仕事/導関数、独立 ODE 収束、収支、portable/MCP 再生、ロールバックとゼロ割当ステップに合格しました。
+
+- `artifacts/reports/tank-headspace-closure-2026-10-08.log`
+- `artifacts/reports/tank-headspace-evidence-2026-10-08.json`
+- `artifacts/reports/tank-headspace-doc-audit-2026-10-08.json`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/vented-tank-liquid-cylinder.json`
+- `artifacts/reports/vented-tank-needle-cylinder.json`
+- `tests/Power.Tests/Fixtures/recirculating-liquid-cylinder-v28.powerasset`
+
+剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、相平衡、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
+
+[TANK_HEADSPACE.ja.md](TANK_HEADSPACE.ja.md)
+
+## 2026-10-08: 完全なラボとコンポーネント検出
+
+必須の直列検証はローカルの Windows x64/.NET 10.0.12 で合格しました。Standard アセンブリ検証は .NET 10 上で実行しており、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 400/400 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 46/46 |
+| laboratories | 42 |
+| agent_examples | 41 |
+| supported_components | 41 |
+| unchanged_laboratories | 42 |
+| matching_sample_boundaries | 6680 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| audited_documents | 50 |
+| documentation_locales | 10 |
+| catalog_schema_matches_cli | true |
+| asset_version | power.asset.v28 |
+| source_state | working_tree |
+| baseline_revision | 90e70cdc6421c3bd60a85839670587c8b237523e |
+| verification_log_sha256 | 5dbc2ef47f7ba1621f5e3ce09a2290acb770eeab97b090466c3d1c0d7bf20196 |
+| catalog_sha256 | a84748a97884ad9bdfea9f6e74ecd7bcc100d26fd4afb284c67aca2264675db4 |
+| catalog_schema_sha256 | d38c90471e424519c092e35f372834a32e26bccc6fac51ab56468ec8866be69a |
+| acceptance_scope | local_windows_only |
+
+CLI `list-labs`、MCP サンプル、Unity 出力と直列検証は共通カタログを使用します。全ソースを網羅し、公開サンプルは実際の stdio で検証され、公開コンポーネントは完全なモデルスキーマと一致します。全ラボの指紋、ソースハッシュと各サンプル状態ハッシュは基準と一致します。アセット v28 と以前のリーダーは変更していません。
+
+文書監査は全十言語の対応する節、単一の言語切替行と完全なラボ表を確認します。カタログと CLI 応答は `power.laboratory_catalog.v1.schema.json` に準拠します。
+
+- `artifacts/reports/development-review-baseline-2026-10-08.log`
+- `artifacts/reports/development-review-final-2026-10-08.log`
+- `artifacts/reports/development-review-baseline-replays-2026-10-08.json`
+- `artifacts/reports/development-review-evidence-2026-10-08.json`
+- `artifacts/reports/development-review-catalog-2026-10-08.json`
+
+タンク形状/ヘッドスペース、より完全なエンジン挙動、ECU/TCU 協調、実測較正と実際の Unity 受け入れは未完了です。研究パラメーターは引き続き `unverified` です。
+
+## 2026-10-05: 追跡可能な燃料リリーフ戻り流れ
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しています。Standard アセンブリ検査は .NET 10 で実行し、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 398/398 |
+| standard_checks_on_dotnet | 305/305 |
+| actual_mcp_groups | 45/45 |
+| laboratories | 42 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| fluid_heat_fractions | 0, 0.5, 1 |
+| asset_version | power.asset.v28 |
+| v27_fixture_sha256 | ee344fad148d226c223145d610b18f84912060bc722fee980cae6515ceea3d62 |
+| verification_log_sha256 | ee5eb035556dd2ba0cd17baa274672ee3663a8572982b72bd23da881ab877e41 |
+| prior_ci_scope | preceding_revision_only |
+| prior_ci_revision | 85eebeb442b455304c5e88aebd86279c8347aad2 |
+
+| Identifier | recirculating-liquid-cylinder | recirculating-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 54 | 63 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 8c295e86019b787b | 354faf7fae4a338e |
+| final_state_hash | d4a612015c1623dc | 8554f5721f716a34 |
+| source_sha256 | f7e499c1b155869fad912df7a10ba443f62aa22af585147523d4527f9f8937a4 | 8de240be98f08a3ceb110337228a09a68c25f5f54fbefac159daf517cca0f827 |
+| report_sha256 | 4a5e68862dc626a09471d5964f0623652efcf3056f6b2417545713ed00c421aa | d2efe3cb35bfc6bda3e61c2ef668f276784ed0f450909976d1b8dffaee4b5612 |
+| max_sampled_energy_j | 1.412331585015636e-09 | 1.4023612493474502e-08 |
+| max_sampled_mass_kg | 1.951563910473908e-18 | 5.3600244902252125e-18 |
+| max_sampled_fuel_kg | 3.1238575094738597e-18 | 5.834362940687621e-18 |
+| max_sampled_hydraulic_volume_m3 | 4.1689902872672595e-21 | 7.239484721064098e-21 |
+
+- `artifacts/reports/liquid-return-final-2026-10-05.log`
+- `artifacts/reports/liquid-return-evidence-2026-10-05.json`
+- `artifacts/reports/liquid-return-schema-audit-2026-10-05.json`
+
+独立リリーフ減衰/仕事、機械/圧力/熱同時細化、熱割合、複数経路、外部境界、replay、rollback、割り当て検査は合格します。沸騰や未解像移送区間は全バッチを失敗させます。タンク形状/通気、実測弁/ポンプ、キャビテーション、噴霧、OEM 校正、実 Unity Editor/Play/Player/IL2CPP は未完了です。
+
+[CI 37273231730](https://github.com/Water-Run/Power/actions/runs/37273231730)
+
+[LIQUID_FUEL_RETURN.ja.md](LIQUID_FUEL_RETURN.ja.md)
+
+## 2026-10-05: 有限液体燃料タンク
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しています。Standard アセンブリ検査は .NET 10 で実行し、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 388/388 |
+| standard_checks_on_dotnet | 298/298 |
+| actual_mcp_groups | 43/43 |
+| laboratories | 40 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| physical_transaction_groups | 5 |
+| portable_groups | 2 |
+| integrated_groups | 3 |
+| new_mcp_scenarios | 2 |
+| asset_version | power.asset.v27 |
+| v26_fixture_sha256 | b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d |
+| verification_log_sha256 | 6c7b9ad52c6e4977b2817c6f6bdd9de4eaf6aeeb943efba255a2ad4956a27d70 |
+
+| Identifier | finite-tank-liquid-cylinder | finite-tank-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 43 | 52 |
+| step_ns | 50000 | 10000 |
+| fingerprint | f7ee4872a034c885 | 8be53a56f175aeeb |
+| final_state_hash | 9fbab09b0d8fea77 | e77e6d4adaf785eb |
+| source_sha256 | 0a67c3eaaac79992b21b647efd6535d0c5c81159808006e5dde40552c3fd5934 | 508a8d163f965b2fc62c965d1984d9abd0e88011685a4099be110470c92baac6 |
+| report_sha256 | 038cbafab19f3e587b7e4a156c017e06531fd04cbaca8619240b81b8e14d6936 | ab18f538eae81bcead2a1a929ab97a0b6ef856a9b6058f1a375e2195d0747edc |
+| max_sampled_energy_j | 5.5981672630878165e-09 | 1.93150526683894e-08 |
+| max_sampled_mass_kg | 1.1926223897340549e-18 | 3.63207727782644e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 1.3137481011914198e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.2977429835191313e-21 | 1.826414792517085e-21 |
+
+- `artifacts/reports/finite-tank-integrated-2026-10-05.log`
+- `artifacts/reports/finite-tank-evidence-2026-10-05.json`
+- `artifacts/reports/finite-tank-schema-audit-2026-10-05.json`
+
+タンク質量と熱エネルギーは正確にゼロになり、前進ポンプ流量/反力が消えても軸は実際の動特性を保持します。逆流はレール混合温度で湿潤在庫を回復します。独立湿潤解析交換、枯渇軸/圧力エネルギー、完全 rollback と割り当て検査は合格です。
+
+化学境界エネルギーには排気に出る未燃燃料が含まれます。タンク移送は内部であり、統合検査は化学全在庫変化と放出熱の和を正味化学境界エネルギーと比較します。
+
+形状容量、通気/気相空間/揺動、キャビテーション、実測充液/効率/調圧、解像噴霧は未完了です。パラメーターは `unverified` で、実際の Unity Editor/Play/Player/IL2CPP と OEM 校正は未検証です。
+
+前のポンプ供給リビジョンは Windows、Linux、macOS CI に合格しています。その実行は今回の有限タンク変更を検証しません。
+
+`144ac3d5d0f15d0eafefe713996f2b08d8ae3ea4` · [CI 37269218379](https://github.com/Water-Run/Power/actions/runs/37269218379)
+
+[LIQUID_FUEL_TANK.ja.md](LIQUID_FUEL_TANK.ja.md)
+
+## 2026-10-05: ポンプ供給の液体燃料レール
+
+必須の直列検証はローカル Windows x64/.NET 10.0.12 で合格しています。Standard アセンブリ検査は .NET 10 で実行し、実際の Unity Editor/Play/Player/IL2CPP は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 378/378 |
+| standard_checks_on_dotnet | 291/291 |
+| actual_mcp_groups | 41/41 |
+| laboratories | 38 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v26 |
+| v25_fixture_sha256 | df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc |
+| verification_log_sha256 | 2a2c3aa19317c8251c970a4b98a169b402d1855838e7fb79831d273593bfdf29 |
+
+| Identifier | pump-fed-liquid-cylinder | pump-fed-needle-cylinder |
+|---|---|---|
+| duration_s | 0.6 | 0.6 |
+| boundaries | 65 | 65 |
+| states | 39 | 48 |
+| step_ns | 50000 | 10000 |
+| fingerprint | 22cbbe4a983098f4 | 782b15c21ad211c2 |
+| final_state_hash | 4004b74f7f1d8c22 | e322d7a4bd72088c |
+| source_sha256 | 1bc97e3f985567f93fd4ace4006307ab571d2e10850e1bd75a1537ed6f0954bb | 3a801026e05e9e6cb67d298145ac20aea9948ab28e2c4552f8dee0d4f1eb4cce |
+| report_sha256 | 9869c20db74d4bb1dd22f5b3a924402001ca29451acee7fcc72b9188f25bf437 | 16ac066d9f9e268b98d874aba37f75efeb6b1fa1034b6b06562899f20f67fbbb |
+| max_sampled_energy_j | 4.160256139584817e-09 | 2.0303104975027964e-08 |
+| max_sampled_mass_kg | 9.215718466126788e-19 | 2.439454888092385e-18 |
+| max_sampled_fuel_kg | 1.0486267887008238e-18 | 2.825701912040346e-18 |
+| max_sampled_hydraulic_volume_m3 | 1.523666688322677e-21 | 3.763671787116276e-21 |
+
+- `artifacts/reports/rail-feed-integrated-2026-10-05.log`
+- `artifacts/reports/rail-feed-evidence-2026-10-05.json`
+- `artifacts/reports/rail-feed-schema-audit-2026-10-05.json`
+
+物理/トランザクション六組、アセット二組、統合三組、実際の MCP シナリオ二組で補給経路を検査します。流入燃料の熱/化学エネルギーはガス境界エネルギーと累積し、圧力貯蔵は一度だけ計上します。圧力 KPI は初期圧力の代わりにポンプのみの解析上限 920541.8 Pa を使います。
+
+源は明示的な外部境界であり、有限燃料タンクのモデルではありません。タンク枯渇、ポンプ効率/調圧、配管損失、キャビテーション、圧力依存物性、有限体積噴霧は未完成です。パラメーターは `unverified` であり、OEM 校正や実際の Unity Editor/Play/Player/IL2CPP 受入を証明しません。
+
+先の AT チェックポイントも記録したリビジョンで Windows、Linux、macOS CI に合格しています。この実行は今回の燃料補給変更を検証しません。
+
+`0d5a98583723b39e5a0b7723d06e988ebea1a425` · [CI 37259428892](https://github.com/Water-Run/Power/actions/runs/37259428892)
+
+[PUMP_FED_FUEL.ja.md](PUMP_FED_FUEL.ja.md)
+
+## 2026-10-05: 油圧 AT フィードバックと圧力制御
+
+必須の直列検証は Windows x64/.NET 10.0.12 で通過しました。Release ビルドに警告やエラーはありません。実際の Unity と新しい Linux/macOS の受入は未検証です。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 367/367 |
+| standard_checks_on_dotnet | 283/283 |
+| actual_mcp_groups | 39/39 |
+| laboratories | 36 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| asset_version | power.asset.v25 |
+| v24_fixture_sha256 | 6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc |
+
+| Identifier | controlled-hydraulic-ravigneaux | controlled-fired-hydraulic-ravigneaux |
+|---|---|---|
+| duration_s | 4.5 | 2.2 |
+| boundaries | 451 | 221 |
+| states | 99 | 122 |
+| confirmed_range | 1 | 4 |
+| fault | 0 | 0 |
+| lockup_state | 0 | 2 |
+| max_sampled_energy_j | 7.059115887386724e-7 | 2.7647047318168916e-7 |
+| max_sampled_hydraulic_volume_m3 | 1.7499700690273845e-18 | 2.7681036716270535e-18 |
+| fingerprint | ceb522c56530be00 | 9fa63e406ccae528 |
+| final_state_hash | 7ff1919e1f504740 | 958185fe86764b63 |
+| source_sha256 | 9cac20ed7a79a2b9dd30f630adf5c6b3ce1f5dbbe4fa837eba3f0465cf67855b | cd4bd02357168532793462903670f9ec59e0c47edcd24986adc71c27bb4e88af |
+
+- `artifacts/reports/at-control-final-2026-10-05.log`
+- `artifacts/reports/at-control-evidence-2026-10-05.json`
+- `artifacts/reports/at-control-schema-audit-2026-10-05.json`
+- `artifacts/reports/at-controller-probe-2026-10-05.log`
+
+8 組の物理/トランザクション検査は全前進段と後退、実際の圧力/接触/ロック、弁所有権、時計、PI 境界を確認します。故障検査は供給喪失、排油詰まり、係合/解放タイムアウト、移動方向インターロック、確認済みロック喪失を含みます。2 組のアセット検査は型付き経路を保持し再署名した降格を拒否します。3 組の統合検査と 2 つの実 MCP シナリオは全スカラーと状態ハッシュで一致します。
+
+後退起動と故障復旧は 500 ms で Applying のままで、設定タイムアウト内の 800 ms 前に確認されます。検査は固定遅延ではなく実際のロックに従います。安全排油は物理的詰まりを除去できません。エンジン/惑星歯車/アクチュエーター/制御グラフは、変更していない 128 上限内で 122 状態を保持します。
+
+パラメーターは `unverified` のままです。ECU トルク協調、詳細なセンサー/弁、包括的な車両故障、OEM 校正、実際の Editor/Play/Player/IL2CPP 受入は未完成です。
+
+[AT_CONTROL.ja.md](AT_CONTROL.ja.md)
+
+
 ## 2026-10-02: 共有 AT 油圧供給と動的ピストン駆動
 
 必須の逐次 `dotnet run --file tools/Build.cs -- verify` は、Windows x64/.NET 10.0.12 上でローカルに合格します。マネージド検査 **354/354**、.NET 10 上でホストされた Standard アセンブリ検査 **273/273**、実際の MCP 群 **37/37**、Zig テスト **16/16**、ネイティブモデルの C# 検査 6 件です。Release ビルドは警告/エラー 0 を報告します。**34** のラボラトリーすべてが合格し、元のベースライン値 **176** 件すべてが正確に一致します。C/C++/Lua 監査は空のままです。実際の Unity と、新しい Linux/macOS の受け入れは未検証のままです。

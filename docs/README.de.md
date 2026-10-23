@@ -31,7 +31,11 @@ flowchart LR
 | Dokument | Worum es geht |
 |---|---|
 | [Agent-API](AGENT_API.de.md) | MCP-Werkzeuge, Revisionen, Fehler und die Operationsfolge |
-| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v24 und die Leser für v1 bis v23 |
+| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v36 und die Leser für v1 bis v35 |
+| [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md) | Kritischer Fluss mit eingefrorenem Dampfanteil, Flüssigkeitsverdrängung und physische Pumpe/Nadel |
+| [Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md) | Endliches Flüssigkeitsinventar, dynamischer Fluss, Mischung und erhaltende Leitungsarbeit |
+| [Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md) | Konservativer kompressibler Zweiphasentransport und Gleichgewichtsakustik |
+| [Referenz für den Impuls am Flüssigkeitseinlass](LIQUID_COLUMN.de.md) | Einphasige Einlassträgheit, Reibungswärme und unabhängig geprüfter Impuls zweiter Ordnung |
 | [Native Zig-Grenze](NATIVE_ZIG.de.md) | Die archivierten Zig-Prototypen und das versionierte ABI |
 
 ## Motor und Kraftstoff
@@ -49,6 +53,12 @@ flowchart LR
 | [Flüssigeinspritzung](LIQUID_FUEL_INJECTION.de.md) | Endliche nachgiebige Flüssigkeitsleitung, die einen Film speist |
 | [Nadelansteuerung](NEEDLE_ACTUATION.de.md) | Positionsabhängiges Solenoid, Nadelmasse, Schließverzögerung und Abprall |
 | [Schließvorhersage](CLOSURE_PREDICTION.de.md) | Begrenztes Strecken-Replay, das die Spannungsabschaltung plant |
+| [Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md) | Starre Kapazität, endliche Gasdruckarbeit und explizite Entlüftung |
+| [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md) | Reversible Verdampfung/Kondensation, Sättigung und Flüssigkeitsgrenzen |
+| [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md) | Endliche Flüssigkeitsverdrängung, Druckkorrektur und dampfführende Entlüftung |
+| [Referenz für ein nachgiebiges Kraftstoffvolumen](COMPLIANT_FUEL_VOLUME.de.md) | Flüssigkeit/Dampf-Gleichgewicht, elastischer Speicher und konservativer Wärmeaustausch mit endlichem Bad |
+| [Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md) | Homogener Zweiphasen-Enthalpietransport, endliche Wandwärme und vollständige Bilanzen |
+| [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md) | Endliche Kammerfüllung, Phasenwechsel und konservative Wellen-Druckarbeit |
 
 ## Getriebe
 

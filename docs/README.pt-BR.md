@@ -31,7 +31,11 @@ flowchart LR
 | Documento | O que é |
 |---|---|
 | [API de agente](AGENT_API.pt-BR.md) | Ferramentas MCP, revisões, erros e a sequência de operação |
-| [Formato de asset](ASSET_FORMAT.pt-BR.md) | `.powerasset` v24 e os leitores de v1 a v23 |
+| [Formato de asset](ASSET_FORMAT.pt-BR.md) | `.powerasset` v36 e os leitores de v1 a v35 |
+| [Descarga de combustível com título congelado e receptores finitos](FUEL_DISCHARGE.pt-BR.md) | Estrangulamento com título congelado, deslocamento líquido finito e bomba/agulha físicas em combustão |
+| [Quantidade de movimento da linha finita de combustível líquido](FUEL_INERTIAL_PIPE.pt-BR.md) | Inventário líquido finito, vazão dinâmica, mistura térmica e trabalho conservativo |
+| [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md) | Transporte bifásico compressível conservativo e acústica de equilíbrio |
+| [Referência de quantidade de movimento na entrada líquida](LIQUID_COLUMN.pt-BR.md) | Inércia de entrada monofásica, calor de atrito e quantidade de movimento de segunda ordem verificada |
 | [Fronteira Zig nativa](NATIVE_ZIG.pt-BR.md) | Os protótipos Zig arquivados e o ABI versionado |
 
 ## Motor e combustível
@@ -49,6 +53,12 @@ flowchart LR
 | [Injeção líquida](LIQUID_FUEL_INJECTION.pt-BR.md) | Trilho líquido finito e flexível que alimenta um filme |
 | [Acionamento da agulha](NEEDLE_ACTUATION.pt-BR.md) | Solenoide dependente da posição, massa da agulha, atraso de fechamento e ricochete |
 | [Predição de fechamento](CLOSURE_PREDICTION.pt-BR.md) | Replay limitado da planta que agenda a remoção da tensão |
+| [Geometria do tanque e espaço gasoso finito](TANK_HEADSPACE.pt-BR.md) | Capacidade rígida, trabalho do gás finito e ventilação explícita |
+| [Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md) | Evaporação/condensação reversíveis, saturação e limites de suprimento líquido |
+| [Equilíbrio do tanque com volume líquido finito](TANK_PHASE_EQUILIBRIUM.pt-BR.md) | Deslocamento líquido finito, correção de pressão e ventilação com vapor |
+| [Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md) | Equilíbrio líquido/vapor, armazenamento elástico e calor conservativo com banho finito |
+| [Rede de transporte de combustível em equilíbrio](EQUILIBRIUM_FUEL_NETWORK.pt-BR.md) | Transporte homogêneo bifásico de entalpia, calor de parede finita e balanços completos |
+| [Bomba de combustível com mudança de fase acionada por eixo](FUEL_CHAMBER_PUMP.pt-BR.md) | Enchimento finito, mudança de fase e trabalho conservativo do eixo |
 
 ## Transmissão
 

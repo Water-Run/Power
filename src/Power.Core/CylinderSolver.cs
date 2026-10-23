@@ -12,13 +12,13 @@ internal sealed class CylinderCoupling
 
     internal CylinderCoupling(CompiledModel model)
     {
-        int[] nodes = model.Components.Where(c => c.Kind is ComponentKind.SealedCylinder or ComponentKind.GasCylinder).Select(c => c.A).Distinct().OrderBy(i => i).ToArray();
+        int[] nodes = model.Components.Where(c => c.Kind is ComponentKind.SealedCylinder or ComponentKind.GasCylinder or ComponentKind.FuelChamber).Select(c => c.A).Distinct().OrderBy(i => i).ToArray();
         Angles = nodes.Select(i => model.Nodes[i].Index).ToArray();
         Components = new int[nodes.Length][]; Response = new double[nodes.Length][]; GearReaction = new double[nodes.Length][];
         var gearCorrection = new double[model.GearComponents.Length];
         for (int k = 0; k < nodes.Length; ++k)
         {
-            Components[k] = Enumerable.Range(0, model.ComponentCount).Where(i => (model.Cylinders[i] is not null || model.GasCylinders[i] is not null) && model.Components[i].A == nodes[k]).ToArray();
+            Components[k] = Enumerable.Range(0, model.ComponentCount).Where(i => (model.Cylinders[i] is not null || model.GasCylinders[i] is not null || model.FuelChamberByComponent[i] >= 0) && model.Components[i].A == nodes[k]).ToArray();
             var response = new double[model.DynamicCount];
             response[Angles[k] + 1] = 0.5 * model.Dt / model.Nodes[nodes[k]].Storage;
             if (!model.Dynamics.Solve(response))
@@ -85,11 +85,22 @@ internal sealed class CylinderSolver : MechanicalSolver
         double torque = 0;
         foreach (int i in _coupling.Components[k])
         {
-            if (_model.Cylinders[i] is { } sealedCylinder) torque += sealedCylinder.DiscreteTorque(angle, delta);
+            if (_model.FuelChamberByComponent[i] is int chamber && chamber >= 0)
+            {
+                if (!_model.FuelChamberWork(chamber, FuelState!, angle, delta, out _, out double fuelTorque, out _)) return double.NaN;
+                torque += fuelTorque;
+            }
+            else if (_model.Cylinders[i] is { } sealedCylinder) torque += sealedCylinder.DiscreteTorque(angle, delta);
             else
             {
                 int gas = _model.Nodes[_model.Components[i].B].Index;
-                torque += _model.GasCylinders[i]!.DiscreteTorque(angle, delta, energy[gas] + .5 * (_combustion?.PreviewHeat(gas, angle + delta) ?? 0), _model.Gas!.Gases[gas].Gamma);
+                double heat = .5 * (_combustion?.PreviewHeat(gas, angle + delta) ?? 0);
+                if (_model.FiniteFilmByGas[gas] >= 0)
+                {
+                    if (!_model.FiniteReceiverWork(i, FiniteFilms!, FiniteMixture!, energy, angle, delta, heat, out _, out double receiverTorque)) return double.NaN;
+                    torque += receiverTorque;
+                }
+                else torque += _model.GasCylinders[i]!.DiscreteTorque(angle, delta, energy[gas] + heat, _model.Gas!.Gases[gas].Gamma);
             }
         }
         return torque;

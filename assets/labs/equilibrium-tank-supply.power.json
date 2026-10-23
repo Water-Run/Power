@@ -1,0 +1,465 @@
+{
+  "schema": "power.model.v1",
+  "description": "Research finite-density equilibrium fuel tank supplying a compliant liquid rail through an ideal separated-liquid pump. Gas and liquid begin in declared thermal and pressure-corrected phase equilibrium. Pump reversal, explicit fuel-bearing venting and a finite heated wall exercise evaporation and condensation. The paired receiver material defines the caloric and negligible-displacement saturation reference; the tank includes liquid displacement and the p/rho chemical-potential term. All properties are unverified. Incompressible liquid, common ideal-gas R/cv and instantaneous equilibrium are declared approximations; two-phase pump entrainment, local NPSH, real mixtures and calibration remain open.",
+  "step_ns": 50000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "rotational",
+      "storage": {
+        "value": 1,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 1,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 2,
+      "domain": "gas",
+      "storage": {
+        "value": 0.01,
+        "unit": "m3"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      },
+      "position": {
+        "value": 100000,
+        "unit": "pa"
+      },
+      "gas": {
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "gamma": 1.4,
+        "premixed": {
+          "lower_heating_value": {
+            "value": 44000000.0,
+            "unit": "j_kg"
+          },
+          "stoichiometric_air_fuel_ratio": 14.7,
+          "initial_fractions": {
+            "fuel": 0,
+            "fresh_air": 1
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 20,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 4,
+      "domain": "rotational",
+      "storage": {
+        "value": 0.02,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 100,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 5,
+      "domain": "hydraulic",
+      "storage": {
+        "value": 5e-13,
+        "unit": "m3_pa"
+      },
+      "initial": {
+        "value": 800000,
+        "unit": "pa"
+      }
+    },
+    {
+      "id": 40,
+      "domain": "gas",
+      "initial": {
+        "value": 340,
+        "unit": "k"
+      },
+      "position": {
+        "value": 100000,
+        "unit": "pa"
+      },
+      "gas": {
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "gamma": 1.4,
+        "premixed": {
+          "lower_heating_value": {
+            "value": 44000000.0,
+            "unit": "j_kg"
+          },
+          "stoichiometric_air_fuel_ratio": 14.7,
+          "initial_fractions": {
+            "fuel": 0.5042628803363988,
+            "fresh_air": 0.49573711966360123
+          }
+        }
+      }
+    },
+    {
+      "id": 60,
+      "domain": "thermal",
+      "storage": {
+        "value": 0.2,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 360,
+        "unit": "k"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "fuel_film",
+      "node_a": 2,
+      "node_b": 3,
+      "parameters": {
+        "initial_mass": {
+          "value": 0,
+          "unit": "kg"
+        },
+        "initial_temperature": {
+          "value": 300,
+          "unit": "k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "saturation_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "conductance": {
+          "value": 0,
+          "unit": "w_k"
+        },
+        "phase_equilibrium": {
+          "reference_pressure": {
+            "value": 100000,
+            "unit": "pa"
+          },
+          "minimum_temperature": {
+            "value": 200,
+            "unit": "k"
+          },
+          "maximum_temperature": {
+            "value": 600,
+            "unit": "k"
+          }
+        }
+      }
+    },
+    {
+      "id": 11,
+      "kind": "torque_source",
+      "node_a": 1,
+      "input_channel": 100,
+      "initial_input": {
+        "value": 0,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 12,
+      "kind": "liquid_fuel_injector",
+      "node_a": 2,
+      "input_channel": 104,
+      "initial_input": {
+        "value": 0,
+        "unit": "kg"
+      },
+      "parameters": {
+        "film_component": 10,
+        "crank_node": 1,
+        "cycle_angle": {
+          "value": 720,
+          "unit": "deg"
+        },
+        "start_angle": {
+          "value": 40,
+          "unit": "deg"
+        },
+        "duration_angle": {
+          "value": 120,
+          "unit": "deg"
+        },
+        "maximum_dose": {
+          "value": 4e-05,
+          "unit": "kg"
+        },
+        "initial_mass": {
+          "value": 0.0005,
+          "unit": "kg"
+        },
+        "supply_temperature": {
+          "value": 300,
+          "unit": "k"
+        },
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "initial_pressure": {
+          "value": 800000,
+          "unit": "pa"
+        },
+        "pressure_compliance": {
+          "value": 5e-13,
+          "unit": "m3_pa"
+        },
+        "area": {
+          "value": 1e-08,
+          "unit": "m2"
+        },
+        "discharge_coefficient": 0.8
+      }
+    },
+    {
+      "id": 20,
+      "kind": "hydraulic_pump",
+      "node_a": 4,
+      "node_b": 5,
+      "parameters": {
+        "inlet_node": 0,
+        "displacement": {
+          "value": 1e-09,
+          "unit": "m3_rad"
+        },
+        "reservoir_pressure": {
+          "value": 0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "kind": "liquid_rail_feed",
+      "node_a": 2,
+      "parameters": {
+        "injector_component": 12,
+        "pump_component": 20,
+        "tank_component": 22
+      }
+    },
+    {
+      "id": 22,
+      "kind": "liquid_fuel_tank",
+      "node_a": 2,
+      "parameters": {
+        "injector_component": 12,
+        "initial_mass": {
+          "value": 0.0001,
+          "unit": "kg"
+        },
+        "initial_temperature": {
+          "value": 340,
+          "unit": "k"
+        },
+        "headspace": {
+          "capacity": {
+            "value": 1.4333333333333335e-07,
+            "unit": "m3"
+          },
+          "gas_node": 40,
+          "phase_equilibrium": true
+        }
+      }
+    },
+    {
+      "id": 41,
+      "kind": "gas_orifice",
+      "node_a": 40,
+      "input_channel": 110,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "reservoir_fractions": {
+        "fuel": 0,
+        "fresh_air": 1
+      },
+      "parameters": {
+        "area": {
+          "value": 1e-10,
+          "unit": "m2"
+        },
+        "discharge_coefficient": 0.7,
+        "reservoir_pressure": {
+          "value": 1000,
+          "unit": "pa"
+        },
+        "reservoir_temperature": {
+          "value": 300,
+          "unit": "k"
+        }
+      }
+    },
+    {
+      "id": 50,
+      "kind": "torque_source",
+      "node_a": 4,
+      "input_channel": 950,
+      "initial_input": {
+        "value": 0,
+        "unit": "nm"
+      }
+    },
+    {
+      "id": 61,
+      "kind": "gas_heat_link",
+      "node_a": 40,
+      "node_b": 60,
+      "parameters": {
+        "conductance": {
+          "value": 0.02,
+          "unit": "w_k"
+        }
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 200000000,
+    "sample_every_ns": 5000000,
+    "events": [
+      {
+        "time_ns": 50000000,
+        "values": [
+          {
+            "channel": 950,
+            "value": -40
+          }
+        ]
+      },
+      {
+        "time_ns": 75000000,
+        "values": [
+          {
+            "channel": 110,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 125000000,
+        "values": [
+          {
+            "channel": 110,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 150000000,
+        "values": [
+          {
+            "channel": 950,
+            "value": 0
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 1e-06
+      },
+      {
+        "object_id": 0,
+        "field": "mass_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "fuel_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "hydraulic_volume_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 22,
+        "field": "mass",
+        "min": 0,
+        "max": 0.0001075
+      },
+      {
+        "object_id": 22,
+        "field": "temperature",
+        "min": 200,
+        "max": 600
+      },
+      {
+        "object_id": 22,
+        "field": "evaporated_fuel_mass",
+        "min": 1e-10,
+        "max": 0.0001
+      },
+      {
+        "object_id": 22,
+        "field": "condensed_fuel_mass",
+        "min": 1e-10,
+        "max": 0.0001
+      },
+      {
+        "object_id": 22,
+        "field": "vapor_partial_pressure",
+        "min": 1,
+        "max": 200000
+      },
+      {
+        "object_id": 12,
+        "field": "cavitation_margin",
+        "min": 0
+      },
+      {
+        "object_id": 40,
+        "field": "pressure",
+        "min": 1000,
+        "max": 300000
+      },
+      {
+        "object_id": 40,
+        "field": "fuel_mass",
+        "min": 0,
+        "max": 0.0001
+      }
+    ]
+  }
+}

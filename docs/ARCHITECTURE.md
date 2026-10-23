@@ -152,7 +152,7 @@ MCP sessions live in the local server process. The limit is 16. They are release
 
 ## What is still open
 
-Compressible gas exchange, prescribed premixed combustion, clutches, gears, a mapped converter and hydraulic actuation now exist as components with ports, state and conservation checks. They do not finish the powertrain. Still open: rail pump and refill, ignition control, detailed intake and exhaust, mechanical losses, richer thermochemistry, mesh compliance, complete AT pressure and shift control, coordinated ECU/TCU behavior, and measured calibration. A new equation still needs an explicit model version, dimensions and numerical evidence. Existing component semantics are not extended by changing them quietly.
+Compressible gas exchange, prescribed premixed combustion, clutches, gears, a mapped converter and hydraulic actuation now exist as components with ports, state and conservation checks. They do not finish the powertrain. Still open: measured pump filling and regulation, ignition control, detailed intake and exhaust, mechanical losses, richer thermochemistry, mesh compliance, complete AT pressure and shift control, coordinated ECU/TCU behavior, and measured calibration. A new equation still needs an explicit model version, dimensions and numerical evidence. Existing component semantics are not extended by changing them quietly.
 
 An agent can generate a topology and initial state, propose parameter hypotheses, write component candidates, build experiments and read the evidence back. The execution core still owns numerical constraints and checks. A language-model judgment is not a physical fact. Unity graph editing, a simulation worker thread and a replaceable high-performance solver backend wait until the boundary is stable. Nothing here claims a general nonlinear solver, Burst or a GPU solver.
 
@@ -488,3 +488,87 @@ front/back areas retain swept inventory and reference-pressure work. Immutable
 ordinary definitions preserve the existing joint pressure/motion/friction solve,
 portable v24 semantics and complete atomic state. Prescribed valve schedules
 remain separate from AT feedback/control and measured valve-body acceptance.
+
+## Hydraulic AT feedback
+
+`at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
+
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v36 retains routes, gains and clocks and reads v1-v35.
+
+These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
+
+[AT_CONTROL.md](AT_CONTROL.md)
+
+## Pump-fed liquid fuel rail
+
+`liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
+
+Asset v36 retains feed links and source temperature and reads v1-v35. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+
+[PUMP_FED_FUEL.md](PUMP_FED_FUEL.md)
+
+## Finite liquid fuel tank
+
+`liquid_fuel_tank` stores finite liquid mass and caloric energy using the paired injector's density, film thermal reference and heating value. A feed selects it with `tank_component` and omits `supply_temperature`. Each tank belongs to one feed with matching fuel properties.
+
+Tank caloric and chemical energy enter the complete stored-energy ledger. Tank-to-rail transfer adds no external mass or chemical supply. The explicit prescribed pump inlet pressure retains its pressure-work boundary. Gas inlet/exhaust can still carry chemical boundary energy.
+
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+
+[LIQUID_FUEL_TANK.md](LIQUID_FUEL_TANK.md)
+
+## Tracked fuel relief return
+
+`liquid_rail_return` pairs a feed with an exclusively owned one-way `hydraulic_relief`. The valve connects the rail to the pump's same prescribed inlet pressure. Register every fluid path; incompatible ports, duplicate valve ownership and untracked paths reject.
+
+`fluid_heat_fraction` explicitly selects the fraction in [0,1] of valve loss carried with returned fuel. The remaining heat follows the valve's declared heat path. Simultaneous rail/tank caloric mixing preserves the full mass, chemical, pressure-work and thermal ledgers. External-source returns instead carry mass and energy out through the boundary.
+
+[LIQUID_FUEL_RETURN.md](LIQUID_FUEL_RETURN.md)
+
+## Geometric tank and finite headspace
+
+`liquid_fuel_tank.parameters.headspace` declares `capacity` in `m3` or `l` and `gas_node`. The gas node omits `storage`: its volume is `capacity - liquid_mass / density`. It must have one owner and remain positive. The paired pump and relief return use zero prescribed reservoir pressure because the finite gas owns inlet pressure.
+
+The coupled solve exchanges shaft, rail and gas pressure work without an external pressure source. Gas orifices and heat links provide explicit vent/thermal paths. Read tank `pressure`, `fill_fraction` and signed cumulative `hydraulic_work`, plus headspace gas mass, energy and volume. Prescribed dose, delivered liquid, evaporation and burn remain separate.
+
+[Geometric tank and finite headspace](TANK_HEADSPACE.md)
+
+## Fuel phase equilibrium and liquid supply limits
+
+The model uses one ideal pseudo-species, the receiver's common gas constant and constant heat capacities, and negligible liquid displacement. Equality of phase chemical potentials gives the saturation relation below. At fixed volume, total fuel and internal energy determine the common temperature and vapor mass. Evaporation and condensation transfer chemical inventory internally; reaction still consumes vapor only.
+
+A bounded scalar solve uses the monotone equilibrium energy relation. Finite-wall heat uses backward Euler. Coupling to transport and moving-cylinder work has first-order refinement evidence. Liquid coexistence stays within the declared temperature interval. Completely evaporated gas can superheat after dryout within that interval; the saturation curve is not extrapolated.
+
+`mass_flow` is the signed net phase transfer over the complete physical tick. `evaporated_fuel_mass` and `condensed_fuel_mass` accumulate its positive and negative mass amounts, so canceling split-operator projections are not counted twice. `vapor_partial_pressure` reports the receiver fuel partial pressure. Thermal, mass and chemical ledgers include both phases.
+
+[Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)
+
+## Finite-volume fuel tank equilibrium
+
+The rigid vessel contains incompressible liquid and an ideal pseudo-species/carrier gas. Liquid volume changes the gas volume. The liquid chemical potential includes `p/rho`, so the receiver's negligible-displacement saturation reference `p_0(T)` receives a pressure correction. `reference_pressure` retains that material-reference meaning; it is not silently reinterpreted as the finite-density pure-fluid saturation pressure.
+
+A bounded constant-U,V flash conserves total fuel and thermal energy. Explicit gas orifices carry vapor, carrier gas and chemical energy; gas heat links exchange heat with finite thermal nodes. The pump/return solve exchanges displacement work with the gas, then phase equilibration redistributes internal energy. Its `hydraulic_work` channel records pump-displacement work, excluding internal phase-change work.
+
+[Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)
+
+## Compliant fuel volume reference
+
+`CompliantFuelVolume` supplies the constitutive closure used by the equilibrium fuel network. It resolves liquid, vapor and coexistence with elastic storage from total mass and temperature or stored energy. The pump-fed injector path remains separate until its coupling is extended. [Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md)
+
+[Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md)
+
+## Equilibrium fuel transport network
+
+The `fuel` domain carries pure liquid and vapor together in finite elastic vessels. Each vessel owns independent total mass and caloric-plus-elastic energy; its phase flash determines temperature, pressure and vapor fractions. `fuel_restriction` exchanges homogeneous donor fluid and `fuel_heat_link` exchanges heat with a finite thermal node. Chemical heating-value energy stays in a separate ledger.
+
+[Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md)
+
+## Shaft-driven phase-resolving fuel pump
+
+A `fuel_chamber` couples an actual shaft to a finite fuel-domain chamber. Inlet and outlet `fuel_check_valve` components provide pressure-driven filling and delivery. Liquid, vapor and elastic wall energy share the same material closure. An inlet-starved chamber can flash during suction; delivered fuel follows the computed inventory and pressure.
+
+[Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
+
+The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse. [Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md)

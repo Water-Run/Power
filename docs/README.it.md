@@ -31,7 +31,11 @@ flowchart LR
 | Documento | Che cos'è |
 |---|---|
 | [API agente](AGENT_API.it.md) | Strumenti MCP, revisioni, errori e la sequenza delle operazioni |
-| [Formato degli asset](ASSET_FORMAT.it.md) | `.powerasset` v24 e i lettori da v1 a v23 |
+| [Formato degli asset](ASSET_FORMAT.it.md) | `.powerasset` v36 e i lettori da v1 a v35 |
+| [Scarico carburante a titolo congelato e ricevitori finiti](FUEL_DISCHARGE.it.md) | Strozzamento a titolo congelato, spostamento liquido finito e pompa/ago fisici in combustione |
+| [Quantità di moto della linea finita di carburante liquido](FUEL_INERTIAL_PIPE.it.md) | Inventario liquido finito, portata dinamica, miscela termica e lavoro conservativo |
+| [Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md) | Trasporto bifase comprimibile conservativo e acustica d’equilibrio |
+| [Riferimento della quantità di moto all'ingresso liquido](LIQUID_COLUMN.it.md) | Inerzia d'ingresso monofase, calore d'attrito e quantità di moto del secondo ordine verificata |
 | [Confine Zig nativo](NATIVE_ZIG.it.md) | I prototipi Zig archiviati e l'ABI versionata |
 
 ## Motore e carburante
@@ -49,6 +53,12 @@ flowchart LR
 | [Iniezione liquida](LIQUID_FUEL_INJECTION.it.md) | Binario liquido finito e cedevole che alimenta un film |
 | [Azionamento ago](NEEDLE_ACTUATION.it.md) | Solenoide dipendente dalla posizione, massa dell'ago, ritardo di chiusura e rimbalzo |
 | [Predizione di chiusura](CLOSURE_PREDICTION.it.md) | Replay limitato dell'impianto che pianifica la rimozione della tensione |
+| [Geometria del serbatoio e spazio gassoso finito](TANK_HEADSPACE.it.md) | Capacità rigida, lavoro del gas finito e sfiato esplicito |
+| [Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md) | Evaporazione/condensazione reversibili, saturazione e limiti del liquido |
+| [Equilibrio del serbatoio con volume liquido finito](TANK_PHASE_EQUILIBRIUM.it.md) | Spostamento liquido finito, correzione di pressione e sfiato con vapore |
+| [Riferimento del volume di carburante cedevole](COMPLIANT_FUEL_VOLUME.it.md) | Equilibrio liquido/vapore, accumulo elastico e calore conservativo con bagno finito |
+| [Rete di trasporto del carburante in equilibrio](EQUILIBRIUM_FUEL_NETWORK.it.md) | Trasporto bifase omogeneo di entalpia, calore di parete finita e bilanci completi |
+| [Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md) | Riempimento finito, cambio di fase e lavoro conservativo dell’albero |
 
 ## Trasmissione
 

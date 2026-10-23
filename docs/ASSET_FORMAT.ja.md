@@ -14,7 +14,229 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現行バージョン 24 と保持されるリーダー
+## 現在のバージョン 36
+
+`equilibrium_fuel_duct` は明示的な `compressible_fuel` セル間で質量、運動量、全エネルギーを輸送します。液体は圧縮性、蒸気は理想気体で、両相の圧力、温度、速度は共通です。局所平衡により凝縮とフラッシュ蒸発が生じます。有限の静止貯槽 2 個と有限熱壁が収支を閉じます。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| compressible_fuel_material_first_quantity | liquid_bulk_modulus replaces compliance |
+| compressible_fuel_material_appended_quantity | initial_velocity |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| fuel_duct_cell_count | 1..24 |
+| fuel_duct_record_order | component_index, cell_count, area, linear_resistance, quadratic_resistance, fluid_heat_fraction, cells |
+| fuel_duct_record_count | count(component.kind == equilibrium_fuel_duct) |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112 density; 113 sound_speed; 114 mass_at_a; 115 mass_at_b |
+| retained_asset_readers | power.asset.v1..v35 |
+
+[圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md)
+
+
+## 保持バージョン 35
+
+`fuel_inertial_pipe` は二つの有限燃料ノードと有限熱壁を接続します。水平剛体管は両容器に加えて独自の液体質量、熱内部エネルギー、運動エネルギーを持ちます。密度一定で温度は完全混合により変化します。ポートと管路全体が液相である必要があり、既存の準静的リンクは別の二相挙動を保ちます。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[有限液体燃料管路の運動量](FUEL_INERTIAL_PIPE.ja.md)
+
+
+## 保持バージョン 34
+
+`fuel_discharge` は有限燃料源を `finite_fuel_film` の気体ノードへ接続します。`phase_mode` を `frozen` と宣言し、ノズル通過中の蒸気質量分率を固定します。両端のバルクは再平衡化します。均質な両相は温度と速度を共有し、液体は非圧縮、蒸気は理想擬似種です。材料特性と液体密度は一致する必要があります。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[蒸気質量分率を凍結した燃料流出と有限受容室](FUEL_DISCHARGE.ja.md)
+
+
+## 保持バージョン 33
+
+`fuel_chamber` は実際の軸と有限燃料室を結合します。入口・出口の `fuel_check_valve` が圧力差で充填と供給を行います。液体、蒸気、弾性壁エネルギーは同じ閉包を使います。入口不足では吸入中にフラッシュ蒸発でき、供給量は計算した在庫と圧力に従います。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[軸駆動の相変化燃料ポンプ](FUEL_CHAMBER_PUMP.ja.md)
+
+
+## 保持バージョン 32
+
+`fuel` ドメインは有限弾性容器内で純燃料の液体と蒸気を共に輸送します。各容器は総質量と熱量・弾性の合計エネルギーを独立に保持し、相平衡フラッシュが温度、圧力、蒸気割合を決定します。`fuel_restriction` は均質な供給側流体を交換し、`fuel_heat_link` は有限熱ノードと熱交換します。発熱量に対応する化学エネルギーは別台帳です。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 36 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_domain | 7 |
+| fuel_restriction_kind | 42 |
+| fuel_heat_link_kind | 43 |
+| fuel_material_record_bytes | 148 |
+| fuel_material_quantity_fields | 12 |
+| fuel_material_count | count(node.domain == fuel) |
+| fuel_table_order | liquid_returns -> fuel_material -> inputs |
+| fuel_quantity_order | compliance, liquid_density, maximum_pressure, gas_constant, vapor_specific_heat, liquid_specific_heat, reference_temperature, latent_internal_energy, reference_pressure, minimum_temperature, maximum_temperature, lower_heating_value |
+| additional_states_per_fuel_node | 2 |
+| additional_states_per_fuel_link | 5 |
+
+[相平衡燃料輸送ネットワーク](EQUILIBRIUM_FUEL_NETWORK.ja.md)
+
+
+## 保持バージョン 31
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium` を `true` にするとタンク内の蒸発と凝縮を解きます。対応する膜が `phase_equilibrium` 物性を与え、追跡ヘッドスペースは R、cv、発熱量と化学量論比を共有します。湿潤タンクは共通初期温度と飽和燃料分圧を、乾燥タンクは飽和以下の分圧を宣言します。総密度は液体密度未満です。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md)
+
+## 保持バージョン 30
+
+任意の `fuel_film.parameters.phase_equilibrium` は `pa` または `bar` の `reference_pressure` と、`k` の `minimum_temperature` / `maximum_temperature` を指定します。既存の `saturation_temperature` は基準温度、`latent_internal_energy` はそこでの蒸気と液体の比内部エネルギー差です。平衡受け側は一つの膜が所有します。初期スナップショットを保持し、受理した区間で気液平衡と有限壁の熱交換を計算します。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[燃料の相平衡と液体供給の境界](FUEL_PHASE_EQUILIBRIUM.ja.md)
+
+## 保持バージョン 29
+
+`liquid_fuel_tank.parameters.headspace` は `m3` または `l` の `capacity` と `gas_node` を指定します。気体ノードは `storage` を省略し、体積は `capacity - liquid_mass / density` です。所有者は一つで体積は正を維持します。有限気体が入口圧力を決めるため、ポンプと戻りの指定リザーバー圧力はゼロです。
+
+`vented-tank-liquid-cylinder` と `vented-tank-needle-cylinder` はタンク 1513、気体 1520、通気入力 960 を使います。アセット v29 は形状を保存し v1-v28 を読みます。解析仕事/導関数、独立 ODE 収束、収支、portable/MCP 再生、ロールバックとゼロ割当ステップに合格しました。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md)
+
+## 保持バージョン 28
+
+`recirculating-liquid-cylinder` と `recirculating-needle-cylinder` は有限燃料、実噴射、蒸発、任意のニードル動特性を保持します。v28 は接続/熱割合を保存し v1-v27 を読みます。各戻りは既存上限内で 8 状態を追加します。
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.ja.md](LIQUID_FUEL_RETURN.ja.md)
+
+## 保持するバージョン 27
+
+v27 はタンクと補給選択を保存し v1-v26 を読みます。各タンクは既存上限内で 4 状態を追加します。独立湿潤交換、枯渇後の圧力/軸エネルギー解析解、逆流混合、全台帳、rollback、分岐、割り当てなしステップを検査します。
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.ja.md](LIQUID_FUEL_TANK.ja.md)
+
+## 保持するバージョン 26
+
+エンコーダーは `power.asset.v26` を書き、v1-v26 を読みます。計数は 38 個の int32（152 bytes）、ヘッダーは 230 + UTF-8 名称長 bytes です。種類 39 は `liquid_rail_feed`、指紋タグは 30 です。24 bytes のレコードは索引、噴射器/ポンプ ID、源温度量を保存します。型とレール/ポンプの独占所有権を確認し、再署名した v25 降格は新種類を拒否します。
+
+## 保持するバージョン 25
+
+エンコーダーは `power.asset.v25` を書き、v1-v25 を読みます。計数表は 37 個の int32（148 bytes）、ヘッダーは 226 + UTF-8 名称長 bytes です。種類 38 は `at_controller`、指紋タグは 29 です。各レコードは固定 208 bytes と経路ごとの 12 bytes です。経路数は 5 または 6 で、有界合計を別に宣言します。型、時計、単位、所有権、トポロジーを確認します。digest を再署名した v24 への降格は新しい種類を拒否します。
+
+## 保持するバージョン 24
 
 エンコーダーは `power.asset.v24` を書き出します。バージョン 1 から 24 までは読み取れます。件数テーブルとレコードサイズは v23 のままです。種別 37 は `carrier_gear` です。基本変速比は有限で、符号付き、かつ非ゼロです。8 バイトの歯車拡張は、コンポーネントインデックスと、区別される可動キャリアを保持します。型付き件数は、すべてのキャリア噛み合いを網羅します。ダイジェストを再封した v23 ダウングレードは、新しい種別を拒否します。
 

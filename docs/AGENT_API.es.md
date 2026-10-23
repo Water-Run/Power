@@ -76,7 +76,7 @@ Windows usa el mismo comando `dotnet` y una ruta absoluta a la DLL. Una conexió
 
 ## Herramientas y resultados
 
-En la versión 0.29.0 de la API de agente, `get_example_model` acepta un `name` opcional: `electrothermal` (por defecto), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` o `fired-hydraulic-ravigneaux`. `get_capabilities` anuncia los niveles de fidelidad admitidos, las versiones de asset legibles, los límites del solver y las cotas de entrada. Las exportaciones usan `power.asset.v24`; los assets v1–v23 siguen siendo legibles. La validación del modelo y la creación de sesión devuelven los canales de salida y sus unidades. Aprobar los KPI de un laboratorio no establece un grupo motopropulsor completo ni calibrado.
+En la API de agente versión 0.41.0, `get_example_model` acepta un `name` opcional, por defecto `electrothermal`. `get_capabilities.examples` enumera los 57 ejemplos, incluidos tanque finito y recirculación. CLI `list-labs` devuelve los 58 laboratorios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` es exclusivo de CLI por diseño. Las capacidades también anuncian componentes, fidelidad, límites del solver y entradas. Los exports usan `power.asset.v36`, conservando lectores v1-v35. La validación y creación de sesión devuelven canales y unidades. Los KPI aprobados no establecen un tren motriz completo o calibrado.
 
 | Herramienta | Finalidad |
 |---|---|
@@ -605,3 +605,93 @@ barrido, el calor de fricción, de restricción y de amortiguación, y cada hash
 la cancelación, la reversión tardía y las bifurcaciones independientes de liberación de válvula usan los contratos
 ordinarios. El grafo usa registros existentes del asset v24, no un formato de serialización
 nuevo. Consulta [AT_HYDRAULIC_ACTUATION.es.md](AT_HYDRAULIC_ACTUATION.es.md).
+
+## Realimentación de AT hidráulica
+
+`at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
+
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v36 conserva rutas, ganancias y relojes y lee v1-v35.
+
+Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
+
+[AT_CONTROL.es.md](AT_CONTROL.es.md)
+
+## Raíl de combustible líquido alimentado por bomba
+
+`liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
+
+v36 conserva enlaces y temperatura de fuente y lee v1-v35. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+
+Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
+
+[PUMP_FED_FUEL.es.md](PUMP_FED_FUEL.es.md)
+
+## Tanque finito de combustible líquido
+
+`liquid_fuel_tank` guarda masa líquida finita y energía térmica con densidad, referencia térmica de película y poder calorífico del inyector asociado. La alimentación lo elige con `tank_component` y omite `supply_temperature`. Cada tanque pertenece a una alimentación compatible.
+
+Energías térmica y química del tanque forman el almacenamiento completo. La transferencia interna no agrega masa ni suministro químico externos. La presión de entrada prescrita mantiene su frontera de trabajo de presión. Admisión/escape gaseoso aún pueden llevar energía química.
+
+Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
+
+[LIQUID_FUEL_TANK.es.md](LIQUID_FUEL_TANK.es.md)
+
+## Retorno de alivio de combustible trazado
+
+`liquid_rail_return` une una alimentación con un `hydraulic_relief` unidireccional exclusivo. La válvula conecta el raíl a la misma presión de entrada prescrita de la bomba. Registrar toda ruta fluida; puertos incompatibles, propiedad duplicada y rutas no seguidas se rechazan.
+
+`fluid_heat_fraction` elige explícitamente la fracción [0,1] de pérdida transportada por combustible retornado. El resto sigue la ruta térmica declarada. Mezcla simultánea raíl/tanque conserva masa, química, trabajo de presión y calor. El retorno a fuente externa saca masa/energía por la frontera.
+
+[LIQUID_FUEL_RETURN.es.md](LIQUID_FUEL_RETURN.es.md)
+
+## Geometría del tanque y espacio gaseoso finito
+
+`liquid_fuel_tank.parameters.headspace` declara `capacity` en `m3` o `l` y `gas_node`. El gas omite `storage`: volumen `capacity - liquid_mass / density`, con un propietario y volumen positivo. Bomba y retorno usan presión prescrita nula: el gas finito determina la presión de entrada.
+
+El solver acoplado intercambia trabajo de presión entre eje, riel y gas sin fuente externa. Orificios gaseosos y enlaces térmicos dan venteo/calor explícitos. Leer `pressure`, `fill_fraction`, `hydraulic_work` acumulado con signo y masa, energía, volumen del gas. Dosis, líquido, evaporación y combustión permanecen separados.
+
+[Geometría del tanque y espacio gaseoso finito](TANK_HEADSPACE.es.md)
+
+## Equilibrio de fases del combustible y límites de suministro
+
+La opción `fuel_film.parameters.phase_equilibrium` declara `reference_pressure` en `pa` o `bar`, y `minimum_temperature` / `maximum_temperature` en `k`. `saturation_temperature` es la temperatura de referencia; `latent_internal_energy` es la diferencia de energía interna vapor-líquido allí. Cada receptor en equilibrio tiene una película. La instantánea inicial se conserva; los intervalos aceptados equilibran gas y líquido e intercambian calor con la pared finita.
+
+`mass_flow` es la transferencia neta con signo del paso físico completo. `evaporated_fuel_mass` y `condensed_fuel_mass` acumulan sus masas positiva y negativa sin duplicar proyecciones que se cancelan. `vapor_partial_pressure` muestra la presión parcial de combustible. Los balances térmico, másico y químico incluyen ambas fases.
+
+El suministro predeterminado rechaza líquido bajo saturación. La opción de tanque finito resuelve vapor fuente con potenciales corregidos por presión. Riel y aspiración aún llevan líquido separado; burbujas y flujo cavitante requieren más física.
+
+La comparación solo admite redondeo binary64: `64 * epsilon * max(p, p_sat)`, con `epsilon = 2^-52`. El margen informado no se recorta. Es una comprobación de saturación global; pérdidas locales y NPSH de bomba requieren un modelo de flujo resuelto. Las comprobaciones independientes también exigen entropía total no decreciente en el flash adiabático y el intercambio con la pared finita.
+
+[Equilibrio de fases del combustible y límites de suministro](FUEL_PHASE_EQUILIBRIUM.es.md)
+
+## Equilibrio del tanque con volumen líquido finito
+
+Activar `liquid_fuel_tank.parameters.headspace.phase_equilibrium` con `true` para resolver evaporación y condensación del tanque. La película asociada aporta propiedades `phase_equilibrium`; el gas seguido comparte R, cv, poder calorífico y estequiometría. Declarar temperatura inicial común y presión parcial saturada para tanque húmedo; un tanque seco comienza como máximo en saturación. La densidad total es menor que la líquida.
+
+`evaporated_fuel_mass`, `condensed_fuel_mass` y `mass_flow` con signo cuentan transferencia neta por paso físico completo. Leer juntos `vapor_partial_pressure`, `saturation_pressure` corregida, inventario líquido y volumen gaseoso. La bomba toma líquido separado; transporte bifásico, arrastre de burbujas y NPSH local siguen abiertos.
+
+[Equilibrio del tanque con volumen líquido finito](TANK_PHASE_EQUILIBRIUM.es.md)
+
+## Red de transporte de combustible en equilibrio
+
+Pedir `equilibrium-fuel-network` o `electrothermal-fuel-network` por MCP o ejecutar el mismo JSON con CLI. Leer `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy`, `specific_enthalpy`. Aquí `internal_energy` incluye pared elástica y la energía química es aparte. Los enlaces exponen flujos con signo, masa acumulada, `transport_energy` y cambio de entropía de pareja.
+
+Euler implícito acotado resuelve las mismas masa q y entalpía H aceptadas en ambos recipientes. Los enlaces avanzan por ID estable; el baño finito usa otro subpaso conservativo. El acoplamiento es de primer orden. Masa, temperatura o presión fuera de límites y fallos rechazan todo el lote, incluidas entradas, historias compensadas e intervalos especulativos del embrague.
+
+[Red de transporte de combustible en equilibrio](EQUILIBRIUM_FUEL_NETWORK.es.md)
+
+## Bomba de combustible con cambio de fase impulsada por eje
+
+Pedir `equilibrium-fuel-pump` o `electric-equilibrium-fuel-pump` por MCP o ejecutar su JSON en CLI. Leer masa, temperatura, presión, vapor y energía junto a entrega de válvulas y velocidad del eje. `volume` del componente es geométrico; el del nodo incluye expansión de pared. `torque`, `hydraulic_power` y `hydraulic_work` muestran el intercambio interno del eje.
+
+El subpaso mecánico cerrado conserva masa y entropía. La energía incluye fluido y pared elástica, así que el trabajo del eje usa el volumen geométrico de referencia. El mismo cambio aceptado determina el par en el solver mecánico conjunto con engranajes, convertidores, hidráulica e intervalos especulativos del embrague. La expansión impulsa el eje; `hydraulic_work` positivo entra a la cámara. No se añade otra fuente externa de presión.
+
+[Bomba de combustible con cambio de fase impulsada por eje](FUEL_CHAMBER_PUMP.es.md)
+
+## Conductos de combustible compresible en equilibrio
+
+Un `equilibrium_fuel_duct` transporta masa, cantidad de movimiento y energía total por celdas explícitas `compressible_fuel`. El líquido es compresible y el vapor ideal; ambas fases comparten presión, temperatura y velocidad. El equilibrio local permite condensación y vaporización súbita. Dos depósitos finitos estacionarios y una pared térmica finita cierran los balances.
+
+Declare `liquid_bulk_modulus`, omita `compliance` y especifique `initial_velocity` en cada nodo. Declare 1–24 `cells` internas distintas y ordenadas; cada una pertenece a un conducto. Su longitud es volumen dividido por `area`. Los depósitos tienen velocidad cero y no pueden ser celdas internas. Todos los puertos comparten material. `linear_resistance` y `quadratic_resistance` representan la resistencia total, distribuida por volumen; `fluid_heat_fraction` reparte calor de fricción entre fluido y pared. No hay entrada directa de apertura.
+
+[Conductos de combustible compresible en equilibrio](EQUILIBRIUM_FUEL_DUCT.es.md)
