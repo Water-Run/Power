@@ -74,7 +74,7 @@ internal static class HydraulicIntegrationChecks
         Reject(n=>n["nodes"]![8]!["initial"]!["value"]=-1,"model_range");
         var example=Data(AgentWorkspace.ExampleModel("fired-hydraulic")); Require(JsonNode.DeepEquals(JsonNode.Parse(Source),JsonNode.Parse(example.GetRawText())));
         var capability=Data(AgentWorkspace.Capabilities()); Require(capability.GetProperty("hydraulics").GetProperty("pressure_reference").GetString()=="nonnegative_gauge_common_tank");
-        Require(capability.GetProperty("asset_format").GetString()=="power.asset.v24" && capability.GetProperty("readable_asset_formats").GetArrayLength()==24);
+        Require(capability.GetProperty("asset_format").GetString()==AssetCodec.FormatName && capability.GetProperty("readable_asset_formats").GetArrayLength()==AssetCodec.FormatVersion);
         var workspace=new AgentWorkspace(); var created=Data(workspace.CreateSession(example)); string id=created.GetProperty("session_id").GetString()!;
         string before=Data(workspace.ReadSnapshot(id)).GetRawText();
         Require(workspace.SetInputs(id,"0",[new("106",1),new("116",-1)]).Error is {Code:"invalid_input",CurrentRevision:"0"});

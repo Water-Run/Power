@@ -1,0 +1,258 @@
+{
+  "schema": "power.model.v1",
+  "description": "Unverified homogeneous pure-fuel research network: elastic vessels, phase-resolving enthalpy transport and finite-wall heat. Quasi-static linear resistance; no sonic choking, link inertia, pump filling or injector coupling. All parameters are unverified.",
+  "step_ns": 100000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "fuel",
+      "storage": {
+        "value": 8e-07,
+        "unit": "m3"
+      },
+      "initial": {
+        "value": 400,
+        "unit": "k"
+      },
+      "position": {
+        "value": 0.00065,
+        "unit": "kg"
+      },
+      "fuel": {
+        "compliance": {
+          "value": 5e-13,
+          "unit": "m3_pa"
+        },
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "domain": "fuel",
+      "storage": {
+        "value": 8e-07,
+        "unit": "m3"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      },
+      "position": {
+        "value": 0.0003,
+        "unit": "kg"
+      },
+      "fuel": {
+        "compliance": {
+          "value": 5e-13,
+          "unit": "m3_pa"
+        },
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 2,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 500,
+        "unit": "k"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "fuel_restriction",
+      "node_a": 1,
+      "node_b": 2,
+      "input_channel": 100,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "conductance": {
+          "value": 1e-11,
+          "unit": "m3_s_pa"
+        }
+      }
+    },
+    {
+      "id": 11,
+      "kind": "fuel_heat_link",
+      "node_a": 2,
+      "node_b": 3,
+      "parameters": {
+        "conductance": {
+          "value": 0.2,
+          "unit": "w_k"
+        }
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 200000000,
+    "sample_every_ns": 10000000,
+    "events": [
+      {
+        "time_ns": 50000000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 0.25
+          }
+        ]
+      },
+      {
+        "time_ns": 100000000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 0
+          }
+        ]
+      },
+      {
+        "time_ns": 125000000,
+        "values": [
+          {
+            "channel": 100,
+            "value": 1
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 2e-07
+      },
+      {
+        "object_id": 0,
+        "field": "mass_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "fuel_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 1,
+        "field": "vapor_mass",
+        "min": 1e-10
+      },
+      {
+        "object_id": 10,
+        "field": "total_fuel_delivered",
+        "min": 2e-05
+      },
+      {
+        "object_id": 10,
+        "field": "entropy_produced",
+        "min": 0
+      },
+      {
+        "object_id": 11,
+        "field": "transport_energy",
+        "min": 0
+      },
+      {
+        "object_id": 3,
+        "field": "temperature",
+        "min": 300,
+        "max": 500
+      }
+    ]
+  }
+}

@@ -8,10 +8,7 @@ evaporado entra na massa, na energia interna e no constituinte de combustível d
 premisturada existente consome só vapor. O inventário líquido é molhagem inicial,
 não combustível injetado, e continua fazendo parte do livro de massa total e de energia química.
 
-É um modelo de pesquisa de propriedades constantes, com volume de deslocamento líquido
-desprezível e temperatura de saturação prescrita. Não implementa dinâmica de trilho
-líquido, de agulha nem de pulverização, equilíbrio de fases dependente da pressão, condensação,
-propriedades de combustível multicomponente nem comportamento de gasolina calibrado.
+O contrato abaixo descreve o filme padrão com saturação prescrita. A opção [Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md) acrescenta evaporação/condensação reversíveis e dependência da pressão com a mesma referência calórica.
 
 ## Energia de fase e fonte de calor finita
 
@@ -109,8 +106,8 @@ Descubra IDs e unidades de saída pela validação ou pela criação da sessão.
 de massa, de combustível e de energia química incluem o inventário do filme. A entrega interna
 de vapor não incrementa a energia de combustível de reservatório nem a entalpia externa.
 
-O asset v19 guarda todas as propriedades de fase e conserva os leitores v1-v18. Cada filme precisa
-de um registro de fase tipado de 64 bytes. Comprimentos e contagens limitados, digest, cobertura completa,
+O asset v37 guarda todas as propriedades de fase e conserva os leitores v1-v36. Cada filme precisa
+de um registro de fase tipado de 100 bytes. Comprimentos e contagens limitados, digest, cobertura completa,
 registros duplicados ou ausentes, unidades, compilação física e proteção contra rebaixamento
 são verificados. O fixture autêntico de medição de combustível v17 conserva a impressão digital e
 o replay atualizado no mesmo runtime. Veja [ASSET_FORMAT.pt-BR.md](ASSET_FORMAT.pt-BR.md).
@@ -129,3 +126,11 @@ O [injetor líquido](LIQUID_FUEL_INJECTION.pt-BR.md) separado agora repõe filme
 uma fonte flexível finita. Bomba e reabastecimento, agulha e pulverização, propriedades medidas de combustível,
 ignição e ECU, comportamento completo de admissão e escape, controles de transmissão e powertrains
 calibrados continuam como requisitos separados.
+
+## Equilíbrio de fases do combustível e limites de suprimento
+
+`mass_flow` é a transferência líquida com sinal do passo físico completo. `evaporated_fuel_mass` e `condensed_fuel_mass` acumulam suas massas positiva e negativa sem duplicar projeções que se cancelam. `vapor_partial_pressure` mostra a pressão parcial do combustível. Balanços térmicos, de massa e químicos incluem ambas as fases.
+
+Uma solução escalar limitada usa energia de equilíbrio monótona. Calor da parede usa Euler implícito. Transporte e trabalho do cilindro móvel têm evidência de refinamento de primeira ordem. A coexistência líquida fica no intervalo declarado. Após evaporação completa dentro dele, o gás pode superaquecer sem extrapolar a curva.
+
+[Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md)

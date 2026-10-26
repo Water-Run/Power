@@ -117,7 +117,7 @@ Les sessions MCP vivent dans le processus serveur local. La limite est 16. Elles
 
 ## Ce qui reste ouvert
 
-L'échange gazeux compressible, la combustion prémélangée prescrite, les embrayages, les engrenages, un convertisseur cartographié et l'actionnement hydraulique existent maintenant comme composants avec ports, état et contrôles de conservation. Ils n'achèvent pas le groupe motopropulseur. Encore ouvert : pompe et ravitaillement de rampe, contrôle d'allumage, admission et échappement détaillés, pertes mécaniques, thermochimie plus riche, compliance d'engrènement, pression et contrôle de passage AT complets, comportement ECU/TCU coordonné, et calibration mesurée. Une nouvelle équation a encore besoin d'une version de modèle explicite, de dimensions et de preuves numériques. La sémantique des composants existants n'est pas étendue en la changeant en silence.
+L'échange gazeux compressible, la combustion prémélangée prescrite, les embrayages, les engrenages, un convertisseur cartographié et l'actionnement hydraulique existent maintenant comme composants avec ports, état et contrôles de conservation. Ils n'achèvent pas le groupe motopropulseur. Encore ouvert : remplissage et régulation de pompe mesurés, contrôle d'allumage, admission et échappement détaillés, pertes mécaniques, thermochimie plus riche, compliance d'engrènement, pression et contrôle de passage AT complets, comportement ECU/TCU coordonné, et calibration mesurée. Une nouvelle équation a encore besoin d'une version de modèle explicite, de dimensions et de preuves numériques. La sémantique des composants existants n'est pas étendue en la changeant en silence.
 
 Un agent peut générer une topologie et un état initial, proposer des hypothèses de paramètres, écrire des candidats de composants, construire des expériences et relire les preuves. Le cœur d'exécution possède encore les contraintes numériques et les contrôles. Le jugement d'un modèle de langage n'est pas un fait physique. L'édition de graphe Unity, un fil de travailleur de simulation et un backend de solveur haute performance remplaçable attendent que la frontière soit stable. Rien ici ne revendique un solveur non linéaire général, Burst ou un solveur GPU.
 
@@ -244,3 +244,95 @@ Les engrènements de porte-satellites prennent en charge des rapports relatifs s
 ## Assemblage d'actionnement hydraulique partagé
 
 L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibles d'embrayage déclarées en embrayages réels à piston/contact, restrictions de remplissage/vidange et ressorts de rappel alimentés par une pompe réversible partagée, des fuites/traînée et une décharge. Les aires avant/arrière explicites conservent l'inventaire balayé et le travail de pression de référence. Les définitions ordinaires immuables préservent la résolution conjointe existante pression/mouvement/frottement, la sémantique portable v24 et l'état atomique complet. Les calendriers de vanne prescrits restent séparés du retour/contrôle AT et de l'acceptation mesurée du corps de vanne.
+
+## Régulation hydraulique de boîte AT
+
+`at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
+
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v37 conserve routes, gains et horloges et lit v1-v36.
+
+Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
+
+[AT_CONTROL.fr.md](AT_CONTROL.fr.md)
+
+## Rampe de carburant liquide alimentée par pompe
+
+`liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
+
+Le format v37 conserve les liens et la température source et lit v1-v36. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
+
+[PUMP_FED_FUEL.fr.md](PUMP_FED_FUEL.fr.md)
+
+## Réservoir fini de carburant liquide
+
+`liquid_fuel_tank` stocke masse liquide finie et énergie calorique avec la densité, référence thermique du film et pouvoir calorifique de l'injecteur associé. L'alimentation le choisit via `tank_component` et omet `supply_temperature`. Chaque réservoir appartient à une alimentation compatible.
+
+Énergies calorique et chimique du réservoir entrent dans le stockage complet. Le transfert interne n'ajoute aucune matière ni énergie chimique externe. La pression d'entrée prescrite garde sa frontière de travail de pression. Admission/échappement gazeux peuvent encore transporter de l'énergie chimique.
+
+Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
+
+[LIQUID_FUEL_TANK.fr.md](LIQUID_FUEL_TANK.fr.md)
+
+## Retour suivi de décharge de carburant
+
+`liquid_rail_return` associe une alimentation à un `hydraulic_relief` unidirectionnel exclusif. La soupape relie la rampe à la même pression d'entrée prescrite que la pompe. Toute voie doit être enregistrée ; ports incompatibles, propriété dupliquée et voies non suivies sont rejetés.
+
+`fluid_heat_fraction` choisit explicitement la part [0,1] des pertes transportée par le carburant de retour. Le reste suit le chemin thermique déclaré. Le mélange simultané rampe/réservoir conserve les bilans matière, chimie, travail de pression et chaleur. Les retours à source externe sortent matière et énergie par la frontière.
+
+[LIQUID_FUEL_RETURN.fr.md](LIQUID_FUEL_RETURN.fr.md)
+
+## Géométrie du réservoir et espace gazeux fini
+
+`liquid_fuel_tank.parameters.headspace` déclare `capacity` en `m3` ou `l` et `gas_node`. Le gaz omet `storage` : son volume vaut `capacity - liquid_mass / density`, avec un seul propriétaire et un volume positif. Pompe et retour utilisent une pression prescrite nulle car le gaz fini détermine la pression d'entrée.
+
+Le solveur couplé échange le travail de pression entre arbre, rampe et gaz sans source externe. Orifices gazeux et liens thermiques fournissent ventilation et chaleur explicites. Lire `pressure`, `fill_fraction`, `hydraulic_work` cumulé signé et masse, énergie, volume du gaz. Dose, liquide livré, évaporation et combustion restent distincts.
+
+[Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md)
+
+## Équilibre des phases du carburant et limites d'alimentation
+
+Le modèle utilise une pseudo-espèce idéale, la constante gazeuse commune du récepteur, des capacités thermiques constantes et un déplacement liquide négligeable. L'égalité des potentiels chimiques donne la relation de saturation ci-dessous. À volume fixé, carburant total et énergie interne déterminent température et masse de vapeur. Le transfert chimique reste interne ; la réaction consomme uniquement la vapeur.
+
+Un solveur scalaire borné utilise l'énergie d'équilibre monotone. La chaleur de paroi suit Euler implicite. Le couplage au transport et au travail du cylindre présente une convergence du premier ordre. La coexistence liquide reste dans l'intervalle déclaré. Le gaz peut surchauffer après évaporation complète dans cet intervalle, sans extrapoler la courbe de saturation.
+
+`mass_flow` est le transfert net signé sur le pas physique complet. `evaporated_fuel_mass` et `condensed_fuel_mass` cumulent ses masses positive et négative, sans compter deux fois les projections qui s'annulent. `vapor_partial_pressure` donne la pression partielle du carburant. Les bilans thermiques, massiques et chimiques comprennent les deux phases.
+
+[Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md)
+
+## Équilibre du réservoir à volume fini
+
+Le récipient rigide contient un liquide incompressible et un gaz idéal avec pseudo-espèce et porteur. Le volume liquide modifie le volume gazeux. Le potentiel chimique liquide inclut `p/rho`, d'où une correction de la référence `p_0(T)` à déplacement négligeable du récepteur. `reference_pressure` garde ce sens et n'est pas réinterprété comme saturation réelle du fluide pur à densité finie.
+
+Un flash borné à U,V constants conserve carburant total et énergie thermique. Les orifices explicites transportent vapeur, porteur et énergie chimique ; les liens thermiques échangent avec des parois finies. Pompe/retour échangent le travail de déplacement avec le gaz, puis l'équilibre redistribue l'énergie interne. `hydraulic_work` compte le travail de déplacement de pompe, hors travail interne de changement de phase.
+
+[Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md)
+
+## Référence de volume de carburant déformable
+
+`CompliantFuelVolume` fournit la fermeture constitutive du réseau de carburant en équilibre. Elle résout liquide, vapeur et coexistence avec stockage élastique depuis masse totale et température ou énergie. Le chemin d'injecteur alimenté par pompe attend son couplage étendu. [Réseau de transport de carburant en équilibre](EQUILIBRIUM_FUEL_NETWORK.fr.md)
+
+[Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md)
+
+## Réseau de transport de carburant en équilibre
+
+Le domaine `fuel` transporte ensemble liquide pur et vapeur dans des récipients élastiques finis. Chaque récipient conserve indépendamment masse totale et énergie calorique plus élastique ; le flash détermine température, pression et fractions de vapeur. `fuel_restriction` échange le fluide donneur homogène et `fuel_heat_link` échange avec un nœud thermique fini. L'énergie chimique du pouvoir calorifique garde son bilan séparé.
+
+[Réseau de transport de carburant en équilibre](EQUILIBRIUM_FUEL_NETWORK.fr.md)
+
+## Pompe carburant diphasique entraînée par arbre
+
+`fuel_chamber` couple un arbre réel à une chambre finie du domaine carburant. Des `fuel_check_valve` d'entrée et de sortie assurent remplissage et livraison par pression. Liquide, vapeur et énergie élastique partagent la même fermeture. Une chambre sous-alimentée peut vaporiser à l'aspiration ; la livraison suit l'inventaire et la pression calculés.
+
+[Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)
+
+La pompe du domaine carburant alimente désormais une aiguille physique et une décharge à titre figé dans un récepteur allumé à volume liquide fini. Les inventaires incluent changement de phase, travail de déplacement, énergie cinétique du jet et impulsion à la paroi immobile. [Décharge de carburant à titre figé et récepteurs finis](FUEL_DISCHARGE.fr.md)
+
+## Chambres de carburant compressible entraînées par arbre
+
+Le travail fermé conserve masse et entropie. Énergie de compression froide et énergie calorique utilisent le potentiel d’équilibre du conduit. Le liquide seul utilise l’intégrale exacte de pression, la vapeur idéale son adiabatique analytique. Le changement de phase inverse l’entropie et vérifie l’état énergétique final. La différence acceptée produit le couple discret dans la résolution mécanique commune. Un `hydraulic_work` positif représente l’énergie de l’arbre vers le fluide.
+
+Le réservoir mobile utilise un demi-transport, le travail complet de l’arbre, puis un demi-transport. Le transport reste du premier ordre avec diffusion numérique ; la séparation symétrique n’augmente pas son ordre. Le mouvement liquide fermé et lisse converge au second ordre. L’incrément angulaire est limité à 0.25 rad par intervalle mécanique. CFL, limites matérielles, restauration complète, annulation et branches indépendantes s’appliquent. L’impulsion stationnaire des ports et du carter est distincte du travail du piston.
+
+[Chambres de carburant compressible entraînées par arbre](COMPRESSIBLE_FUEL_CHAMBER.fr.md)

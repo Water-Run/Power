@@ -8,10 +8,7 @@ suivi. Un nœud thermique fini fournit la chaleur sensible et la chaleur de chan
 prémélangée existante ne consomme que la vapeur. L'inventaire liquide est un mouillage initial,
 pas du carburant injecté, et reste dans le bilan de masse totale et d'énergie chimique.
 
-C'est un modèle de recherche à propriétés constantes, avec un volume de déplacement liquide
-négligeable et une température de saturation prescrite. Il n'implémente pas la dynamique de rampe liquide,
-d'aiguille ou de pulvérisation, l'équilibre de phase dépendant de la pression, la condensation,
-les propriétés de carburant multicomposant ni un comportement d'essence calibré.
+Le contrat ci-dessous décrit le film à saturation prescrite par défaut. L’option [Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md) ajoute évaporation/condensation réversibles et comportement dépendant de la pression avec la même référence calorique.
 
 ## Énergie de phase et source de chaleur finie
 
@@ -109,8 +106,8 @@ Découvrez les identifiants et les unités de sortie par la validation ou la cr�
 globaux de masse, de carburant et d'énergie chimique incluent l'inventaire du film. La livraison interne
 de vapeur n'incrémente ni l'énergie de carburant du réservoir ni l'enthalpie externe.
 
-L'asset v19 stocke toutes les propriétés de phase et conserve les lecteurs v1-v18. Chaque film exige
-un enregistrement de phase typé de 64 octets. Les longueurs et comptes bornés, le condensé, la couverture complète,
+L'asset v37 stocke toutes les propriétés de phase et conserve les lecteurs v1-v36. Chaque film exige
+un enregistrement de phase typé de 100 octets. Les longueurs et comptes bornés, le condensé, la couverture complète,
 les enregistrements dupliqués ou manquants, les unités, la compilation physique et la protection contre la rétrogradation
 sont contrôlés. La fixture authentique de dosage v17 conserve son empreinte et
 son rejeu mis à niveau au même runtime. Voir [ASSET_FORMAT.fr.md](ASSET_FORMAT.fr.md).
@@ -129,3 +126,11 @@ L'[injecteur liquide](LIQUID_FUEL_INJECTION.fr.md) distinct réalimente maintena
 une source finie et souple. La pompe et la réalimentation, l'aiguille et la pulvérisation, les propriétés de carburant mesurées,
 l'allumage et l'ECU, le comportement complet d'admission et d'échappement, les contrôles de transmission et les
 groupes motopropulseurs calibrés restent des exigences distinctes.
+
+## Équilibre des phases du carburant et limites d'alimentation
+
+`mass_flow` est le transfert net signé sur le pas physique complet. `evaporated_fuel_mass` et `condensed_fuel_mass` cumulent ses masses positive et négative, sans compter deux fois les projections qui s'annulent. `vapor_partial_pressure` donne la pression partielle du carburant. Les bilans thermiques, massiques et chimiques comprennent les deux phases.
+
+Un solveur scalaire borné utilise l'énergie d'équilibre monotone. La chaleur de paroi suit Euler implicite. Le couplage au transport et au travail du cylindre présente une convergence du premier ordre. La coexistence liquide reste dans l'intervalle déclaré. Le gaz peut surchauffer après évaporation complète dans cet intervalle, sans extrapoler la courbe de saturation.
+
+[Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md)

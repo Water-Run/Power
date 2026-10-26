@@ -76,7 +76,7 @@ Windows uses the same `dotnet` command and an absolute path to the DLL. A produc
 
 ## Tools and results
 
-In agent API version 0.29.0, `get_example_model` accepts an optional `name`: `electrothermal` (default), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` or `fired-hydraulic-ravigneaux`. `get_capabilities` advertises supported fidelity levels, readable asset versions, solver limits and input bounds. Exports use `power.asset.v24`; v1–v23 assets remain readable. Output channels and their units are returned by model validation and session creation. Passing laboratory KPIs does not establish a complete or calibrated powertrain.
+In agent API version 0.42.0, `get_example_model` takes an optional `name`, defaulting to `electrothermal`. `get_capabilities.examples` lists all 59 available examples, including finite-tank and recirculating fuel models. CLI `list-labs` returns all 60 laboratories as [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON; `thermal-network` is CLI-only by design. Capabilities also advertise supported components, fidelity, solver limits and input bounds. Exports use `power.asset.v37`, with v1-v36 readers retained. Validation and session creation return output channels and units. Passing laboratory KPIs doesn't establish a complete or calibrated powertrain.
 
 | Tool | Purpose |
 |---|---|
@@ -605,3 +605,101 @@ volume, friction/restriction/damping heat and every model hash. Full revisions,
 cancellation, late rollback and independent valve-release forks use the ordinary
 contracts. The graph uses existing asset v24 records, not a new serialization
 format. See [AT_HYDRAULIC_ACTUATION.md](AT_HYDRAULIC_ACTUATION.md).
+
+## Hydraulic AT feedback
+
+`at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
+
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v37 retains routes, gains and clocks and reads v1-v36.
+
+These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
+
+[AT_CONTROL.md](AT_CONTROL.md)
+
+## Pump-fed liquid fuel rail
+
+`liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
+
+Asset v37 retains feed links and source temperature and reads v1-v36. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+
+[PUMP_FED_FUEL.md](PUMP_FED_FUEL.md)
+
+## Finite liquid fuel tank
+
+`liquid_fuel_tank` stores finite liquid mass and caloric energy using the paired injector's density, film thermal reference and heating value. A feed selects it with `tank_component` and omits `supply_temperature`. Each tank belongs to one feed with matching fuel properties.
+
+Tank caloric and chemical energy enter the complete stored-energy ledger. Tank-to-rail transfer adds no external mass or chemical supply. The explicit prescribed pump inlet pressure retains its pressure-work boundary. Gas inlet/exhaust can still carry chemical boundary energy.
+
+This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
+
+[LIQUID_FUEL_TANK.md](LIQUID_FUEL_TANK.md)
+
+## Tracked fuel relief return
+
+`liquid_rail_return` pairs a feed with an exclusively owned one-way `hydraulic_relief`. The valve connects the rail to the pump's same prescribed inlet pressure. Register every fluid path; incompatible ports, duplicate valve ownership and untracked paths reject.
+
+`fluid_heat_fraction` explicitly selects the fraction in [0,1] of valve loss carried with returned fuel. The remaining heat follows the valve's declared heat path. Simultaneous rail/tank caloric mixing preserves the full mass, chemical, pressure-work and thermal ledgers. External-source returns instead carry mass and energy out through the boundary.
+
+[LIQUID_FUEL_RETURN.md](LIQUID_FUEL_RETURN.md)
+
+## Geometric tank and finite headspace
+
+`liquid_fuel_tank.parameters.headspace` declares `capacity` in `m3` or `l` and `gas_node`. The gas node omits `storage`: its volume is `capacity - liquid_mass / density`. It must have one owner and remain positive. The paired pump and relief return use zero prescribed reservoir pressure because the finite gas owns inlet pressure.
+
+The coupled solve exchanges shaft, rail and gas pressure work without an external pressure source. Gas orifices and heat links provide explicit vent/thermal paths. Read tank `pressure`, `fill_fraction` and signed cumulative `hydraulic_work`, plus headspace gas mass, energy and volume. Prescribed dose, delivered liquid, evaporation and burn remain separate.
+
+[Geometric tank and finite headspace](TANK_HEADSPACE.md)
+
+## Fuel phase equilibrium and liquid supply limits
+
+Optional `fuel_film.parameters.phase_equilibrium` declares `reference_pressure` in `pa` or `bar`, and `minimum_temperature` / `maximum_temperature` in `k`. Existing `saturation_temperature` is the reference temperature; `latent_internal_energy` is the vapor-minus-liquid internal energy there. One film owns each equilibrium receiver. The authored initial snapshot is retained; accepted intervals equilibrate gas and liquid and exchange heat with the finite wall.
+
+`mass_flow` is the signed net phase transfer over the complete physical tick. `evaporated_fuel_mass` and `condensed_fuel_mass` accumulate its positive and negative mass amounts, so canceling split-operator projections are not counted twice. `vapor_partial_pressure` reports the receiver fuel partial pressure. Thermal, mass and chemical ledgers include both phases.
+
+The default liquid-supply model rejects wet states below saturation. Optional finite-volume tank equilibrium instead resolves source vapor transfer with pressure-corrected chemical potentials. The rail and pump pickup still carry separated liquid; bubble entrainment and cavitating pump/rail flow require further physics.
+
+The pressure comparison allows only binary64 roundoff: `64 * epsilon * max(p, p_sat)`, with `epsilon = 2^-52`. It doesn't clamp the reported margin. This is a bulk saturation check; local pressure losses and pump NPSH require a resolved flow model. Independent checks also require nondecreasing total entropy for adiabatic flash and finite-wall exchange.
+
+[Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)
+
+## Finite-volume fuel tank equilibrium
+
+Set `liquid_fuel_tank.parameters.headspace.phase_equilibrium` to `true` to resolve tank evaporation and condensation. The paired film supplies explicit `phase_equilibrium` material properties; the tracked headspace shares its R, cv, heating value and stoichiometric ratio. Declare a common initial gas/liquid temperature and saturated fuel partial pressure for a wet tank; a dry tank starts at or below saturation. Its total inventory density stays below liquid density.
+
+Tank `evaporated_fuel_mass`, `condensed_fuel_mass` and signed `mass_flow` count net phase transfer per complete physical tick. Read `vapor_partial_pressure`, pressure-corrected `saturation_pressure`, liquid inventory and gas volume together. The pump picks up separated liquid only; two-phase pump/rail transport, entrainment and local NPSH remain open.
+
+[Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md)
+
+## Equilibrium fuel transport network
+
+Request `equilibrium-fuel-network` or `electrothermal-fuel-network` through MCP, or run the same JSON through CLI. Read `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy` and `specific_enthalpy` on each vessel. Here `internal_energy` includes the elastic wall; chemical energy is reported separately. Links expose signed mass/volume flow, cumulative transferred mass, `transport_energy` and pair entropy change.
+
+A bounded backward-Euler solve finds the same accepted mass q and enthalpy H for both vessels. Links advance in stable component-ID order; finite-bath heat uses another conservative substep. The coupled method is first order. Out-of-range mass, temperature or pressure and failed solves reject the complete batch, including inputs, compensated histories and speculative clutch intervals.
+
+[Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md)
+
+## Shaft-driven phase-resolving fuel pump
+
+Request `equilibrium-fuel-pump` or `electric-equilibrium-fuel-pump` through MCP, or run their JSON through CLI. Read chamber-node mass, temperature, pressure, vapor fractions and energy beside valve delivery and shaft speed. Component `volume` is geometric reference volume; node `volume` includes wall expansion. Chamber `torque`, `hydraulic_power` and `hydraulic_work` expose the internal shaft exchange.
+
+Closed mechanical work holds mass and entropy fixed. Stored energy includes the fluid and elastic wall, so shaft work uses the geometric reference-volume change. The same accepted energy change determines pressure torque in the joint mechanical solve, including gears, converters, hydraulics and speculative clutch intervals. Expansion pushes the shaft; positive `hydraulic_work` means work from shaft to chamber. No extra external pressure source is added.
+
+[Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
+
+## Compressible equilibrium fuel ducts
+
+An `equilibrium_fuel_duct` transports mass, momentum and total energy through explicit `compressible_fuel` cells. The liquid is compressible and the vapor is ideal; both phases share pressure, temperature and velocity. Local equilibrium permits condensation and flashing. Two finite stationary reservoirs and a finite thermal wall close the balances.
+
+Declare `liquid_bulk_modulus`, omit `compliance`, and explicitly supply `initial_velocity` on each node. Declare 1–24 ordered, distinct internal `cells`; each belongs to one duct. Cell length is volume divided by `area`. Reservoirs have zero velocity and cannot also be internal cells. All ports share the same material. `linear_resistance` and `quadratic_resistance` describe total line resistance and are distributed by cell volume; `fluid_heat_fraction` routes friction heat between fluid and wall. There is no direct opening input.
+
+[Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
+
+## Shaft-driven compressible fuel chambers
+
+A `compressible_fuel_chamber` connects a rotational shaft to a finite `compressible_fuel` reservoir. Shaft motion changes its volume, while the same pressure work changes fluid energy and shaft torque. The reservoir can supply or receive an `equilibrium_fuel_duct`, including equilibrium flashing and condensation.
+
+Port `node_a` is rotational and `node_b` owns one chamber geometry. Declare `minimum_reference_volume`, `swept_volume` and `phase`; initial node storage must match volume at the initial shaft angle. The mixed reservoir has zero bulk velocity and cannot be an internal duct cell. The massless sinusoidal mechanism adds no piston or cam inertia; shaft inertia is explicit. External case pressure is zero.
+
+[Shaft-driven compressible fuel chambers](COMPRESSIBLE_FUEL_CHAMBER.md)

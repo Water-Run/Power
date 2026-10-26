@@ -31,7 +31,12 @@ flowchart LR
 | Document | What it is |
 |---|---|
 | [Agent API](AGENT_API.md) | MCP tools, revisions, errors and the operation sequence |
-| [Asset format](ASSET_FORMAT.md) | `.powerasset` v24 and the readers for v1 through v23 |
+| [Asset format](ASSET_FORMAT.md) | `.powerasset` v37 and the readers for v1 through v36 |
+| [Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md) | Frozen-quality choking, finite liquid displacement and physical pump/needle firing |
+| [Finite liquid fuel line momentum](FUEL_INERTIAL_PIPE.md) | Finite liquid inventory, dynamic flow, thermal mixing and conserving line work |
+| [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md) | Conservative compressible two-phase transport and equilibrium acoustics |
+| [Shaft-driven compressible fuel chambers](COMPRESSIBLE_FUEL_CHAMBER.md) | Shaft pressure work coupled to compressible fuel transport |
+| [Liquid inlet momentum reference](LIQUID_COLUMN.md) | Single-phase inlet inertia, friction heat and independently checked second-order momentum |
 | [Native Zig boundary](NATIVE_ZIG.md) | The archived Zig prototypes and the versioned ABI |
 
 ## Engine and fuel
@@ -49,6 +54,12 @@ flowchart LR
 | [Liquid injection](LIQUID_FUEL_INJECTION.md) | Finite compliant liquid rail feeding a film |
 | [Needle actuation](NEEDLE_ACTUATION.md) | Position-dependent solenoid, needle mass, closing delay and rebound |
 | [Closure prediction](CLOSURE_PREDICTION.md) | Bounded plant replay that schedules voltage removal |
+| [Geometric tank and finite headspace](TANK_HEADSPACE.md) | Rigid tank capacity, finite gas pressure work and explicit venting |
+| [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md) | Reversible evaporation/condensation, saturation pressure and liquid supply boundaries |
+| [Finite-volume fuel tank equilibrium](TANK_PHASE_EQUILIBRIUM.md) | Finite liquid displacement, pressure-corrected evaporation/condensation and vapor-bearing vents |
+| [Compliant fuel volume reference](COMPLIANT_FUEL_VOLUME.md) | Liquid/vapor equilibrium, elastic storage and conservative finite-bath heat |
+| [Equilibrium fuel transport network](EQUILIBRIUM_FUEL_NETWORK.md) | Homogeneous two-phase enthalpy transport, finite-wall heat and complete ledgers |
+| [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md) | Finite chamber filling, phase change and conserving shaft pressure work |
 
 ## Transmission
 

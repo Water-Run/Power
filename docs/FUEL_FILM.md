@@ -8,10 +8,7 @@ fuel joins the receiver's mass, internal energy and fuel constituent; the existi
 premixed reaction consumes vapor only. The liquid inventory is initial wetting,
 not injected fuel, and remains part of the total mass and chemical-energy ledger.
 
-This is a constant-property research model with negligible liquid displacement
-volume and a prescribed saturation temperature. It doesn't implement liquid rail,
-needle or spray dynamics, pressure-dependent phase equilibrium, condensation,
-multicomponent fuel properties or calibrated gasoline behavior.
+The contract below describes the default prescribed-saturation film. Optional [Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md) adds reversible evaporation/condensation and pressure-dependent phase behavior while retaining the same caloric reference.
 
 ## Phase energy and finite heat source
 
@@ -109,8 +106,8 @@ Discover output IDs and units through validation or session creation. Global
 mass, fuel and chemical-energy observables include the film inventory. Internal
 vapor delivery doesn't increment reservoir fuel energy or external enthalpy.
 
-Asset v19 stores all phase properties and retains v1-v18 readers. Every film needs
-one typed 64-byte phase record. Bounded lengths/counts, digest, complete coverage,
+Asset v37 stores all phase properties and retains v1-v36 readers. Every film needs
+one typed 100-byte phase record. Bounded lengths/counts, digest, complete coverage,
 duplicate/missing records, units, physical compilation and downgrade protection
 are checked. The authentic v17 fuel-metering fixture retains its fingerprint and
 same-runtime upgraded replay. See [ASSET_FORMAT.md](ASSET_FORMAT.md).
@@ -129,3 +126,11 @@ The separate [liquid injector](LIQUID_FUEL_INJECTION.md) now replenishes films f
 a finite compliant source. Pump/refill, needle/spray, measured fuel properties,
 ignition/ECU, complete intake/exhaust behavior, transmission controls and calibrated
 powertrains remain separate requirements.
+
+## Fuel phase equilibrium and liquid supply limits
+
+`mass_flow` is the signed net phase transfer over the complete physical tick. `evaporated_fuel_mass` and `condensed_fuel_mass` accumulate its positive and negative mass amounts, so canceling split-operator projections are not counted twice. `vapor_partial_pressure` reports the receiver fuel partial pressure. Thermal, mass and chemical ledgers include both phases.
+
+A bounded scalar solve uses the monotone equilibrium energy relation. Finite-wall heat uses backward Euler. Coupling to transport and moving-cylinder work has first-order refinement evidence. Liquid coexistence stays within the declared temperature interval. Completely evaporated gas can superheat after dryout within that interval; the saturation curve is not extrapolated.
+
+[Fuel phase equilibrium and liquid supply limits](FUEL_PHASE_EQUILIBRIUM.md)

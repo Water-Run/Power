@@ -26,15 +26,85 @@ public sealed class AgentWorkspace
 
     public static AgentReply Capabilities() => AgentReply.Success(new
     {
-        version = "0.29.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
-        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", "power.asset.v11", "power.asset.v12", "power.asset.v13", "power.asset.v14", "power.asset.v15", "power.asset.v16", "power.asset.v17", "power.asset.v18", "power.asset.v19", "power.asset.v20", "power.asset.v21", "power.asset.v22", "power.asset.v23", AssetCodec.FormatName },
-        domains = new[] { "rotational", "thermal", "gas", "hydraulic", "battery", "translational" },
-        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief", "pressure_controller", "battery_motor", "resistive_load", "pressure_duty_controller", "linear_spring", "hydraulic_piston", "piston_clutch", "force_source", "hydraulic_spool_valve", "gas_piston", "gas_fuel_injector", "fuel_film", "liquid_fuel_injector", "solenoid", "travel_stop", "needle_driver", "dct_controller", "double_pinion_planetary_gear", "carrier_gear" },
-        examples = new[] { "electrothermal", "sealed-cylinder", "gas-network", "moving-cylinder", "crank-timed-cylinder", "fired-cylinder", "fired-clutch", "fired-planetary", "fired-converter", "fired-hydraulic", "fired-pump", "fired-pump-losses", "electric-pump", "pressure-regulated-pump", "battery-regulated-pump", "piston-actuated-clutch", "spool-regulated-pump", "gas-accumulator-pump", "metered-fired-cylinder", "film-fired-cylinder", "liquid-injected-cylinder", "needle-actuated-cylinder", "closure-compensated-cylinder", "dual-clutch-transmission", "fired-dual-clutch", "controlled-dual-clutch", "controlled-fired-dual-clutch", "ravigneaux-transmission", "fired-ravigneaux-converter", "resolved-ravigneaux-transmission", "fired-resolved-ravigneaux-converter", "hydraulic-ravigneaux-transmission", "fired-hydraulic-ravigneaux" },
+        version = "0.42.0", model_schema = "power.model.v1", report_schema = "power.experiment_report.v2", asset_format = AssetCodec.FormatName,
+        readable_asset_formats = new[] { "power.asset.v1", "power.asset.v2", "power.asset.v3", "power.asset.v4", "power.asset.v5", "power.asset.v6", "power.asset.v7", "power.asset.v8", "power.asset.v9", "power.asset.v10", "power.asset.v11", "power.asset.v12", "power.asset.v13", "power.asset.v14", "power.asset.v15", "power.asset.v16", "power.asset.v17", "power.asset.v18", "power.asset.v19", "power.asset.v20", "power.asset.v21", "power.asset.v22", "power.asset.v23", "power.asset.v24", "power.asset.v25", "power.asset.v26", "power.asset.v27", "power.asset.v28", "power.asset.v29", "power.asset.v30", "power.asset.v31", "power.asset.v32", "power.asset.v33", "power.asset.v34", "power.asset.v35", "power.asset.v36", AssetCodec.FormatName },
+        domains = new[] { "rotational", "thermal", "gas", "hydraulic", "battery", "translational", "fuel", "compressible_fuel" },
+        components = new[] { "shaft", "dc_motor", "torque_source", "thermal_link", "sealed_cylinder", "gas_orifice", "gas_heat_link", "gas_cylinder", "premixed_combustion", "clutch", "ideal_gear", "planetary_gear", "torque_converter", "hydraulic_resistance", "hydraulic_orifice", "hydraulic_clutch", "hydraulic_pump", "hydraulic_relief", "pressure_controller", "battery_motor", "resistive_load", "pressure_duty_controller", "linear_spring", "hydraulic_piston", "piston_clutch", "force_source", "hydraulic_spool_valve", "gas_piston", "gas_fuel_injector", "fuel_film", "liquid_fuel_injector", "solenoid", "travel_stop", "needle_driver", "dct_controller", "double_pinion_planetary_gear", "carrier_gear", "at_controller", "liquid_rail_feed", "liquid_fuel_tank", "liquid_rail_return", "fuel_restriction", "fuel_heat_link", "fuel_chamber", "fuel_check_valve", "finite_fuel_film", "fuel_discharge", "fuel_inertial_pipe", "equilibrium_fuel_duct", "compressible_fuel_chamber" },
+        examples = LaboratoryCatalog.Entries.Where(lab => lab.AgentExample).Select(lab => lab.Name).ToArray(),
         limits = new { nodes = CompiledModel.MaxNodes, components = CompiledModel.MaxComponents, states = CompiledModel.MaxStates,
             sessions = MaxSessions, ticks_per_step = 1_000_000, experiment_ticks = 10_000_000, document_bytes = 1_048_576, asset_bytes = AssetCodec.MaxBytes },
         determinism = "Exact replay within the same binary/runtime/architecture. Compare tolerances across platforms.",
-        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics", "sampled_pressure_control", "battery_electromechanical", "battery_pressure_control", "dynamic_piston_powertrain", "mechanically_regulated_hydraulics", "linear_gas_actuation", "gas_accumulator_powertrain", "cycle_fuel_metering", "metered_fired_powertrain", "finite_liquid_film_evaporation", "film_evaporation_fired_powertrain", "finite_liquid_fuel_delivery", "liquid_injected_fired_powertrain", "electromagnetic_linear_actuation", "elastic_translational_contact", "needle_actuated_liquid_delivery", "needle_actuated_fired_powertrain", "closure_compensated_liquid_delivery", "closure_compensated_fired_powertrain", "sampled_dual_clutch_control" }, calibration = "unverified",
+        fidelity = new[] { "linear_lumped", "sealed_adiabatic_gas", "finite_volume_gas_exchange", "moving_cylinder_gas_exchange", "crank_timed_gas_exchange", "premixed_gas_transport", "premixed_wiebe_combustion", "hybrid_clutch_powertrain", "constrained_gear_powertrain", "quasisteady_converter_powertrain", "compliant_hydraulic_powertrain", "shaft_driven_hydraulics", "sampled_pressure_control", "battery_electromechanical", "battery_pressure_control", "dynamic_piston_powertrain", "mechanically_regulated_hydraulics", "linear_gas_actuation", "gas_accumulator_powertrain", "cycle_fuel_metering", "metered_fired_powertrain", "finite_liquid_film_evaporation", "film_evaporation_fired_powertrain", "finite_liquid_fuel_delivery", "liquid_injected_fired_powertrain", "electromagnetic_linear_actuation", "elastic_translational_contact", "needle_actuated_liquid_delivery", "needle_actuated_fired_powertrain", "closure_compensated_liquid_delivery", "closure_compensated_fired_powertrain", "sampled_dual_clutch_control", "sampled_hydraulic_at_control", "pump_fed_liquid_fuel_powertrain", "finite_tank_liquid_fuel_powertrain", "recirculating_liquid_fuel_powertrain", "geometric_tank_liquid_fuel_powertrain", "equilibrium_liquid_fuel_powertrain", "equilibrium_tank_liquid_fuel_powertrain", "homogeneous_equilibrium_fuel_network", "shaft_driven_equilibrium_fuel_pump", "finite_volume_equilibrium_fuel_receiver", "finite_volume_fuel_discharge_powertrain", "liquid_inertial_fuel_network", "equilibrium_compressible_fuel_transport", "compressible_fuel_equilibrium", "shaft_driven_compressible_fuel" }, calibration = "unverified",
+        compressible_fuel_chamber = new
+        {
+            domain = "compressible_fuel", component = "compressible_fuel_chamber",
+            ports = "node_a is a rotational shaft; node_b is a mixed compressible reservoir with one geometry owner, zero bulk velocity and no internal duct-cell ownership",
+            geometry = "minimum_reference_volume and swept_volume in m3 or l; phase in rad or deg; actual rigid volume is minimum+swept*sin((angle-phase)/2)^2; initial storage must match",
+            work = "closed reversible fixed-mass entropy inversion; fluid cold compression and caloric energy pay -integral(p dV); the same discrete energy change drives shaft torque",
+            coupling = "joint gear-projected mechanical solve with converter, hydraulic and clutch trials; half duct flow / full mechanical work / half duct flow; full transport remains first order",
+            outputs = new[] { "volume", "torque", "hydraulic_power", "hydraulic_work" },
+            limits = "zero external case pressure, massless geometry, mixed chamber with no resolved bulk kinetic energy, no check valve or direct opening input; ideal vapor and zero-thermal-expansion liquid",
+            recovery = "reduce step_ns after numerical_failure; inspect material temperature/pressure bounds, chamber volume and shaft angular increment; the whole batch rolls back",
+            remaining = "compatible needle/nozzle and directional valve boundaries, finite phase relaxation/slip, measured calibration and actual Unity acceptance"
+        },
+        equilibrium_fuel_duct = new
+        {
+            domain = "compressible_fuel", component = "equilibrium_fuel_duct",
+            material = "Explicit liquid_bulk_modulus in Pa replaces vessel compliance. Node storage declares initial volume, with optional compressible_fuel_chamber geometry; total mass, temperature and initial_velocity in m_s are explicit. Matching material and LHV across reservoirs and cells.",
+            thermodynamics = "Liquid p=K*(rho/rho0-1), zero thermal expansion, constant liquid heat capacity and integrated cold energy. Ideal vapor and homogeneous instantaneous phase equilibrium share chemical potentials. Equilibrium acoustic speed follows the isentropic derivative; no measured fuel calibration.",
+            topology = "Finite mixed reservoirs at node_a/node_b have zero bulk velocity and may own compressible_fuel_chamber geometry; 1..24 ordered internal rigid cell IDs each belong to one duct. Explicit area, linear/quadratic resistance and finite thermal heat_node; all cell states observable.",
+            integration = "Conservative Rusanov finite-volume mass/momentum/total-energy transport, bounded explicit CFL substeps (maximum 4096 per interval), then exact local drag decay with finite-wall heat routing. First-order numerical diffusion; each accepted substep checks total entropy. Failures preserve the complete batch.",
+            momentum = "Stationary reservoir and friction-wall reactions are reported as impulse and mean force; they perform no mechanical work. Reservoir inflow kinetic energy thermalizes in the finite fluid inventory.",
+            recovery = "On numerical_failure reduce step_ns, refine cell volumes, and inspect material pressure/temperature and acoustic CFL bounds. Missing or duplicate cells and incompatible properties fail validation.",
+            scope = "Horizontal constant-area rigid duct, equilibrium phase change, uniform state per cell; optional shaft-driven moving mixed reservoir. No phase slip/relaxation delay, surface tension, real critical-point behavior, compatible needle/nozzle or directional-valve boundary, or actual Unity acceptance. Existing liquid-only and frozen-nozzle paths retain their own contracts."
+        },
+        fuel_inertial_pipe = new
+        {
+            component = "fuel_inertial_pipe", ports = "Distinct finite fuel nodes A/B with matching material and density; required finite thermal heat_node. No direct opening input.",
+            inventory = "Rigid horizontal uniform-area line owns rho*length*area liquid mass, caloric energy and I*Q^2/2 kinetic energy, with I=rho*length/area. Line volume is additional to both vessel volumes.",
+            momentum = "Signed dynamic flow, linear loss in pa_s_m3 and quadratic loss in pa_s2_m6. Midpoint momentum uses end-state finite-vessel pressures; split zero-flow events preserve gross forward/reverse transfer.",
+            energy = "Donor port enthalpy leaves one vessel; mixed line enthalpy enters the other. Explicit fluid_heat_fraction routes friction heat to the line and the rest to its finite wall. Pressure work changes kinetic energy and supplies friction heat once.",
+            numerics = "Pairwise backward-Euler port energy/mixing and midpoint momentum; first-order coupled refinement. Endpoint pressure discretization creates numerical caloric heating distinct from physical friction. Entropy history includes mixing and time discretization.",
+            bounds = "Liquid-only endpoints and pressure-corrected liquid stability throughout the line. Material temperature/pressure, quarter-mass transfer and dt*sqrt((1/Ca+1/Cb)/I)<=0.5 bounds apply. On numerical_failure reduce step_ns and inspect supply pressure, phase and line thermal bounds; full rollback applies.",
+            scope = "Constant-density incompressible liquid and well-mixed caloric line. No variable-density two-phase momentum, cavitation, acoustic waves, gravity, moving line geometry, distributed thermal fronts or measured calibration. Existing quasi-static two-phase links remain available separately."
+        },
+        fuel_discharge = new
+        {
+            component = "fuel_discharge", receiver = "finite_fuel_film", phase_mode = "frozen",
+            flow = "Finite fuel-domain source to gas/film receiver. Frozen vapor mass quality and common temperature during isentropic nozzle transit; bulk endpoints re-equilibrate. Incompressible liquid and ideal pseudo-species vapor. Unique mass-flux maximum limits sonic choking; Cd scales effective throat area.",
+            receiver_volume = "finite_fuel_film declares finite_volume_density in kg_m3. Accessible gas volume is cavity volume minus liquid mass/density, including gas_cylinder pressure work. Linear gas_piston coupling is unsupported.",
+            energy_momentum = "Source loses stagnation enthalpy. Explicit wall_kinetic_fraction in [0,1] thermalizes jet kinetic energy at the finite stationary film wall; the rest enters receiver fluid. Report ideal fully expanded jet speed, kinetic energy and impulse. Stationary wall/housing reactions do no work and add no direct piston or needle force.",
+            actuation = "Optional physical translational needle and crank valve_timing multiply the [0,1] opening command. No kg-per-cycle quota or needle_driver ownership for this component; coil voltage schedules remain explicit.",
+            material = "Source/receiver require matching pure-fuel properties and density. Vapor cv equality permits only 64-epsilon conversion rounding from declared gamma. Material temperature and positive gas-volume bounds remain enforced.",
+            recovery = "On numerical_failure refine step_ns and check source depletion, receiver capacity, phase temperature limits and conductance. Complete batch rollback, cancellation and fork independence apply.",
+            scope = "Quasi-steady homogeneous frozen-quality nozzle reference; no local inlet inertia, finite-rate nucleation, slip, resolved spray, real-fluid critical behavior, measured nozzle exit velocity or hardware calibration."
+        },
+        fuel_chamber = new
+        {
+            component = "fuel_chamber", ports = "node_a is the rotational shaft; node_b is one exclusively owned fuel-domain chamber.",
+            geometry = "Explicit minimum_reference_volume and swept_volume in m3 or l, phase in rad or deg. V0(theta)=Vmin+Vs sin^2((theta-phase)/2). Initial fuel storage matches this geometry within binary64 rounding.",
+            thermodynamics = "V=V0(theta)+C p; stored energy includes fluid and C p^2/2. Closed pressure work holds mass and entropy fixed; shaft torque uses the same energy change. Material temperature, maximum pressure and positive mass bounds remain explicit.",
+            coupling = "Joint projected electromechanical/cylinder/converter/hydraulic solve, including gear reactions and speculative clutch intervals. No explicit shaft torque kick. Transport surrounds mechanical work and includes homogeneous phase change during filling and delivery.",
+            valves = "fuel_check_valve permits only node_a to node_b flow when upstream pressure exceeds downstream pressure. Massless zero-cracking-pressure ideal check behavior with declared finite conductance and optional opening input; no measured valve dynamics or local inertia.",
+            evidence = "Shaft pressure torque, reference volume and signed work are observable. Closed-liquid and ideal-vapor references, independent entropy inversion, coupled ODE refinement, source starvation, full ledgers, replay and rollback require separate checks.",
+            scope = "Incompressible liquid, ideal pseudo-species vapor and instantaneous common-temperature equilibrium. No detailed cam/piston inertia, local NPSH, sonic choking, injector discharge or measured hardware calibration."
+        },
+        equilibrium_fuel_network = new
+        {
+            domain = "fuel", node_storage = "Positive reference vessel volume in m3 or l; initial is K and position is total kg.",
+            material = "Explicit density, compliance, maximum wall pressure, R, vapor cv, liquid cl, reference T/pressure, latent internal energy, temperature limits and LHV. Connected volumes require compatible pure-fuel properties.",
+            restriction = "fuel_restriction: finite fuel ports, conductance in m3_s_pa and optional opening channel in [0,1]. Reference volume flow follows pressure drop; total mass uses homogeneous donor density and upstream enthalpy.",
+            heat = "fuel_heat_link: finite fuel and thermal ports, conductance in w_k; conservative finite-bath heat and phase flash.",
+            state = "Independent fuel mass and caloric-plus-elastic energy. Report vapor mass/void fractions, entropy, enthalpy, transferred mass/energy and full mass/fuel/energy ledgers. LHV energy stays separate.",
+            integration = "Pairwise backward Euler in canonical component order, with bounded mass-energy solves and complete rollback. Entropy histories include physical mixing and time-discretization entropy; first-order refinement is checked independently.",
+            scope = "Homogeneous quasi-static dissipative restrictions; no link inertia, slip, sonic choking, finite-rate nucleation, injector coupling, real-fluid mixture calibration or actual Unity acceptance. Explicit fuel_chamber components supply finite-volume pump filling and shaft work.",
+            recovery = "On numerical_failure reduce step_ns and inspect conductance, vessel mass, compliance, maximum pressure and material temperature bounds. The entire failed batch and inputs remain unchanged."
+        },
+        at_controller = new { component = "at_controller", input = "Integral requested_gear state_code in [-1,4]; zero requests vented neutral.",
+            ownership = "Owns all fill/drain pairs; write requested gear instead of owned valve fractions.",
+            phases = new[] { "Neutral", "Releasing", "Applying", "Driving", "Fault" },
+            faults = new[] { "None", "ReleaseTimeout", "ApplyTimeout", "LowSupplyPressure", "DirectionChangeBlocked", "ConfirmedLockLost" },
+            lockup = "Optional sixth piston route with speed/dwell hysteresis; physical Released/Applying/Locked/Releasing output." },
         dct_controller = new { component = "dct_controller", input = "Integral requested_gear state_code in [-1,7]; zero is neutral.",
             ownership = "Owns both drive clutches and all eight selectors; write requested gear instead of owned engagement channels.",
             policy = "Sampled physical selector/drive lock confirmation; unloaded preselection, exclusive release/engagement ramps, neutral abort, timeout/direction faults and new-request recovery.",
@@ -52,17 +122,42 @@ public sealed class AgentWorkspace
             flow = "Needle position sets actual nozzle opening. Fluid can continue after target/window closure or reversal; actual delivery is not clipped to requested dose.",
             control = "Sampled forward-window/delivered-dose feedback owns coil voltage; write the injector kg request. Held voltage, sampled dose and every physical history share integer clocks, rollback and forks.",
             scope = "Pressure-balanced needle, constant R and linear unsaturated inductance. No nonlinear magnetic maps, hysteresis/eddy losses, flyback/PWM hardware, axial fluid force or calibrated actuation." },
+        liquid_rail_return = new { component = "liquid_rail_return", valve = "hydraulic_relief",
+            flow = "Explicit exclusive one-way relief from rail to the feed source at prescribed inlet pressure or coupled finite headspace pressure. Unregistered fluid paths reject.",
+            thermal = "Simultaneous rail/tank caloric mixing. Explicit fraction [0,1] of valve loss travels with returned fuel; the remainder follows the valve heat route.",
+            evidence = "Returned mass, caloric/chemical energy, carried fluid heat and mean flow remain observable. Research valve law; no measured regulator, cavitation or liquid boiling model." },
+        liquid_fuel_tank = new { component = "liquid_fuel_tank", feed_parameter = "tank_component",
+            headspace = new { optional_parameter = "headspace", capacity_unit = "m3", gas_node = "Finite gas node with omitted storage; tank capacity minus liquid volume owns it.",
+                pressure_work = "Coupled finite gas pressure sets pump inlet and relief return pressure; its adiabatic work is internal, not an external reservoir source.",
+                phase_equilibrium = new { optional_boolean = "phase_equilibrium", material = "Reuse the paired film's phase_equilibrium reference, with matching tracked headspace R/cv/LHV/stoichiometry. The tank adds p/rho to liquid chemical potential and resolves finite liquid volume.",
+                    initial = "Declare common gas/liquid temperature and pressure-corrected saturated vapor for a wet tank; a dry tank is at or below saturation. Total inventory density is below liquid density by a representable margin.",
+                    observables = new[] { "evaporated_fuel_mass", "condensed_fuel_mass", "signed mass_flow", "vapor_partial_pressure", "saturation_pressure", "cavitation_margin" },
+                    integration = "Bounded constant-U,V flash around gas transport and the conserving pump/return solve. Histories count physical-tick net phase transfer; gas vents carry fuel and chemical energy. Coupled refinement evidence is first order.",
+                    pickup = "The pump draws separated liquid only; dry forward rotation delivers no liquid. Bubble entrainment, two-phase pump/rail transport and local NPSH remain unsupported." },
+                vent = "Explicit existing gas_orifice and gas_heat_link paths; no implicit ambient clamp.",
+                observables = new[] { "pressure", "fill_fraction", "hydraulic_work", "gas mass", "gas internal_energy", "gas volume" },
+                interval = "Accepted net withdrawal is at most one quarter of the old headspace volume; refine ticks for unresolved transport or capacity failure." },
+            inventory = "Finite mixed liquid mass, caloric and chemical storage. Prescribed inlet pressure applies without headspace; geometric headspace owns the coupled pressure. Return flow mixes current rail temperature.",
+            filling = "Interval-average fill fraction limits positive displacement flow by remaining inventory and scales shaft reaction with the same work-conjugate displacement. Dry forward rotation transfers no fluid work.",
+            scope = "Optional rigid capacity and ideal-gas pressure work, with explicit vents/heat paths and optional finite-volume phase equilibrium. Without headspace the prescribed inlet pressure-work boundary remains. Slosh, real-fluid mixtures, cavitating pump transport, measured filling dynamics and calibrated hardware remain open." },
         liquid_fuel_injector = new { component = "liquid_fuel_injector", source = "Finite compliant liquid inventory; absolute pressure falls with discharged volume.",
             input_unit = "kg", density_unit = "kg_m3", compliance_unit = "m3_pa",
             delivery = "Forward cycle quota is latched once. Exact fixed-receiver pressure-head decay limits delivery by pressure, finite inventory and remaining dose.",
             energy = "Rail caloric/chemical and pressure energy are stored. Released pressure work equals nozzle heat plus exported receiver pressure work. Only liquid joins the film; evaporation remains separate.",
             scope = "Constant density/compliance/caloric properties; negligible liquid receiver volume with explicit exported displacement work. No pump/refill, needle/electrical actuation, spray/cavitation or calibrated hardware." },
         fuel_film = new { component = "fuel_film", receiver = "Tracked gas", wall = "Finite thermal node",
-            phases = "Analytic finite-bath sensible heating, declared saturation plateau, heat-limited vaporization and dryout. Only vapor joins the gas reactants.",
+            phases = "Default: analytic finite-bath heating, prescribed saturation plateau, evaporation and dryout. Optional phase_equilibrium adds reversible liquid/vapor and thermal equilibrium; reaction still consumes vapor only.",
             energy = "Latent input is internal-energy difference in j_kg. Liquid phase offset matches the receiver vapor cv at saturation; signed liquid thermal energy is valid.",
             units = new { mass = "kg", temperature = "k", specific_heat = "j_kg_k", latent_internal_energy = "j_kg", conductance = "w_k" },
             integration = "Symmetric film/gas/mechanics/gas/film split; reverse film order on the second half-step. Other wall heat sources use the explicit outer-tick wall temperature and retain first-order coupling accuracy.",
-            scope = "Negligible liquid volume, constant prescribed saturation temperature/properties, no condensation, no liquid injection/rail/needle/spray dynamics or calibrated fuel properties." },
+            phase_equilibrium = new { required_parameters = new[] { "reference_pressure", "minimum_temperature", "maximum_temperature" }, pressure_units = new[] { "pa", "bar" }, temperature_unit = "k",
+                material = "The declared saturation_temperature and latent_internal_energy define the reference. Constant liquid heat capacity and receiver R/cv determine a consistent saturation curve; one film owns each equilibrium receiver.",
+                advance = "Conserving bounded scalar flash at fixed total fuel, volume and internal energy, with finite-wall backward Euler. Gas, liquid and wall coupling has first-order refinement evidence. Fully vaporized gas may superheat after complete evaporation within the declared curve interval.",
+                observables = new[] { "condensed_fuel_mass", "evaporated_fuel_mass", "vapor_partial_pressure", "signed mass_flow", "saturation_pressure", "cavitation_margin" },
+                pressure_roundoff = "64 * 2^-52 * max(p, p_sat); reported margins are not clamped. Bulk saturation is not a local-flow or pump NPSH model.",
+                histories = "Evaporated and condensed histories accumulate positive and negative net phase transfer per complete physical tick; signed mass_flow retains that tick net rate.",
+                supply = "Liquid rail and inlet pressure minus saturation pressure is observable. A negative wet-inventory margin rejects the entire batch; raise pressure or lower liquid temperature. Vapor bubbles and cavitating pump flow are not modeled." },
+            scope = "Negligible liquid displacement and constant caloric properties. Optional equilibrium uses one ideal pseudo-species with the receiver gas constant; multicomponent fuel, finite-rate phase kinetics, resolved spray and measured calibration remain open." },
         gas_fuel_injector = new { component = "gas_fuel_injector", source = "Finite tracked gas rail; pressure-dependent one-way fuel/enthalpy transfer.", input_unit = "kg",
             quota = "Requested fuel dose is latched once at each forward metering window. Mid-window writes apply to the next cycle; reversal cannot reissue an observed cycle quota.",
             limiter = "One half-step fuel-rate ceiling preserves the per-cycle budget. The same flow factor transports total mass, constituents and upstream thermal enthalpy.",
@@ -185,43 +280,16 @@ public sealed class AgentWorkspace
         return document.RootElement.Clone();
     }
     public static AgentReply ModelSchema() => AgentReply.Success(Resource("power.model.schema.json"));
-    public static AgentReply ExampleModel(string name = "electrothermal") => name switch
+    public static AgentReply ExampleModel(string name = "electrothermal")
     {
-        "electrothermal" => AgentReply.Success(Resource("power.template.json")),
-        "sealed-cylinder" => AgentReply.Success(Resource("power.cylinder.template.json")),
-        "gas-network" => AgentReply.Success(Resource("power.gas.template.json")),
-        "moving-cylinder" => AgentReply.Success(Resource("power.moving-cylinder.template.json")),
-        "crank-timed-cylinder" => AgentReply.Success(Resource("power.crank-timed-cylinder.template.json")),
-        "fired-cylinder" => AgentReply.Success(Resource("power.fired-cylinder.template.json")),
-        "fired-clutch" => AgentReply.Success(Resource("power.fired-clutch.template.json")),
-        "fired-pump" => AgentReply.Success(Resource("power.fired-pump.template.json")),
-        "fired-pump-losses" => AgentReply.Success(Resource("power.fired-pump-losses.template.json")),
-        "electric-pump" => AgentReply.Success(Resource("power.electric-pump.template.json")),
-        "pressure-regulated-pump" => AgentReply.Success(Resource("power.pressure-regulated-pump.template.json")),
-        "battery-regulated-pump" => AgentReply.Success(Resource("power.battery-regulated-pump.template.json")),
-        "piston-actuated-clutch" => AgentReply.Success(Resource("power.piston-actuated-clutch.template.json")),
-        "spool-regulated-pump" => AgentReply.Success(Resource("power.spool-regulated-pump.template.json")),
-        "gas-accumulator-pump" => AgentReply.Success(Resource("power.gas-accumulator-pump.template.json")),
-        "metered-fired-cylinder" => AgentReply.Success(Resource("power.metered-fired-cylinder.template.json")),
-        "film-fired-cylinder" => AgentReply.Success(Resource("power.film-fired-cylinder.template.json")),
-        "liquid-injected-cylinder" => AgentReply.Success(Resource("power.liquid-injected-cylinder.template.json")),
-        "needle-actuated-cylinder" => AgentReply.Success(Resource("power.needle-actuated-cylinder.template.json")),
-        "closure-compensated-cylinder" => AgentReply.Success(Resource("power.closure-compensated-cylinder.template.json")),
-        "dual-clutch-transmission" => AgentReply.Success(Resource("power.dual-clutch-transmission.template.json")),
-        "fired-dual-clutch" => AgentReply.Success(Resource("power.fired-dual-clutch.template.json")),
-        "hydraulic-ravigneaux-transmission" => AgentReply.Success(Resource("power.hydraulic-ravigneaux-transmission.template.json")),
-        "fired-hydraulic-ravigneaux" => AgentReply.Success(Resource("power.fired-hydraulic-ravigneaux.template.json")),
-        "resolved-ravigneaux-transmission" => AgentReply.Success(Resource("power.resolved-ravigneaux-transmission.template.json")),
-        "fired-resolved-ravigneaux-converter" => AgentReply.Success(Resource("power.fired-resolved-ravigneaux-converter.template.json")),
-        "ravigneaux-transmission" => AgentReply.Success(Resource("power.ravigneaux-transmission.template.json")),
-        "fired-ravigneaux-converter" => AgentReply.Success(Resource("power.fired-ravigneaux-converter.template.json")),
-        "controlled-dual-clutch" => AgentReply.Success(Resource("power.controlled-dual-clutch.template.json")),
-        "controlled-fired-dual-clutch" => AgentReply.Success(Resource("power.controlled-fired-dual-clutch.template.json")),
-        "fired-hydraulic" => AgentReply.Success(Resource("power.fired-hydraulic.template.json")),
-        "fired-converter" => AgentReply.Success(Resource("power.fired-converter.template.json")),
-        "fired-planetary" => AgentReply.Success(Resource("power.fired-planetary.template.json")),
-        _ => AgentReply.Failure("unknown_example", "Available examples: electrothermal, sealed-cylinder, gas-network, moving-cylinder, crank-timed-cylinder, fired-cylinder, fired-clutch, fired-planetary, fired-converter, fired-hydraulic, fired-pump, fired-pump-losses, electric-pump, pressure-regulated-pump, battery-regulated-pump, piston-actuated-clutch, spool-regulated-pump, gas-accumulator-pump, metered-fired-cylinder, film-fired-cylinder, liquid-injected-cylinder, needle-actuated-cylinder, closure-compensated-cylinder, dual-clutch-transmission, fired-dual-clutch, controlled-dual-clutch, controlled-fired-dual-clutch, ravigneaux-transmission, fired-ravigneaux-converter, resolved-ravigneaux-transmission, fired-resolved-ravigneaux-converter, hydraulic-ravigneaux-transmission, fired-hydraulic-ravigneaux.", field: "name")
-    };
+        var lab = LaboratoryCatalog.Entries.FirstOrDefault(entry => entry.AgentExample && entry.Name == name);
+        if (lab is null)
+            return AgentReply.Failure("unknown_example",
+                "Available examples: " + string.Join(", ", LaboratoryCatalog.Entries.Where(entry => entry.AgentExample).Select(entry => entry.Name)) + ".",
+                field: "name");
+        using var document = JsonDocument.Parse(LaboratoryCatalog.ReadSource(lab.Name));
+        return AgentReply.Success(document.RootElement);
+    }
 
     private static AgentReply Guard(Func<AgentReply> work)
     {
@@ -359,7 +427,7 @@ public sealed class AgentWorkspace
     private static AgentReply Status(SimulationStatus status, Session s) => AgentReply.Failure(
         JsonNamingPolicy.SnakeCaseLower.ConvertName(status.ToString()),
         status == SimulationStatus.NumericalFailure
-            ? "Numerical solve failed; state and revision are unchanged. Reduce step_ns and recreate the model/session. For cylinders keep crank travel below 0.25 rad per interval; for gas networks inspect flow area, volume, conductance and initial conditions. Timed valves require crank travel per interval <= min(0.25 rad, duration_angle/8). Premixed combustion also requires travel <= min(0.25 rad, burn duration/32) and heat release <= 25% of pre-burn thermal energy. For hydraulics inspect compliance, valve coefficients, gauge pressures and actuator geometry; reduce step_ns if pressures become negative. For closure prediction inspect the aligned finite horizon, available integer time and monotone cutoff bracket; reduce the sample period/horizon when control assumptions fail. For solenoids keep L(x)>0, resolve needle travel and inspect R/L/gradient and stroke scales; reducing step_ns also resolves controller/closing dynamics. For converters inspect map slopes and speed/inertia scales. For ideal gears inspect constraint rank and inertia/ratio scales. For clutches inspect inertia/ratio scales, redundant constraints, capacity schedules and the bounded interval/constraint limits in capabilities."
+            ? "Numerical solve failed; state and revision are unchanged. Reduce step_ns and recreate the model/session. For cylinders keep crank travel below 0.25 rad per interval; for gas networks inspect flow area, volume, conductance and initial conditions. Timed valves require crank travel per interval <= min(0.25 rad, duration_angle/8). Premixed combustion also requires travel <= min(0.25 rad, burn duration/32) and heat release <= 25% of pre-burn thermal energy. For hydraulics inspect compliance, valve coefficients, gauge pressures and actuator geometry; reduce step_ns if pressures become negative. For equilibrium fuel, keep the wet phase inside its declared temperature interval and liquid rail/inlet pressure at or above saturation; increase supply pressure or lower liquid temperature if cavitation starts. For fuel-domain networks inspect positive mass, maximum wall pressure, material temperature limits, restriction conductance and moving-chamber geometry/angle intervals; these homogeneous restrictions do not resolve choking or pump filling. For finite-volume equilibrium tanks also keep total inventory density below liquid density, resolve gas heat/vent intervals, and use matching tracked gas properties and declared material temperatures. For closure prediction inspect the aligned finite horizon, available integer time and monotone cutoff bracket; reduce the sample period/horizon when control assumptions fail. For solenoids keep L(x)>0, resolve needle travel and inspect R/L/gradient and stroke scales; reducing step_ns also resolves controller/closing dynamics. For converters inspect map slopes and speed/inertia scales. For ideal gears inspect constraint rank and inertia/ratio scales. For clutches inspect inertia/ratio scales, redundant constraints, capacity schedules and the bounded interval/constraint limits in capabilities."
             : status == SimulationStatus.ControlledInput ? "This actuator input is owned by a pressure controller. Write its pressure_setpoint input instead; state and revision are unchanged."
             : "Operation rejected; session state and revision are unchanged. Inspect capabilities, channels and fixed step before retrying. Gas openings, burn multipliers and clutch engagement must be finite fractions in [0, 1]; pressure setpoints must be nonnegative.",
         status is SimulationStatus.Cancelled or SimulationStatus.Busy, revision: s.Revision.ToString(CultureInfo.InvariantCulture));

@@ -28,7 +28,8 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
         ["v_pa"] = Unit.VoltPerPascal, ["v_pa_s"] = Unit.VoltPerPascalSecond,
         ["c"] = Unit.Coulomb, ["ah"] = Unit.AmpereHour, ["f"] = Unit.Farad,
         ["fraction_pa"] = Unit.FractionPerPascal, ["fraction_pa_s"] = Unit.FractionPerPascalSecond,
-        ["m_s"] = Unit.MeterPerSecond, ["n_m"] = Unit.NewtonPerMeter, ["n_s_m"] = Unit.NewtonSecondPerMeter,
+        ["m_s"] = Unit.MeterPerSecond, ["n_m"] = Unit.NewtonPerMeter, ["n_s_m"] = Unit.NewtonSecondPerMeter, ["n_s"] = Unit.NewtonSecond,
+        ["pa_s_m3"] = Unit.PascalSecondPerCubicMeter, ["pa_s2_m6"] = Unit.PascalSecondSquaredPerCubicMeterSquared,
         ["m3_rad"] = Unit.CubicMeterPerRadian, ["m3_pa"] = Unit.CubicMeterPerPascal, ["m3_s_pa"] = Unit.CubicMeterPerSecondPascal,
         ["m3_s_sqrt_pa"] = Unit.CubicMeterPerSecondSqrtPascal, ["m3_s"] = Unit.CubicMeterPerSecond, ["n"] = Unit.Newton,
         ["nm_s2_rad2"] = Unit.NewtonMeterSecondSquaredPerRadianSquared, ["none"] = Unit.None, ["kg_m2"] = Unit.KilogramMeterSquared, ["rad"] = Unit.Radian,
@@ -43,7 +44,14 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     };
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
-        ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault,
+        ["density"] = Field.Density, ["sound_speed"] = Field.SoundSpeed, ["mass_at_a"] = Field.MassAtA, ["mass_at_b"] = Field.MassAtB,
+        ["jet_kinetic_energy"] = Field.JetKineticEnergy, ["jet_impulse"] = Field.JetImpulse, ["throat_pressure"] = Field.ThroatPressure,
+        ["exit_temperature"] = Field.ExitTemperature, ["exit_velocity"] = Field.ExitVelocity, ["choked"] = Field.Choked,
+        ["forward_volume"] = Field.ForwardVolume, ["reverse_volume"] = Field.ReverseVolume, ["kinetic_energy"] = Field.KineticEnergy, ["energy_at_a"] = Field.EnergyAtA, ["energy_at_b"] = Field.EnergyAtB,
+        ["requested_gear"] = Field.RequestedGear, ["actual_gear"] = Field.ActualGear, ["selected_odd_gear"] = Field.SelectedOddGear, ["selected_even_gear"] = Field.SelectedEvenGear, ["shift_phase"] = Field.ShiftPhase, ["sync_error"] = Field.SyncError, ["control_fault"] = Field.ControlFault, ["lockup_state"] = Field.LockupState,
+        ["actuator_integral_a"] = Field.ActuatorIntegralA, ["actuator_integral_b"] = Field.ActuatorIntegralB, ["actuator_integral_c"] = Field.ActuatorIntegralC, ["actuator_integral_d"] = Field.ActuatorIntegralD, ["actuator_integral_e"] = Field.ActuatorIntegralE, ["actuator_integral_f"] = Field.ActuatorIntegralF, ["tank_state"] = Field.TankState, ["fill_fraction"] = Field.FillFraction,
+        ["vapor_mass"] = Field.VaporMass, ["vapor_mass_fraction"] = Field.VaporMassFraction, ["vapor_volume_fraction"] = Field.VaporVolumeFraction, ["elastic_energy"] = Field.ElasticEnergy, ["entropy"] = Field.Entropy, ["specific_enthalpy"] = Field.SpecificEnthalpy, ["transport_energy"] = Field.TransportEnergy, ["entropy_produced"] = Field.EntropyProduced,
+        ["condensed_fuel_mass"] = Field.CondensedFuelMass, ["vapor_partial_pressure"] = Field.VaporPartialPressure, ["saturation_pressure"] = Field.SaturationPressure, ["cavitation_margin"] = Field.CavitationMargin,
         ["copper_heat"] = Field.CopperHeat, ["predicted_fuel_mass"] = Field.PredictedFuelMass, ["prediction_ticks"] = Field.PredictionTicks, ["driver_state"] = Field.DriverState, ["closing_delay_ticks"] = Field.ClosingDelayTicks,
         ["sampled_pressure"] = Field.SampledPressure, ["pressure_error"] = Field.PressureError,
         ["integral_voltage"] = Field.IntegralVoltage, ["command_voltage"] = Field.CommandVoltage,
@@ -124,18 +132,31 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
         if (Text(root.GetProperty("schema")) != "power.model.v1") throw new ArgumentException("Unsupported schema.");
         var nodes = Array(root.GetProperty("nodes"), CompiledModel.MaxNodes, 1).Select(n =>
         {
-            Object(n, ["id", "domain", "initial"], "storage", "position", "gas", "battery");
+            Object(n, ["id", "domain", "initial"], "storage", "position", "gas", "battery", "fuel", "initial_velocity");
             var domain = Text(n.GetProperty("domain")) switch
             {
-                "rotational" => Domain.Rotational, "thermal" => Domain.Thermal, "gas" => Domain.Gas, "hydraulic" => Domain.Hydraulic, "battery" => Domain.Battery, "translational" => Domain.Translational,
+                "rotational" => Domain.Rotational, "thermal" => Domain.Thermal, "gas" => Domain.Gas, "hydraulic" => Domain.Hydraulic, "battery" => Domain.Battery, "translational" => Domain.Translational, "fuel" => Domain.Fuel, "compressible_fuel" => Domain.CompressibleFuel,
                 _ => throw new ArgumentException("Unknown node domain.")
             };
-            if (domain is Domain.Rotational or Domain.Gas or Domain.Battery or Domain.Translational && !n.TryGetProperty("position", out _))
+            if(domain==Domain.CompressibleFuel) Object(n,["id","domain","storage","initial","position","fuel","initial_velocity"]);
+            if (domain is Domain.Rotational or Domain.Gas or Domain.Battery or Domain.Translational or Domain.Fuel or Domain.CompressibleFuel && !n.TryGetProperty("position", out _))
                 throw new ArgumentException("Rotational position and gas pressure must be explicit.");
             if (domain != Domain.Gas && !n.TryGetProperty("storage", out _))
                 throw new ArgumentException("Rotational inertia and thermal capacity must be explicit.");
             GasDefinition? gas = null;
             BatteryDefinition? battery = null;
+            EquilibriumFuelDefinition? fuel = null;
+            if (n.TryGetProperty("fuel", out var sourceFuel))
+            {
+                Object(sourceFuel, [domain == Domain.CompressibleFuel ? "liquid_bulk_modulus" : "compliance", "liquid_density", "maximum_pressure", "gas_constant", "vapor_specific_heat", "liquid_specific_heat", "reference_temperature", "latent_internal_energy", "reference_pressure", "minimum_temperature", "maximum_temperature", "lower_heating_value"]);
+                fuel = new()
+                {
+                    Compliance = domain == Domain.CompressibleFuel ? default : Quantity(sourceFuel.GetProperty("compliance")), LiquidBulkModulus = domain == Domain.CompressibleFuel ? Quantity(sourceFuel.GetProperty("liquid_bulk_modulus")) : default, LiquidDensity = Quantity(sourceFuel.GetProperty("liquid_density")), MaximumPressure = Quantity(sourceFuel.GetProperty("maximum_pressure")),
+                    GasConstant = Quantity(sourceFuel.GetProperty("gas_constant")), VaporSpecificHeat = Quantity(sourceFuel.GetProperty("vapor_specific_heat")), LiquidSpecificHeat = Quantity(sourceFuel.GetProperty("liquid_specific_heat")),
+                    ReferenceTemperature = Quantity(sourceFuel.GetProperty("reference_temperature")), LatentInternalEnergy = Quantity(sourceFuel.GetProperty("latent_internal_energy")), ReferencePressure = Quantity(sourceFuel.GetProperty("reference_pressure")),
+                    MinimumTemperature = Quantity(sourceFuel.GetProperty("minimum_temperature")), MaximumTemperature = Quantity(sourceFuel.GetProperty("maximum_temperature")), LowerHeatingValue = Quantity(sourceFuel.GetProperty("lower_heating_value"))
+                };
+            }
             if (n.TryGetProperty("battery", out var sourceBattery))
             {
                 Object(sourceBattery, ["empty_voltage", "full_voltage", "series_resistance", "polarization_resistance", "polarization_capacitance"], "heat_node");
@@ -160,13 +181,16 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 gas = new() { GasConstant = Quantity(composition.GetProperty("gas_constant")), Gamma = Number(composition.GetProperty("gamma")), Premixed = premixed };
             }
             return new NodeDefinition(Id(n, "id"), domain, n.TryGetProperty("storage", out var storage) ? Quantity(storage) : default, Quantity(n.GetProperty("initial")),
-                n.TryGetProperty("position", out var p) ? Quantity(p) : default) { Gas = gas, Battery = battery };
+                n.TryGetProperty("position", out var p) ? Quantity(p) : default) { Gas = gas, Battery = battery, Fuel = fuel, InitialVelocity = domain == Domain.CompressibleFuel || n.TryGetProperty("initial_velocity", out _) ? Quantity(n.GetProperty("initial_velocity")) : default };
         }).ToArray();
         var components = Array(root.GetProperty("components"), CompiledModel.MaxComponents).Select(c =>
         {
             Object(c, ["id", "kind", "node_a"], "node_b", "node_c", "heat_node", "input_channel", "initial_input", "parameters", "valve_timing", "reservoir_fractions");
             var kind = Text(c.GetProperty("kind")) switch
             {
+                "fuel_chamber" => ComponentKind.FuelChamber, "compressible_fuel_chamber" => ComponentKind.CompressibleFuelChamber, "fuel_check_valve" => ComponentKind.FuelCheckValve, "fuel_restriction" => ComponentKind.FuelRestriction, "fuel_heat_link" => ComponentKind.FuelHeatLink,
+                "fuel_discharge" => ComponentKind.FuelDischarge, "finite_fuel_film" => ComponentKind.FiniteFuelFilm,
+                "fuel_inertial_pipe" => ComponentKind.FuelInertialPipe, "equilibrium_fuel_duct" => ComponentKind.EquilibriumFuelDuct,
                 "hydraulic_resistance" => ComponentKind.HydraulicResistance, "hydraulic_orifice" => ComponentKind.HydraulicOrifice,
                 "hydraulic_clutch" => ComponentKind.HydraulicClutch,
                 "hydraulic_pump" => ComponentKind.HydraulicPump, "hydraulic_relief" => ComponentKind.HydraulicRelief,
@@ -176,23 +200,28 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 "torque_converter" => ComponentKind.TorqueConverter, "shaft" => ComponentKind.Shaft, "dc_motor" => ComponentKind.DcMotor,
                 "torque_source" => ComponentKind.TorqueSource, "thermal_link" => ComponentKind.ThermalLink,
                 "sealed_cylinder" => ComponentKind.SealedCylinder,
-                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink, "fuel_film" => ComponentKind.FuelFilm, "liquid_fuel_injector" => ComponentKind.LiquidFuelInjector, "solenoid" => ComponentKind.Solenoid, "travel_stop" => ComponentKind.TravelStop, "needle_driver" => ComponentKind.NeedleDriver, "dct_controller" => ComponentKind.DualClutchController,
+                "gas_orifice" => ComponentKind.GasOrifice, "gas_fuel_injector" => ComponentKind.GasFuelInjector, "gas_heat_link" => ComponentKind.GasHeatLink, "fuel_film" => ComponentKind.FuelFilm, "liquid_fuel_injector" => ComponentKind.LiquidFuelInjector, "liquid_rail_feed" => ComponentKind.LiquidRailFeed, "liquid_fuel_tank" => ComponentKind.LiquidFuelTank, "liquid_rail_return" => ComponentKind.LiquidRailReturn, "solenoid" => ComponentKind.Solenoid, "travel_stop" => ComponentKind.TravelStop, "needle_driver" => ComponentKind.NeedleDriver, "dct_controller" => ComponentKind.DualClutchController, "at_controller" => ComponentKind.HydraulicAtController,
                 "gas_cylinder" => ComponentKind.GasCylinder, "gas_piston" => ComponentKind.GasPiston, "premixed_combustion" => ComponentKind.PremixedCombustion,
                 "clutch" => ComponentKind.Clutch,
                 "ideal_gear" => ComponentKind.IdealGear, "planetary_gear" => ComponentKind.PlanetaryGear, "double_pinion_planetary_gear" => ComponentKind.DoublePinionPlanetaryGear, "carrier_gear" => ComponentKind.CarrierGear,
                 _ => throw new ArgumentException("Unknown component kind.")
             };
-            if (kind == ComponentKind.IdealGear) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
+            if (kind is ComponentKind.FuelRestriction or ComponentKind.FuelCheckValve) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel");
+            else if (kind == ComponentKind.FuelDischarge) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel", "valve_timing");
+            else if (kind is ComponentKind.FuelHeatLink or ComponentKind.FuelChamber or ComponentKind.CompressibleFuelChamber) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
+            else if (kind is ComponentKind.FuelInertialPipe or ComponentKind.EquilibriumFuelDuct) Object(c, ["id", "kind", "node_a", "node_b", "heat_node", "parameters"]);
+            else if (kind == ComponentKind.IdealGear) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind is ComponentKind.PlanetaryGear or ComponentKind.DoublePinionPlanetaryGear or ComponentKind.CarrierGear) Object(c, ["id", "kind", "node_a", "node_b", "node_c", "parameters"]);
             else if (kind == ComponentKind.TorqueConverter) Object(c, ["id", "kind", "node_a", "node_b", "parameters"], "heat_node");
             else if (kind is ComponentKind.PressureController or ComponentKind.PressureDutyController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if (kind == ComponentKind.BatteryMotor) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"], "heat_node");
             else if (kind == ComponentKind.ResistiveLoad) Object(c, ["id", "kind", "node_a", "initial_input", "parameters"], "input_channel", "heat_node");
-            else if (kind == ComponentKind.DualClutchController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
+            else if (kind is ComponentKind.DualClutchController or ComponentKind.HydraulicAtController) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
             else if (kind == ComponentKind.Solenoid) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"], "heat_node");
             else if (kind is ComponentKind.TravelStop or ComponentKind.NeedleDriver) Object(c, ["id", "kind", "node_a", "parameters"]);
+            else if (kind is ComponentKind.LiquidRailFeed or ComponentKind.LiquidFuelTank or ComponentKind.LiquidRailReturn) Object(c,["id","kind","node_a","parameters"]);
             else if (kind == ComponentKind.LiquidFuelInjector) Object(c, ["id", "kind", "node_a", "input_channel", "initial_input", "parameters"]);
-            else if(kind==ComponentKind.FuelFilm)Object(c,["id","kind","node_a","node_b","parameters"]);
+            else if(kind is ComponentKind.FuelFilm or ComponentKind.FiniteFuelFilm)Object(c,["id","kind","node_a","node_b","parameters"]);
             else if (kind == ComponentKind.GasFuelInjector) Object(c, ["id", "kind", "node_a", "node_b", "input_channel", "initial_input", "parameters"]);
             else if (kind is ComponentKind.HydraulicPiston or ComponentKind.GasPiston) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind == ComponentKind.PistonClutch) Object(c, ["id", "kind", "node_a", "parameters"], "node_b", "heat_node");
@@ -216,12 +245,79 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 InputChannel = c.TryGetProperty("input_channel", out var channel) ? Integer(channel, long.MaxValue) : 0,
                 InitialInput = c.TryGetProperty("initial_input", out var initial) ? Quantity(initial) : default
             };
+            if(kind==ComponentKind.EquilibriumFuelDuct)
+            {
+                var duct=c.GetProperty("parameters");Object(duct,["cells","area","linear_resistance","quadratic_resistance","fluid_heat_fraction"]);
+                return result with{FuelDuct=new(){Cells=Array(duct.GetProperty("cells"),24,1).Select(x=>(uint)Integer(x,uint.MaxValue,1)).ToArray(),Area=Quantity(duct.GetProperty("area")),
+                    LinearResistance=Quantity(duct.GetProperty("linear_resistance")),QuadraticResistance=Quantity(duct.GetProperty("quadratic_resistance")),FluidHeatFraction=Quantity(duct.GetProperty("fluid_heat_fraction"))}};
+            }
+            if (kind == ComponentKind.FuelInertialPipe)
+            {
+                var pipe = c.GetProperty("parameters");
+                Object(pipe, ["length", "area", "linear_resistance", "quadratic_resistance", "initial_flow", "initial_temperature", "fluid_heat_fraction"]);
+                return result with { FuelPipe = new() { Length = Quantity(pipe.GetProperty("length")), Area = Quantity(pipe.GetProperty("area")),
+                    LinearResistance = Quantity(pipe.GetProperty("linear_resistance")), QuadraticResistance = Quantity(pipe.GetProperty("quadratic_resistance")),
+                    InitialFlow = Quantity(pipe.GetProperty("initial_flow")), InitialTemperature = Quantity(pipe.GetProperty("initial_temperature")), FluidHeatFraction = Quantity(pipe.GetProperty("fluid_heat_fraction")) } };
+            }
             if (kind is ComponentKind.TorqueSource or ComponentKind.ForceSource)
             {
                 if (c.TryGetProperty("parameters", out var empty)) Object(empty, []);
                 return result;
             }
             if (!c.TryGetProperty("parameters", out var parameters)) throw new ArgumentException("Missing component parameters.");
+            if (kind is ComponentKind.FuelChamber or ComponentKind.CompressibleFuelChamber)
+            {
+                Object(parameters, ["minimum_reference_volume", "swept_volume", "phase"]);
+                return result with { FuelChamber = new() { MinimumReferenceVolume = Quantity(parameters.GetProperty("minimum_reference_volume")),
+                    SweptVolume = Quantity(parameters.GetProperty("swept_volume")), Phase = Quantity(parameters.GetProperty("phase")) } };
+            }
+            if (kind is ComponentKind.FuelRestriction or ComponentKind.FuelHeatLink or ComponentKind.FuelCheckValve)
+            {
+                Object(parameters, ["conductance"]);
+                return result with { Conductance = Quantity(parameters.GetProperty("conductance")) };
+            }
+            if(kind==ComponentKind.LiquidRailFeed)
+            {
+                Object(parameters,["injector_component","pump_component"],"supply_temperature","tank_component");
+                return result with{LiquidRailFeed=new(){InjectorComponent=Id(parameters,"injector_component"),PumpComponent=Id(parameters,"pump_component"),TankComponent=parameters.TryGetProperty("tank_component",out var tank)?Id(parameters,"tank_component"):0,SupplyTemperature=parameters.TryGetProperty("supply_temperature",out var temperature)?Quantity(temperature):default}};
+            }
+            if (kind == ComponentKind.LiquidRailReturn)
+            {
+                Object(parameters,["feed_component","valve_component","fluid_heat_fraction"]);
+                return result with{LiquidRailReturn=new(){FeedComponent=Id(parameters,"feed_component"),ValveComponent=Id(parameters,"valve_component"),FluidHeatFraction=Quantity(parameters.GetProperty("fluid_heat_fraction"))}};
+            }
+            if (kind == ComponentKind.LiquidFuelTank)
+            {
+                Object(parameters,["injector_component","initial_mass","initial_temperature"],"headspace");
+                LiquidTankHeadspaceDefinition? headspace = null;
+                if (parameters.TryGetProperty("headspace", out var geometry))
+                {
+                    Object(geometry, ["capacity", "gas_node"], "phase_equilibrium");
+                    bool equilibrium = false;
+                    if (geometry.TryGetProperty("phase_equilibrium", out var flag))
+                    {
+                        if (flag.ValueKind is not (JsonValueKind.True or JsonValueKind.False)) throw new ArgumentException("headspace.phase_equilibrium must be a JSON boolean.");
+                        equilibrium = flag.GetBoolean();
+                    }
+                    headspace = new() { Capacity = Quantity(geometry.GetProperty("capacity")), GasNode = Id(geometry, "gas_node"), PhaseEquilibrium = equilibrium };
+                }
+                return result with{LiquidFuelTank=new(){InjectorComponent=Id(parameters,"injector_component"),InitialMass=Quantity(parameters.GetProperty("initial_mass")),InitialTemperature=Quantity(parameters.GetProperty("initial_temperature")),Headspace=headspace}};
+            }
+            if (kind == ComponentKind.HydraulicAtController)
+            {
+                Object(parameters,["vehicle_node","ring_node","supply_pressure_node","routes","sample_period_ns","release_timeout_ns","apply_timeout_ns","low_supply_timeout_ns","lockup_dwell_ns",
+                    "apply_pressure","pressure_tolerance","minimum_supply_pressure","release_force","minimum_apply_force","proportional_gain","integral_gain","synchronize_tolerance","direction_speed_limit",
+                    "lockup_speed_limit","unlock_speed_limit","minimum_lockup_input_speed","minimum_lockup_forward_range"]);
+                var routes=parameters.GetProperty("routes");if(routes.ValueKind!=JsonValueKind.Array||routes.GetArrayLength() is <5 or >6)throw new ArgumentException("AT routes require five range elements and optional lockup.");
+                var bindings=routes.EnumerateArray().Select(route=>{Object(route,["clutch","fill_valve","drain_valve"]);return new AtActuatorRoute(Id(route,"clutch"),Id(route,"fill_valve"),Id(route,"drain_valve"));}).ToArray();
+                return result with { HydraulicAtController=new() { VehicleNode=Id(parameters,"vehicle_node"),RingNode=Id(parameters,"ring_node"),SupplyPressureNode=Id(parameters,"supply_pressure_node"),Routes=bindings,
+                    SamplePeriodNanoseconds=Integer(parameters.GetProperty("sample_period_ns"),1_000_000_000,1),ReleaseTimeoutNanoseconds=Integer(parameters.GetProperty("release_timeout_ns"),10_000_000_000,1),
+                    ApplyTimeoutNanoseconds=Integer(parameters.GetProperty("apply_timeout_ns"),10_000_000_000,1),LowSupplyTimeoutNanoseconds=Integer(parameters.GetProperty("low_supply_timeout_ns"),10_000_000_000,1),LockupDwellNanoseconds=Integer(parameters.GetProperty("lockup_dwell_ns"),10_000_000_000),
+                    ApplyPressure=Quantity(parameters.GetProperty("apply_pressure")),PressureTolerance=Quantity(parameters.GetProperty("pressure_tolerance")),MinimumSupplyPressure=Quantity(parameters.GetProperty("minimum_supply_pressure")),
+                    ReleaseForce=Quantity(parameters.GetProperty("release_force")),MinimumApplyForce=Quantity(parameters.GetProperty("minimum_apply_force")),ProportionalGain=Quantity(parameters.GetProperty("proportional_gain")),IntegralGain=Quantity(parameters.GetProperty("integral_gain")),
+                    SynchronizeTolerance=Quantity(parameters.GetProperty("synchronize_tolerance")),DirectionChangeSpeedLimit=Quantity(parameters.GetProperty("direction_speed_limit")),LockupSpeedLimit=Quantity(parameters.GetProperty("lockup_speed_limit")),UnlockSpeedLimit=Quantity(parameters.GetProperty("unlock_speed_limit")),
+                    MinimumLockupInputSpeed=Quantity(parameters.GetProperty("minimum_lockup_input_speed")),MinimumLockupForwardRange=(int)Integer(parameters.GetProperty("minimum_lockup_forward_range"),4,1) } };
+            }
             if (kind == ComponentKind.DualClutchController)
             {
                 Object(parameters, ["vehicle_node", "odd_clutch", "even_clutch", "selectors", "sample_period_ns", "release_ns", "engage_ns", "synchronize_timeout_ns", "synchronize_tolerance", "direction_speed_limit"]);
@@ -278,8 +374,37 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                     }
                 };
             }
-            if(kind==ComponentKind.FuelFilm)
-            {Object(parameters,["initial_mass","initial_temperature","liquid_specific_heat","saturation_temperature","latent_internal_energy","conductance"]);return result with{Conductance=Quantity(parameters.GetProperty("conductance")),FuelFilm=new(){InitialMass=Quantity(parameters.GetProperty("initial_mass")),InitialTemperature=Quantity(parameters.GetProperty("initial_temperature")),LiquidSpecificHeat=Quantity(parameters.GetProperty("liquid_specific_heat")),SaturationTemperature=Quantity(parameters.GetProperty("saturation_temperature")),LatentInternalEnergy=Quantity(parameters.GetProperty("latent_internal_energy"))}};}
+            if (kind == ComponentKind.FuelDischarge)
+            {
+                Object(parameters, ["film_component", "phase_mode", "wall_kinetic_fraction", "area", "discharge_coefficient"], "needle");
+                if (Text(parameters.GetProperty("phase_mode")) != "frozen") throw new ArgumentException("fuel_discharge phase_mode must be frozen.");
+                InjectorNeedleDefinition? needle = null;
+                if (parameters.TryGetProperty("needle", out var needleData))
+                { Object(needleData, ["needle_node", "closed_position", "full_open_position"]); needle = new() { NeedleNode = Id(needleData, "needle_node"), ClosedPosition = Quantity(needleData.GetProperty("closed_position")), FullOpenPosition = Quantity(needleData.GetProperty("full_open_position")) }; }
+                return result with { Area = Quantity(parameters.GetProperty("area")), DischargeCoefficient = Number(parameters.GetProperty("discharge_coefficient")),
+                    FuelDischarge = new() { FilmComponent = Id(parameters, "film_component"), PhaseModel = FuelDischargePhaseModel.Frozen,
+                        WallKineticFraction = Quantity(parameters.GetProperty("wall_kinetic_fraction")), Needle = needle } };
+            }
+            if(kind is ComponentKind.FuelFilm or ComponentKind.FiniteFuelFilm)
+            {
+                if (kind == ComponentKind.FiniteFuelFilm)
+                    Object(parameters,["initial_mass","initial_temperature","liquid_specific_heat","saturation_temperature","latent_internal_energy","conductance","phase_equilibrium","finite_volume_density"]);
+                else Object(parameters,["initial_mass","initial_temperature","liquid_specific_heat","saturation_temperature","latent_internal_energy","conductance"],["phase_equilibrium"]);
+                FuelPhaseEquilibriumDefinition? phaseEquilibrium = null;
+                if (parameters.TryGetProperty("phase_equilibrium", out var phase))
+                {
+                    Object(phase, ["reference_pressure", "minimum_temperature", "maximum_temperature"]);
+                    phaseEquilibrium = new() { ReferencePressure = Quantity(phase.GetProperty("reference_pressure")),
+                        MinimumTemperature = Quantity(phase.GetProperty("minimum_temperature")), MaximumTemperature = Quantity(phase.GetProperty("maximum_temperature")) };
+                }
+                return result with { Conductance = Quantity(parameters.GetProperty("conductance")), FuelFilm = new()
+                {
+                    InitialMass = Quantity(parameters.GetProperty("initial_mass")), InitialTemperature = Quantity(parameters.GetProperty("initial_temperature")),
+                    LiquidSpecificHeat = Quantity(parameters.GetProperty("liquid_specific_heat")), SaturationTemperature = Quantity(parameters.GetProperty("saturation_temperature")),
+                    LatentInternalEnergy = Quantity(parameters.GetProperty("latent_internal_energy")), PhaseEquilibrium = phaseEquilibrium,
+                    FiniteVolumeDensity = kind == ComponentKind.FiniteFuelFilm ? Quantity(parameters.GetProperty("finite_volume_density")) : default
+                } };
+            }
             if (kind == ComponentKind.GasFuelInjector)
             {
                 Object(parameters, ["area", "discharge_coefficient", "crank_node", "cycle_angle", "start_angle", "duration_angle", "maximum_dose"]);

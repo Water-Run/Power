@@ -44,6 +44,12 @@
           },
           {
             "$ref": "#/$defs/translational"
+          },
+          {
+            "$ref": "#/$defs/fuel"
+          },
+          {
+            "$ref": "#/$defs/compressible_fuel"
           }
         ]
       },
@@ -164,6 +170,45 @@
           },
           {
             "$ref": "#/$defs/carrierGear"
+          },
+          {
+            "$ref": "#/$defs/atController"
+          },
+          {
+            "$ref": "#/$defs/liquidRailFeed"
+          },
+          {
+            "$ref": "#/$defs/liquidFuelTank"
+          },
+          {
+            "$ref": "#/$defs/liquidRailReturn"
+          },
+          {
+            "$ref": "#/$defs/fuel_restriction"
+          },
+          {
+            "$ref": "#/$defs/fuel_heat_link"
+          },
+          {
+            "$ref": "#/$defs/fuel_check_valve"
+          },
+          {
+            "$ref": "#/$defs/fuel_chamber"
+          },
+          {
+            "$ref": "#/$defs/finite_fuel_film"
+          },
+          {
+            "$ref": "#/$defs/fuel_discharge"
+          },
+          {
+            "$ref": "#/$defs/fuel_inertial_pipe"
+          },
+          {
+            "$ref": "#/$defs/equilibrium_fuel_duct"
+          },
+          {
+            "$ref": "#/$defs/compressible_fuel_chamber"
           }
         ]
       },
@@ -449,7 +494,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -582,7 +627,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -792,7 +837,7 @@
               "channel": {
                 "type": "integer",
                 "minimum": 1,
-                "maximum": 9223372036854775807
+                "maximum": 9223372036854776000
               },
               "value": {
                 "type": "number"
@@ -896,7 +941,43 @@
             "selected_even_gear",
             "shift_phase",
             "sync_error",
-            "control_fault"
+            "control_fault",
+            "lockup_state",
+            "actuator_integral_a",
+            "actuator_integral_b",
+            "actuator_integral_c",
+            "actuator_integral_d",
+            "actuator_integral_e",
+            "actuator_integral_f",
+            "tank_state",
+            "fill_fraction",
+            "condensed_fuel_mass",
+            "vapor_partial_pressure",
+            "saturation_pressure",
+            "cavitation_margin",
+            "vapor_mass",
+            "vapor_mass_fraction",
+            "vapor_volume_fraction",
+            "elastic_energy",
+            "entropy",
+            "specific_enthalpy",
+            "transport_energy",
+            "entropy_produced",
+            "jet_kinetic_energy",
+            "jet_impulse",
+            "throat_pressure",
+            "exit_temperature",
+            "exit_velocity",
+            "choked",
+            "forward_volume",
+            "reverse_volume",
+            "kinetic_energy",
+            "energy_at_a",
+            "energy_at_b",
+            "density",
+            "sound_speed",
+            "mass_at_a",
+            "mass_at_b"
           ]
         },
         "min": {
@@ -1278,7 +1359,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -1805,7 +1886,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -1997,7 +2078,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -2316,7 +2397,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -2459,7 +2540,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 0,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -2988,7 +3069,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3026,7 +3107,7 @@
             "target_channel": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 9223372036854775807
+              "maximum": 9223372036854776000
             },
             "sample_period_ns": {
               "type": "integer",
@@ -3359,7 +3440,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3498,7 +3579,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3574,7 +3655,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -3612,7 +3693,7 @@
             "target_channel": {
               "type": "integer",
               "minimum": 1,
-              "maximum": 9223372036854775807
+              "maximum": 9223372036854776000
             },
             "sample_period_ns": {
               "type": "integer",
@@ -3931,7 +4012,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -4607,7 +4688,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -4901,6 +4982,75 @@
                   ]
                 }
               }
+            },
+            "phase_equilibrium": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "reference_pressure",
+                "minimum_temperature",
+                "maximum_temperature"
+              ],
+              "properties": {
+                "reference_pressure": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "pa",
+                        "bar"
+                      ]
+                    }
+                  }
+                },
+                "minimum_temperature": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "k"
+                      ]
+                    }
+                  }
+                },
+                "maximum_temperature": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "k"
+                      ]
+                    }
+                  }
+                }
+              }
             }
           }
         }
@@ -4934,7 +5084,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -5270,7 +5420,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -5558,7 +5708,7 @@
             "closure_prediction_ns": {
               "type": "integer",
               "minimum": 0,
-              "maximum": 18446744073709551615
+              "maximum": 18446744073709552000
             }
           }
         }
@@ -5688,7 +5838,7 @@
         "input_channel": {
           "type": "integer",
           "minimum": 1,
-          "maximum": 9223372036854775807
+          "maximum": 9223372036854776000
         },
         "initial_input": {
           "type": "object",
@@ -5811,6 +5961,2504 @@
           "type": "integer",
           "minimum": 1,
           "maximum": 4294967295
+        }
+      }
+    },
+    "atController": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "input_channel",
+        "initial_input",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "at_controller"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "required": [
+            "vehicle_node",
+            "ring_node",
+            "supply_pressure_node",
+            "routes",
+            "sample_period_ns",
+            "release_timeout_ns",
+            "apply_timeout_ns",
+            "low_supply_timeout_ns",
+            "lockup_dwell_ns",
+            "apply_pressure",
+            "pressure_tolerance",
+            "minimum_supply_pressure",
+            "release_force",
+            "minimum_apply_force",
+            "proportional_gain",
+            "integral_gain",
+            "synchronize_tolerance",
+            "direction_speed_limit",
+            "lockup_speed_limit",
+            "unlock_speed_limit",
+            "minimum_lockup_input_speed",
+            "minimum_lockup_forward_range"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "vehicle_node": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "ring_node": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "supply_pressure_node": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "routes": {
+              "type": "array",
+              "minItems": 5,
+              "maxItems": 6,
+              "items": {
+                "type": "object",
+                "required": [
+                  "clutch",
+                  "fill_valve",
+                  "drain_valve"
+                ],
+                "additionalProperties": false,
+                "properties": {
+                  "clutch": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4294967295
+                  },
+                  "fill_valve": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4294967295
+                  },
+                  "drain_valve": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 4294967295
+                  }
+                }
+              }
+            },
+            "sample_period_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1000000000
+            },
+            "release_timeout_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000000000
+            },
+            "apply_timeout_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000000000
+            },
+            "low_supply_timeout_ns": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10000000000
+            },
+            "lockup_dwell_ns": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 10000000000
+            },
+            "apply_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "pressure_tolerance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "minimum_supply_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "release_force": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "n"
+                  ]
+                }
+              }
+            },
+            "minimum_apply_force": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "n"
+                  ]
+                }
+              }
+            },
+            "proportional_gain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "fraction_pa"
+                  ]
+                }
+              }
+            },
+            "integral_gain": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "fraction_pa_s"
+                  ]
+                }
+              }
+            },
+            "synchronize_tolerance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "direction_speed_limit": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "lockup_speed_limit": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "unlock_speed_limit": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "minimum_lockup_input_speed": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "rad_s",
+                    "rpm"
+                  ]
+                }
+              }
+            },
+            "minimum_lockup_forward_range": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4
+            }
+          }
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854776000
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "integer",
+              "minimum": -1,
+              "maximum": 4
+            },
+            "unit": {
+              "enum": [
+                "state_code"
+              ]
+            }
+          }
+        }
+      }
+    },
+    "liquidRailFeed": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "liquid_rail_feed"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "injector_component",
+            "pump_component"
+          ],
+          "properties": {
+            "injector_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "pump_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "supply_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "const": "k"
+                }
+              }
+            },
+            "tank_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            }
+          },
+          "oneOf": [
+            {
+              "required": [
+                "supply_temperature"
+              ],
+              "not": {
+                "required": [
+                  "tank_component"
+                ]
+              }
+            },
+            {
+              "required": [
+                "tank_component"
+              ],
+              "not": {
+                "required": [
+                  "supply_temperature"
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    "liquidFuelTank": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "liquid_fuel_tank"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "injector_component",
+            "initial_mass",
+            "initial_temperature"
+          ],
+          "properties": {
+            "injector_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "initial_mass": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "const": "kg"
+                }
+              }
+            },
+            "initial_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "const": "k"
+                }
+              }
+            },
+            "headspace": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "capacity",
+                "gas_node"
+              ],
+              "properties": {
+                "capacity": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "m3",
+                        "l"
+                      ]
+                    }
+                  }
+                },
+                "gas_node": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 4294967295
+                },
+                "phase_equilibrium": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "liquidRailReturn": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "liquid_rail_return"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "feed_component",
+            "valve_component",
+            "fluid_heat_fraction"
+          ],
+          "properties": {
+            "feed_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "valve_component": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 4294967295
+            },
+            "fluid_heat_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "const": "fraction"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "fuel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "domain",
+        "storage",
+        "initial",
+        "position",
+        "fuel"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "domain": {
+          "const": "fuel"
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "m3",
+                "l"
+              ]
+            }
+          }
+        },
+        "initial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "k"
+              ]
+            }
+          }
+        },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "kg"
+              ]
+            }
+          }
+        },
+        "fuel": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "compliance",
+            "liquid_density",
+            "maximum_pressure",
+            "gas_constant",
+            "vapor_specific_heat",
+            "liquid_specific_heat",
+            "reference_temperature",
+            "latent_internal_energy",
+            "reference_pressure",
+            "minimum_temperature",
+            "maximum_temperature",
+            "lower_heating_value"
+          ],
+          "properties": {
+            "compliance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3_pa"
+                  ]
+                }
+              }
+            },
+            "liquid_density": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "kg_m3"
+                  ]
+                }
+              }
+            },
+            "maximum_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "gas_constant": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "vapor_specific_heat": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "liquid_specific_heat": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "reference_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "latent_internal_energy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg"
+                  ]
+                }
+              }
+            },
+            "reference_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "minimum_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "maximum_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "lower_heating_value": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "Homogeneous pure fuel in an elastic vessel. Position is total fuel mass; caloric and elastic energy share the phase flash. Parameters remain unverified."
+    },
+    "fuel_restriction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters",
+        "initial_input"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "fuel_restriction"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "conductance"
+          ],
+          "properties": {
+            "conductance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3_s_pa"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        }
+      }
+    },
+    "fuel_heat_link": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "fuel_heat_link"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "conductance"
+          ],
+          "properties": {
+            "conductance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "w_k"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "fuel_check_valve": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters",
+        "initial_input"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "fuel_check_valve"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "conductance"
+          ],
+          "properties": {
+            "conductance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3_s_pa"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854775807
+        }
+      }
+    },
+    "fuel_chamber": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "fuel_chamber"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "minimum_reference_volume",
+            "swept_volume",
+            "phase"
+          ],
+          "properties": {
+            "minimum_reference_volume": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3",
+                    "l"
+                  ]
+                }
+              }
+            },
+            "swept_volume": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3",
+                    "l"
+                  ]
+                }
+              }
+            },
+            "phase": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "rad",
+                    "deg"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "finite_fuel_film": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "finite_fuel_film"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "initial_mass",
+            "initial_temperature",
+            "liquid_specific_heat",
+            "saturation_temperature",
+            "latent_internal_energy",
+            "conductance",
+            "phase_equilibrium",
+            "finite_volume_density"
+          ],
+          "properties": {
+            "initial_mass": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "kg"
+                  ]
+                }
+              }
+            },
+            "initial_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "liquid_specific_heat": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "saturation_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "latent_internal_energy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg"
+                  ]
+                }
+              }
+            },
+            "conductance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "w_k"
+                  ]
+                }
+              }
+            },
+            "phase_equilibrium": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "reference_pressure",
+                "minimum_temperature",
+                "maximum_temperature"
+              ],
+              "properties": {
+                "reference_pressure": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "pa",
+                        "bar"
+                      ]
+                    }
+                  }
+                },
+                "minimum_temperature": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "k"
+                      ]
+                    }
+                  }
+                },
+                "maximum_temperature": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number",
+                      "exclusiveMinimum": 0
+                    },
+                    "unit": {
+                      "enum": [
+                        "k"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "finite_volume_density": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "kg_m3"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "description": "Instantaneous pure-fuel phase equilibrium in a finite cavity. Liquid mass/density displaces gas; declared material temperature bounds apply."
+    },
+    "fuel_discharge": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Finite fuel-domain source to finite-displacement film/gas receiver. Frozen-quality common-temperature nozzle transit, effective throat area Cd, sonic choking and ideal fully expanded jet reference. No finite-rate phase kinetics or local inlet inertia.",
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "initial_input",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "fuel_discharge"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854776000
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "valve_timing": {
+          "$ref": "#/$defs/valve_timing"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "film_component",
+            "phase_mode",
+            "wall_kinetic_fraction",
+            "area",
+            "discharge_coefficient"
+          ],
+          "properties": {
+            "film_component": {
+              "$ref": "#/$defs/id"
+            },
+            "area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "discharge_coefficient": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "needle": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "needle_node",
+                "closed_position",
+                "full_open_position"
+              ],
+              "properties": {
+                "needle_node": {
+                  "$ref": "#/$defs/id"
+                },
+                "closed_position": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "enum": [
+                        "m",
+                        "mm"
+                      ]
+                    }
+                  }
+                },
+                "full_open_position": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": [
+                    "value",
+                    "unit"
+                  ],
+                  "properties": {
+                    "value": {
+                      "type": "number"
+                    },
+                    "unit": {
+                      "enum": [
+                        "m",
+                        "mm"
+                      ]
+                    }
+                  }
+                }
+              }
+            },
+            "phase_mode": {
+              "const": "frozen"
+            },
+            "wall_kinetic_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "fuel_inertial_pipe": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "heat_node",
+        "parameters"
+      ],
+      "description": "Always-open rigid liquid line with its own fixed liquid mass, caloric energy and kinetic energy. Liquid-only finite fuel ports, constant density, well-mixed line temperature and a finite friction wall; not a cavitating or acoustic pipe.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "fuel_inertial_pipe"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "heat_node": {
+          "$ref": "#/$defs/id"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "length",
+            "area",
+            "linear_resistance",
+            "quadratic_resistance",
+            "initial_flow",
+            "initial_temperature",
+            "fluid_heat_fraction"
+          ],
+          "properties": {
+            "length": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "linear_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa_s_m3"
+                  ]
+                }
+              }
+            },
+            "quadratic_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa_s2_m6"
+                  ]
+                }
+              }
+            },
+            "initial_flow": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m3_s"
+                  ]
+                }
+              }
+            },
+            "initial_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "fluid_heat_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "compressible_fuel": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "domain",
+        "storage",
+        "initial",
+        "position",
+        "fuel",
+        "initial_velocity"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "domain": {
+          "const": "compressible_fuel"
+        },
+        "storage": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "m3",
+                "l"
+              ]
+            }
+          }
+        },
+        "initial": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "k"
+              ]
+            }
+          }
+        },
+        "position": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            },
+            "unit": {
+              "enum": [
+                "kg"
+              ]
+            }
+          }
+        },
+        "fuel": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "liquid_bulk_modulus",
+            "liquid_density",
+            "maximum_pressure",
+            "gas_constant",
+            "vapor_specific_heat",
+            "liquid_specific_heat",
+            "reference_temperature",
+            "latent_internal_energy",
+            "reference_pressure",
+            "minimum_temperature",
+            "maximum_temperature",
+            "lower_heating_value"
+          ],
+          "properties": {
+            "liquid_density": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "kg_m3"
+                  ]
+                }
+              }
+            },
+            "maximum_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "gas_constant": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "vapor_specific_heat": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "liquid_specific_heat": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg_k"
+                  ]
+                }
+              }
+            },
+            "reference_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "latent_internal_energy": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg"
+                  ]
+                }
+              }
+            },
+            "reference_pressure": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            },
+            "minimum_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "maximum_temperature": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "k"
+                  ]
+                }
+              }
+            },
+            "lower_heating_value": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "j_kg"
+                  ]
+                }
+              }
+            },
+            "liquid_bulk_modulus": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa",
+                    "bar"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "initial_velocity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number"
+            },
+            "unit": {
+              "enum": [
+                "m_s"
+              ]
+            }
+          }
+        }
+      },
+      "description": "Homogeneous pure fuel in an elastic vessel. Position is total fuel mass; caloric and elastic energy share the phase flash. Parameters remain unverified."
+    },
+    "equilibrium_fuel_duct": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "heat_node",
+        "parameters"
+      ],
+      "description": "Conservative homogeneous-equilibrium fuel transport with explicit compressible fluid cells and finite stationary reservoirs. Cold compression energy, phase equilibrium and equilibrium sound speed share one thermodynamic potential.",
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "equilibrium_fuel_duct"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "heat_node": {
+          "$ref": "#/$defs/id"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "cells",
+            "area",
+            "linear_resistance",
+            "quadratic_resistance",
+            "fluid_heat_fraction"
+          ],
+          "properties": {
+            "area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "linear_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa_s_m3"
+                  ]
+                }
+              }
+            },
+            "quadratic_resistance": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "pa_s2_m6"
+                  ]
+                }
+              }
+            },
+            "fluid_heat_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
+                  ]
+                }
+              }
+            },
+            "cells": {
+              "type": "array",
+              "minItems": 1,
+              "maxItems": 24,
+              "uniqueItems": true,
+              "items": {
+                "$ref": "#/$defs/id"
+              }
+            }
+          }
+        }
+      }
+    },
+    "compressible_fuel_chamber": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "compressible_fuel_chamber"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "minimum_reference_volume",
+            "swept_volume",
+            "phase"
+          ],
+          "properties": {
+            "minimum_reference_volume": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3",
+                    "l"
+                  ]
+                }
+              }
+            },
+            "swept_volume": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3",
+                    "l"
+                  ]
+                }
+              }
+            },
+            "phase": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "rad",
+                    "deg"
+                  ]
+                }
+              }
+            }
+          }
         }
       }
     }

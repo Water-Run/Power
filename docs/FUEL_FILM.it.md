@@ -8,10 +8,7 @@ evaporato si unisce a massa, energia interna e costituente carburante del ricevi
 premiscelata esistente consuma solo il vapore. L'inventario liquido è bagnatura iniziale,
 non carburante iniettato, e resta parte del registro di massa totale ed energia chimica.
 
-È un modello di ricerca a proprietà costanti, con volume di spostamento del liquido trascurabile
-e una temperatura di saturazione prescritta. Non implementa dinamica di binario liquido,
-ago o spruzzo, equilibrio di fase dipendente dalla pressione, condensazione,
-proprietà multicomponente del carburante o comportamento della benzina calibrato.
+Il contratto seguente descrive il film a saturazione prescritta predefinito. L’opzione [Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md) aggiunge evaporazione/condensazione reversibili e dipendenza dalla pressione con lo stesso riferimento calorico.
 
 ## Energia di fase e sorgente di calore finita
 
@@ -109,8 +106,8 @@ Scopri ID e unità di uscita attraverso la validazione o la creazione della sess
 globali di massa, carburante ed energia chimica includono l'inventario del film. L'erogazione interna
 di vapore non incrementa l'energia di carburante del serbatoio né l'entalpia esterna.
 
-L'asset v19 memorizza tutte le proprietà di fase e conserva i lettori v1-v18. Ogni film richiede
-un record di fase tipizzato da 64 byte. Lunghezze/conteggi limitati, digest, copertura completa,
+L'asset v37 memorizza tutte le proprietà di fase e conserva i lettori v1-v36. Ogni film richiede
+un record di fase tipizzato da 100 byte. Lunghezze/conteggi limitati, digest, copertura completa,
 record duplicati/mancanti, unità, compilazione fisica e protezione dal declassamento
 sono controllati. La fixture autentica di dosatura carburante v17 conserva la sua impronta e il
 replay aggiornato nello stesso runtime. Vedi [ASSET_FORMAT.it.md](ASSET_FORMAT.it.md).
@@ -129,3 +126,11 @@ L'[iniettore liquido](LIQUID_FUEL_INJECTION.it.md) separato reintegra ora i film
 una sorgente finita e cedevole. Pompa/rabbocco, ago/spruzzo, proprietà del carburante misurate,
 accensione/ECU, comportamento completo di aspirazione/scarico, controlli della trasmissione e gruppi
 motopropulsori calibrati restano requisiti separati.
+
+## Equilibrio di fase del carburante e limiti di alimentazione
+
+`mass_flow` è il trasferimento netto con segno del passo fisico completo. `evaporated_fuel_mass` e `condensed_fuel_mass` accumulano masse positive e negative senza contare due volte proiezioni che si annullano. `vapor_partial_pressure` indica la pressione parziale del carburante. I bilanci termici, di massa e chimici includono entrambe le fasi.
+
+Una soluzione scalare limitata usa l'energia di equilibrio monotona. Il calore della parete usa Euler implicito. Trasporto e lavoro del cilindro mobile hanno evidenza di convergenza del primo ordine. La coesistenza liquida resta nell'intervallo dichiarato. Dopo completa evaporazione al suo interno il gas può surriscaldarsi senza estrapolare la curva.
+
+[Equilibrio di fase del carburante e limiti di alimentazione](FUEL_PHASE_EQUILIBRIUM.it.md)

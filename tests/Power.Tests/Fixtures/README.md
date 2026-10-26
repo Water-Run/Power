@@ -217,3 +217,141 @@ Fingerprint: `63d28eb32bc4cfb2`. Source SHA-256:
 `ResolvedPlanetAssetChecks` retains its digest and exact every-boundary upgraded
 replay. Do not regenerate the fixture with the current writer. The Power! GPL
 license and Unity Linking Exception apply.
+
+## Hydraulic AT plant version 24
+
+`fired-hydraulic-ravigneaux-v24.powerasset` retains verified v24 output before
+adding the feedback controller records. Source:
+`assets/labs/fired-hydraulic-ravigneaux.power.json`; name: `Fired hydraulic
+Ravigneaux laboratory`. Retained locally on 2026-10-05 from the v24 checkpoint.
+SHA-256: `6d6dc0f3b17ae1dfdcda59fc45ca7db63d260fb954c8c51567f9b00bab783ecc`.
+Fingerprint: `4e83efb34de63922`. Tests retain the original digest and exact
+old/upgraded physical replay. Do not regenerate this fixture with the current
+encoder. The Power! GPL license and Unity Linking Exception apply.
+
+## Closure-compensated injector version 25
+
+`closure-compensated-cylinder-v25.powerasset` retains the verified v25 writer output
+before adding liquid feed records. Source: `assets/labs/closure-compensated-cylinder.power.json`.
+Retained locally on 2026-10-05 from checkpoint `0d5a985`; no later writer output
+is substituted. SHA-256: `df400d7e72a2375c6b6185e7206162f2dd8f74ecd52c1862b0bedca6c03ba6dc`.
+Fingerprint: `ddefea6d870e7e75`. `LiquidRailFeedAssetChecks` retains its digest
+and exact every-boundary old/upgraded replay. Do not regenerate this fixture
+with the current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Pump-fed liquid rail version 26
+
+`pump-fed-liquid-cylinder-v26.powerasset` retains the verified v26 writer output
+before finite tank records. Source: `assets/labs/pump-fed-liquid-cylinder.power.json`.
+Retained on 2026-10-05 from checkpoint `144ac3d`. SHA-256:
+`b57fa9c5ff4814e9fe898882fe7146465b68878f61423805f23e5f717bfb995d`. Fingerprint:
+`22cbbe4a983098f4`. `LiquidFuelTankAssetChecks` retains the original digest
+and exact every-boundary old/upgraded replay. Do not regenerate this fixture
+with the current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Finite liquid tank version 27
+
+`finite-tank-liquid-cylinder-v27.powerasset` retains verified v27 writer output
+before tracked relief returns. Source: `assets/labs/finite-tank-liquid-cylinder.power.json`.
+Retained on 2026-10-05 from checkpoint `85eebeb`. SHA-256:
+`ee344fad148d226c223145d610b18f84912060bc722fee980cae6515ceea3d62`. Fingerprint:
+`f7ee4872a034c885`. `LiquidRailReturnAssetChecks` preserves the digest and exact
+every-boundary old/upgraded replay. Do not regenerate this fixture with the
+current writer. The Power! GPL license and Unity Linking Exception apply.
+
+## Recirculating fuel version 28
+
+`recirculating-liquid-cylinder-v28.powerasset` retains v28 writer output before
+geometric tank headspace records. Source: `assets/labs/recirculating-liquid-cylinder.power.json`.
+Retained on 2026-10-08 from the encoder/model sources at `90e70cd`, before changing
+the asset format. SHA-256: `3c871df37c63e671efdbaf34730a70fced19840f0fb9f1b1e5655b31d6cd2a57`.
+Fingerprint: `8c295e86019b787b`. `TankHeadspaceAssetChecks` checks its digest and
+every-boundary old/upgraded replay. Do not regenerate it with the current writer.
+The Power! GPL license and Unity Linking Exception apply.
+
+## Vented tank v29
+
+`vented-tank-liquid-cylinder-v29.powerasset` was retained on 2026-10-13 from the
+unmodified v29 encoder and laboratory at commit `ca443cbd218bd678a1de6e579ddfe99826659555`.
+It preserves headspace geometry and every replay boundary before the v30 film extension.
+Do not regenerate it with the current encoder.
+
+SHA-256: `e7f48291b8c9817af7d2eec61b989854d5200130cd4a0987f42e49c21d36d16d`.
+Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.
+
+## Equilibrium injected cylinder v30
+
+`equilibrium-injected-cylinder-v30.powerasset` was retained on 2026-10-20 from the
+unmodified v30 encoder and laboratory at commit `b91662388d1f09d72455531097bd88844c89f138`.
+It preserves receiver phase equilibrium and single-phase liquid-supply checks before
+the finite-volume tank phase flag. Keep these authentic bytes when extending the writer.
+
+SHA-256: `c246723026ac3cbdd69b3e0015b29a161d15c85865e94f3054507cd9c7bc2335`.
+Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.
+
+## Equilibrium tank supply v31
+
+`equilibrium-tank-supply-v31.powerasset` was retained on 2026-10-20 from the
+unmodified v31 encoder and laboratory at commit `d36f416c882925474dbfb2d25f81e39bd70e0211`.
+It preserves the finite-volume tank phase state before the fuel-network extension.
+Keep these authentic bytes when extending the writer.
+
+SHA-256: `8042d65c3171a71cd79eaa0b49ba733a232a805bd4ed429d23a93e5821016349`.
+Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.
+
+## Equilibrium fuel network v32
+
+`equilibrium-fuel-network-v32.powerasset` was retained on 2026-10-20 from the
+unmodified v32 encoder and laboratory at commit `904b97a95df5e08dbbc838a648d363a16ac07d56`.
+It preserves homogeneous fuel transport and finite-wall heat before moving chamber geometry.
+Keep these authentic bytes when extending the writer.
+
+SHA-256: `dc53c55f9ed58503a4e37d3b9a57ace52e5aac8196fdb5707bb555c47f3a593e`.
+Original Power! material remains GPL-3.0-or-later with the Unity Linking Exception.
+
+## Equilibrium fuel pump v33
+
+`equilibrium-fuel-pump-v33.powerasset` was retained on 2026-10-20 from the
+unmodified v33 encoder and laboratory at commit `0fd4036c04e7e31029b7ec6f37a74c4c1643e447`.
+It preserves shaft-driven phase-resolving fuel pumping before finite receiver
+displacement and frozen-quality nozzle records. Keep these authentic bytes.
+
+SHA-256: `3e3804c7277baea26c330c47a319669c5f61142486fb73f127679e56192fe9ba`.
+`FuelDischargeAssetChecks` checks the digest and every original/upgraded replay
+boundary. The Power! GPL license and Unity Linking Exception apply.
+
+## Pump-fed finite-volume cylinder v34
+
+`pump-fed-finite-volume-cylinder-v34.powerasset` retains the v34 writer output
+from commit `529542e047a52d1a5b3a1096a01b9774421b347a`, copied before changing
+the encoder on 2026-10-23. It preserves pump, physical needle, frozen-quality
+discharge and finite receiver records before the inertial liquid line extension.
+
+SHA-256: `51c0f51ef6ff0db9d84d952793da0fe2592f855f12302a96774294193d02b587`.
+`FuelPipeAssetChecks` verifies the authentic digest and every original/upgraded
+replay boundary. Keep these original bytes. The Power! GPL license and Unity
+Linking Exception apply.
+
+## Inertial pump-fed cylinder v35
+
+`inertial-pump-fed-cylinder-v35.powerasset` retains the v35 writer output
+from commit `02c547866dea045eebc70424bbb60091c17082fd`, copied before changing
+the encoder on 2026-10-23. It preserves the liquid-only inertial line, pump,
+physical needle and finite receiver before compressible equilibrium duct records.
+
+SHA-256: `a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4`.
+`EquilibriumDuctAssetChecks` verifies the authentic digest and every original
+and upgraded replay boundary. Keep these original bytes. The Power! GPL license
+and Unity Linking Exception apply.
+
+## Equilibrium condensing duct v36
+
+`equilibrium-fuel-condensing-duct-v36.powerasset` retains the v36 writer output
+from commit `8210aa8bd1ca66d28d06906de0261204bd515a3d`, copied before changing
+the encoder on 2026-10-26. It preserves compressible equilibrium cells and the
+conservative duct before shaft-driven moving reservoir records.
+
+SHA-256: `093420e1031206913600e1581ed717012194d303f60f8afec7595a324f789cc5`.
+`CompressibleChamberAssetChecks` verifies the authentic digest and every original
+and upgraded replay boundary. Keep these original bytes. The Power! GPL license
+and Unity Linking Exception apply.

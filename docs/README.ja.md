@@ -31,7 +31,12 @@ flowchart LR
 | ドキュメント | 内容 |
 |---|---|
 | [エージェント API](AGENT_API.ja.md) | MCP ツール、リビジョン、エラー、操作シーケンス |
-| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v24 と、v1 から v23 までのリーダー |
+| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v37 と、v1 から v36 までのリーダー |
+| [蒸気質量分率を凍結した燃料流出と有限受容室](FUEL_DISCHARGE.ja.md) | 凍結蒸気分率のチョーク、有限液体排除、物理ポンプ/ニードル燃焼 |
+| [有限液体燃料管路の運動量](FUEL_INERTIAL_PIPE.ja.md) | 有限液体在庫、動的流量、熱混合、保存的管路仕事 |
+| [圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md) | 保存形の圧縮性二相輸送と平衡音響 |
+| [軸駆動の圧縮性燃料室](COMPRESSIBLE_FUEL_CHAMBER.ja.md) | 軸の圧力仕事と圧縮性燃料輸送の結合 |
+| [液体入口の運動量参照](LIQUID_COLUMN.ja.md) | 単相入口慣性、摩擦熱、独立検証した二次運動量 |
 | [ネイティブ Zig 境界](NATIVE_ZIG.ja.md) | 保管された Zig プロトタイプと、バージョン付き ABI |
 
 ## エンジンと燃料
@@ -49,6 +54,12 @@ flowchart LR
 | [液体噴射](LIQUID_FUEL_INJECTION.ja.md) | フィルムへ供給する、有限で柔軟な液体レール |
 | [ニードル駆動](NEEDLE_ACTUATION.ja.md) | 位置依存ソレノイド、ニードル質量、閉じ遅れ、反発 |
 | [クロージャ予測](CLOSURE_PREDICTION.ja.md) | 電圧除去を計画する、有界なプラントリプレイ |
+| [タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md) | 剛体容量、有限気体の圧力仕事と明示的通気 |
+| [燃料の相平衡と液体供給の境界](FUEL_PHASE_EQUILIBRIUM.ja.md) | 可逆蒸発/凝縮、飽和圧力と液体供給の境界 |
+| [有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md) | 有限液体押しのけ、圧力補正蒸発/凝縮と蒸気通気 |
+| [弾性燃料容積の参照モデル](COMPLIANT_FUEL_VOLUME.ja.md) | 液体・蒸気平衡、弾性蓄積、保存的な有限熱浴との熱交換 |
+| [相平衡燃料輸送ネットワーク](EQUILIBRIUM_FUEL_NETWORK.ja.md) | 均質二相エンタルピー輸送、有限壁熱交換、完全な台帳 |
+| [軸駆動の相変化燃料ポンプ](FUEL_CHAMBER_PUMP.ja.md) | 有限室充填、相変化、保存的な軸圧力仕事 |
 
 ## トランスミッション
 

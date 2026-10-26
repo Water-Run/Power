@@ -196,6 +196,12 @@ namespace Power.Studio.Tests
         public IEnumerator FuelFilmImportsAndReplays() => PumpAssemblyReplay("FilmFiredCylinder", "Liquid fuel film 16");
 
         [UnityTest]
+        public IEnumerator EquilibriumFuelCellImportsAndReplays() => PumpAssemblyReplay("EquilibriumFuelCell", "Liquid fuel film 10");
+
+        [UnityTest]
+        public IEnumerator EquilibriumInjectedCylinderImportsAndReplays() => PumpAssemblyReplay("EquilibriumInjectedCylinder", "Liquid fuel film 16");
+
+        [UnityTest]
         public IEnumerator LiquidInjectionImportsAndReplays() => PumpAssemblyReplay("LiquidInjectedCylinder", "Liquid fuel film 16");
 
         [UnityTest]
@@ -233,6 +239,48 @@ namespace Power.Studio.Tests
 
         [UnityTest]
         public IEnumerator FiredHydraulicRavigneauxImportsAndReplays() => PumpAssemblyReplay("FiredHydraulicRavigneaux", "Piston actuator 21");
+
+        [UnityTest]
+        public IEnumerator ControlledATImportsAndReplays() => PumpAssemblyReplay("ControlledHydraulicRavigneaux", "AT feedback controller 1400");
+
+        [UnityTest]
+        public IEnumerator ControlledFiredATImportsAndReplays() => PumpAssemblyReplay("ControlledFiredHydraulicRavigneaux", "AT feedback controller 1400");
+
+        [UnityTest]
+        public IEnumerator PumpFedFuelImportsAndReplays() => PumpAssemblyReplay("PumpFedLiquidCylinder", "Liquid rail feed 1511");
+
+        [UnityTest]
+        public IEnumerator PumpFedNeedleImportsAndReplays() => PumpAssemblyReplay("PumpFedNeedleCylinder", "Liquid rail feed 1511");
+
+        [UnityTest]
+        public IEnumerator FiniteTankFuelImportsAndReplays() => PumpAssemblyReplay("FiniteTankLiquidCylinder", "Liquid fuel tank 1513");
+
+        [UnityTest]
+        public IEnumerator EquilibriumTankSupplyImportsAndReplays() => PumpAssemblyReplay("EquilibriumTankSupply", "Liquid fuel tank 22");
+
+        [UnityTest]
+        public IEnumerator EquilibriumTankEngineImportsAndReplays() => PumpAssemblyReplay("EquilibriumTankFiredCylinder", "Liquid fuel tank 1513");
+
+        [UnityTest]
+        public IEnumerator EquilibriumFuelPumpImportsAndReplays() => PumpAssemblyReplay("EquilibriumFuelPump", "Fuel chamber 12");
+
+        [UnityTest]
+        public IEnumerator ElectricEquilibriumFuelPumpImportsAndReplays() => PumpAssemblyReplay("ElectricEquilibriumFuelPump", "Fuel chamber 12");
+
+        [UnityTest]
+        public IEnumerator EquilibriumFuelNetworkImportsAndReplays() => PumpAssemblyReplay("EquilibriumFuelNetwork", "Fuel vessel 1");
+
+        [UnityTest]
+        public IEnumerator ElectrothermalFuelNetworkImportsAndReplays() => PumpAssemblyReplay("ElectrothermalFuelNetwork", "Fuel vessel 1001");
+
+        [UnityTest]
+        public IEnumerator FiniteTankNeedleImportsAndReplays() => PumpAssemblyReplay("FiniteTankNeedleCylinder", "Liquid fuel tank 1513");
+
+        [UnityTest]
+        public IEnumerator RecirculatingFuelImportsAndReplays() => PumpAssemblyReplay("RecirculatingLiquidCylinder", "Liquid rail return 1515");
+
+        [UnityTest]
+        public IEnumerator RecirculatingNeedleImportsAndReplays() => PumpAssemblyReplay("RecirculatingNeedleCylinder", "Liquid rail return 1515");
 
         private IEnumerator PumpAssemblyReplay(string resource, string pumpName)
         {

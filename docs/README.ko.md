@@ -31,7 +31,12 @@ flowchart LR
 | 문서 | 내용 |
 |---|---|
 | [에이전트 API](AGENT_API.ko.md) | MCP 도구, 개정, 오류, 작업 순서 |
-| [자산 형식](ASSET_FORMAT.ko.md) | `.powerasset` v24와 v1부터 v23까지의 판독기 |
+| [자산 형식](ASSET_FORMAT.ko.md) | `.powerasset` v37와 v1부터 v36까지의 판독기 |
+| [증기 질량분율 동결 연료 토출과 유한 수용실](FUEL_DISCHARGE.ko.md) | 증기 분율 동결 초크, 유한 액체 배제 및 물리 펌프/니들 연소 |
+| [유한 액체 연료 관로 운동량](FUEL_INERTIAL_PIPE.ko.md) | 유한 액체 재고, 동적 유량, 열 혼합과 보존 관로 일 |
+| [압축성 평형 연료 덕트](EQUILIBRIUM_FUEL_DUCT.ko.md) | 보존형 압축성 2상 수송과 평형 음향 |
+| [축 구동 압축성 연료 챔버](COMPRESSIBLE_FUEL_CHAMBER.ko.md) | 축 압력 일과 압축성 연료 수송 결합 |
+| [액체 입구 운동량 기준 모델](LIQUID_COLUMN.ko.md) | 단상 입구 관성, 마찰열과 독립 검증한 2차 운동량 |
 | [네이티브 Zig 경계](NATIVE_ZIG.ko.md) | 보관된 Zig 프로토타입과 버전이 있는 ABI |
 
 ## 엔진과 연료
@@ -49,6 +54,12 @@ flowchart LR
 | [액체 분사](LIQUID_FUEL_INJECTION.ko.md) | 필름에 공급하는 유한 컴플라이언트 액체 레일 |
 | [니들 구동](NEEDLE_ACTUATION.ko.md) | 위치 의존 솔레노이드, 니들 질량, 닫힘 지연과 반발 |
 | [폐쇄 예측](CLOSURE_PREDICTION.ko.md) | 전압 제거를 계획하는 유계 플랜트 리플레이 |
+| [탱크 형상과 유한 헤드스페이스](TANK_HEADSPACE.ko.md) | 강체 용량, 유한 기체 압력 일과 명시적 통기 |
+| [연료 상평형과 액체 공급 경계](FUEL_PHASE_EQUILIBRIUM.ko.md) | 가역 증발/응축, 포화압과 액체 공급 경계 |
+| [유한 체적 연료 탱크 상평형](TANK_PHASE_EQUILIBRIUM.ko.md) | 유한 액체 변위, 압력 보정 증발/응축과 증기 통기 |
+| [탄성 연료 체적 참조 모델](COMPLIANT_FUEL_VOLUME.ko.md) | 액체/증기 평형, 탄성 저장 및 보존적 유한 열욕 열교환 |
+| [상평형 연료 수송 네트워크](EQUILIBRIUM_FUEL_NETWORK.ko.md) | 균질 2상 엔탈피 수송, 유한 벽 열교환 및 전체 장부 |
+| [축 구동 상변화 연료 펌프](FUEL_CHAMBER_PUMP.ko.md) | 유한 챔버 충전, 상변화 및 보존 축 압력 일 |
 
 ## 변속기
 

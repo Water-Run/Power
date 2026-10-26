@@ -8,10 +8,7 @@ Kraftstoff tritt zur Masse, zur inneren Energie und zur Kraftstoffkonstituente d
 Vormischreaktion verbraucht nur Dampf. Das Flüssigkeitsinventar ist anfängliche Benetzung,
 kein eingespritzter Kraftstoff, und bleibt Teil der Gesamtbilanz von Masse und chemischer Energie.
 
-Das ist ein Forschungsmodell mit konstanten Eigenschaften, vernachlässigbarem Flüssigkeitsverdrängungsvolumen
-und vorgeschriebener Sättigungstemperatur. Es bildet keine flüssige Leitung,
-keine Nadel- oder Spraydynamik, kein druckabhängiges Phasengleichgewicht, keine Kondensation,
-keine mehrkomponentigen Kraftstoffeigenschaften und kein kalibriertes Benzinverhalten ab.
+Der folgende Vertrag beschreibt den Standardfilm mit vorgeschriebener Sättigung. Optionales [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md) ergänzt reversible Verdampfung/Kondensation und druckabhängiges Phasenverhalten mit derselben kalorischen Referenz.
 
 ## Phasenenergie und endliche Wärmequelle
 
@@ -106,8 +103,8 @@ Ausgabe-IDs und Einheiten über Validierung oder Sitzungserzeugung auffinden. Gl
 Beobachtungsgrößen für Masse, Kraftstoff und chemische Energie schließen das Filminventar ein. Interne
 Dampfförderung erhöht weder die Reservoir-Kraftstoffenergie noch die externe Enthalpie.
 
-Asset v19 speichert alle Phaseneigenschaften und behält Leser für v1-v18. Jeder Film braucht
-einen typisierten Phasendatensatz von 64 Byte. Begrenzte Längen und Anzahlen, Digest, vollständige Abdeckung,
+Asset v37 speichert alle Phaseneigenschaften und behält Leser für v1-v36. Jeder Film braucht
+einen typisierten Phasendatensatz von 100 Byte. Begrenzte Längen und Anzahlen, Digest, vollständige Abdeckung,
 doppelte oder fehlende Datensätze, Einheiten, physikalische Kompilierung und Schutz vor Herabstufung
 werden geprüft. Das authentische Fixture v17 der Kraftstoffdosierung behält seinen Fingerabdruck und
 das aufgewertete Replay derselben Laufzeit. Siehe [ASSET_FORMAT.de.md](ASSET_FORMAT.de.md).
@@ -126,3 +123,11 @@ Der getrennte [Flüssigeinspritzer](LIQUID_FUEL_INJECTION.de.md) füllt Filme nu
 einer endlichen nachgiebigen Quelle nach. Pumpe und Nachfüllung, Nadel und Spray, gemessene Kraftstoffeigenschaften,
 Zündung und ECU, vollständiges Einlass- und Auslassverhalten, Getrieberegelung und kalibrierte
 Antriebsstränge bleiben getrennte Anforderungen.
+
+## Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen
+
+`mass_flow` ist der vorzeichenbehaftete Nettophasentransfer des vollständigen Physikschritts. `evaporated_fuel_mass` und `condensed_fuel_mass` summieren positive und negative Massen, ohne sich aufhebende Teilprojektionen doppelt zu zählen. `vapor_partial_pressure` zeigt den Kraftstoffpartialdruck. Wärme-, Masse- und Chemiebilanzen enthalten beide Phasen.
+
+Eine begrenzte skalare Lösung nutzt die monotone Gleichgewichtsenergie. Endliche Wandwärme verwendet impliziten Euler. Transport- und Zylinderarbeitskopplung besitzen Verfeinerungsnachweise erster Ordnung. Flüssige Koexistenz bleibt im Temperaturintervall. Nach vollständiger Verdampfung darin kann Gas überhitzen, ohne die Sättigungskurve zu extrapolieren.
+
+[Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)

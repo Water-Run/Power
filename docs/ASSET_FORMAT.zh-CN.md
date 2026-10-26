@@ -14,7 +14,251 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 24 与保留的读取器
+## 当前版本 37
+
+`compressible_fuel_chamber` 将转轴连接到有限的 `compressible_fuel` 储腔。轴运动改变容积，同一压力功同时改变流体能量和轴转矩。储腔可通过 `equilibrium_fuel_duct` 供给或接收燃料，并发生平衡闪蒸与凝结。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 42 |
+| compressible_fuel_chamber_kind | 50 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_record_bytes | 40 |
+| fuel_chamber_record_count | count(kind in [fuel_chamber, compressible_fuel_chamber]) |
+| fuel_chamber_record_order | component_index, minimum_reference_volume, swept_volume, phase |
+| fuel_chamber_quantity_fields | 3 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_compressible_chamber | 4 |
+| retained_asset_readers | power.asset.v1..v36 |
+
+[轴驱动可压缩燃料腔室](COMPRESSIBLE_FUEL_CHAMBER.zh-CN.md)
+
+
+## 保留版本 36
+
+`equilibrium_fuel_duct` 通过显式的 `compressible_fuel` 单元输运质量、动量和总能量。液体可压缩，蒸气为理想气体；两相共享压力、温度和速度。局部平衡允许凝结与闪蒸。两个有限静止储罐和一个有限热壁面闭合各项收支。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| compressible_fuel_material_first_quantity | liquid_bulk_modulus replaces compliance |
+| compressible_fuel_material_appended_quantity | initial_velocity |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| fuel_duct_cell_count | 1..24 |
+| fuel_duct_record_order | component_index, cell_count, area, linear_resistance, quadratic_resistance, fluid_heat_fraction, cells |
+| fuel_duct_record_count | count(component.kind == equilibrium_fuel_duct) |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112 density; 113 sound_speed; 114 mass_at_a; 115 mass_at_b |
+| retained_asset_readers | power.asset.v1..v35 |
+
+[可压缩平衡燃料管路](EQUILIBRIUM_FUEL_DUCT.zh-CN.md)
+
+
+## 保留版本 35
+
+`fuel_inertial_pipe` 连接两个有限燃油节点和有限热壁面。水平刚性管路拥有独立的液体质量、热内能与动能，不替代两端容器库存。管内密度恒定，温度随完全混合库存变化。端口及整条管路必须保持液态；现有准静态连接保留各自的两相行为。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[有限液体燃油管路动量](FUEL_INERTIAL_PIPE.zh-CN.md)
+
+
+## 保留版本 34
+
+`fuel_discharge` 将有限燃油域源连接到 `finite_fuel_film` 的气体节点。将 `phase_mode` 声明为 `frozen`：喷嘴输运过程中汽相质量分数保持不变，两端主体重新达到平衡。均相两相具有共同温度和速度；液体不可压缩，蒸汽是理想伪组分。源与接收腔的材料属性和液体密度必须一致。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[冻结汽相质量分数的燃油喷流与有限体积接收腔](FUEL_DISCHARGE.zh-CN.md)
+
+
+## 保留版本 33
+
+`fuel_chamber` 将实际转轴与有限燃料域腔体耦合。进出口 `fuel_check_valve` 通过压差完成充填与排出。液体、蒸气和弹性壁储能使用同一物性闭合关系。入口供给不足时，腔体可在吸入期间闪蒸；交付燃料由实际库存和压力决定。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[轴驱动相变燃料泵](FUEL_CHAMBER_PUMP.zh-CN.md)
+
+
+## 保留版本 32
+
+`fuel` 域在有限弹性容器中共同输送纯燃料液体与蒸气。每个容器独立保存总质量及热量加弹性储能，相平衡闪蒸据此确定温度、压力和蒸气比例。`fuel_restriction` 交换均匀混合的供体流体，`fuel_heat_link` 与有限热节点换热。燃料热值对应的化学能使用独立账本。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 36 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_domain | 7 |
+| fuel_restriction_kind | 42 |
+| fuel_heat_link_kind | 43 |
+| fuel_material_record_bytes | 148 |
+| fuel_material_quantity_fields | 12 |
+| fuel_material_count | count(node.domain == fuel) |
+| fuel_table_order | liquid_returns -> fuel_material -> inputs |
+| fuel_quantity_order | compliance, liquid_density, maximum_pressure, gas_constant, vapor_specific_heat, liquid_specific_heat, reference_temperature, latent_internal_energy, reference_pressure, minimum_temperature, maximum_temperature, lower_heating_value |
+| additional_states_per_fuel_node | 2 |
+| additional_states_per_fuel_link | 5 |
+
+[相平衡燃料输运网络](EQUILIBRIUM_FUEL_NETWORK.zh-CN.md)
+
+
+## 保留版本 31
+
+将 `liquid_fuel_tank.parameters.headspace.phase_equilibrium` 设为 `true`，以求解油箱蒸发与冷凝。配对油膜提供显式 `phase_equilibrium` 物性，受追踪的气相空间使用相同的 R、cv、热值和化学计量比。湿油箱声明共同气液初温和饱和燃料分压；干油箱初始分压不高于饱和。总库存平均密度须低于液体密度。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[有限体积油箱相平衡](TANK_PHASE_EQUILIBRIUM.zh-CN.md)
+
+## 保留版本 30
+
+可选的 `fuel_film.parameters.phase_equilibrium` 声明单位为 `pa` 或 `bar` 的 `reference_pressure`，以及单位为 `k` 的 `minimum_temperature` / `maximum_temperature`。已有 `saturation_temperature` 指参考温度，`latent_internal_energy` 指该温度下蒸气与液体的比内能差。每个平衡接收端由一个油膜拥有。初始快照保留输入状态；接受的推进区间使气液达到平衡，并与有限热容量壁面交换热量。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[燃油相平衡与液体供给边界](FUEL_PHASE_EQUILIBRIUM.zh-CN.md)
+
+## 保留版本 29
+
+`liquid_fuel_tank.parameters.headspace` 声明单位为 `m3` 或 `l` 的 `capacity` 和 `gas_node`。气体节点省略 `storage`，其体积为 `capacity - liquid_mass / density`，必须有唯一所有者且保持为正。配对泵及泄压回流的设定储液器压力为零，由有限气体决定入口压力。
+
+示例 `vented-tank-liquid-cylinder` 和 `vented-tank-needle-cylinder` 使用油箱 1513、气相 1520、通气输入 960。资产 v29 保留几何并读取 v1-v28。解析功及导数、独立联立 ODE 细化、完整账本、资产/MCP 回放、回滚和零分配推进检查通过。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md)
+
+## 保留版本 28
+
+`recirculating-liquid-cylinder` 与 `recirculating-needle-cylinder` 保留有限燃料、真实喷射、蒸发和可选针阀动力学。资产 v28 保留回流连接与热比例，并读取 v1-v27。每条回流在原有模型边界内增加 8 个状态。
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.zh-CN.md](LIQUID_FUEL_RETURN.zh-CN.md)
+
+## 保留的版本 27
+
+资产 v27 保留油箱数据和补给选择，并读取 v1-v26。每个油箱在原有边界内增加 4 个报告状态。独立湿态交换、耗尽压力/轴能解析解、回流混合、完整账本、回滚、独立分支与无分配步进均有检查。
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.zh-CN.md](LIQUID_FUEL_TANK.zh-CN.md)
+
+## 保留的版本 26
+
+编码器写入 `power.asset.v26`，读取 v1-v26。计数为 38 个 int32（152 bytes）；头部为 230 + UTF-8 名称长度 bytes。种类 39 是 `liquid_rail_feed`，指纹标签为 30。24 bytes 记录保存组件索引、喷射器/泵 ID 和源温度量。检查类型覆盖与燃轨/泵的独占归属；重签名的 v25 降级拒绝新种类。
+
+## 保留的版本 25
+
+编码器写入 `power.asset.v25`，可读取 v1-v25。计数表包含 37 个 int32（148 bytes）；头部为 226 + UTF-8 名称长度 bytes。种类 38 为 `at_controller`，指纹标签为 29。每条记录包含 208 固定 bytes，加上每支路 12 bytes。支路数量为 5 或 6，另行声明有界总数。类型覆盖、时钟、单位、归属和拓扑均需检查。重新签署摘要的 v24 降级会拒绝新种类。
+
+## 保留的版本 24
 
 编码器写出 `power.asset.v24`;版本 1 到 24 仍可读取。计数表与记录大小仍是 v23 的那些。种类 37 是 `carrier_gear`:其基线速比有限、有符号且非零;其 8 字节齿轮扩展保留元件索引与彼此不同的运动行星架。带类型的计数覆盖每一个行星架啮合。重新封装摘要的 v23 降级会拒绝这个新种类。
 

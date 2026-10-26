@@ -31,7 +31,12 @@ flowchart LR
 | Document | De quoi il s'agit |
 |---|---|
 | [API agent](AGENT_API.fr.md) | Outils MCP, révisions, erreurs et la séquence d'opérations |
-| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v24 et les lecteurs de v1 à v23 |
+| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v37 et les lecteurs de v1 à v36 |
+| [Décharge de carburant à titre figé et récepteurs finis](FUEL_DISCHARGE.fr.md) | Étranglement à titre figé, déplacement liquide fini et combustion avec pompe/aiguille physiques |
+| [Quantité de mouvement d'une ligne finie de carburant liquide](FUEL_INERTIAL_PIPE.fr.md) | Inventaire liquide fini, débit dynamique, mélange thermique et travail conservatif |
+| [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md) | Transport diphasique compressible conservatif et acoustique d’équilibre |
+| [Chambres de carburant compressible entraînées par arbre](COMPRESSIBLE_FUEL_CHAMBER.fr.md) | Travail de pression d’arbre couplé au transport compressible |
+| [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md) | Inertie d'entrée monophasique, chaleur de friction et quantité de mouvement au second ordre vérifiée |
 | [Frontière Zig native](NATIVE_ZIG.fr.md) | Les prototypes Zig archivés et l'ABI versionnée |
 
 ## Moteur et carburant
@@ -49,6 +54,12 @@ flowchart LR
 | [Injection liquide](LIQUID_FUEL_INJECTION.fr.md) | Rampe liquide finie et souple alimentant un film |
 | [Actionnement d'aiguille](NEEDLE_ACTUATION.fr.md) | Solénoïde dépendant de la position, masse d'aiguille, retard de fermeture et rebond |
 | [Prédiction de fermeture](CLOSURE_PREDICTION.fr.md) | Rejeu plant borné qui planifie la coupure de tension |
+| [Géométrie du réservoir et espace gazeux fini](TANK_HEADSPACE.fr.md) | Capacité rigide, travail du gaz fini et ventilation explicite |
+| [Équilibre des phases du carburant et limites d'alimentation](FUEL_PHASE_EQUILIBRIUM.fr.md) | Évaporation/condensation réversibles, saturation et limites d'alimentation liquide |
+| [Équilibre du réservoir à volume fini](TANK_PHASE_EQUILIBRIUM.fr.md) | Déplacement liquide fini, phases corrigées en pression et évent avec vapeur |
+| [Référence de volume de carburant déformable](COMPLIANT_FUEL_VOLUME.fr.md) | Équilibre liquide/vapeur, stockage élastique et échange conservatif avec bain fini |
+| [Réseau de transport de carburant en équilibre](EQUILIBRIUM_FUEL_NETWORK.fr.md) | Transport diphasique homogène d’enthalpie, chaleur de paroi finie et bilans complets |
+| [Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md) | Remplissage fini, changement de phase et travail de pression conservatif |
 
 ## Transmission
 

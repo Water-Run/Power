@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — Experimente ohne Oberfläche"]
     mcp["Power.Mcp — 12 MCP-Werkzeuge über stdio"]
-    assets["Power.Assets — .powerasset v24"]
+    assets["Power.Assets — .powerasset v37"]
     unity["Unity-6.6-Studio — 3D-Laboratorien"]
 
     model --> core
@@ -119,7 +119,7 @@ Der Dienst stellt zwölf Werkzeuge mit Eingabe- und Ausgabeschemas bereit:
 |---|---|
 | `get_capabilities` | Modelle, Grenzen, Zeit- und Revisionskonventionen entdecken. Hier beginnen. |
 | `get_model_schema` | JSON Schema 2020-12 für `power.model.v1` |
-| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (33 Beispiele) |
+| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (59 Beispiele) |
 | `validate_model` | Modell ohne Ausführung prüfen; strukturierte Reparaturdiagnosen |
 | `run_experiment` | Begrenzter Lauf ohne Oberfläche mit Batch-Replay, KPIs und Herkunft |
 | `export_model_asset` | Ein portables `.powerasset` exportieren |
@@ -147,10 +147,18 @@ Ein Ravigneaux-Forschungsgraph mit vier Bereichen ergänzt zusammengesetzte Plan
 > [!NOTE]
 > Alle Beispielparameter sind `unverified` — Forschungswerte, keine kalibrierten Messungen.
 
-Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v24`, Leser für ältere Assets bleiben erhalten.
+Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v37`, Leser für ältere Assets bleiben erhalten.
+
+Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampfanteil in einen befeuerten Empfänger mit endlichem Flüssigkeitsvolumen. Vollständige Inventare enthalten Phasenwechsel, Verdrängungsarbeit, Strahlenergie und Impuls an die ruhende Wand. [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](docs/FUEL_DISCHARGE.de.md) [Wellengetriebene phasenauflösende Kraftstoffpumpe](docs/FUEL_CHAMBER_PUMP.de.md)
+
+Ein `fuel_inertial_pipe` verbindet zwei endliche Kraftstoffknoten und eine endliche Wärmewand. Die waagerechte starre Leitung besitzt zusätzlich Flüssigkeitsmasse, kalorische und kinetische Energie. Ihre Dichte bleibt konstant, ihre vollständig gemischte Temperatur ändert sich. Ports und gesamte Leitung bleiben flüssig; quasistatische Verbindungen behalten ihr separates Zweiphasenverhalten. [Impuls einer endlichen Flüssigkraftstoffleitung](docs/FUEL_INERTIAL_PIPE.de.md)
+
+Ein `equilibrium_fuel_duct` transportiert Masse, Impuls und Gesamtenergie durch explizite `compressible_fuel`-Zellen. Die Flüssigkeit ist kompressibel, der Dampf ideal; beide Phasen teilen Druck, Temperatur und Geschwindigkeit. Lokales Gleichgewicht erlaubt Kondensation und Entspannungsverdampfung. Zwei endliche ruhende Behälter und eine endliche thermische Wand schließen die Bilanzen. [Kompressible Kraftstoffkanäle im Gleichgewicht](docs/EQUILIBRIUM_FUEL_DUCT.de.md)
+
+Eine `compressible_fuel_chamber` verbindet eine Welle mit einem endlichen `compressible_fuel`-Behälter. Die Bewegung ändert sein Volumen; dieselbe Druckarbeit ändert Fluidenergie und Wellendrehmoment. Der Behälter kann einen `equilibrium_fuel_duct` speisen oder aufnehmen, einschließlich Gleichgewichtsverdampfung und Kondensation. [Wellengetriebene kompressible Kraftstoffkammern](docs/COMPRESSIBLE_FUEL_CHAMBER.de.md)
 
 <details>
-<summary>Verfügbare Laboratorien (34)</summary>
+<summary>Verfügbare Laboratorien (60)</summary>
 
 | Beispielname (`get_example_model`) | Laboratorium | Was es prüft |
 |---|---|---|
@@ -188,8 +196,40 @@ Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studi
 | `ravigneaux-transmission` | `assets/labs/ravigneaux-transmission.power.json` | zusammengesetzte Planetenschaltungen mit vier Bereichen |
 | `fired-ravigneaux-converter` | `assets/labs/fired-ravigneaux-converter.power.json` | gezündeter Motor, Wandler/Überbrückung und zusammengesetztes Getriebe |
 | `controlled-fired-dual-clutch` | `assets/labs/controlled-fired-dual-clutch.power.json` | gezündeter Motor mit abgetasteter DCT-Regelung und vollem Nachweis |
+| `controlled-hydraulic-ravigneaux` | `assets/labs/controlled-hydraulic-ravigneaux.power.json` | abgetastete Druckregelung und Bestätigung des tatsächlichen Gangs/Lockups |
+| `controlled-fired-hydraulic-ravigneaux` | `assets/labs/controlled-fired-hydraulic-ravigneaux.power.json` | gezündeter Motor mit rückgekoppelten hydraulischen AT-Schaltungen |
+| `pump-fed-liquid-cylinder` | `assets/labs/pump-fed-liquid-cylinder.power.json` | wellengetriebene Rail-Nachfüllung, kalorische Mischung und vollständige Bilanzen |
+| `pump-fed-needle-cylinder` | `assets/labs/pump-fed-needle-cylinder.power.json` | pumpengespeiste Rail mit physischer Nadel und Dosierregelung |
+| `finite-tank-liquid-cylinder` | `assets/labs/finite-tank-liquid-cylinder.power.json` | Entleerung des endlichen Tanks, Trockenpumpen und interner Kraftstofftransport |
+| `finite-tank-needle-cylinder` | `assets/labs/finite-tank-needle-cylinder.power.json` | endliche Versorgung mit physischer Nadel und Verdampfung |
+| `equilibrium-tank-supply` | `assets/labs/equilibrium-tank-supply.power.json` | Pumpenumkehr, endliche Phasendichte, Heizquelle und Kraftstoffentlüftung |
+| `equilibrium-tank-fired-cylinder` | `assets/labs/equilibrium-tank-fired-cylinder.power.json` | Motor mit endlichem Tankgleichgewicht und erhaltender Flüssigkeitsansaugung |
+| `equilibrium-fuel-cell` | `assets/labs/equilibrium-fuel-cell.power.json` | Kondensation an endlicher Wand, Entlüftungsverdampfung und Phasenbilanzen |
+| `equilibrium-injected-cylinder` | `assets/labs/equilibrium-injected-cylinder.power.json` | Gleichgewichtszufuhr, reine Dampfverbrennung und Einlass/Rail-Reserven |
+| `vented-tank-liquid-cylinder` | `assets/labs/vented-tank-liquid-cylinder.power.json` | endlicher Gasraum, interne Druckarbeit und gesteuerte Entlüftung |
+| `vented-tank-needle-cylinder` | `assets/labs/vented-tank-needle-cylinder.power.json` | endlicher Gasraum/Entlüftung mit physischer Nadeldynamik |
+| `recirculating-liquid-cylinder` | `assets/labs/recirculating-liquid-cylinder.power.json` | Druckentlastungsrücklauf mit gleichzeitiger Tank/Rail-Mischung und Verlustwärme |
+| `recirculating-needle-cylinder` | `assets/labs/recirculating-needle-cylinder.power.json` | Kraftstoffumlauf mit physischer Nadel und vollständiger Wiedergabe |
+| `equilibrium-fuel-network` | `assets/labs/equilibrium-fuel-network.power.json` | Flüssigkeitsaustrag in Koexistenz, Ventilereignisse und endliche Wandwärme |
+| `electrothermal-fuel-network` | `assets/labs/electrothermal-fuel-network.power.json` | Rücktransport des Gemischs und Wärmekopplung mit einem elektromechanischen Labor |
+| `equilibrium-fuel-pump` | `assets/labs/equilibrium-fuel-pump.power.json` | Einlassmangel, Dampfentstehung und Förderung durch auslaufende Welle |
+| `electric-equilibrium-fuel-pump` | `assets/labs/electric-equilibrium-fuel-pump.power.json` | DC-Motorantrieb, versorgte Flüssigkeitsfüllung und endliche Motorwandwärme |
+| `finite-volume-fuel-discharge` | `assets/labs/finite-volume-fuel-discharge.power.json` | Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger |
+| `pump-fed-finite-volume-cylinder` | `assets/labs/pump-fed-finite-volume-cylinder.power.json` | Kritischer Fluss mit eingefrorenem Dampfanteil, Flüssigkeitsverdrängung und physische Pumpe/Nadel |
+| `inertial-fuel-line` | `assets/labs/inertial-fuel-line.power.json` | Endliches Flüssigkeitsinventar, dynamischer Fluss, Mischung und erhaltende Leitungsarbeit |
+| `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | Endliches Flüssigkeitsinventar, dynamischer Fluss, Mischung und erhaltende Leitungsarbeit |
+| `equilibrium-fuel-condensing-duct` | `assets/labs/equilibrium-fuel-condensing-duct.power.json` | Endliche Flüssigkeitszufuhr kondensiert den nassen Kanalinhalt |
+| `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | Flüssiger Kanalinhalt verdampft in endliche Zweiphasenbehälter |
+| `compressible-fuel-chamber-duct` | `assets/labs/compressible-fuel-chamber-duct.power.json` | Wellendruckarbeit gekoppelt an kompressiblen Kraftstofftransport |
+| `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | Wellendruckarbeit gekoppelt an kompressiblen Kraftstofftransport |
 
 </details>
+
+Alle Labore als JSON auflisten:
+
+```sh
+dotnet src/Power.Cli/bin/Release/net10.0/Power.Cli.dll list-labs
+```
 
 `get_example_model` mit einem `name` anfordern oder direkt ausführen:
 
@@ -203,7 +243,7 @@ Der Build exportiert zu jedem Laboratorium ein passendes `.powerasset`. Replay-N
 
 Vollständige Antriebsstränge sind das Ziel, nicht der aktuelle Stand. Noch offen:
 
-- Vollständiges Motorverhalten: Saug-/Auslassmodellierung, Flüssigkeitspumpe/-nachfüllung, verfeinertes magnetisches/elektronisches/Einspritzverhalten, druckabhängiges Phasenverhalten, reichere Thermochemie und Zündungsregelung.
+- Vollständiges Motorverhalten: Schwappen/hydrostatische Form, zweiphasiger Pumpen/Rail-Transport und Kavitation, gemessene Pumpenfüllung/Regelung, verfeinerte Magnetik/Elektronik/Sprühmodelle, Zündregelung, Einlass/Auslassdynamik, mechanische Verluste und reichere Thermochemie.
 - Vollständige DCT-Stellansteuerung, AT-Topologie und Getrieberegelung (ECU/TCU).
 - Gemessene Pumpenverlust- und Regelungskennlinien, gemessene Batteriechemie und BMS, gemessene Ventil-/Akkumulatordynamik.
 - Kalibrierte Antriebsstränge.
@@ -219,7 +259,7 @@ Die OEM-Recherche zu EA211 DJS + DQ200 und PSA EC5 + AT8 bleibt in [assets/sampl
 | Projekt | [Architektur](docs/ARCHITECTURE.de.md) · [Fahrplan](docs/ROADMAP.de.md) · [Entwicklungsstand](docs/DEVELOPMENT_STATUS.de.md) · [Validierungsakte](docs/VALIDATION.de.md) · [Notizen zur Motorfortsetzung](docs/NEXT_ENGINE_STEP.de.md) |
 | Schnittstellen | [Agent-API](docs/AGENT_API.de.md) · [Asset-Format](docs/ASSET_FORMAT.de.md) · [Native Zig-Grenze](docs/NATIVE_ZIG.de.md) |
 | Motor und Gas | [Abgeschlossener Zylinder](docs/SEALED_CYLINDER.de.md) · [Gasnetz](docs/GAS_NETWORK.de.md) · [Gaswechsel](docs/GAS_EXCHANGE.de.md) · [Bewegter Zylinder](docs/MOVING_CYLINDER.de.md) · [Ventilsteuerzeiten](docs/VALVE_TIMING.de.md) · [Vormischverbrennung](docs/PREMIXED_COMBUSTION.de.md) |
-| Kraftstoff und Einspritzung | [Kraftstoffdosierung](docs/FUEL_METERING.de.md) · [Kraftstofffilm](docs/FUEL_FILM.de.md) · [Flüssigeinspritzung](docs/LIQUID_FUEL_INJECTION.de.md) · [Nadelansteuerung](docs/NEEDLE_ACTUATION.de.md) · [Schließvorhersage](docs/CLOSURE_PREDICTION.de.md) |
+| Kraftstoff und Einspritzung | [Kraftstoffdosierung](docs/FUEL_METERING.de.md) · [Kraftstofffilm](docs/FUEL_FILM.de.md) · [Flüssigeinspritzung](docs/LIQUID_FUEL_INJECTION.de.md) · [Nadelansteuerung](docs/NEEDLE_ACTUATION.de.md) · [Schließvorhersage](docs/CLOSURE_PREDICTION.de.md) · [Tankgeometrie und endlicher Gasraum](docs/TANK_HEADSPACE.de.md) · [Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](docs/FUEL_PHASE_EQUILIBRIUM.de.md) · [Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](docs/TANK_PHASE_EQUILIBRIUM.de.md) |
 | Getriebe | [Kupplungsnetz](docs/CLUTCH_NETWORK.de.md) · [Kupplungsphysik](docs/CLUTCH_PHYSICS.de.md) · [Zahnradnetz](docs/GEAR_NETWORK.de.md) · [Ideale Zahnräder](docs/IDEAL_GEARS.de.md) · [Wandler](docs/CONVERTER_NETWORK.de.md) · [Doppelkupplungsgetriebe](docs/DUAL_CLUTCH_TRANSMISSION.de.md) · [DCT-Regelung](docs/DCT_CONTROL.de.md) · [Ravigneaux-Getriebe](docs/RAVIGNEAUX_TRANSMISSION.de.md) · [Aufgelöste Planeten](docs/RESOLVED_PLANETS.de.md) |
 | Hydraulik | [Hydrauliknetz](docs/HYDRAULIC_NETWORK.de.md) · [Pumpe](docs/HYDRAULIC_PUMP.de.md) · [Kolben](docs/HYDRAULIC_PISTON.de.md) · [Schieber](docs/HYDRAULIC_SPOOL.de.md) · [Gasakkumulator](docs/GAS_PISTON.de.md) · [AT-Ansteuerung](docs/AT_HYDRAULIC_ACTUATION.de.md) |
 

@@ -31,7 +31,12 @@ flowchart LR
 | 文档 | 内容 |
 |---|---|
 | [智能体 API](AGENT_API.zh-CN.md) | MCP 工具、修订号、错误与操作序列 |
-| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v24,以及 v1 至 v23 的读取器 |
+| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v37,以及 v1 至 v36 的读取器 |
+| [冻结汽相质量分数的燃油喷流与有限体积接收腔](FUEL_DISCHARGE.zh-CN.md) | 冻结汽相质量分数阻塞、有限液体排量与物理泵/针阀燃烧 |
+| [有限液体燃油管路动量](FUEL_INERTIAL_PIPE.zh-CN.md) | 有限液体库存、动态流动、热混合与守恒管路功 |
+| [可压缩平衡燃料管路](EQUILIBRIUM_FUEL_DUCT.zh-CN.md) | 守恒可压缩两相输运与平衡声学 |
+| [轴驱动可压缩燃料腔室](COMPRESSIBLE_FUEL_CHAMBER.zh-CN.md) | 轴压力功与可压缩燃料输运耦合 |
+| [液体入口动量参考](LIQUID_COLUMN.zh-CN.md) | 单相入口惯性、摩擦热及独立验证的二阶动量 |
 | [原生 Zig 边界](NATIVE_ZIG.zh-CN.md) | 归档的 Zig 原型与带版本的 ABI |
 
 ## 发动机与燃油
@@ -49,6 +54,12 @@ flowchart LR
 | [低压喷射](LIQUID_FUEL_INJECTION.zh-CN.md) | 为油膜供油的有限柔性液轨 |
 | [针阀驱动](NEEDLE_ACTUATION.zh-CN.md) | 位置相关电磁铁、针阀质量、关闭延迟与回弹 |
 | [闭合预测](CLOSURE_PREDICTION.zh-CN.md) | 安排断电时刻的有界对象回放 |
+| [油箱几何与有限气相空间](TANK_HEADSPACE.zh-CN.md) | 刚性油箱容量、有限气体压力功与显式通气 |
+| [燃油相平衡与液体供给边界](FUEL_PHASE_EQUILIBRIUM.zh-CN.md) | 可逆蒸发/冷凝、饱和压力与液体供给边界 |
+| [有限体积油箱相平衡](TANK_PHASE_EQUILIBRIUM.zh-CN.md) | 有限液体位移、压力修正蒸发/冷凝与含蒸气通气 |
+| [柔性燃料容积参考模型](COMPLIANT_FUEL_VOLUME.zh-CN.md) | 液/汽相平衡、弹性储能与守恒有限热浴传热 |
+| [相平衡燃料输运网络](EQUILIBRIUM_FUEL_NETWORK.zh-CN.md) | 均匀两相焓输运、有限壁传热与完整账本 |
+| [轴驱动相变燃料泵](FUEL_CHAMBER_PUMP.zh-CN.md) | 有限腔体充填、相变及守恒轴压力功 |
 
 ## 变速器
 

@@ -116,7 +116,7 @@ A impressão digital cobre a semântica do modelo, os parâmetros normalizados, 
 
 ## O que ainda está aberto
 
-Troca de gás compressível, combustão premisturada prescrita, embreagens, engrenagens, um conversor mapeado e acionamento hidráulico agora existem como componentes com portas, estado e verificações de conservação. Eles não concluem o powertrain. Ainda aberto: bomba e reabastecimento do trilho, controle de ignição, admissão e escape detalhados, perdas mecânicas, termoquímica mais rica, flexibilidade de engrenamento, controle completo de pressão e troca da AT, comportamento coordenado de ECU/TCU e calibração medida. Uma equação nova ainda precisa de uma versão explícita de modelo, dimensões e evidência numérica. A semântica dos componentes existentes não é estendida alterando-os em silêncio.
+Troca de gás compressível, combustão premisturada prescrita, embreagens, engrenagens, um conversor mapeado e acionamento hidráulico agora existem como componentes com portas, estado e verificações de conservação. Eles não concluem o powertrain. Ainda aberto: enchimento e regulação medidos da bomba, controle de ignição, admissão e escape detalhados, perdas mecânicas, termoquímica mais rica, flexibilidade de engrenamento, controle completo de pressão e troca da AT, comportamento coordenado de ECU/TCU e calibração medida. Uma equação nova ainda precisa de uma versão explícita de modelo, dimensões e evidência numérica. A semântica dos componentes existentes não é estendida alterando-os em silêncio.
 
 Um agente pode gerar uma topologia e um estado inicial, propor hipóteses de parâmetros, escrever candidatos de componente, construir experimentos e ler a evidência de volta. O núcleo de execução continua dono das restrições e verificações numéricas. O julgamento de um modelo de linguagem não é um fato físico. Edição de grafo no Unity, uma thread de trabalho de simulação e um backend substituível de solver de alto desempenho esperam até a fronteira estar estável. Nada aqui afirma um solver não linear geral, Burst ou um solver de GPU.
 
@@ -243,3 +243,95 @@ Engrenamentos do porta-planetas suportam relações relativas finitas, não nula
 ## Montagem compartilhada de acionamento hidráulico
 
 A [montagem de acionamento da AT](AT_HYDRAULIC_ACTUATION.pt-BR.md) reduz 1..6 alvos de embreagem declarados em embreagens reais de pistão/contato, restrições de enchimento/drenagem e molas de retorno alimentadas por uma bomba reversível compartilhada, vazamento/arrasto e alívio. Áreas dianteira/traseira explícitas conservam o inventário varrido e o trabalho de pressão de referência. Definições ordinárias imutáveis preservam a solução conjunta existente de pressão/movimento/atrito, a semântica portátil v24 e o estado atômico completo. Agendas prescritas de válvulas continuam separadas da realimentação/controle da AT e da aceitação medida do corpo de válvulas.
+
+## Realimentação de AT hidráulica
+
+`at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v37 preserva rotas, ganhos e relógios e lê v1-v36.
+
+São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.pt-BR.md](AT_CONTROL.pt-BR.md)
+
+## Rail de combustível líquido alimentado por bomba
+
+`liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
+
+v37 preserva conexões e temperatura da fonte e lê v1-v36. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+
+Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
+
+[PUMP_FED_FUEL.pt-BR.md](PUMP_FED_FUEL.pt-BR.md)
+
+## Tanque finito de combustível líquido
+
+`liquid_fuel_tank` guarda massa líquida finita e energia térmica com densidade, referência térmica do filme e poder calorífico do injetor associado. A alimentação o escolhe por `tank_component` e omite `supply_temperature`. Cada tanque pertence a uma alimentação compatível.
+
+Energias térmica e química do tanque entram no armazenamento completo. Transferência interna não adiciona massa ou energia química externa. A pressão de entrada prescrita mantém sua fronteira de trabalho de pressão. Admissão/escape gasoso ainda podem transportar energia química.
+
+Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
+
+[LIQUID_FUEL_TANK.pt-BR.md](LIQUID_FUEL_TANK.pt-BR.md)
+
+## Retorno de alívio de combustível rastreado
+
+`liquid_rail_return` associa alimentação a um `hydraulic_relief` unidirecional exclusivo. A válvula liga o rail à mesma pressão de entrada prescrita da bomba. Registrar cada rota; portas incompatíveis, propriedade duplicada e rotas não rastreadas são rejeitadas.
+
+`fluid_heat_fraction` escolhe explicitamente a fração [0,1] da perda transportada pelo combustível retornado. O restante segue a rota térmica declarada. Mistura simultânea rail/tanque conserva massa, química, trabalho de pressão e calor. Retorno à fonte externa leva massa/energia pela fronteira.
+
+[LIQUID_FUEL_RETURN.pt-BR.md](LIQUID_FUEL_RETURN.pt-BR.md)
+
+## Geometria do tanque e espaço gasoso finito
+
+`liquid_fuel_tank.parameters.headspace` declara `capacity` em `m3` ou `l` e `gas_node`. O gás omite `storage`: volume `capacity - liquid_mass / density`, um proprietário e volume positivo. Bomba e retorno usam pressão prescrita nula: o gás finito determina a pressão de entrada.
+
+O solver acoplado troca trabalho de pressão entre eixo, trilho e gás sem fonte externa. Orifícios gasosos e conexões térmicas fornecem ventilação/calor explícitos. Ler `pressure`, `fill_fraction`, `hydraulic_work` acumulado com sinal e massa, energia, volume do gás. Dose, líquido, evaporação e combustão continuam separados.
+
+[Geometria do tanque e espaço gasoso finito](TANK_HEADSPACE.pt-BR.md)
+
+## Equilíbrio de fases do combustível e limites de suprimento
+
+O modelo usa uma pseudoespécie ideal, a constante gasosa comum, calores específicos constantes e deslocamento líquido desprezível. Potenciais químicos iguais fornecem a saturação abaixo. A volume fixo, combustível total e energia interna determinam temperatura e massa de vapor. O inventário químico é transferido internamente; a reação consome só vapor.
+
+Uma solução escalar limitada usa energia de equilíbrio monótona. Calor da parede usa Euler implícito. Transporte e trabalho do cilindro móvel têm evidência de refinamento de primeira ordem. A coexistência líquida fica no intervalo declarado. Após evaporação completa dentro dele, o gás pode superaquecer sem extrapolar a curva.
+
+`mass_flow` é a transferência líquida com sinal do passo físico completo. `evaporated_fuel_mass` e `condensed_fuel_mass` acumulam suas massas positiva e negativa sem duplicar projeções que se cancelam. `vapor_partial_pressure` mostra a pressão parcial do combustível. Balanços térmicos, de massa e químicos incluem ambas as fases.
+
+[Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md)
+
+## Equilíbrio do tanque com volume líquido finito
+
+O recipiente rígido contém líquido incompressível e gás ideal de pseudoespécie/portador. O líquido muda o volume gasoso. Seu potencial químico inclui `p/rho`, corrigindo a referência `p_0(T)` de deslocamento desprezível. `reference_pressure` mantém esse significado, sem ser reinterpretada como saturação real de fluido puro com densidade finita.
+
+Um flash limitado a U,V constantes conserva combustível e energia térmica. Orifícios explícitos carregam vapor, portador e energia química; ligações térmicas trocam com nós finitos. Bomba/retorno trocam trabalho de deslocamento com o gás e depois o equilíbrio redistribui energia. `hydraulic_work` conta deslocamento de bomba, excluindo trabalho interno de fase.
+
+[Equilíbrio do tanque com volume líquido finito](TANK_PHASE_EQUILIBRIUM.pt-BR.md)
+
+## Referência de volume de combustível complacente
+
+`CompliantFuelVolume` fornece o fechamento constitutivo da rede de combustível em equilíbrio. Resolve líquido, vapor e coexistência com armazenamento elástico por massa total e temperatura ou energia. O caminho de injetor alimentado por bomba ainda exige ampliar o acoplamento. [Rede de transporte de combustível em equilíbrio](EQUILIBRIUM_FUEL_NETWORK.pt-BR.md)
+
+[Referência de volume de combustível complacente](COMPLIANT_FUEL_VOLUME.pt-BR.md)
+
+## Rede de transporte de combustível em equilíbrio
+
+O domínio `fuel` transporta líquido puro e vapor juntos em recipientes elásticos finitos. Cada recipiente mantém massa total e energia calórica mais elástica independentes; o flash determina temperatura, pressão e frações de vapor. `fuel_restriction` troca fluido doador homogêneo e `fuel_heat_link` troca calor com um nó térmico finito. A energia química do poder calorífico mantém um balanço separado.
+
+[Rede de transporte de combustível em equilíbrio](EQUILIBRIUM_FUEL_NETWORK.pt-BR.md)
+
+## Bomba de combustível com mudança de fase acionada por eixo
+
+`fuel_chamber` acopla um eixo real a uma câmara finita de combustível. `fuel_check_valve` de entrada e saída fornecem enchimento e entrega por pressão. Líquido, vapor e energia elástica usam o mesmo fechamento. Com entrada insuficiente a câmara pode vaporizar na sucção; a entrega segue inventário e pressão calculados.
+
+[Bomba de combustível com mudança de fase acionada por eixo](FUEL_CHAMBER_PUMP.pt-BR.md)
+
+A bomba do domínio de combustível agora alimenta agulha física e descarga de título congelado em um receptor em combustão com volume líquido finito. Os inventários completos incluem mudança de fase, trabalho de deslocamento, energia cinética e impulso na parede imóvel. [Descarga de combustível com título congelado e receptores finitos](FUEL_DISCHARGE.pt-BR.md)
+
+## Câmaras de combustível compressível acionadas por eixo
+
+O passo fechado de trabalho mantém massa e entropia. Energia de compressão fria e energia calórica usam o potencial de equilíbrio do duto. O líquido puro usa a integral exata da pressão e o vapor ideal sua adiabática analítica. A mudança de fase inverte entropia e verifica a energia final. A diferença aceita fornece torque discreto na solução mecânica conjunta. `hydraulic_work` positivo significa energia do eixo para o fluido.
+
+O reservatório móvel usa meio transporte, trabalho completo do eixo e meio transporte. O transporte continua de primeira ordem com difusão numérica; a separação simétrica não eleva a ordem. O movimento líquido fechado e suave converge em segunda ordem. Incrementos angulares são limitados a 0.25 rad por intervalo mecânico. CFL, limites materiais, reversão completa, cancelamento e ramificações independentes continuam válidos. O impulso estacionário das portas/carcaça é separado do trabalho do pistão.
+
+[Câmaras de combustível compressível acionadas por eixo](COMPRESSIBLE_FUEL_CHAMBER.pt-BR.md)
