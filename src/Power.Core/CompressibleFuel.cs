@@ -16,7 +16,7 @@ public readonly record struct CompressibleFuelSaturation(double PressurePascals,
 /// expansion. The liquid cold energy is the integral of p=K*(rho/rho0-1), not an extra
 /// wall energy. Chemical potentials, caloric energy, entropy and sound speed share it.
 /// </summary>
-public sealed class CompressibleFuel
+public sealed partial class CompressibleFuel
 {
     public FuelPhaseEquilibrium Material { get; }
     public double ReferenceLiquidDensityKilogramsPerCubicMeter { get; }

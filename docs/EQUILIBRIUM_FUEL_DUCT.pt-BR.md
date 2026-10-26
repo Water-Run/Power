@@ -6,6 +6,8 @@
 
 Um `equilibrium_fuel_duct` transporta massa, quantidade de movimento e energia total por células explícitas `compressible_fuel`. O líquido é compressível e o vapor ideal; as fases compartilham pressão, temperatura e velocidade. O equilíbrio local permite condensação e vaporização súbita. Dois reservatórios finitos estacionários e uma parede térmica finita fecham os balanços.
 
+Uma `compressible_fuel_chamber` pode mudar pelo trabalho do eixo o volume de qualquer reservatório misturado. A velocidade média permanece zero e as células internas rígidas. O impulso estacionário das portas/carcaça não realiza trabalho; o trabalho do pistão é uma troca mecânica separada. [Câmaras de combustível compressível acionadas por eixo](COMPRESSIBLE_FUEL_CHAMBER.pt-BR.md)
+
 O líquido tem expansão térmica nula e calor específico constante. `K` é o módulo volumétrico na pressão zero; o valor real é `K+p`. Energia de compressão fria, potenciais químicos, entropia e velocidade do som em equilíbrio derivam do mesmo potencial. `a` é o deslocamento energético líquido existente, `p0(T)` a curva de saturação que despreza o volume líquido, `x` a fração mássica de vapor e `Cv_eq` a derivada da energia interna da mistura a volume específico fixo. `Tr`, `Pref` e `Lu_ref` são temperatura, pressão e energia interna latente de referência. Usam-se unidades SI.
 
 ```text
@@ -47,6 +49,6 @@ Execute `equilibrium-fuel-condensing-duct` ou `equilibrium-fuel-flashing-duct`. 
 
 Os parâmetros continuam `unverified`. Respeite as faixas declaradas de temperatura e pressão, entalpia latente positiva, volumes de coexistência separados e vapor diluído. O duto é rígido, horizontal, de seção constante e equilíbrio homogêneo instantâneo. Não inclui nucleação com taxa finita, deslizamento, tensão superficial, gravidade, elasticidade ou comportamento crítico real. A difusão de primeira ordem pode alargar frentes; conservação e reprodução não demonstram precisão espacial nem validade de hardware medido. A aceitação real no Unity permanece pendente.
 
-Conecte dutos compressíveis a câmaras acionadas por eixo e fronteiras de agulha/bocal compatíveis, com trabalho de pressão e hipóteses de fase explícitos. Depois avance relaxação/deslizamento, ignição, admissão/escape, perdas mecânicas e coordenação ECU/TCU. Calibração medida e aceitação real no Unity permanecem separadas.
+Adicionar fronteiras compatíveis de válvula direcional e agulha/bocal compressíveis, com entalpia, energia cinética e hipóteses de fase explícitas. Depois avançar relaxação/deslizamento, ignição, admissão/escape, perdas mecânicas e coordenação ECU/TCU. Calibração medida e aceitação real no Unity permanecem separadas.
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

@@ -343,3 +343,15 @@ SHA-256: `a5f8117c0240e888ee9cd9556f13cf668aff5d50ca8e9afad1c6d053310a4ac4`.
 `EquilibriumDuctAssetChecks` verifies the authentic digest and every original
 and upgraded replay boundary. Keep these original bytes. The Power! GPL license
 and Unity Linking Exception apply.
+
+## Equilibrium condensing duct v36
+
+`equilibrium-fuel-condensing-duct-v36.powerasset` retains the v36 writer output
+from commit `8210aa8bd1ca66d28d06906de0261204bd515a3d`, copied before changing
+the encoder on 2026-10-26. It preserves compressible equilibrium cells and the
+conservative duct before shaft-driven moving reservoir records.
+
+SHA-256: `093420e1031206913600e1581ed717012194d303f60f8afec7595a324f789cc5`.
+`CompressibleChamberAssetChecks` verifies the authentic digest and every original
+and upgraded replay boundary. Keep these original bytes. The Power! GPL license
+and Unity Linking Exception apply.

@@ -250,7 +250,7 @@ Die [Baugruppe der AT-Ansteuerung](AT_HYDRAULIC_ACTUATION.de.md) senkt 1..6 erkl
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v36 speichert Routen, Verstärkungen und Uhren und liest v1-v35.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v37 speichert Routen, Verstärkungen und Uhren und liest v1-v36.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -260,7 +260,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v36 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v35. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v37 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v36. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -329,3 +329,11 @@ Die Domäne `fuel` transportiert reine Flüssigkeit und Dampf gemeinsam in endli
 [Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
 
 Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampfanteil in einen befeuerten Empfänger mit endlichem Flüssigkeitsvolumen. Vollständige Inventare enthalten Phasenwechsel, Verdrängungsarbeit, Strahlenergie und Impuls an die ruhende Wand. [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md)
+
+## Wellengetriebene kompressible Kraftstoffkammern
+
+Der geschlossene Arbeitsschritt hält Masse und Entropie konstant. Kalte Kompressionsenergie und kalorische Energie verwenden dasselbe Gleichgewichtspotenzial wie der Kanal. Reine Flüssigkeit nutzt das exakte Druckintegral, idealer Dampf seine analytische Adiabate. Beim Phasenwechsel wird Entropie invertiert und der Energieendzustand geprüft. Die akzeptierte Energiedifferenz liefert das diskrete Druckmoment im gemeinsamen mechanischen Löser. Positives `hydraulic_work` bedeutet Energie von Welle zu Fluid.
+
+Der bewegliche Behälter verwendet halben Transport, volle Wellenarbeit und halben Transport. Der Transport bleibt erster Ordnung mit numerischer Diffusion; symmetrische Aufteilung erhöht die Ordnung nicht. Glatte geschlossene Flüssigkeitsbewegung konvergiert zweiter Ordnung. Winkeländerungen sind auf 0.25 rad je mechanischem Intervall begrenzt. CFL, Stoffgrenzen, vollständige Rücknahme, Abbruch und unabhängige Zweige gelten weiterhin. Stationärer Anschluss-/Gehäuseimpuls ist von der Kolbendruckarbeit getrennt.
+
+[Wellengetriebene kompressible Kraftstoffkammern](COMPRESSIBLE_FUEL_CHAMBER.de.md)

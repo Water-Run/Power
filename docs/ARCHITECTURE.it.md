@@ -250,7 +250,7 @@ L'[assemblaggio di azionamento AT](AT_HYDRAULIC_ACTUATION.it.md) abbassa i bersa
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v36 conserva percorsi, guadagni e clock e legge v1-v35.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v37 conserva percorsi, guadagni e clock e legge v1-v36.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -260,7 +260,7 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v36 conserva collegamenti e temperatura sorgente e legge v1-v35. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v37 conserva collegamenti e temperatura sorgente e legge v1-v36. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
@@ -329,3 +329,11 @@ Il dominio `fuel` trasporta insieme liquido puro e vapore in recipienti elastici
 [Pompa carburante a cambio di fase azionata da albero](FUEL_CHAMBER_PUMP.it.md)
 
 La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo congelato in un ricevitore acceso con volume liquido finito. Gli inventari comprendono cambio fase, lavoro di spostamento, energia cinetica del getto e impulso sulla parete ferma. [Scarico carburante a titolo congelato e ricevitori finiti](FUEL_DISCHARGE.it.md)
+
+## Camere di combustibile comprimibile azionate da albero
+
+Il passo di lavoro chiuso mantiene massa ed entropia. Compressione fredda ed energia calorica usano lo stesso potenziale d’equilibrio del condotto. Il liquido puro usa l’integrale esatto della pressione, il vapore ideale l’adiabatica analitica. Il cambiamento di fase inverte l’entropia e verifica l’energia finale. La differenza accettata fornisce una coppia discreta nel solutore meccanico comune. `hydraulic_work` positivo significa energia dall’albero al fluido.
+
+Il serbatoio mobile usa mezzo trasporto, lavoro completo d’albero e mezzo trasporto. Il trasporto resta al primo ordine con diffusione numerica; la separazione simmetrica non alza l’ordine. Il moto liquido chiuso e regolare converge al secondo ordine. Gli incrementi angolari sono limitati a 0.25 rad per intervallo meccanico. Restano validi CFL, limiti materiali, rollback completo, annullamento e rami indipendenti. L’impulso stazionario di porte/carter è distinto dal lavoro del pistone.
+
+[Camere di combustibile comprimibile azionate da albero](COMPRESSIBLE_FUEL_CHAMBER.it.md)

@@ -6,6 +6,8 @@
 
 Ein `equilibrium_fuel_duct` transportiert Masse, Impuls und Gesamtenergie durch explizite `compressible_fuel`-Zellen. Die Flüssigkeit ist kompressibel, der Dampf ideal; beide Phasen teilen Druck, Temperatur und Geschwindigkeit. Lokales Gleichgewicht erlaubt Kondensation und Entspannungsverdampfung. Zwei endliche ruhende Behälter und eine endliche thermische Wand schließen die Bilanzen.
 
+Eine `compressible_fuel_chamber` kann das Volumen beider gemischter Behälter durch Wellenarbeit ändern. Die mittlere Geschwindigkeit bleibt null, interne Zellen bleiben starr. Stationärer Anschluss-/Gehäuseimpuls leistet keine Arbeit; Kolbendruckarbeit ist ein eigener mechanischer Austausch. [Wellengetriebene kompressible Kraftstoffkammern](COMPRESSIBLE_FUEL_CHAMBER.de.md)
+
 Die Flüssigkeit hat keine thermische Ausdehnung und eine konstante Wärmekapazität. `K` ist ihr Kompressionsmodul bei Nulldruck; tatsächlich gilt `K+p`. Kalte Kompressionsenergie, chemische Potenziale, Entropie und Gleichgewichtsschallgeschwindigkeit stammen aus demselben Potenzial. `a` ist der bestehende Flüssigkeitsenergieversatz, `p0(T)` die Sättigungskurve bei vernachlässigtem Flüssigkeitsvolumen, `x` der Dampfmassenanteil und `Cv_eq` die Ableitung der inneren Gemischenergie bei festem spezifischem Volumen. `Tr`, `Pref` und `Lu_ref` sind Referenztemperatur, Referenzdruck und latente innere Energie. Es gelten SI-Einheiten.
 
 ```text
@@ -47,6 +49,6 @@ Der konservative Rusanov-Fluss aktualisiert alle Flächen aus demselben Teilschr
 
 Parameter bleiben `unverified`. Temperatur- und Druckgrenzen, positive latente Enthalpie, getrennte Koexistenzvolumina und verdünnter Dampf sind einzuhalten. Der Kanal ist starr, horizontal und querschnittskonstant mit sofortigem homogenem Gleichgewicht. Endliche Keimbildungsrate, Phasenschlupf, Oberflächenspannung, Schwerkraft, Rohrelastizität und reales kritisches Verhalten fehlen. Diffusion erster Ordnung kann Fronten verschmieren; Erhaltung und Wiedergabe belegen weder räumliche Genauigkeit noch gemessene Hardwaregültigkeit. Tatsächliche Unity-Abnahme steht aus.
 
-Kompressible Kanäle mit kompatiblen wellengetriebenen Kammern und Nadel-/Düsengrenzen verbinden; Druckarbeit und Phasenannahmen explizit behandeln. Danach Relaxation/Schlupf, Zündung, Ein-/Auslass, mechanische Verluste und ECU/TCU-Koordination bearbeiten. Messkalibrierung und tatsächliche Unity-Abnahme bleiben getrennt.
+Kompatible kompressible Wegeventil- und Nadel-/Düsengrenzen mit expliziter Enthalpie, kinetischer Energie und Phasenannahmen ergänzen. Danach Relaxation/Schlupf, Zündung, Ein-/Auslass, mechanische Verluste und ECU/TCU-Koordination bearbeiten. Messkalibrierung und tatsächliche Unity-Abnahme bleiben getrennt.
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

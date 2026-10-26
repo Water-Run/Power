@@ -2,6 +2,78 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-26: 축 구동 압축성 연료 챔버
+
+`compressible_fuel_chamber`는 회전축을 유한한 `compressible_fuel` 저장조에 연결합니다. 축 운동이 체적을 바꾸며 동일한 압력 일이 유체 에너지와 축 토크를 바꿉니다. 저장조는 `equilibrium_fuel_duct`에 연료를 공급하거나 받으며 평형 플래시 증발과 응축을 처리합니다.
+
+`compressible-fuel-chamber-duct` 또는 `electric-compressible-fuel-duct`를 실행합니다. 셀 상태와 함께 저장조 질량, 체적, 압력, 온도, 엔트로피, 증기분율 및 챔버 토크, 동력, 일을 읽습니다. 독립 액체 일과 이상증기 극한, 별도 역산 평형 등엔트로피선과 압력 구적, 액체 축 ODE, 이상증기 반이산 방정식 RK4 세분화를 검사합니다. 보존, 전기/기어/유압/클러치 조합, 이식 재생, 실제 MCP, 할당 없는 트랜잭션은 별도로 확인합니다. 수치 결과는 검증 증거에 기록합니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 538/538 |
+| standard_checks_on_dotnet | 422/422 |
+| actual_mcp_groups | 64/64 |
+| laboratories | 60 |
+| agent_examples | 59 |
+| unchanged_laboratories | 58 |
+| identical_complete_sample_boundaries | 7553 |
+| all_sample_boundaries | 7575 |
+| new_core_groups | 8 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| closed_liquid_mechanical_order | 2 |
+| complete_duct_transport_order | 1 |
+| independent_rk4_steps | 4000, 8000 |
+| independent_isentrope_quadrature_panels | 256 |
+| asset_version | power.asset.v37 |
+| agent_api_version | 0.42.0 |
+| fingerprint_tag | 42 |
+| compressible_fuel_chamber_kind | 50 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_record_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| additional_reported_states_per_compressible_chamber | 4 |
+| v36_fixture_sha256 | 093420e1031206913600e1581ed717012194d303f60f8afec7595a324f789cc5 |
+| verification_log_sha256 | 6d522006d80050beed5cf1e194370a837ea564c8f097cf40113541712edb9dad |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 60 |
+| schema_negative_cases | 13 |
+| documentation_locales | 10 |
+| documentation_files | 220 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| closed_liquid_shaft | 100000, 50000, 25000, 12500 | 3.029892336670059e-06, 7.57468126977301e-07, 1.8936980765715817e-07, 4.734514256199418e-08 |
+| moving_vapor_duct | 1000, 500, 250, 125 | 0.0003081770469322745, 0.0001529805876784644, 7.621636547253657e-05, 3.804007645861641e-05 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_chamber_vapor_fraction | final_shaft_work_to_fluid_j |
+|---|---|---|---|---|---|---|
+| compressible-fuel-chamber-duct | 4dc90226555e261a | 58ca174554cb97a2 | 11 | 7.450580596923828e-09 | 0.00019321851778233967 | -0.0019504693745775968 |
+| electric-compressible-fuel-duct | e7bfdc1dbb2a257f | 88bfb8a3f73fe406 | 11 | 8.523488772421706e-12 | 1 | -0.002862662570127313 |
+
+- `artifacts/reports/compressible-chamber-final-2026-10-26.log`
+- `artifacts/reports/compressible-chamber-verify-exit-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-evidence-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-baseline-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-schema-audit-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-provenance-audit-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-doc-audit-2026-10-26.json`
+
+가변 체적 저장조는 반 수송, 전체 축 일, 반 수송 순서로 계산합니다. 수송은 수치 확산을 가진 1차이며 대칭 분할이 차수를 높이지 않습니다. 매끄러운 닫힌 액체 축 운동은 2차 수렴합니다. 기계 구간의 각 증가량은 0.25 rad로 제한합니다. CFL, 물성 범위, 전체 롤백, 취소, 독립 분기는 그대로 적용됩니다. 정지 포트/하우징 충격량은 피스톤 압력 일과 구분합니다.
+
+매개변수는 `unverified`입니다. 압축성이고 열팽창이 0인 액체와 이상증기의 평형 순수 의사유체, 혼합 챔버, 강체 셀을 가정합니다. 온도와 압력 범위를 지켜야 합니다. 챔버 벌크 운동에너지는 해석하지 않으며 자동 체크 밸브가 없습니다. 유한 속도 핵생성, 상간 미끄럼, 실제 유체 임계 거동, 실측 보정, 실제 Unity 인수 검증은 남아 있습니다.
+
 ## 2026-10-23: 압축성 평형 연료 덕트
 
 `equilibrium_fuel_duct`는 명시적인 `compressible_fuel` 셀을 통해 질량, 운동량, 총에너지를 수송합니다. 액체는 압축성이며 증기는 이상기체이고 두 상은 압력, 온도, 속도를 공유합니다. 국소 평형으로 응축과 플래시 증발을 계산합니다. 유한한 정지 저장조 2개와 유한 열벽이 수지를 닫습니다.

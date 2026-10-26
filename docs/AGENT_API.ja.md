@@ -42,7 +42,7 @@ Windows も同じ `dotnet` コマンドと、DLL への絶対パスを使いま�
 
 ## ツールと結果
 
-エージェント API バージョン 0.41.0 の `get_example_model` は任意の `name` を受け取り、既定値は `electrothermal` です。`get_capabilities.examples` は有限タンクと循環燃料モデルを含む全 57 サンプルを列挙します。CLI `list-labs` は全 58 ラボを [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON で返します。`thermal-network` は設計上 CLI 専用です。機能には対応コンポーネント、忠実度、ソルバー制限と入力範囲も含まれます。出力は `power.asset.v36` を使い、v1-v35 の読み込みを保持します。検証とセッション作成は出力チャネルと単位を返します。ラボ KPI の合格は完全または較正済みのパワートレインを示しません。
+エージェント API バージョン 0.42.0 の `get_example_model` は任意の `name` を受け取り、既定値は `electrothermal` です。`get_capabilities.examples` は有限タンクと循環燃料モデルを含む全 59 サンプルを列挙します。CLI `list-labs` は全 60 ラボを [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON で返します。`thermal-network` は設計上 CLI 専用です。機能には対応コンポーネント、忠実度、ソルバー制限と入力範囲も含まれます。出力は `power.asset.v37` を使い、v1-v36 の読み込みを保持します。検証とセッション作成は出力チャネルと単位を返します。ラボ KPI の合格は完全または較正済みのパワートレインを示しません。
 
 | ツール | 役割 |
 |---|---|
@@ -292,7 +292,7 @@ KPI とリプレイのエビデンスを評価するには `run_experiment` を�
 
 `at_controller` は [-1,4] の整数目標段を受け取り、ゼロはニュートラルです。五組の充填/排油弁と任意のトルクコンバーターのロックアップを管理します。経路の順序はキャリア入力、小サン入力、大サン入力、キャリアブレーキ、大サンブレーキ、最後にロックアップです。
 
-例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v36 は経路、ゲイン、時計を保存し、v1-v35 を読みます。
+例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v37 は経路、ゲイン、時計を保存し、v1-v36 を読みます。
 
 研究用の制御であり、パラメーターは `unverified` のままです。ECU トルク協調、詳細なセンサー/弁、包括的な車両故障、OEM 校正は未完成です。managed と Standard の検査は実際の Unity Editor/Play/Player/IL2CPP の受入を証明しません。
 
@@ -302,7 +302,7 @@ KPI とリプレイのエビデンスを評価するには `run_experiment` を�
 
 `liquid_rail_feed` は液体噴射器を既存の容積ポンプと明示的な物質/熱境界に結びます。油圧出口ノードはレールのコンプライアンスと初期絶対圧に一致する必要があります。ポンプと噴射器がこの圧力ノードを所有し、未追跡の他の流体経路は拒否されます。
 
-v36 は補給接続と源温度を保存し v1-v35 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
+v37 は補給接続と源温度を保存し v1-v36 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
 
 剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、実混合物の熱力学、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
 
@@ -377,3 +377,11 @@ MCP で `equilibrium-fuel-pump` または `electric-equilibrium-fuel-pump` を�
 `liquid_bulk_modulus` を指定し、`compliance` を省略して、各ノードの `initial_velocity` を明示します。順序付きで重複しない内部 `cells` を 1–24 個指定し、各セルは一つのダクトに所属します。セル長は体積を `area` で割った値です。貯槽の速度はゼロで、内部セルを兼用できません。全ポートで同じ物性を使用します。`linear_resistance` と `quadratic_resistance` は管全体の抵抗を表し、セル体積に応じて配分します。`fluid_heat_fraction` は摩擦熱を流体と壁に配分します。直接の開度入力はありません。
 
 [圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md)
+
+## 軸駆動の圧縮性燃料室
+
+`compressible_fuel_chamber` は回転軸と有限の `compressible_fuel` 貯槽を結びます。軸の運動で容積が変わり、同じ圧力仕事が流体エネルギーと軸トルクを変えます。貯槽は `equilibrium_fuel_duct` と燃料を交換し、平衡フラッシュ蒸発や凝縮を扱えます。
+
+`node_a` は回転ポート、`node_b` の幾何所有者は一つです。`minimum_reference_volume`、`swept_volume`、`phase` を指定し、初期容積を初期軸角の幾何に合わせます。混合貯槽のバルク速度はゼロで、内部セルを兼用できません。質量のない正弦機構はピストンやカムの慣性を加えず、軸慣性を明示します。外部ケース圧力はゼロです。
+
+[軸駆動の圧縮性燃料室](COMPRESSIBLE_FUEL_CHAMBER.ja.md)

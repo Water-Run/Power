@@ -493,7 +493,7 @@ remain separate from AT feedback/control and measured valve-body acceptance.
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v36 retains routes, gains and clocks and reads v1-v35.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v37 retains routes, gains and clocks and reads v1-v36.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -503,7 +503,7 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v36 retains feed links and source temperature and reads v1-v35. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v37 retains feed links and source temperature and reads v1-v36. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -572,3 +572,11 @@ A `fuel_chamber` couples an actual shaft to a finite fuel-domain chamber. Inlet 
 [Shaft-driven phase-resolving fuel pump](FUEL_CHAMBER_PUMP.md)
 
 The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse. [Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md)
+
+## Shaft-driven compressible fuel chambers
+
+The closed work step holds mass and entropy fixed. Liquid cold compression energy and caloric energy use the same equilibrium potential as the duct. Liquid-only motion uses the exact pressure integral; ideal-vapor motion uses its analytic adiabat. Phase-changing motion inverts entropy and checks the final energy state. The accepted energy difference supplies a discrete pressure torque in the joint mechanical solve. Positive `hydraulic_work` means energy from shaft to fluid.
+
+A moving reservoir uses half duct transport, full shaft work, then half transport. Transport remains first order with numerical diffusion; symmetric splitting does not raise its order. Closed smooth liquid shaft motion has second-order refinement. Angular increments are limited to 0.25 rad per mechanical interval. Duct CFL, material bounds, full rollback, cancellation and independent branches still apply. Stationary port/housing impulse is separate from piston pressure work.
+
+[Shaft-driven compressible fuel chambers](COMPRESSIBLE_FUEL_CHAMBER.md)

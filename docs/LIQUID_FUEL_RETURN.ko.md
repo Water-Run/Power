@@ -12,7 +12,7 @@
 
 ## 증거와 한계
 
-`recirculating-liquid-cylinder`와 `recirculating-needle-cylinder`는 유한 연료, 실제 분사, 증발과 선택적 니들 동역학을 보존합니다. v36은 연결/열 비율을 저장하고 v1-v35을 읽습니다. 각 반환은 기존 상한 내 8개 상태를 추가합니다.
+`recirculating-liquid-cylinder`와 `recirculating-needle-cylinder`는 유한 연료, 실제 분사, 증발과 선택적 니들 동역학을 보존합니다. v37은 연결/열 비율을 저장하고 v1-v36을 읽습니다. 각 반환은 기존 상한 내 8개 상태를 추가합니다.
 
 독립 릴리프 감쇠/일, 기계/압력/열 동시 세분화, 열 비율, 다중 경로, 외부 경계, replay, rollback과 할당 검사가 통과합니다. 비등이나 미해상 전달 구간은 전체 배치를 실패시킵니다.
 

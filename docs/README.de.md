@@ -31,10 +31,11 @@ flowchart LR
 | Dokument | Worum es geht |
 |---|---|
 | [Agent-API](AGENT_API.de.md) | MCP-Werkzeuge, Revisionen, Fehler und die Operationsfolge |
-| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v36 und die Leser für v1 bis v35 |
+| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v37 und die Leser für v1 bis v36 |
 | [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md) | Kritischer Fluss mit eingefrorenem Dampfanteil, Flüssigkeitsverdrängung und physische Pumpe/Nadel |
 | [Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md) | Endliches Flüssigkeitsinventar, dynamischer Fluss, Mischung und erhaltende Leitungsarbeit |
 | [Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md) | Konservativer kompressibler Zweiphasentransport und Gleichgewichtsakustik |
+| [Wellengetriebene kompressible Kraftstoffkammern](COMPRESSIBLE_FUEL_CHAMBER.de.md) | Wellendruckarbeit gekoppelt an kompressiblen Kraftstofftransport |
 | [Referenz für den Impuls am Flüssigkeitseinlass](LIQUID_COLUMN.de.md) | Einphasige Einlassträgheit, Reibungswärme und unabhängig geprüfter Impuls zweiter Ordnung |
 | [Native Zig-Grenze](NATIVE_ZIG.de.md) | Die archivierten Zig-Prototypen und das versionierte ABI |
 

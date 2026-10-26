@@ -15,7 +15,7 @@ public enum Unit
 }
 
 public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6, Fuel = 7, CompressibleFuel = 8 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn, FuelRestriction, FuelHeatLink, FuelChamber, FuelCheckValve, FuelDischarge, FiniteFuelFilm, FuelInertialPipe, EquilibriumFuelDuct }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn, FuelRestriction, FuelHeatLink, FuelChamber, FuelCheckValve, FuelDischarge, FiniteFuelFilm, FuelInertialPipe, EquilibriumFuelDuct, CompressibleFuelChamber }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
@@ -414,6 +414,8 @@ public sealed record ComponentDefinition
         Id = id, Kind = ComponentKind.FuelDischarge, NodeA = source, NodeB = receiver, FuelDischarge = definition,
         Area = new(areaSquareMeters, Unit.SquareMeter), DischargeCoefficient = dischargeCoefficient, InputChannel = channel, InitialInput = new(opening, Unit.Fraction)
     };
+    public static ComponentDefinition CompressibleChamber(uint id, uint shaft, uint fuel, FuelChamberDefinition geometry) => new()
+    { Id = id, Kind = ComponentKind.CompressibleFuelChamber, NodeA = shaft, NodeB = fuel, FuelChamber = geometry };
     public static ComponentDefinition FuelChamberPump(uint id, uint shaft, uint fuel, FuelChamberDefinition geometry) => new()
     { Id = id, Kind = ComponentKind.FuelChamber, NodeA = shaft, NodeB = fuel, FuelChamber = geometry };
     public static ComponentDefinition EquilibriumDuct(uint id, uint a, uint b, uint wall, EquilibriumFuelDuctDefinition definition) => new()

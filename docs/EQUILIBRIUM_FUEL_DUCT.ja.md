@@ -6,6 +6,8 @@
 
 `equilibrium_fuel_duct` は明示的な `compressible_fuel` セル間で質量、運動量、全エネルギーを輸送します。液体は圧縮性、蒸気は理想気体で、両相の圧力、温度、速度は共通です。局所平衡により凝縮とフラッシュ蒸発が生じます。有限の静止貯槽 2 個と有限熱壁が収支を閉じます。
 
+`compressible_fuel_chamber` は軸仕事でどちらの混合貯槽の容積も変更できます。バルク速度はゼロ、内部セルは剛体のままです。静止ポート／筐体への力積は仕事をせず、ピストン圧力仕事は別の機械交換です。 [軸駆動の圧縮性燃料室](COMPRESSIBLE_FUEL_CHAMBER.ja.md)
+
 液体は熱膨張ゼロ、比熱一定です。`K` は圧力ゼロでの体積弾性率で、実際の値は `K+p` です。冷圧縮エネルギー、化学ポテンシャル、エントロピー、平衡音速は同じポテンシャルから導きます。`a` は既存の液相エネルギーオフセット、`p0(T)` は液体体積を無視した飽和曲線、`x` は蒸気質量分率、`Cv_eq` は比体積一定での混合物内部エネルギーの温度微分です。`Tr`、`Pref`、`Lu_ref` は基準温度、圧力、潜内部エネルギーです。単位は SI です。
 
 ```text
@@ -47,6 +49,6 @@ a_max = max_ports(abs(velocity)) + sqrt(max(K/rho0, (1+R/cv) R Tmax))
 
 パラメータは `unverified` のままです。指定温度・圧力範囲、正の潜エンタルピー、分離した共存比体積、希薄蒸気の条件を守ってください。剛体・等断面・水平管で瞬時均質平衡を仮定します。有限速度の核生成、相間滑り、表面張力、重力、管弾性、実流体の臨界挙動は含みません。一次数値拡散は相変化と音響の前線をぼかします。保存と再生だけでは空間精度や実測機器への妥当性を証明できません。実 Unity の受入検証は未完了です。
 
-圧縮性ダクトを互換性のある軸駆動室とニードル／ノズル境界に接続し、圧力仕事と相の仮定を明示します。その後、相緩和／滑り、点火、吸排気、機械損失、ECU/TCU 協調制御を進めます。実測校正と実 Unity の受入検証は別に行います。
+互換性のある圧縮性方向弁とニードル／ノズル境界を追加し、エンタルピー、運動エネルギー、相の仮定を明示します。その後、相緩和／滑り、点火、吸排気、機械損失、ECU/TCU 協調制御を進めます。実測校正と実 Unity 受入検証は別に行います。
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

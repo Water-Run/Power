@@ -6,6 +6,8 @@
 
 `equilibrium_fuel_duct` 通过显式的 `compressible_fuel` 单元输运质量、动量和总能量。液体可压缩，蒸气为理想气体；两相共享压力、温度和速度。局部平衡允许凝结与闪蒸。两个有限静止储罐和一个有限热壁面闭合各项收支。
 
+`compressible_fuel_chamber` 可通过轴功改变任一混合储腔的容积。储腔主体速度保持为零，管路内部单元保持刚性。静止端口／壳体冲量不做功，活塞压力功作为独立机械交换核算。 [轴驱动可压缩燃料腔室](COMPRESSIBLE_FUEL_CHAMBER.zh-CN.md)
+
 液体采用零热膨胀和恒定比热。`K` 是零压参考体积模量，实际模量为 `K+p`。冷压缩能、化学势、熵和平衡声速来自同一势函数。`a` 为已有液相能量偏置，`p0(T)` 为忽略液体体积的饱和曲线，`x` 为蒸气质量分数，`Cv_eq` 为混合物内能对温度在定比容下的导数。`Tr`、`Pref` 和 `Lu_ref` 分别是材料参考温度、压力和潜内能。所有量使用 SI 单位。
 
 ```text
@@ -47,6 +49,6 @@ a_max = max_ports(abs(velocity)) + sqrt(max(K/rho0, (1+R/cv) R Tmax))
 
 参数仍为 `unverified`。须处于声明的温压范围内，并满足潜焓为正、两相共存比容分离及稀薄蒸气条件。这是采用瞬时均相平衡的刚性等截面水平管路，未包含有限速率成核、相间滑移、表面张力、重力、管壁弹性或真实流体临界行为。一阶数值扩散会抹平相变及声波前沿；守恒与回放不能证明空间精度或实测硬件有效性。实际 Unity 验收仍待完成。
 
-将可压缩管路接入相容的轴驱动腔室和针阀／喷嘴边界，明确压力功与相态假设。之后继续相变弛豫／滑移、点火、进排气、机械损失及 ECU/TCU 协同控制。实测标定和实际 Unity 验收分别开展。
+增加相容的可压缩方向阀和针阀／喷嘴边界，明确焓、动能与相态假设。之后继续相变弛豫／滑移、点火、进排气、机械损失及 ECU/TCU 协同控制。实测标定和实际 Unity 验收分别开展。
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

@@ -36,6 +36,6 @@ h_port = u + p/rho
 
 매개변수는 `unverified`입니다. 재료 온도·압력 범위와 압력 보정 액상 안정성을 지킵니다. 실패 구간은 전체 롤백되며 틱을 줄이고 공급 고갈·압력·상을 확인합니다. 변밀도 2상 운동량, 공동현상, 음파, 중력, 이동 관 형상과 열 전선 해상은 제외합니다. 규정 연소는 상세 화학평형·반응 엔트로피 정확도를 입증하지 않습니다.
 
-압축성 덕트를 호환되는 축 구동 챔버와 니들/노즐 경계에 연결하고 압력 일과 상 가정을 명시합니다. 이후 상완화/미끄럼, 점화, 흡배기, 기계 손실, ECU/TCU 협조 제어를 진행합니다. 실측 보정과 실제 Unity 인수 검증은 별도로 수행합니다. [압축성 평형 연료 덕트](EQUILIBRIUM_FUEL_DUCT.ko.md)
+호환되는 압축성 방향 밸브와 니들/노즐 경계를 추가하고 엔탈피, 운동에너지, 상 가정을 명시합니다. 이후 상완화/미끄럼, 점화, 흡배기, 기계 손실, ECU/TCU 협조 제어를 진행합니다. 실측 보정과 실제 Unity 인수 검증은 별도로 수행합니다. [압축성 평형 연료 덕트](EQUILIBRIUM_FUEL_DUCT.ko.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: dynamic pipe boundaries](https://doc.modelica.org/om/Modelica.Fluid.Pipes.DynamicPipe.html) · [VALIDATION.md](VALIDATION.md)

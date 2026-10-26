@@ -6,6 +6,8 @@
 
 `equilibrium_fuel_duct`는 명시적인 `compressible_fuel` 셀을 통해 질량, 운동량, 총에너지를 수송합니다. 액체는 압축성이며 증기는 이상기체이고 두 상은 압력, 온도, 속도를 공유합니다. 국소 평형으로 응축과 플래시 증발을 계산합니다. 유한한 정지 저장조 2개와 유한 열벽이 수지를 닫습니다.
 
+`compressible_fuel_chamber`는 축 일로 양쪽 혼합 저장조의 체적을 바꿀 수 있습니다. 벌크 속도는 0이고 내부 셀은 강체로 유지됩니다. 정지 포트/하우징 충격량은 일을 하지 않으며 피스톤 압력 일은 별도 기계 교환입니다. [축 구동 압축성 연료 챔버](COMPRESSIBLE_FUEL_CHAMBER.ko.md)
+
 액체의 열팽창은 0이고 비열은 일정합니다. `K`는 압력 0에서의 체적탄성률이며 실제 값은 `K+p`입니다. 냉압축 에너지, 화학 퍼텐셜, 엔트로피, 평형 음속은 동일한 퍼텐셜에서 도출합니다. `a`는 기존 액체 에너지 오프셋, `p0(T)`는 액체 체적을 무시한 포화 곡선, `x`는 증기 질량분율, `Cv_eq`는 비체적이 일정할 때 혼합물 내부에너지의 온도 미분입니다. `Tr`, `Pref`, `Lu_ref`는 기준 온도, 압력, 잠재 내부에너지입니다. SI 단위를 사용합니다.
 
 ```text
@@ -47,6 +49,6 @@ a_max = max_ports(abs(velocity)) + sqrt(max(K/rho0, (1+R/cv) R Tmax))
 
 매개변수는 `unverified` 상태입니다. 선언된 온도와 압력 범위, 양의 잠재 엔탈피, 분리된 공존 비체적, 희박 증기 조건을 지켜야 합니다. 순간 균질 평형을 가정한 강체 등단면 수평 덕트입니다. 유한 속도 핵생성, 상간 미끄럼, 표면장력, 중력, 관 탄성, 실제 유체 임계 거동은 제외합니다. 1차 수치 확산은 상변화와 음향 전면을 흐리게 할 수 있습니다. 보존과 재생은 공간 정확도나 실측 하드웨어 타당성을 입증하지 않습니다. 실제 Unity 인수 검증은 남아 있습니다.
 
-압축성 덕트를 호환되는 축 구동 챔버와 니들/노즐 경계에 연결하고 압력 일과 상 가정을 명시합니다. 이후 상완화/미끄럼, 점화, 흡배기, 기계 손실, ECU/TCU 협조 제어를 진행합니다. 실측 보정과 실제 Unity 인수 검증은 별도로 수행합니다.
+호환되는 압축성 방향 밸브와 니들/노즐 경계를 추가하고 엔탈피, 운동에너지, 상 가정을 명시합니다. 이후 상완화/미끄럼, 점화, 흡배기, 기계 손실, ECU/TCU 협조 제어를 진행합니다. 실측 보정과 실제 Unity 인수 검증은 별도로 수행합니다.
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

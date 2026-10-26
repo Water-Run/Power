@@ -2,6 +2,78 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · **Português**
 
+## 2026-10-26: Câmaras de combustível compressível acionadas por eixo
+
+Uma `compressible_fuel_chamber` conecta um eixo a um reservatório finito `compressible_fuel`. O movimento muda o volume; o mesmo trabalho de pressão muda energia do fluido e torque. O reservatório pode alimentar ou receber um `equilibrium_fuel_duct`, com vaporização súbita e condensação em equilíbrio.
+
+Execute `compressible-fuel-chamber-duct` ou `electric-compressible-fuel-duct`. Leia massa, volume, pressão, temperatura, entropia e fração de vapor junto a células, torque, potência e trabalho. As verificações usam trabalho líquido e limites de vapor independentes, isentrópica de equilíbrio invertida separadamente e quadratura da pressão, EDO do eixo líquido e refinamento RK4 das equações semidiscretas do vapor ideal. Conservação, composição elétrica/engrenagens/hidráulica/embreagem, reprodução portável, MCP real e transações sem alocação são verificados separadamente. Os resultados estão nas evidências de validação.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 538/538 |
+| standard_checks_on_dotnet | 422/422 |
+| actual_mcp_groups | 64/64 |
+| laboratories | 60 |
+| agent_examples | 59 |
+| unchanged_laboratories | 58 |
+| identical_complete_sample_boundaries | 7553 |
+| all_sample_boundaries | 7575 |
+| new_core_groups | 8 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| closed_liquid_mechanical_order | 2 |
+| complete_duct_transport_order | 1 |
+| independent_rk4_steps | 4000, 8000 |
+| independent_isentrope_quadrature_panels | 256 |
+| asset_version | power.asset.v37 |
+| agent_api_version | 0.42.0 |
+| fingerprint_tag | 42 |
+| compressible_fuel_chamber_kind | 50 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_record_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| additional_reported_states_per_compressible_chamber | 4 |
+| v36_fixture_sha256 | 093420e1031206913600e1581ed717012194d303f60f8afec7595a324f789cc5 |
+| verification_log_sha256 | 6d522006d80050beed5cf1e194370a837ea564c8f097cf40113541712edb9dad |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 60 |
+| schema_negative_cases | 13 |
+| documentation_locales | 10 |
+| documentation_files | 220 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| closed_liquid_shaft | 100000, 50000, 25000, 12500 | 3.029892336670059e-06, 7.57468126977301e-07, 1.8936980765715817e-07, 4.734514256199418e-08 |
+| moving_vapor_duct | 1000, 500, 250, 125 | 0.0003081770469322745, 0.0001529805876784644, 7.621636547253657e-05, 3.804007645861641e-05 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_chamber_vapor_fraction | final_shaft_work_to_fluid_j |
+|---|---|---|---|---|---|---|
+| compressible-fuel-chamber-duct | 4dc90226555e261a | 58ca174554cb97a2 | 11 | 7.450580596923828e-09 | 0.00019321851778233967 | -0.0019504693745775968 |
+| electric-compressible-fuel-duct | e7bfdc1dbb2a257f | 88bfb8a3f73fe406 | 11 | 8.523488772421706e-12 | 1 | -0.002862662570127313 |
+
+- `artifacts/reports/compressible-chamber-final-2026-10-26.log`
+- `artifacts/reports/compressible-chamber-verify-exit-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-evidence-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-baseline-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-schema-audit-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-provenance-audit-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-doc-audit-2026-10-26.json`
+
+O reservatório móvel usa meio transporte, trabalho completo do eixo e meio transporte. O transporte continua de primeira ordem com difusão numérica; a separação simétrica não eleva a ordem. O movimento líquido fechado e suave converge em segunda ordem. Incrementos angulares são limitados a 0.25 rad por intervalo mecânico. CFL, limites materiais, reversão completa, cancelamento e ramificações independentes continuam válidos. O impulso estacionário das portas/carcaça é separado do trabalho do pistão.
+
+Os parâmetros continuam `unverified`. O pseudofluido puro em equilíbrio usa líquido compressível sem expansão térmica e vapor ideal, câmara misturada e células rígidas. Respeite limites térmicos e de pressão. A câmara não resolve energia cinética média nem inclui válvula de retenção automática. Nucleação com taxa finita, deslizamento, comportamento crítico real, calibração medida e aceitação real no Unity permanecem abertos.
+
 ## 2026-10-23: Dutos de combustível compressível em equilíbrio
 
 Um `equilibrium_fuel_duct` transporta massa, quantidade de movimento e energia total por células explícitas `compressible_fuel`. O líquido é compressível e o vapor ideal; as fases compartilham pressão, temperatura e velocidade. O equilíbrio local permite condensação e vaporização súbita. Dois reservatórios finitos estacionários e uma parede térmica finita fecham os balanços.

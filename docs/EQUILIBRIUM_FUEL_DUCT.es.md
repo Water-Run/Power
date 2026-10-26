@@ -6,6 +6,8 @@
 
 Un `equilibrium_fuel_duct` transporta masa, cantidad de movimiento y energía total por celdas explícitas `compressible_fuel`. El líquido es compresible y el vapor ideal; ambas fases comparten presión, temperatura y velocidad. El equilibrio local permite condensación y vaporización súbita. Dos depósitos finitos estacionarios y una pared térmica finita cierran los balances.
 
+Una `compressible_fuel_chamber` puede cambiar por trabajo del eje el volumen de cualquiera de los depósitos mezclados. La velocidad global permanece en cero y las celdas internas siguen rígidas. El impulso estacionario de puertos/carcasa no realiza trabajo; el trabajo del pistón es un intercambio mecánico separado. [Cámaras de combustible compresible accionadas por eje](COMPRESSIBLE_FUEL_CHAMBER.es.md)
+
 El líquido tiene expansión térmica nula y calor específico constante. `K` es su módulo volumétrico a presión cero; el valor real es `K+p`. Energía de compresión fría, potenciales químicos, entropía y velocidad del sonido en equilibrio proceden del mismo potencial. `a` es el desplazamiento energético líquido existente, `p0(T)` la curva de saturación que desprecia el volumen líquido, `x` la fracción másica de vapor y `Cv_eq` la derivada de energía interna de la mezcla a volumen específico fijo. `Tr`, `Pref` y `Lu_ref` son temperatura, presión y energía interna latente de referencia. Se usan unidades SI.
 
 ```text
@@ -47,6 +49,6 @@ Ejecute `equilibrium-fuel-condensing-duct` o `equilibrium-fuel-flashing-duct`. C
 
 Los parámetros siguen `unverified`. Respete los rangos declarados de temperatura y presión, entalpía latente positiva, volúmenes de coexistencia separados y vapor diluido. Es un conducto horizontal rígido de sección constante y equilibrio homogéneo instantáneo. Omite nucleación a velocidad finita, deslizamiento, tensión superficial, gravedad, elasticidad y comportamiento crítico real. La difusión de primer orden puede ensanchar frentes; conservación y reproducción no demuestran precisión espacial ni validez de hardware medido. La aceptación real de Unity está pendiente.
 
-Conecte conductos compresibles con cámaras accionadas por eje y fronteras de aguja/tobera compatibles, con trabajo de presión e hipótesis de fase explícitos. Después aborde relajación/deslizamiento, encendido, admisión/escape, pérdidas mecánicas y coordinación ECU/TCU. Calibración medida y aceptación real de Unity siguen separadas.
+Añadir fronteras compatibles de válvula direccional y aguja/tobera compresibles, con entalpía, energía cinética e hipótesis de fase explícitas. Después abordar relajación/deslizamiento, encendido, admisión/escape, pérdidas mecánicas y coordinación ECU/TCU. Calibración medida y aceptación real de Unity siguen separadas.
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

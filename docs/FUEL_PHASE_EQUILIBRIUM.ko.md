@@ -33,7 +33,7 @@ U_eq(T) = (M_c + m_v) cv T + (M_f - m_v) u_l(T)
 
 ## 증거
 
-`equilibrium-fuel-cell`은 응축, 통기 증발과 재응축을 보여 줍니다. `equilibrium-injected-cylinder`는 통기 탱크 엔진에 가역 수용부 상평형과 공급 여유를 추가합니다. 독립 엔트로피 최대화, 해석적 극한, 연립 ODE 수렴, 완전 재현, 롤백과 할당 검사를 수행합니다. 자산 v36은 물성을 보존하고 v1-v35를 읽습니다.
+`equilibrium-fuel-cell`은 응축, 통기 증발과 재응축을 보여 줍니다. `equilibrium-injected-cylinder`는 통기 탱크 엔진에 가역 수용부 상평형과 공급 여유를 추가합니다. 독립 엔트로피 최대화, 해석적 극한, 연립 ODE 수렴, 완전 재현, 롤백과 할당 검사를 수행합니다. 자산 v37은 물성을 보존하고 v1-v36를 읽습니다.
 
 매개변수는 `unverified`입니다. 실측 가솔린 물성, 다성분 또는 유한 속도 상변화, 해상된 액체 변위/분무와 OEM 보정은 제공하지 않습니다. 실제 Unity Editor/Play/Player/IL2CPP 수용은 미완성입니다.
 

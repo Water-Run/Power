@@ -2,6 +2,78 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-10-26: 軸駆動の圧縮性燃料室
+
+`compressible_fuel_chamber` は回転軸と有限の `compressible_fuel` 貯槽を結びます。軸の運動で容積が変わり、同じ圧力仕事が流体エネルギーと軸トルクを変えます。貯槽は `equilibrium_fuel_duct` と燃料を交換し、平衡フラッシュ蒸発や凝縮を扱えます。
+
+`compressible-fuel-chamber-duct` または `electric-compressible-fuel-duct` を実行します。セル状態に加え、貯槽の質量、容積、圧力、温度、エントロピー、蒸気分率、室のトルク、動力、仕事を読みます。独立した液体仕事と理想蒸気極限、別途反転した平衡等エントロピー線と圧力求積、液体軸 ODE、理想蒸気半離散方程式の RK4 細分化を検証します。保存、電気／歯車／油圧／クラッチ合成、可搬再生、実 MCP、割り当てのない取引は別々に確認します。数値結果は検証証拠に記録します。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 538/538 |
+| standard_checks_on_dotnet | 422/422 |
+| actual_mcp_groups | 64/64 |
+| laboratories | 60 |
+| agent_examples | 59 |
+| unchanged_laboratories | 58 |
+| identical_complete_sample_boundaries | 7553 |
+| all_sample_boundaries | 7575 |
+| new_core_groups | 8 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| closed_liquid_mechanical_order | 2 |
+| complete_duct_transport_order | 1 |
+| independent_rk4_steps | 4000, 8000 |
+| independent_isentrope_quadrature_panels | 256 |
+| asset_version | power.asset.v37 |
+| agent_api_version | 0.42.0 |
+| fingerprint_tag | 42 |
+| compressible_fuel_chamber_kind | 50 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_record_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| additional_reported_states_per_compressible_chamber | 4 |
+| v36_fixture_sha256 | 093420e1031206913600e1581ed717012194d303f60f8afec7595a324f789cc5 |
+| verification_log_sha256 | 6d522006d80050beed5cf1e194370a837ea564c8f097cf40113541712edb9dad |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 60 |
+| schema_negative_cases | 13 |
+| documentation_locales | 10 |
+| documentation_files | 220 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_errors |
+|---|---|---|
+| closed_liquid_shaft | 100000, 50000, 25000, 12500 | 3.029892336670059e-06, 7.57468126977301e-07, 1.8936980765715817e-07, 4.734514256199418e-08 |
+| moving_vapor_duct | 1000, 500, 250, 125 | 0.0003081770469322745, 0.0001529805876784644, 7.621636547253657e-05, 3.804007645861641e-05 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_chamber_vapor_fraction | final_shaft_work_to_fluid_j |
+|---|---|---|---|---|---|---|
+| compressible-fuel-chamber-duct | 4dc90226555e261a | 58ca174554cb97a2 | 11 | 7.450580596923828e-09 | 0.00019321851778233967 | -0.0019504693745775968 |
+| electric-compressible-fuel-duct | e7bfdc1dbb2a257f | 88bfb8a3f73fe406 | 11 | 8.523488772421706e-12 | 1 | -0.002862662570127313 |
+
+- `artifacts/reports/compressible-chamber-final-2026-10-26.log`
+- `artifacts/reports/compressible-chamber-verify-exit-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-evidence-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-baseline-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-schema-audit-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-provenance-audit-2026-10-26.json`
+- `artifacts/reports/compressible-chamber-doc-audit-2026-10-26.json`
+
+可動貯槽は半輸送、軸仕事全体、半輸送の順に更新します。輸送は数値拡散を伴う一次精度のままで、対称分割でも次数は上がりません。滑らかな閉液体の軸運動は二次収束します。機械区間の角度増分は 0.25 rad 以下です。CFL、物性境界、完全ロールバック、取消、独立分岐が適用されます。静止ポート／筐体への力積とピストン圧力仕事を分けて扱います。
+
+パラメータは `unverified` です。圧縮性で熱膨張ゼロの液体と理想蒸気からなる平衡純疑似流体、混合室、剛体セルを仮定します。温度・圧力範囲を守ってください。室のバルク運動エネルギーは解かず、逆止弁も自動では付きません。有限速度の核生成、相間滑り、実流体臨界挙動、実測校正、実 Unity 受入検証は残っています。
+
 ## 2026-10-23: 圧縮性平衡燃料ダクト
 
 `equilibrium_fuel_duct` は明示的な `compressible_fuel` セル間で質量、運動量、全エネルギーを輸送します。液体は圧縮性、蒸気は理想気体で、両相の圧力、温度、速度は共通です。局所平衡により凝縮とフラッシュ蒸発が生じます。有限の静止貯槽 2 個と有限熱壁が収支を閉じます。

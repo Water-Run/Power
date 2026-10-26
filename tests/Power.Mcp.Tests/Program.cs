@@ -959,4 +959,30 @@ foreach (string name in new[] { "equilibrium-fuel-condensing-duct", "equilibrium
     await Call("close_session", new() { ["session_id"] = session, ["expected_revision"] = "0" });
     PassGroup("MCP " + name + " / compressible phase momentum and every cell replay with independent branches");
 }
+foreach (string name in new[] { "compressible-fuel-chamber-duct", "electric-compressible-fuel-duct" })
+{
+    var document = (await Call("get_example_model", new() { ["name"] = name })).GetProperty("data");
+    Require(capabilities.GetProperty("compressible_fuel_chamber").GetProperty("domain").GetString() == "compressible_fuel", "Missing compressible duct contract");
+    var ductReport = (await Call("run_experiment", new() { ["document"] = document, ["include_samples"] = true })).GetProperty("data");
+    Require(ductReport.GetProperty("passed").GetBoolean(), "Equilibrium duct experiment failed");
+    var ductExport = (await Call("export_model_asset", new() { ["document"] = document })).GetProperty("data");
+    var asset = AssetCodec.Decode(Convert.FromBase64String(ductExport.GetProperty("content").GetString()!));
+    Require(asset.Model.HasCompressibleFuelChambers, "Duct state was lost");
+    var ductPlayback = asset.CreatePlayback(); var values = new Power.Core.Scalar[asset.Model.OutputCount];
+    foreach (var sample in ductReport.GetProperty("samples").EnumerateArray())
+    {
+        ulong time = sample.GetProperty("time_ns").GetUInt64();
+        while (ductPlayback.TimeNanoseconds < time) Require(ductPlayback.Advance(Math.Min(7 * asset.Model.StepNanoseconds, time - ductPlayback.TimeNanoseconds)) == Power.Core.SimulationStatus.Ok, "Duct ductPlayback failed");
+        Require(ductPlayback.ReadSnapshot(values).StateHash.ToString("x16") == sample.GetProperty("state_hash").GetString() &&
+            values.All(v => v.Value == sample.GetProperty("values").GetProperty(v.Channel.ToString()).GetDouble()), "Duct cell replay differs");
+    }
+    string session = (await Call("create_session", new() { ["document"] = document })).GetProperty("data").GetProperty("session_id").GetString()!;
+    string ductChild = (await Call("fork_session", new() { ["session_id"] = session, ["expected_revision"] = "0" })).GetProperty("data").GetProperty("session_id").GetString()!;
+    await Call("set_inputs", new() { ["session_id"] = ductChild, ["expected_revision"] = "0", ["values"] = new[] { new { channel = "200", value = 0d } } });
+    await Call("step_session", new() { ["session_id"] = ductChild, ["expected_revision"] = "1", ["delta_ns"] = "10000" });
+    Require((await Call("read_snapshot", new() { ["session_id"] = session })).GetProperty("data").GetProperty("revision").GetString() == "0", "Duct fork changed parent");
+    await Call("close_session", new() { ["session_id"] = ductChild, ["expected_revision"] = "2" });
+    await Call("close_session", new() { ["session_id"] = session, ["expected_revision"] = "0" });
+    PassGroup("MCP " + name + " / shaft work and moving-volume duct replay with independent drive branches");
+}
 Console.WriteLine($"{groupsPassed}/{groupsPassed} MCP integration groups passed against an actual child server process.");

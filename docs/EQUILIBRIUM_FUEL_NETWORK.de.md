@@ -32,7 +32,7 @@ Kompatible Thermodynamik und positiver druckgetriebener Leitwert ergeben nichtne
 
 `equilibrium-fuel-network` oder `electrothermal-fuel-network` per MCP anfordern oder dasselbe JSON per CLI ausführen. Pro Behälter `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy` und `specific_enthalpy` lesen. `internal_energy` enthält die elastische Wand; chemische Energie bleibt separat. Verbindungen zeigen vorzeichenbehaftete Flüsse, kumulierte Masse, `transport_energy` und Paarentropieänderung.
 
-Die Labore prüfen Flüssigkeitsaustrag in Koexistenz, Rückfluss, Öffnungswechsel und endliche Wand-/elektromechanische Wärme. Unabhängige Flüssigkeitsdruckexponentiallösung, gleichzeitige Zweiphasen-Massen-/Enthalpie-/Wärme-ODE, wärmegetriebene Umkehr und spekulativer Kupplungsfang prüfen Genauigkeit und Zusammensetzung. Assets und tatsächliches MCP bewahren jeden Abtastwert und Hash. Asset v36 speichert Stoffdaten und liest v1-v35. Tatsächliches Unity Editor/Play/Player/IL2CPP bleibt ungeprüft.
+Die Labore prüfen Flüssigkeitsaustrag in Koexistenz, Rückfluss, Öffnungswechsel und endliche Wand-/elektromechanische Wärme. Unabhängige Flüssigkeitsdruckexponentiallösung, gleichzeitige Zweiphasen-Massen-/Enthalpie-/Wärme-ODE, wärmegetriebene Umkehr und spekulativer Kupplungsfang prüfen Genauigkeit und Zusammensetzung. Assets und tatsächliches MCP bewahren jeden Abtastwert und Hash. Asset v37 speichert Stoffdaten und liest v1-v36. Tatsächliches Unity Editor/Play/Player/IL2CPP bleibt ungeprüft.
 
 ## Verbleibende Arbeit
 

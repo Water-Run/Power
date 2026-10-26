@@ -14,9 +14,11 @@ Un `fuel_inertial_pipe` collega due nodi finiti di carburante e una parete termi
 
 Un `equilibrium_fuel_duct` trasporta massa, quantità di moto ed energia totale attraverso celle esplicite `compressible_fuel`. Il liquido è comprimibile e il vapore ideale; le due fasi condividono pressione, temperatura e velocità. L’equilibrio locale permette condensazione e vaporizzazione istantanea. Due serbatoi finiti fermi e una parete termica finita chiudono i bilanci. [Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md)
 
+Una `compressible_fuel_chamber` collega un albero a un serbatoio finito `compressible_fuel`. Il movimento cambia il volume; lo stesso lavoro di pressione cambia energia del fluido e coppia. Il serbatoio può alimentare o ricevere un `equilibrium_fuel_duct`, con vaporizzazione e condensazione all’equilibrio. [Camere di combustibile comprimibile azionate da albero](COMPRESSIBLE_FUEL_CHAMBER.it.md)
+
 ## Prossimo incremento
 
-Collegare i condotti comprimibili a camere azionate da albero e confini ago/ugello compatibili, esplicitando lavoro di pressione e ipotesi di fase. Proseguire con rilassamento/scorrimento, accensione, aspirazione/scarico, perdite meccaniche e coordinamento ECU/TCU. Calibrazione misurata e accettazione Unity effettiva restano separate. [Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md)
+Aggiungere confini compatibili di valvola direzionale e ago/ugello comprimibili con entalpia, energia cinetica e ipotesi di fase esplicite. Proseguire con rilassamento/scorrimento, accensione, aspirazione/scarico, perdite meccaniche e coordinamento ECU/TCU. Calibrazione misurata e accettazione Unity effettiva restano separate. [Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md)
 
 ## Accettazione
 

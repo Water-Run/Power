@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 无头实验"]
     mcp["Power.Mcp — 12 个 stdio MCP 工具"]
-    assets["Power.Assets — .powerasset v36"]
+    assets["Power.Assets — .powerasset v37"]
     unity["Unity 6.6 工作室 — 3D 实验室"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | 发现模型、限制、时间与修订约定。从这里开始。 |
 | `get_model_schema` | `power.model.v1` 的 JSON Schema 2020-12 |
-| `get_example_model` | 获取可编辑的合成模型与实验(57 个示例) |
+| `get_example_model` | 获取可编辑的合成模型与实验(59 个示例) |
 | `validate_model` | 不运行即校验模型;结构化修复诊断 |
 | `run_experiment` | 有界无头运行,含批量回放、KPI 与溯源 |
 | `export_model_asset` | 导出可移植的 `.powerasset` |
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 所有示例参数均为 `unverified`——研究取值,不是标定测量值。
 
-下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v36`,并保留对更早资产的读取。
+下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v37`,并保留对更早资产的读取。
 
 燃油域泵现在可向物理针阀和冻结汽相质量分数喷嘴供油，并进入有限液体体积的燃烧接收腔。完整库存包括相变、排量功、射流动能和静止壁面冲量。 [冻结汽相质量分数的燃油喷流与有限体积接收腔](docs/FUEL_DISCHARGE.zh-CN.md) [轴驱动相变燃料泵](docs/FUEL_CHAMBER_PUMP.zh-CN.md)
 
@@ -155,8 +155,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 `equilibrium_fuel_duct` 通过显式的 `compressible_fuel` 单元输运质量、动量和总能量。液体可压缩，蒸气为理想气体；两相共享压力、温度和速度。局部平衡允许凝结与闪蒸。两个有限静止储罐和一个有限热壁面闭合各项收支。 [可压缩平衡燃料管路](docs/EQUILIBRIUM_FUEL_DUCT.zh-CN.md)
 
+`compressible_fuel_chamber` 将转轴连接到有限的 `compressible_fuel` 储腔。轴运动改变容积，同一压力功同时改变流体能量和轴转矩。储腔可通过 `equilibrium_fuel_duct` 供给或接收燃料，并发生平衡闪蒸与凝结。 [轴驱动可压缩燃料腔室](docs/COMPRESSIBLE_FUEL_CHAMBER.zh-CN.md)
+
 <details>
-<summary>可用实验室(58 个)</summary>
+<summary>可用实验室(60 个)</summary>
 
 | 示例名(`get_example_model`) | 实验室 | 验证内容 |
 |---|---|---|
@@ -218,6 +220,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `inertial-pump-fed-cylinder` | `assets/labs/inertial-pump-fed-cylinder.power.json` | 有限液体库存、动态流动、热混合与守恒管路功 |
 | `equilibrium-fuel-condensing-duct` | `assets/labs/equilibrium-fuel-condensing-duct.power.json` | 有限液体供给使管内湿蒸气库存凝结 |
 | `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | 液体管路库存向有限两相储罐闪蒸 |
+| `compressible-fuel-chamber-duct` | `assets/labs/compressible-fuel-chamber-duct.power.json` | 轴压力功与可压缩燃料输运耦合 |
+| `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | 轴压力功与可压缩燃料输运耦合 |
 
 </details>
 

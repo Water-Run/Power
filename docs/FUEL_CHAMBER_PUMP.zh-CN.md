@@ -26,7 +26,7 @@ torque_pressure = -delta_E_adiabatic / delta_theta
 
 通过 MCP 请求 `equilibrium-fuel-pump` 或 `electric-equilibrium-fuel-pump`，也可用 CLI 运行其 JSON。联合读取腔体质量、温度、压力、蒸气比例、能量、阀交付量与轴速。组件 `volume` 是几何参考体积，节点 `volume` 包含壁膨胀。腔体 `torque`、`hydraulic_power`、`hydraulic_work` 公开内部轴功交换。
 
-独立液体压力/功、理想蒸气绝热关系和两相熵反演检查本构关系。封闭液体轴运动验证二阶细化；完整相变充填/排出实验相对独立反演的 RK4 参考验证一阶细化。入口不足、充分液体供给、电驱动、齿轮/液压/离合器组合、精确回放、回滚和分配检查覆盖集成。资产 v36 保存几何并读取 v1-v35。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
+独立液体压力/功、理想蒸气绝热关系和两相熵反演检查本构关系。封闭液体轴运动验证二阶细化；完整相变充填/排出实验相对独立反演的 RK4 参考验证一阶细化。入口不足、充分液体供给、电驱动、齿轮/液压/离合器组合、精确回放、回滚和分配检查覆盖集成。资产 v37 保存几何并读取 v1-v36。实际 Unity Editor/Play/Player/IL2CPP 仍未验证。
 
 ## 后续工作
 

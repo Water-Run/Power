@@ -26,7 +26,7 @@ O subpasso mecânico fechado mantém massa e entropia. A energia inclui fluido e
 
 Pedir `equilibrium-fuel-pump` ou `electric-equilibrium-fuel-pump` pelo MCP ou executar JSON na CLI. Ler massa, temperatura, pressão, vapor e energia junto à entrega de válvulas e velocidade do eixo. `volume` do componente é geométrico; `volume` do nó inclui expansão da parede. `torque`, `hydraulic_power`, `hydraulic_work` mostram a troca interna.
 
-Pressão/trabalho líquidos, adiabáticas de vapor ideal e inversão independente de entropia bifásica verificam o fechamento. O movimento líquido fechado refina em segunda ordem; enchimento/entrega com fase em primeira contra RK4 invertido independentemente. Falta e suprimento completo de entrada, acionamento elétrico, engrenagens/hidráulica/embreagem, replay, rollback e alocações cobrem integração. Asset v36 guarda geometria e lê v1-v35. Unity Editor/Play/Player/IL2CPP real segue não verificado.
+Pressão/trabalho líquidos, adiabáticas de vapor ideal e inversão independente de entropia bifásica verificam o fechamento. O movimento líquido fechado refina em segunda ordem; enchimento/entrega com fase em primeira contra RK4 invertido independentemente. Falta e suprimento completo de entrada, acionamento elétrico, engrenagens/hidráulica/embreagem, replay, rollback e alocações cobrem integração. Asset v37 guarda geometria e lê v1-v36. Unity Editor/Play/Player/IL2CPP real segue não verificado.
 
 ## Trabalho restante
 

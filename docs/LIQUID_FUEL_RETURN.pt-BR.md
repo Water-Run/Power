@@ -12,7 +12,7 @@ Leia `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_heat
 
 ## Evidências e limites
 
-`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` mantêm combustível finito, injeção real, evaporação e agulha opcional. v36 guarda conexões/fração e lê v1-v35. Cada retorno acrescenta 8 estados nos mesmos limites.
+`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` mantêm combustível finito, injeção real, evaporação e agulha opcional. v37 guarda conexões/fração e lê v1-v36. Cada retorno acrescenta 8 estados nos mesmos limites.
 
 Passam decaimento/trabalho independentes, refinamento mecânica/pressão/térmico simultâneo, frações, rotas, fronteiras externas, replay, rollback e alocações. Ebulição ou intervalo não resolvido falha o lote inteiro.
 

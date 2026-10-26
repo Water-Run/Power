@@ -14,7 +14,29 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 36
+## Текущая версия 37
+
+`compressible_fuel_chamber` соединяет вращающийся вал с конечным резервуаром `compressible_fuel`. Движение меняет объём, а одна и та же работа давления меняет энергию среды и момент вала. Резервуар связан с `equilibrium_fuel_duct`, включая равновесное вскипание и конденсацию.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 42 |
+| compressible_fuel_chamber_kind | 50 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_record_bytes | 40 |
+| fuel_chamber_record_count | count(kind in [fuel_chamber, compressible_fuel_chamber]) |
+| fuel_chamber_record_order | component_index, minimum_reference_volume, swept_volume, phase |
+| fuel_chamber_quantity_fields | 3 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_compressible_chamber | 4 |
+| retained_asset_readers | power.asset.v1..v36 |
+
+[Топливные камеры сжимаемой среды с приводом от вала](COMPRESSIBLE_FUEL_CHAMBER.ru.md)
+
+
+## Сохранённая версия 36
 
 `equilibrium_fuel_duct` переносит массу, импульс и полную энергию через явные ячейки `compressible_fuel`. Жидкость сжимаема, пар идеален; обе фазы имеют общие давление, температуру и скорость. Локальное равновесие допускает конденсацию и вскипание. Два конечных неподвижных резервуара и конечная тепловая стенка замыкают балансы.
 

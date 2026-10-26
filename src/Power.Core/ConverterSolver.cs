@@ -7,6 +7,8 @@ namespace Power.Core;
 internal abstract class MechanicalSolver
 {
     protected EquilibriumFuelState? FuelState;
+    protected CompressibleFuelState? CompressibleState;
+    internal void PrepareCompressibleFuel(CompressibleFuelState state) => CompressibleState = state;
     protected FuelFilmState? FiniteFilms;
     protected MixtureState? FiniteMixture;
     internal void PrepareFiniteReceivers(FuelFilmState films, MixtureState mixture) { FiniteFilms = films; FiniteMixture = mixture; }
@@ -150,6 +152,11 @@ internal sealed class ConverterSolver : MechanicalSolver
             {
                 if (!_model.FuelChamberWork(chamber, FuelState!, angle, delta, out _, out double fuelTorque, out _)) return double.NaN;
                 torque += fuelTorque;
+            }
+            else if (_model.CompressibleChamberByComponent[i] is int compressible && compressible >= 0)
+            {
+                if (!_model.CompressibleChamberWork(compressible, CompressibleState!, angle, delta, out _, out double pressureTorque, out _)) return double.NaN;
+                torque += pressureTorque;
             }
             else if (_model.Cylinders[i] is { } sealedCylinder) torque += sealedCylinder.DiscreteTorque(angle, delta);
             else

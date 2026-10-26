@@ -14,9 +14,11 @@ A `fuel_inertial_pipe` connects two finite fuel nodes and a finite thermal wall.
 
 An `equilibrium_fuel_duct` transports mass, momentum and total energy through explicit `compressible_fuel` cells. The liquid is compressible and the vapor is ideal; both phases share pressure, temperature and velocity. Local equilibrium permits condensation and flashing. Two finite stationary reservoirs and a finite thermal wall close the balances. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
 
+A `compressible_fuel_chamber` connects a rotational shaft to a finite `compressible_fuel` reservoir. Shaft motion changes its volume, while the same pressure work changes fluid energy and shaft torque. The reservoir can supply or receive an `equilibrium_fuel_duct`, including equilibrium flashing and condensation. [Shaft-driven compressible fuel chambers](COMPRESSIBLE_FUEL_CHAMBER.md)
+
 ## Next increment
 
-Connect compressible ducts to compatible shaft-driven chambers and needle/nozzle boundaries, with explicit pressure work and phase assumptions. Then address phase relaxation/slip, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
+Add compatible compressible directional-valve and needle/nozzle boundaries with explicit enthalpy, kinetic energy and phase assumptions. Then continue phase relaxation/slip, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
 
 ## Acceptance
 

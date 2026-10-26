@@ -248,7 +248,7 @@ A [montagem de acionamento da AT](AT_HYDRAULIC_ACTUATION.pt-BR.md) reduz 1..6 al
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v36 preserva rotas, ganhos e relógios e lê v1-v35.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v37 preserva rotas, ganhos e relógios e lê v1-v36.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -258,7 +258,7 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v36 preserva conexões e temperatura da fonte e lê v1-v35. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v37 preserva conexões e temperatura da fonte e lê v1-v36. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
@@ -327,3 +327,11 @@ O domínio `fuel` transporta líquido puro e vapor juntos em recipientes elásti
 [Bomba de combustível com mudança de fase acionada por eixo](FUEL_CHAMBER_PUMP.pt-BR.md)
 
 A bomba do domínio de combustível agora alimenta agulha física e descarga de título congelado em um receptor em combustão com volume líquido finito. Os inventários completos incluem mudança de fase, trabalho de deslocamento, energia cinética e impulso na parede imóvel. [Descarga de combustível com título congelado e receptores finitos](FUEL_DISCHARGE.pt-BR.md)
+
+## Câmaras de combustível compressível acionadas por eixo
+
+O passo fechado de trabalho mantém massa e entropia. Energia de compressão fria e energia calórica usam o potencial de equilíbrio do duto. O líquido puro usa a integral exata da pressão e o vapor ideal sua adiabática analítica. A mudança de fase inverte entropia e verifica a energia final. A diferença aceita fornece torque discreto na solução mecânica conjunta. `hydraulic_work` positivo significa energia do eixo para o fluido.
+
+O reservatório móvel usa meio transporte, trabalho completo do eixo e meio transporte. O transporte continua de primeira ordem com difusão numérica; a separação simétrica não eleva a ordem. O movimento líquido fechado e suave converge em segunda ordem. Incrementos angulares são limitados a 0.25 rad por intervalo mecânico. CFL, limites materiais, reversão completa, cancelamento e ramificações independentes continuam válidos. O impulso estacionário das portas/carcaça é separado do trabalho do pistão.
+
+[Câmaras de combustível compressível acionadas por eixo](COMPRESSIBLE_FUEL_CHAMBER.pt-BR.md)

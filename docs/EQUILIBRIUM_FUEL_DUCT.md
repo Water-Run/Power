@@ -6,6 +6,8 @@
 
 An `equilibrium_fuel_duct` transports mass, momentum and total energy through explicit `compressible_fuel` cells. The liquid is compressible and the vapor is ideal; both phases share pressure, temperature and velocity. Local equilibrium permits condensation and flashing. Two finite stationary reservoirs and a finite thermal wall close the balances.
 
+A `compressible_fuel_chamber` may change either mixed reservoir volume through shaft work. Its bulk velocity stays zero and internal duct cells stay rigid. Stationary port/housing impulse performs no work; piston pressure work is a separate mechanical exchange. [Shaft-driven compressible fuel chambers](COMPRESSIBLE_FUEL_CHAMBER.md)
+
 The liquid has zero thermal expansion and constant heat capacity. `K` is its bulk modulus at zero pressure; the actual modulus is `K+p`. The cold compression energy, chemical potentials, entropy and equilibrium sound speed come from the same potential. `a` is the existing liquid energy offset, `p0(T)` the negligible-liquid-volume saturation curve, `x` vapor mass fraction and `Cv_eq` the derivative of mixture internal energy at fixed specific volume. `Tr`, `Pref` and `Lu_ref` are the material reference temperature, pressure and latent internal energy. All quantities use SI units.
 
 ```text
@@ -47,6 +49,6 @@ Run `equilibrium-fuel-condensing-duct` or `equilibrium-fuel-flashing-duct`. Ever
 
 Parameters remain `unverified`. Stay inside the declared temperature and pressure range, with positive latent enthalpy, separated coexistence volumes and dilute vapor. This is a rigid constant-area horizontal duct with instantaneous homogeneous equilibrium. It omits finite-rate nucleation, phase slip, surface tension, gravity, pipe elasticity and real-fluid critical behavior. First-order numerical diffusion can smear phase and acoustic fronts; conservation and replay do not establish spatial accuracy or measured hardware validity. Actual Unity acceptance remains pending.
 
-Connect compressible ducts to compatible shaft-driven chambers and needle/nozzle boundaries, with explicit pressure work and phase assumptions. Then address phase relaxation/slip, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate.
+Add compatible compressible directional-valve and needle/nozzle boundaries with explicit enthalpy, kinetic energy and phase assumptions. Then continue phase relaxation/slip, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate.
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

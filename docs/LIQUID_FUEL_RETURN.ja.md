@@ -12,7 +12,7 @@
 
 ## 証拠と制限
 
-`recirculating-liquid-cylinder` と `recirculating-needle-cylinder` は有限燃料、実噴射、蒸発、任意のニードル動特性を保持します。v36 は接続/熱割合を保存し v1-v35 を読みます。各戻りは既存上限内で 8 状態を追加します。
+`recirculating-liquid-cylinder` と `recirculating-needle-cylinder` は有限燃料、実噴射、蒸発、任意のニードル動特性を保持します。v37 は接続/熱割合を保存し v1-v36 を読みます。各戻りは既存上限内で 8 状態を追加します。
 
 独立リリーフ減衰/仕事、機械/圧力/熱同時細化、熱割合、複数経路、外部境界、replay、rollback、割り当て検査は合格します。 沸騰や未解像移送区間は全バッチを失敗させます。
 

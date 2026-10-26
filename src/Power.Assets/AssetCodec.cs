@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 36, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v36";
+    public const int FormatVersion = 37, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v37";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -54,7 +54,7 @@ public static class AssetCodec
         int liquidTanks=asset.Components.Count(c=>c.LiquidFuelTank is not null);
         int liquidReturns=asset.Components.Count(c=>c.LiquidRailReturn is not null);
         int fuelVolumes = asset.Nodes.Count(n => n.Domain is Domain.Fuel or Domain.CompressibleFuel);
-        int fuelChambers = asset.Components.Count(c => c.Kind == ComponentKind.FuelChamber);
+        int fuelChambers = asset.Components.Count(c => c.Kind is ComponentKind.FuelChamber or ComponentKind.CompressibleFuelChamber);
         int finiteFilms = asset.Components.Count(c => c.Kind == ComponentKind.FiniteFuelFilm);
         int discharges = asset.Components.Count(c => c.Kind == ComponentKind.FuelDischarge);
         int fuelPipes = asset.Components.Count(c => c.Kind == ComponentKind.FuelInertialPipe);
@@ -361,7 +361,8 @@ public static class AssetCodec
                     Ratio = reader.ReadDouble(), Resistance = Quantity(), Inductance = Quantity(), Coupling = Quantity(),
                     InitialCurrent = Quantity(), Conductance = Quantity(), AmbientTemperature = Quantity()
                 };
-            int fuelChambers = cs.Count(c => c.Kind == ComponentKind.FuelChamber);
+            if (version < 37 && cs.Any(c => c.Kind == ComponentKind.CompressibleFuelChamber)) throw new AssetFormatException("Compressible fuel chambers require version 37.");
+            int fuelChambers = cs.Count(c => c.Kind is ComponentKind.FuelChamber or ComponentKind.CompressibleFuelChamber);
             int finiteFilms = cs.Count(c => c.Kind == ComponentKind.FiniteFuelFilm), discharges = cs.Count(c => c.Kind == ComponentKind.FuelDischarge);
             int fuelPipes = cs.Count(c => c.Kind == ComponentKind.FuelInertialPipe);
             int ducts = cs.Count(c => c.Kind == ComponentKind.EquilibriumFuelDuct);
@@ -752,7 +753,7 @@ public static class AssetCodec
             for (int i = 0; i < fuelChambers; ++i)
             {
                 int index = reader.ReadInt32();
-                if (index < 0 || index >= components || cs[index].Kind != ComponentKind.FuelChamber || cs[index].FuelChamber is not null)
+                if (index < 0 || index >= components || cs[index].Kind is not (ComponentKind.FuelChamber or ComponentKind.CompressibleFuelChamber) || cs[index].FuelChamber is not null)
                     throw new AssetFormatException("Chamber geometry must reference a distinct fuel-chamber component.");
                 cs[index] = cs[index] with { FuelChamber = new() { MinimumReferenceVolume = Quantity(), SweptVolume = Quantity(), Phase = Quantity() } };
             }

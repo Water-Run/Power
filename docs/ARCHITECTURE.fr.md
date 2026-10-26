@@ -249,7 +249,7 @@ L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibl
 
 `at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
 
-Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v36 conserve routes, gains et horloges et lit v1-v35.
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v37 conserve routes, gains et horloges et lit v1-v36.
 
 Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
 
@@ -259,7 +259,7 @@ Ces commandes sont expérimentales et les paramètres restent `unverified`. Coor
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v36 conserve les liens et la température source et lit v1-v35. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v37 conserve les liens et la température source et lit v1-v36. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -328,3 +328,11 @@ Le domaine `fuel` transporte ensemble liquide pur et vapeur dans des récipients
 [Pompe carburant diphasique entraînée par arbre](FUEL_CHAMBER_PUMP.fr.md)
 
 La pompe du domaine carburant alimente désormais une aiguille physique et une décharge à titre figé dans un récepteur allumé à volume liquide fini. Les inventaires incluent changement de phase, travail de déplacement, énergie cinétique du jet et impulsion à la paroi immobile. [Décharge de carburant à titre figé et récepteurs finis](FUEL_DISCHARGE.fr.md)
+
+## Chambres de carburant compressible entraînées par arbre
+
+Le travail fermé conserve masse et entropie. Énergie de compression froide et énergie calorique utilisent le potentiel d’équilibre du conduit. Le liquide seul utilise l’intégrale exacte de pression, la vapeur idéale son adiabatique analytique. Le changement de phase inverse l’entropie et vérifie l’état énergétique final. La différence acceptée produit le couple discret dans la résolution mécanique commune. Un `hydraulic_work` positif représente l’énergie de l’arbre vers le fluide.
+
+Le réservoir mobile utilise un demi-transport, le travail complet de l’arbre, puis un demi-transport. Le transport reste du premier ordre avec diffusion numérique ; la séparation symétrique n’augmente pas son ordre. Le mouvement liquide fermé et lisse converge au second ordre. L’incrément angulaire est limité à 0.25 rad par intervalle mécanique. CFL, limites matérielles, restauration complète, annulation et branches indépendantes s’appliquent. L’impulsion stationnaire des ports et du carter est distincte du travail du piston.
+
+[Chambres de carburant compressible entraînées par arbre](COMPRESSIBLE_FUEL_CHAMBER.fr.md)

@@ -76,7 +76,7 @@ Windows uses the same `dotnet` command and an absolute path to the DLL. A produc
 
 ## Tools and results
 
-In agent API version 0.41.0, `get_example_model` takes an optional `name`, defaulting to `electrothermal`. `get_capabilities.examples` lists all 57 available examples, including finite-tank and recirculating fuel models. CLI `list-labs` returns all 58 laboratories as [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON; `thermal-network` is CLI-only by design. Capabilities also advertise supported components, fidelity, solver limits and input bounds. Exports use `power.asset.v36`, with v1-v35 readers retained. Validation and session creation return output channels and units. Passing laboratory KPIs doesn't establish a complete or calibrated powertrain.
+In agent API version 0.42.0, `get_example_model` takes an optional `name`, defaulting to `electrothermal`. `get_capabilities.examples` lists all 59 available examples, including finite-tank and recirculating fuel models. CLI `list-labs` returns all 60 laboratories as [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON; `thermal-network` is CLI-only by design. Capabilities also advertise supported components, fidelity, solver limits and input bounds. Exports use `power.asset.v37`, with v1-v36 readers retained. Validation and session creation return output channels and units. Passing laboratory KPIs doesn't establish a complete or calibrated powertrain.
 
 | Tool | Purpose |
 |---|---|
@@ -610,7 +610,7 @@ format. See [AT_HYDRAULIC_ACTUATION.md](AT_HYDRAULIC_ACTUATION.md).
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v36 retains routes, gains and clocks and reads v1-v35.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v37 retains routes, gains and clocks and reads v1-v36.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -620,7 +620,7 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v36 retains feed links and source temperature and reads v1-v35. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v37 retains feed links and source temperature and reads v1-v36. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -695,3 +695,11 @@ An `equilibrium_fuel_duct` transports mass, momentum and total energy through ex
 Declare `liquid_bulk_modulus`, omit `compliance`, and explicitly supply `initial_velocity` on each node. Declare 1–24 ordered, distinct internal `cells`; each belongs to one duct. Cell length is volume divided by `area`. Reservoirs have zero velocity and cannot also be internal cells. All ports share the same material. `linear_resistance` and `quadratic_resistance` describe total line resistance and are distributed by cell volume; `fluid_heat_fraction` routes friction heat between fluid and wall. There is no direct opening input.
 
 [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
+
+## Shaft-driven compressible fuel chambers
+
+A `compressible_fuel_chamber` connects a rotational shaft to a finite `compressible_fuel` reservoir. Shaft motion changes its volume, while the same pressure work changes fluid energy and shaft torque. The reservoir can supply or receive an `equilibrium_fuel_duct`, including equilibrium flashing and condensation.
+
+Port `node_a` is rotational and `node_b` owns one chamber geometry. Declare `minimum_reference_volume`, `swept_volume` and `phase`; initial node storage must match volume at the initial shaft angle. The mixed reservoir has zero bulk velocity and cannot be an internal duct cell. The massless sinusoidal mechanism adds no piston or cam inertia; shaft inertia is explicit. External case pressure is zero.
+
+[Shaft-driven compressible fuel chambers](COMPRESSIBLE_FUEL_CHAMBER.md)

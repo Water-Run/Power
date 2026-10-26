@@ -14,14 +14,16 @@ public sealed record EquilibriumFuelDuctDefinition
 }
 internal sealed record CompiledCompressibleFuel(int Node, CompressibleFuel Law, CompressibleFuelPoint Initial, double Velocity, double HeatingValue);
 internal sealed record CompiledFuelDuct(int Component, int[] Ports, int Wall, double WallCapacity, double Area, double Linear, double Quadratic, double FluidFraction, double LineVolume);
-internal sealed class CompressibleFuelState(int nodes, int ducts)
+internal sealed class CompressibleFuelState(int nodes, int ducts, bool moving = false)
 {
     internal readonly double[] Mass = new double[nodes], MassCorrection = new double[nodes], Momentum = new double[nodes], MomentumCorrection = new double[nodes], Energy = new double[nodes], EnergyCorrection = new double[nodes];
+    internal readonly double[]? Volume = moving ? new double[nodes] : null;
     // Histories: net mass at A/B, energy at A/B, friction/fluid/wall heat, entropy, wall impulse.
     internal readonly double[,] History = new double[ducts,9], Correction = new double[ducts,9];
     internal readonly double[] TickMass = new double[ducts], TickImpulse = new double[ducts];
     internal void CopyFrom(CompressibleFuelState other)
     {
+        if (Volume is not null) Array.Copy(other.Volume!, Volume, nodes);
         Array.Copy(other.Mass,Mass,nodes);Array.Copy(other.MassCorrection,MassCorrection,nodes);Array.Copy(other.Momentum,Momentum,nodes);Array.Copy(other.MomentumCorrection,MomentumCorrection,nodes);
         Array.Copy(other.Energy,Energy,nodes);Array.Copy(other.EnergyCorrection,EnergyCorrection,nodes);Array.Copy(other.History,History,History.Length);Array.Copy(other.Correction,Correction,Correction.Length);
         Array.Copy(other.TickMass,TickMass,ducts);Array.Copy(other.TickImpulse,TickImpulse,ducts);
@@ -31,12 +33,14 @@ internal sealed class CompressibleFuelState(int nodes, int ducts)
     internal bool EndTick(double seconds){for(int i=0;i<ducts;++i){TickMass[i]/=seconds;TickImpulse[i]/=seconds;}return Finite();}
     internal bool Finite()
     {
+        if (Volume is not null) foreach (double v in Volume) if (!Numeric.Finite(v) || v <= 0) return false;
         for(int i=0;i<nodes;++i)if(Mass[i]<=0||!GearReference.Finite(Mass[i],MassCorrection[i],Momentum[i],MomentumCorrection[i])||!GearReference.Finite(Energy[i],EnergyCorrection[i],0,0))return false;
         for(int i=0;i<ducts;++i){if(!GearReference.Finite(TickMass[i],TickImpulse[i],0,0))return false;for(int j=0;j<9;++j)if(!Numeric.Finite(History[i,j])||!Numeric.Finite(Correction[i,j]))return false;}
         return true;
     }
     internal ulong Hash(ulong hash)
     {
+        if (Volume is not null) foreach (double v in Volume) hash = Numeric.Hash(hash, v);
         for(int i=0;i<nodes;++i){hash=Numeric.Hash(hash,Mass[i]);hash=Numeric.Hash(hash,MassCorrection[i]);hash=Numeric.Hash(hash,Momentum[i]);hash=Numeric.Hash(hash,MomentumCorrection[i]);hash=Numeric.Hash(hash,Energy[i]);hash=Numeric.Hash(hash,EnergyCorrection[i]);}
         for(int i=0;i<ducts;++i){for(int j=0;j<9;++j){hash=Numeric.Hash(hash,History[i,j]);hash=Numeric.Hash(hash,Correction[i,j]);}hash=Numeric.Hash(hash,TickMass[i]);hash=Numeric.Hash(hash,TickImpulse[i]);}return hash;
     }
@@ -117,7 +121,7 @@ internal sealed class EquilibriumFuelDuctSolver(CompiledModel model)
     internal static bool Point(CompiledModel model,CompressibleFuelState s,int i,out CompressibleFuelPoint p)
     {
         var d=model.CompressibleFuels[i];double m=s.Mass[i];
-        return d.Law.Flash(m/model.Nodes[d.Node].Storage,s.Energy[i]/m-.5*(s.Momentum[i]/m)*(s.Momentum[i]/m),out p);
+        return d.Law.Flash(m/model.CompressibleVolume(s,i),s.Energy[i]/m-.5*(s.Momentum[i]/m)*(s.Momentum[i]/m),out p);
     }
     internal bool Advance(CompressibleFuelState s,double[] wallTemperature,double duration)
     {
@@ -131,14 +135,14 @@ internal sealed class EquilibriumFuelDuctSolver(CompiledModel model)
                 {
                     if(!Point(model,s,i,out _point[i]))return false;
                     double velocity=s.Momentum[i]/s.Mass[i];speed=Math.Max(speed,Math.Abs(velocity)+model.CompressibleFuels[i].Law.AcousticSpeedBoundMetersPerSecond);
-                    minVolume=Math.Min(minVolume,model.Nodes[model.CompressibleFuels[i].Node].Storage);entropyBefore+=s.Mass[i]*_point[i].SpecificEntropyJoulesPerKilogramKelvin;
+                    minVolume=Math.Min(minVolume,model.CompressibleVolume(s,i));entropyBefore+=s.Mass[i]*_point[i].SpecificEntropyJoulesPerKilogramKelvin;
                     entropyScale+=s.Mass[i]*(_point[i].IsochoricHeatCapacityJoulesPerKilogramKelvin+Math.Abs(_point[i].SpecificEntropyJoulesPerKilogramKelvin));_dm[i]=_dp[i]=_de[i]=0;
                 }
                 double h=Math.Min(remaining,.2*minVolume/(duct.Area*speed));if(!Numeric.Finite(h)||h<=0)return false;
                 double massA=0,massB=0,energyA=0,energyB=0,impulse=0;
                 for(int face=0;face<ports.Length-1;++face)
                 {
-                    int a=ports[face],b=ports[face+1];double va=model.Nodes[model.CompressibleFuels[a].Node].Storage,vb=model.Nodes[model.CompressibleFuels[b].Node].Storage;
+                    int a=ports[face],b=ports[face+1];double va=model.CompressibleVolume(s,a),vb=model.CompressibleVolume(s,b);
                     double ua=s.Momentum[a]/s.Mass[a],ub=s.Momentum[b]/s.Mass[b],rhoA=s.Mass[a]/va,rhoB=s.Mass[b]/vb;
                     double fm=.5*(s.Momentum[a]/va+s.Momentum[b]/vb)-.5*speed*(rhoB-rhoA);
                     double fp=.5*(rhoA*ua*ua+_point[a].PressurePascals+rhoB*ub*ub+_point[b].PressurePascals)-.5*speed*(s.Momentum[b]/vb-s.Momentum[a]/va);
@@ -157,7 +161,7 @@ internal sealed class EquilibriumFuelDuctSolver(CompiledModel model)
                 double friction=0,wallHeat=0,oldWall=wallTemperature[duct.Wall];
                 for(int cell=1;cell<ports.Length-1;++cell)
                 {
-                    int i=ports[cell];double volume=model.Nodes[model.CompressibleFuels[i].Node].Storage,weight=volume/duct.LineVolume,mass=s.Mass[i],u=s.Momentum[i]/mass;
+                    int i=ports[cell];double volume=model.CompressibleVolume(s,i),weight=volume/duct.LineVolume,mass=s.Mass[i],u=s.Momentum[i]/mass;
                     double linear=duct.Area*duct.Area*duct.Linear*weight/mass,quadratic=duct.Area*duct.Area*duct.Area*duct.Quadratic*weight/mass;
                     double exponential=Math.Exp(-linear*h),integral=linear==0?h:-Numeric.Expm1(-linear*h)/linear;
                     double next=u*exponential/(1+quadratic*Math.Abs(u)*integral),loss=.5*mass*(u-next)*(u+next),outward=(1-duct.FluidFraction)*loss;

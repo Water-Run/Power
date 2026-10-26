@@ -206,6 +206,9 @@
           },
           {
             "$ref": "#/$defs/equilibrium_fuel_duct"
+          },
+          {
+            "$ref": "#/$defs/compressible_fuel_chamber"
           }
         ]
       },
@@ -8352,6 +8355,107 @@
               "uniqueItems": true,
               "items": {
                 "$ref": "#/$defs/id"
+              }
+            }
+          }
+        }
+      }
+    },
+    "compressible_fuel_chamber": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "parameters"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "kind": {
+          "const": "compressible_fuel_chamber"
+        },
+        "node_a": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "node_b": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 4294967295
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "minimum_reference_volume",
+            "swept_volume",
+            "phase"
+          ],
+          "properties": {
+            "minimum_reference_volume": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3",
+                    "l"
+                  ]
+                }
+              }
+            },
+            "swept_volume": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m3",
+                    "l"
+                  ]
+                }
+              }
+            },
+            "phase": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "rad",
+                    "deg"
+                  ]
+                }
               }
             }
           }

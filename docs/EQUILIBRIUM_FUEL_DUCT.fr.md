@@ -6,6 +6,8 @@
 
 Un `equilibrium_fuel_duct` transporte masse, quantité de mouvement et énergie totale dans des cellules explicites `compressible_fuel`. Le liquide est compressible et la vapeur idéale ; les phases partagent pression, température et vitesse. L’équilibre local permet condensation et vaporisation éclair. Deux réservoirs stationnaires finis et une paroi thermique finie ferment les bilans.
 
+Un `compressible_fuel_chamber` peut modifier le volume de chaque réservoir mélangé par travail d’arbre. Sa vitesse globale reste nulle et les cellules internes restent rigides. L’impulsion stationnaire des ports et du carter ne travaille pas ; le travail du piston est un échange mécanique distinct. [Chambres de carburant compressible entraînées par arbre](COMPRESSIBLE_FUEL_CHAMBER.fr.md)
+
 Le liquide possède une dilatation thermique nulle et une capacité thermique constante. `K` est son module volumique à pression nulle ; le module réel vaut `K+p`. Énergie de compression froide, potentiels chimiques, entropie et vitesse du son à l’équilibre dérivent du même potentiel. `a` est le décalage énergétique liquide existant, `p0(T)` la courbe de saturation négligeant le volume liquide, `x` la fraction massique de vapeur et `Cv_eq` la dérivée de l’énergie interne du mélange à volume spécifique constant. `Tr`, `Pref` et `Lu_ref` sont la température, la pression et l’énergie interne latente de référence. Les unités sont SI.
 
 ```text
@@ -47,6 +49,6 @@ Exécuter `equilibrium-fuel-condensing-duct` ou `equilibrium-fuel-flashing-duct`
 
 Les paramètres restent `unverified`. Respecter les bornes de température et pression, une enthalpie latente positive, des volumes de coexistence séparés et une vapeur diluée. La conduite est horizontale, rigide, de section constante et à équilibre homogène instantané. Nucléation à vitesse finie, glissement, tension superficielle, gravité, élasticité et comportement critique réel sont omis. La diffusion du premier ordre peut étaler les fronts ; conservation et relecture ne prouvent ni précision spatiale ni validité matérielle mesurée. L’acceptation Unity réelle reste à réaliser.
 
-Relier les conduites compressibles à des chambres entraînées par arbre et à des frontières aiguille/buse compatibles, avec travail de pression et hypothèses de phase explicites. Poursuivre relaxation/glissement, allumage, admission/échappement, pertes mécaniques et coordination ECU/TCU. Étalonnage mesuré et acceptation Unity réelle restent distincts.
+Ajouter des frontières compatibles de distributeur et d’aiguille/buse compressibles, avec enthalpie, énergie cinétique et hypothèses de phase explicites. Poursuivre relaxation/glissement, allumage, admission/échappement, pertes mécaniques et coordination ECU/TCU. Étalonnage mesuré et acceptation Unity réelle restent distincts.
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

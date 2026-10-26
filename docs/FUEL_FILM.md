@@ -106,7 +106,7 @@ Discover output IDs and units through validation or session creation. Global
 mass, fuel and chemical-energy observables include the film inventory. Internal
 vapor delivery doesn't increment reservoir fuel energy or external enthalpy.
 
-Asset v36 stores all phase properties and retains v1-v35 readers. Every film needs
+Asset v37 stores all phase properties and retains v1-v36 readers. Every film needs
 one typed 100-byte phase record. Bounded lengths/counts, digest, complete coverage,
 duplicate/missing records, units, physical compilation and downgrade protection
 are checked. The authentic v17 fuel-metering fixture retains its fingerprint and

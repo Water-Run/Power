@@ -348,6 +348,18 @@
       "asset_name": "EquilibriumFuelFlashingDuct",
       "display_name": "Equilibrium fuel flashing duct laboratory",
       "agent_example": true
+    },
+    {
+      "name": "compressible-fuel-chamber-duct",
+      "asset_name": "CompressibleFuelChamberDuct",
+      "display_name": "Shaft-driven compressible fuel duct laboratory",
+      "agent_example": true
+    },
+    {
+      "name": "electric-compressible-fuel-duct",
+      "asset_name": "ElectricCompressibleFuelDuct",
+      "display_name": "Electric compressible fuel duct laboratory",
+      "agent_example": true
     }
   ]
 }

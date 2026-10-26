@@ -12,7 +12,7 @@ Leggere `total_fuel_delivered`, `reservoir_enthalpy`, `fuel_energy_in`, `fluid_h
 
 ## Evidenze e limiti
 
-`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` conservano combustibile finito, iniezione reale, evaporazione e ago opzionale. v36 salva collegamenti/quota e legge v1-v35. Ogni ritorno aggiunge 8 stati nei limiti invariati.
+`recirculating-liquid-cylinder` e `recirculating-needle-cylinder` conservano combustibile finito, iniezione reale, evaporazione e ago opzionale. v37 salva collegamenti/quota e legge v1-v36. Ogni ritorno aggiunge 8 stati nei limiti invariati.
 
 Decadimento/lavoro indipendenti, raffinamento meccanica/pressione/termica simultaneo, quote, percorsi, confini esterni, replay, rollback e allocazioni passano. Ebollizione o intervallo non risolto fa fallire l'intero lotto.
 
