@@ -74,7 +74,7 @@ Windows verwendet denselben Befehl `dotnet` und einen absoluten Pfad zur DLL. Ei
 
 ## Werkzeuge und Ergebnisse
 
-In Agent-API-Version 0.29.0 nimmt `get_example_model` einen optionalen `name` an: `electrothermal` (Vorgabe), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` oder `fired-hydraulic-ravigneaux`. `get_capabilities` nennt unterstützte Modelltreue-Stufen, lesbare Asset-Versionen, Lösergrenzen und Eingabegrenzen. Exporte verwenden `power.asset.v24`; Assets v1–v23 bleiben lesbar. Ausgabekanäle und ihre Einheiten liefern die Modellprüfung und die Sitzungserzeugung. Bestandene Labor-KPIs begründen keinen vollständigen oder kalibrierten Antriebsstrang.
+In Agent-API-Version 0.46.0 akzeptiert `get_example_model` einen optionalen `name` mit Standardwert `electrothermal`. `get_capabilities.examples` listet alle 67 Beispiele einschließlich endlicher Tanks und Kraftstoffumlauf auf. CLI `list-labs` liefert alle 68 Labore als [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json)-JSON; `thermal-network` ist konstruktionsgemäß nur im CLI verfügbar. Die Fähigkeiten nennen auch Komponenten, Modelltreue, Solvergrenzen und Eingabegrenzen. Exporte nutzen `power.asset.v41` mit erhaltenen v1-v40-Lesern. Validierung und Sitzungserstellung liefern Ausgabekanäle und Einheiten. Bestandene Labor-KPIs belegen keinen vollständigen oder kalibrierten Antriebsstrang.
 
 | Werkzeug | Aufgabe |
 |---|---|
@@ -581,3 +581,133 @@ Berichte behalten Leitungs- und Kammerdruck, Weg, Kontaktkapazität, Pumpenarbei
 Volumen, Wärme von Reibung, Drossel und Dämpfung sowie jeden Modellhash. Volle Revisionen,
 Abbruch, spätes Rollback und unabhängige Abzweigungen zum Lösen der Ventile verwenden die gewöhnlichen
 Verträge. Der Graph verwendet bestehende Datensätze von Asset v24, kein neues Serialisierungsformat. Siehe [AT_HYDRAULIC_ACTUATION.de.md](AT_HYDRAULIC_ACTUATION.de.md).
+
+## Hydraulische AT-Rückführung
+
+`at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
+
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v41 speichert Routen, Verstärkungen und Uhren und liest v1-v40.
+
+Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
+
+[AT_CONTROL.de.md](AT_CONTROL.de.md)
+
+## Pumpengespeiste Flüssigkraftstoffschiene
+
+`liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
+
+v41 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v40. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+
+Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
+
+[PUMP_FED_FUEL.de.md](PUMP_FED_FUEL.de.md)
+
+## Endlicher Flüssigkraftstofftank
+
+`liquid_fuel_tank` speichert endliche Flüssigkeitsmasse und kalorische Energie mit Dichte, Filmwärmereferenz und Heizwert des zugehörigen Injektors. Die Speisung wählt ihn mit `tank_component` und lässt `supply_temperature` weg. Jeder Tank gehört einer stofflich passenden Speisung.
+
+Kalorische und chemische Tankenergie gehören zur gesamten Speicherung. Interner Transfer fügt keine äußere Masse oder chemische Versorgung hinzu. Der erklärte Einlassdruck behält seine Druckarbeitsgrenze. Gaseinlass/-auslass kann weiterhin chemische Grenzenergie tragen.
+
+Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
+
+[LIQUID_FUEL_TANK.de.md](LIQUID_FUEL_TANK.de.md)
+
+## Verfolgter Kraftstoff-Entlastungsrücklauf
+
+`liquid_rail_return` verbindet eine Speisung mit exklusivem einseitigem `hydraulic_relief`. Das Ventil führt die Schiene zum gleichen vorgegebenen Pumpeneinlassdruck. Alle Fluidpfade registrieren; unpassende Ports, doppelte Eigentümer und unbilanzierte Pfade werden abgelehnt.
+
+`fluid_heat_fraction` wählt ausdrücklich den Anteil [0,1] des Ventilverlusts im Rückkraftstoff. Restwärme folgt dem erklärten Ventilwärmepfad. Gleichzeitige Schienen-/Tankmischung erhält Masse-, Chemie-, Druckarbeits- und Wärmebilanzen. Rückfluss zur Außenquelle führt Masse/Energie über die Grenze hinaus.
+
+[LIQUID_FUEL_RETURN.de.md](LIQUID_FUEL_RETURN.de.md)
+
+## Tankgeometrie und endlicher Gasraum
+
+`liquid_fuel_tank.parameters.headspace` deklariert `capacity` in `m3` oder `l` und `gas_node`. Der Gasnode lässt `storage` aus: Volumen `capacity - liquid_mass / density`, ein Eigentümer und positives Volumen. Pumpe und Rücklauf setzen den vorgeschriebenen Reservoirdruck auf null; das endliche Gas bestimmt den Einlassdruck.
+
+Die gekoppelte Lösung tauscht Druckarbeit zwischen Welle, Rail und Gas ohne externe Druckquelle. Gasdrosseln und Wärmeverbindungen bilden explizite Entlüftung/Wärmewege. `pressure`, `fill_fraction`, vorzeichenbehaftete kumulierte `hydraulic_work` sowie Gasmasse, Energie und Volumen lesen. Dosis, Flüssigkeit, Verdampfung und Verbrennung bleiben getrennt.
+
+[Tankgeometrie und endlicher Gasraum](TANK_HEADSPACE.de.md)
+
+## Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen
+
+Optionales `fuel_film.parameters.phase_equilibrium` deklariert `reference_pressure` in `pa` oder `bar` und `minimum_temperature` / `maximum_temperature` in `k`. `saturation_temperature` ist die Referenztemperatur; `latent_internal_energy` die Dampf-minus-Flüssigkeits-Innenenergie dort. Jeder Gleichgewichtsempfänger besitzt einen Film. Der erklärte Anfangssnapshot bleibt erhalten; akzeptierte Intervalle gleichen Gas und Flüssigkeit mit endlicher Wandwärme aus.
+
+`mass_flow` ist der vorzeichenbehaftete Nettophasentransfer des vollständigen Physikschritts. `evaporated_fuel_mass` und `condensed_fuel_mass` summieren positive und negative Massen, ohne sich aufhebende Teilprojektionen doppelt zu zählen. `vapor_partial_pressure` zeigt den Kraftstoffpartialdruck. Wärme-, Masse- und Chemiebilanzen enthalten beide Phasen.
+
+Die Standardversorgung verwirft Flüssigkeit unter Sättigung. Optionales endliches Tankgleichgewicht löst Quellendampftransfer mit druckkorrigierten Potenzialen. Rail und Ansaugung führen weiter getrennte Flüssigkeit; Blasenmitnahme und kavitierende Strömung benötigen weitere Physik.
+
+Der Druckvergleich erlaubt nur binary64-Rundung: `64 * epsilon * max(p, p_sat)` mit `epsilon = 2^-52`. Die ausgegebene Reserve wird nicht geklemmt. Es ist eine Bulk-Sättigungsprüfung; lokale Druckverluste und Pumpen-NPSH benötigen ein aufgelöstes Strömungsmodell. Unabhängige Prüfungen fordern außerdem nicht abnehmende Gesamtentropie bei adiabatischem Flash und endlichem Wandwärmeaustausch.
+
+[Kraftstoff-Phasengleichgewicht und Flüssigkeitsgrenzen](FUEL_PHASE_EQUILIBRIUM.de.md)
+
+## Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium` auf `true` setzen, um Tankverdampfung und -kondensation aufzulösen. Der gekoppelte Film liefert explizite `phase_equilibrium`-Stoffwerte; der verfolgte Gasraum teilt R, cv, Heizwert und Stöchiometrie. Ein nasser Tank startet mit gemeinsamer Temperatur und gesättigtem Kraftstoffpartialdruck, ein trockener höchstens bei Sättigung. Die Gesamtdichte liegt unter der Flüssigkeitsdichte.
+
+Tank-`evaporated_fuel_mass`, `condensed_fuel_mass` und vorzeichenbehafteter `mass_flow` zählen Nettophasentransfer pro vollständigem Physikschritt. `vapor_partial_pressure`, korrigierten `saturation_pressure`, Flüssigkeitsinventar und Gasvolumen zusammen lesen. Die Pumpe saugt getrennte Flüssigkeit; zweiphasiger Transport, Blasenmitnahme und lokaler NPSH bleiben offen.
+
+[Phasengleichgewicht im Tank mit endlichem Flüssigkeitsvolumen](TANK_PHASE_EQUILIBRIUM.de.md)
+
+## Transportnetz für Kraftstoff im Gleichgewicht
+
+`equilibrium-fuel-network` oder `electrothermal-fuel-network` per MCP anfordern oder dasselbe JSON per CLI ausführen. Pro Behälter `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy` und `specific_enthalpy` lesen. `internal_energy` enthält die elastische Wand; chemische Energie bleibt separat. Verbindungen zeigen vorzeichenbehaftete Flüsse, kumulierte Masse, `transport_energy` und Paarentropieänderung.
+
+Ein begrenzter impliziter Euler löst dieselbe angenommene Masse q und Enthalpie H für beide Behälter. Verbindungen laufen nach stabiler Komponenten-ID; endliche Bäder nutzen einen weiteren konservativen Teilschritt. Die Kopplung ist erster Ordnung. Massen-, Temperatur- oder Druckgrenzen und Solverfehler verwerfen den ganzen Batch einschließlich Eingaben, kompensierter Historien und spekulativer Kupplungsintervalle.
+
+[Transportnetz für Kraftstoff im Gleichgewicht](EQUILIBRIUM_FUEL_NETWORK.de.md)
+
+## Wellengetriebene phasenauflösende Kraftstoffpumpe
+
+`equilibrium-fuel-pump` oder `electric-equilibrium-fuel-pump` per MCP anfordern oder JSON per CLI ausführen. Kammermasse, Temperatur, Druck, Dampfanteile und Energie neben Ventilförderung und Wellendrehzahl lesen. Komponenten-`volume` ist geometrisch; Knoten-`volume` enthält Wandausdehnung. `torque`, `hydraulic_power` und `hydraulic_work` zeigen den inneren Wellenaustausch.
+
+Der geschlossene mechanische Teilschritt hält Masse und Entropie fest. Speicherenergie umfasst Fluid und elastische Wand, daher bezieht sich Wellenarbeit auf geometrisches Referenzvolumen. Dieselbe angenommene Energieänderung bestimmt Druckmoment im gemeinsamen Solver mit Getrieben, Wandlern, Hydraulik und spekulativen Kupplungsintervallen. Expansion treibt die Welle; positives `hydraulic_work` geht in die Kammer. Keine zusätzliche äußere Druckquelle wird eingeführt.
+
+[Wellengetriebene phasenauflösende Kraftstoffpumpe](FUEL_CHAMBER_PUMP.de.md)
+
+## Kompressible Kraftstoffkanäle im Gleichgewicht
+
+Ein `equilibrium_fuel_duct` transportiert Masse, Impuls und Gesamtenergie durch explizite `compressible_fuel`-Zellen. Die Flüssigkeit ist kompressibel, der Dampf ideal; beide Phasen teilen Druck, Temperatur und Geschwindigkeit. Lokales Gleichgewicht erlaubt Kondensation und Entspannungsverdampfung. Zwei endliche ruhende Behälter und eine endliche thermische Wand schließen die Bilanzen.
+
+`liquid_bulk_modulus` angeben, `compliance` weglassen und `initial_velocity` für jeden Knoten explizit setzen. 1–24 geordnete, unterschiedliche interne `cells` gehören jeweils genau einem Kanal. Die Zelllänge ist Volumen geteilt durch `area`. Behälter ruhen und dürfen keine internen Zellen sein. Alle Anschlüsse verwenden dasselbe Material. `linear_resistance` und `quadratic_resistance` beschreiben den gesamten Leitungswiderstand, verteilt nach Zellvolumen; `fluid_heat_fraction` verteilt Reibungswärme auf Fluid und Wand. Es gibt keinen direkten Öffnungseingang.
+
+[Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md)
+
+## Wellengetriebene kompressible Kraftstoffkammern
+
+Eine `compressible_fuel_chamber` verbindet eine Welle mit einem endlichen `compressible_fuel`-Behälter. Die Bewegung ändert sein Volumen; dieselbe Druckarbeit ändert Fluidenergie und Wellendrehmoment. Der Behälter kann einen `equilibrium_fuel_duct` speisen oder aufnehmen, einschließlich Gleichgewichtsverdampfung und Kondensation.
+
+`node_a` ist rotatorisch, `node_b` hat genau einen Geometrieeigentümer. `minimum_reference_volume`, `swept_volume` und `phase` angeben; das Anfangsvolumen muss zum Anfangswinkel passen. Der gemischte Behälter hat keine mittlere Geschwindigkeit und darf keine interne Zelle sein. Die masselose sinusförmige Mechanik ergänzt keine Kolben- oder Nockenträgheit; die Wellenträgheit ist explizit. Der äußere Gehäusedruck ist null.
+
+[Wellengetriebene kompressible Kraftstoffkammern](COMPRESSIBLE_FUEL_CHAMBER.de.md)
+
+## Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil
+
+Eine `compressible_fuel_nozzle` verbindet endliche `compressible_fuel`-Behälter, auch wellengetriebene Kammern, mit gerichteter Strömung. Flüssigkeitskompression und idealer Dampf teilen deren Stoffdaten. `phase_mode` muss `frozen` sein: Der Dampfmassenanteil bleibt im Durchgang konstant, die Behälter stellen Gleichgewicht wieder her.
+
+Fläche, effektiven Flächenkoeffizienten und `wall_kinetic_fraction` mit endlicher thermischer Wand angeben. `initial_input` ist die Öffnung in [0,1], optional per Kanal veränderbar. Optionale `needle_node`, `closed_position` und `full_open_position` multiplizieren den Befehl mit der tatsächlichen translatorischen Nadelöffnung. Ports haben keine mittlere Geschwindigkeit, gleiche Stoffdaten und Heizwerte und dürfen keine internen Zellen sein. Gegendruck schließt diese ideale Grenze ohne Öffnungsdruckschwelle.
+
+[Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil](COMPRESSIBLE_FUEL_NOZZLE.de.md)
+
+## Kraftstoffdüsentransit im Phasengleichgewicht
+
+`phase_mode` von `compressible_fuel_nozzle` auf `equilibrium` setzen, um sofortiges homogenes Phasengleichgewicht im Transit zu verwenden. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; der Dampfanteil ändert sich entlang der Isentrope. Düse und endliche Behälter nutzen dasselbe kompressible Flüssigkeitspotenzial und dieselbe ideale Dampfreferenz. `frozen` bleibt eine getrennte unterstützte Annahme.
+
+Druck und spezifische Entropie bestimmen stabile Flüssigkeit, Dampf oder Koexistenz. Die Schließung nutzt gleiche chemische Potenziale und bestehende Temperatur-/Druckgrenzen. Temperaturendpunkte erlauben nur binary64-Rundungsnachbarschaften. Fläche, Wandwärme, Öffnung und reale Nadel folgen dem gemeinsamen Vertrag. Der ideale Strahl expandiert vollständig zum Empfänger; stationärer Impuls fügt weder axiale Nadelkraft noch mechanische Arbeit hinzu.
+
+[Kraftstoffdüsentransit im Phasengleichgewicht](EQUILIBRIUM_FUEL_NOZZLE.de.md)
+
+## Kraftstoff-Phasenrelaxation mit endlicher Rate
+
+Ein `relaxing_fuel`-Knoten führt einen unabhängigen Dampfmassenanteil. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; chemisches Gleichgewicht benötigt eine erklärte endliche Zeit. Ein `relaxing_fuel_duct` transportiert Masse, Impuls, Gesamtenergie und Dampfmasse durch explizite Zellen. Die Verweilzeit folgt aus Geometrie und tatsächlicher Geschwindigkeit.
+
+`relaxing-fuel-evaporation` oder `relaxing-fuel-duct` ausführen. Beobachtbar sind tatsächlicher und Gleichgewichtsanteil, Affinität, Phasenentropie, Dampfbilanzen an Ports und globales Dampfresiduum. Verdampfungs- und Kondensationshistorien trennen den Nettoquelltransfer jedes akzeptierten Takts nach Vorzeichen; sie zählen keine mikroskopischen Bruttoströme. Prüfungen umfassen die unabhängige Exponentiallösung, Entropieableitungen, eingefrorene Akustik, den steifen Gleichgewichtsgrenzfall, zeitliche Selbstverfeinerung und unabhängige linear-akustische Gitterverfeinerung. Transaktionen, portables Replay und tatsächliches MCP werden getrennt geprüft; Zahlen stehen in den Validierungsnachweisen.
+
+[Kraftstoff-Phasenrelaxation mit endlicher Rate](RELAXING_FUEL.de.md)
+
+## Relaxierende Kraftstoffpumpen und Dosierung bei eingefrorener Phase
+
+Ein `compressible_fuel_chamber` kann das Volumen eines `relaxing_fuel`-Behälters bestimmen. Reversible Wellenarbeit hält den Dampfmassenanteil fest; chemische Relaxation ist eine getrennte energieerhaltende Quelle. Ein `compressible_fuel_nozzle` verbindet zwei relaxierende Behälter mit `phase_mode` gleich `frozen` und transportiert Gesamtmasse, Dampfmasse und Stagnationsenthalpie. Eine physische Nadel mit Spule, Feder und Anschlag kann die Öffnung dosieren.
+
+`relaxing-fuel-chamber` oder `relaxing-pump-needle` ausführen. Beobachtbar sind Kammervolumen/-arbeit, tatsächlicher und Gleichgewichtsanteil, Phasenentropie, `total_vapor_delivered`, Portinventare und globales Dampfresiduum. Prüfungen vergleichen reine Adiabaten, unabhängige Druckquadratur bei festem Anteil, infinitesimale Arbeit, reversiblen Zyklus und unabhängige Wellen-ODE mit idealem Dampf. Gekoppelte Verfeinerung, Quellzeit gemeinsamer Behälter, vollständige Bilanzen, Abbruch, Rücksetzung, Zweige, Allokationen, portables Replay und tatsächliches MCP werden getrennt geprüft. Zahlen stehen in den Validierungsnachweisen.
+
+[Relaxierende Kraftstoffpumpen und Dosierung bei eingefrorener Phase](RELAXING_FUEL_BOUNDARIES.de.md)

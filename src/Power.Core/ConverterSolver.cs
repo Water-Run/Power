@@ -6,6 +6,13 @@ namespace Power.Core;
 
 internal abstract class MechanicalSolver
 {
+    protected EquilibriumFuelState? FuelState;
+    protected CompressibleFuelState? CompressibleState;
+    internal void PrepareCompressibleFuel(CompressibleFuelState state) => CompressibleState = state;
+    protected FuelFilmState? FiniteFilms;
+    protected MixtureState? FiniteMixture;
+    internal void PrepareFiniteReceivers(FuelFilmState films, MixtureState mixture) { FiniteFilms = films; FiniteMixture = mixture; }
+    internal void PrepareFuel(EquilibriumFuelState state) => FuelState = state;
     internal abstract bool SetInterval(double duration, Factorization dynamics, GearSolver? gears);
     internal abstract bool Solve(double[] old, double[] midpoint, double[] energy, CombustionSolver? combustion = null, CancellationToken cancellation = default);
     internal abstract void AddGearReactions(double[] reactions);
@@ -114,7 +121,7 @@ internal sealed class ConverterSolver : MechanicalSolver
     internal ConverterSolver(CompiledModel model, HydraulicSolver? hydraulics = null)
     {
         _model = model; _coupling = model.ConverterCoupling!; _hydraulics = model.HasCoupledHydraulics ? hydraulics : null;
-        int count = _coupling.Nodes.Length + (model.HasCoupledHydraulics ? model.HydraulicCount : 0);
+        int count = _coupling.Nodes.Length + (model.HasCoupledHydraulics ? hydraulics!.PressureCount : 0);
         _value = new double[count]; _prediction = new double[count]; _force = new double[_coupling.Nodes.Length]; _residual = new double[count];
         _trial = new double[count]; _trialResidual = new double[count]; _correction = new double[count];
         _derivative = new double[_force.Length, count]; _jacobian = new double[count, count]; _factor = new(count);
@@ -141,12 +148,27 @@ internal sealed class ConverterSolver : MechanicalSolver
     {
         double torque = 0;
         foreach (int i in _model.CylinderCoupling!.Components[k])
-            if (_model.Cylinders[i] is { } sealedCylinder) torque += sealedCylinder.DiscreteTorque(angle, delta);
+            if (_model.FuelChamberByComponent[i] is int chamber && chamber >= 0)
+            {
+                if (!_model.FuelChamberWork(chamber, FuelState!, angle, delta, out _, out double fuelTorque, out _)) return double.NaN;
+                torque += fuelTorque;
+            }
+            else if (_model.CompressibleChamberByComponent[i] is int compressible && compressible >= 0)
+            {
+                if (!_model.CompressibleChamberWork(compressible, CompressibleState!, angle, delta, out _, out double pressureTorque, out _)) return double.NaN;
+                torque += pressureTorque;
+            }
+            else if (_model.Cylinders[i] is { } sealedCylinder) torque += sealedCylinder.DiscreteTorque(angle, delta);
             else
             {
                 int gas = _model.Nodes[_model.Components[i].B].Index;
-                torque += _model.GasCylinders[i]!.DiscreteTorque(angle, delta,
-                    energy[gas] + .5 * (_combustion?.PreviewHeat(gas, angle + delta) ?? 0), _model.Gas!.Gases[gas].Gamma);
+                double heat = .5 * (_combustion?.PreviewHeat(gas, angle + delta) ?? 0);
+                if (_model.FiniteFilmByGas[gas] >= 0)
+                {
+                    if (!_model.FiniteReceiverWork(i, FiniteFilms!, FiniteMixture!, energy, angle, delta, heat, out _, out double receiverTorque)) return double.NaN;
+                    torque += receiverTorque;
+                }
+                else torque += _model.GasCylinders[i]!.DiscreteTorque(angle, delta, energy[gas] + heat, _model.Gas!.Gases[gas].Gamma);
             }
         return torque;
     }
@@ -214,9 +236,16 @@ internal sealed class ConverterSolver : MechanicalSolver
         {
             var c = _model.Components[_model.PumpComponents[k]];
             int row = _coupling.PumpOffset + k, outlet = mechanical + _model.Nodes[c.B].Index;
-            int inlet = c.C < 0 ? -1 : mechanical + _model.Nodes[c.C].Index;
-            _force[row] = -c.P0 * (values[outlet] - (inlet < 0 ? c.P2 : values[inlet]));
-            if (derivatives) { _derivative[row, outlet] = -c.P0; if (inlet >= 0) _derivative[row, inlet] = c.P0; }
+            int inletIndex = _hydraulics!.PumpInlet(k), inlet = inletIndex < 0 ? -1 : mechanical + inletIndex;
+            _hydraulics!.PumpFlowLaw(k, values[row], out double displacement, out double slope, out _);
+            double difference = values[outlet] - (inlet < 0 ? c.P2 : values[inlet]);
+            _force[row] = -displacement * difference;
+            if (derivatives)
+            {
+                _derivative[row, outlet] = -displacement;
+                if (inlet >= 0) _derivative[row, inlet] = displacement;
+                _derivative[row, row] = -slope * difference;
+            }
         }
         double norm = _hydraulics?.CoupledResidual(_hydraulicState!.Pressure, values, mechanical, _coupling.PumpOffset, _coupling.Cranks,
             _inputs!, _duration, residual, derivatives ? _jacobian : null, old) ?? 0;
@@ -240,7 +269,11 @@ internal sealed class ConverterSolver : MechanicalSolver
             int index = _coupling.Variables[k];
             _value[k] = _prediction[k] = k < _coupling.Coordinates ? 2 * (midpoint[index] - old[index]) : midpoint[index];
         }
-        if (_hydraulics is not null) Array.Copy(_hydraulicState!.Pressure, 0, _value, mechanical, _model.HydraulicCount);
+        if (_hydraulics is not null)
+        {
+            Array.Copy(_hydraulicState!.Pressure, 0, _value, mechanical, _model.HydraulicCount);
+            _hydraulics.InitialHeadspacePressures(_value, mechanical);
+        }
         for (int iteration = 0; iteration < MaxIterations; ++iteration)
         {
             if (cancellation.IsCancellationRequested) return false;

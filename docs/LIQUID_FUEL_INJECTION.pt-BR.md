@@ -10,9 +10,7 @@ evapora o líquido; a reação prescrita existente consome só vapor.
 
 Isto liga entrega, mudança de fase e reação e mantém cada inventário
 e cada transferência de energia observáveis. É um modelo de pesquisa de densidade e flexibilidade
-constantes. Bomba e reabastecimento do trilho, propriedades medidas, acionamento magnético e eletrônico refinado,
-pulverização e arraste, cavitação, ignição e ECU, e hardware de gasolina calibrado
-continuam sendo trabalho necessário rumo ao objetivo do powertrain completo.
+constantes. A alimentação opcional por bomba usa uma fronteira externa explícita de matéria/calor. Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
 
 ```mermaid
 flowchart LR
@@ -28,6 +26,8 @@ flowchart LR
 O trilho tem densidade líquida constante `rho`, flexibilidade positiva `C` em m3/Pa,
 massa inicial `m0` e pressão absoluta inicial `P0`. O volume de referência à pressão
 zero deve ser não negativo:
+
+Sem alimentação por bomba, o rail segue estas equações e mantém a temperatura fornecida.
 
 ```text
 V_reference = m0 / rho - C P0
@@ -181,13 +181,7 @@ reação prescrita acionam o mesmo modelo de virabrequim e carga dos outros labo
 CLI, assets portáteis e o servidor MCP real compartilham as definições e os limites
 de replay. Todos os parâmetros permanecem `unverified`.
 
-Decaimento analítico de pressão e trabalho, dose, reversão e esgotamento, refinamento acoplado
-independente, livros completos de fonte, filme, constituintes e energia, limites de alocação
-ativa e rollback especulativo de embreagem são verificados. [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md)
-registra os resultados observados. Vistas de trilho e de bocal e testes de ciclo de vida preparados no Unity
-ainda exigem evidência real de Editor, Play e Player. Reabastecimento e bombas do trilho, dinâmica da agulha,
-pulverização e deslocamento resolvidos, ignição e ECU, transmissão e controle completos e powertrains
-medidos continuam inacabados.
+Trabalho do eixo, pressão e armazenamento térmico misturado têm verificações de conservação e ODE independentes; aceitação Unity real segue pendente. [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md) Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
 
 ## Extensão da agulha física
 
@@ -197,3 +191,13 @@ movimento. Neste modo, a dose solicitada é um alvo do controlador; não limita 
 durante o atraso de fechamento, o ricochete ou a reversão. O caminho ideal limitado por cota permanece
 separado e inalterado. Comportamento magnético, de driver e de pulverização refinado, e a calibração,
 continuam em aberto.
+
+## Rail de combustível líquido alimentado por bomba
+
+`liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
+
+v27 preserva conexões e temperatura da fonte e lê v1-v26. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+
+Capacidade geométrica, ventilação/espaço gasoso/oscilação, cavitação, enchimento/eficiência/regulação medidos e spray resolvido seguem abertos. Parâmetros `unverified`; Unity Editor/Play/Player/IL2CPP real e calibração OEM seguem não verificados.
+
+[PUMP_FED_FUEL.pt-BR.md](PUMP_FED_FUEL.pt-BR.md)

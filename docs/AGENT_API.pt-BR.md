@@ -42,7 +42,7 @@ O Windows usa o mesmo comando `dotnet` e um caminho absoluto para a DLL. Uma con
 
 ## Ferramentas e resultados
 
-Na versão 0.29.0 da API de agente, `get_example_model` aceita um `name` opcional: `electrothermal` (padrão), `sealed-cylinder`, `gas-network`, `moving-cylinder`, `crank-timed-cylinder`, `fired-cylinder`, `fired-clutch`, `fired-planetary`, `fired-converter`, `fired-hydraulic`, `fired-pump`, `fired-pump-losses`, `electric-pump`, `pressure-regulated-pump`, `battery-regulated-pump`, `piston-actuated-clutch`, `spool-regulated-pump`, `gas-accumulator-pump`, `metered-fired-cylinder`, `film-fired-cylinder`, `liquid-injected-cylinder`, `needle-actuated-cylinder`, `closure-compensated-cylinder`, `dual-clutch-transmission`, `fired-dual-clutch`, `controlled-dual-clutch`, `controlled-fired-dual-clutch`, `ravigneaux-transmission`, `fired-ravigneaux-converter`, `resolved-ravigneaux-transmission`, `fired-resolved-ravigneaux-converter`, `hydraulic-ravigneaux-transmission` ou `fired-hydraulic-ravigneaux`. `get_capabilities` anuncia os níveis de fidelidade suportados, as versões de asset legíveis, os limites do solver e os limites de entrada. As exportações usam `power.asset.v24`; assets v1–v23 continuam legíveis. Canais de saída e suas unidades são retornados pela validação do modelo e pela criação da sessão. KPIs de laboratório aprovados não estabelecem um powertrain completo nem calibrado.
+Na API de agente versão 0.46.0, `get_example_model` aceita um `name` opcional, com padrão `electrothermal`. `get_capabilities.examples` lista os 67 exemplos, incluindo tanque finito e recirculação. CLI `list-labs` retorna os 68 laboratórios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` é exclusivo da CLI por projeto. As capacidades também anunciam componentes, fidelidade, limites do solver e entradas. Exports usam `power.asset.v41`, mantendo leitores v1-v40. Validação e criação de sessão retornam canais e unidades. KPI aprovados não estabelecem um powertrain completo ou calibrado.
 
 | Ferramenta | Finalidade |
 |---|---|
@@ -287,3 +287,133 @@ Solicite `resolved-ravigneaux-transmission` ou `fired-resolved-ravigneaux-conver
 Solicite `hydraulic-ravigneaux-transmission` ou `fired-hydraulic-ravigneaux`. Use frações explícitas de enchimento/drenagem em 700/701 até 708/709; a trava em combustão usa 710/711. Os IDs anteriores de engate de faixa estão ausentes. Valide/descubra os canais antes de escrever. Pressão/curso/contato do pistão determinam as capacidades; um comando aceito pela API não confirma o travamento físico.
 
 Os relatórios conservam pressão de linha/câmara, curso, capacidade de contato, trabalho da bomba, volume varrido, calor de atrito/restrição/amortecimento e cada hash de modelo. Revisões completas, cancelamento, rollback tardio e ramificações independentes de liberação de válvula usam os contratos ordinários. O grafo usa registros existentes do asset v24, não um formato novo de serialização. Veja [AT_HYDRAULIC_ACTUATION.pt-BR.md](AT_HYDRAULIC_ACTUATION.pt-BR.md).
+
+## Realimentação de AT hidráulica
+
+`at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
+
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v41 preserva rotas, ganhos e relógios e lê v1-v40.
+
+São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
+
+[AT_CONTROL.pt-BR.md](AT_CONTROL.pt-BR.md)
+
+## Rail de combustível líquido alimentado por bomba
+
+`liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
+
+v41 preserva conexões e temperatura da fonte e lê v1-v40. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+
+Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
+
+[PUMP_FED_FUEL.pt-BR.md](PUMP_FED_FUEL.pt-BR.md)
+
+## Tanque finito de combustível líquido
+
+`liquid_fuel_tank` guarda massa líquida finita e energia térmica com densidade, referência térmica do filme e poder calorífico do injetor associado. A alimentação o escolhe por `tank_component` e omite `supply_temperature`. Cada tanque pertence a uma alimentação compatível.
+
+Energias térmica e química do tanque entram no armazenamento completo. Transferência interna não adiciona massa ou energia química externa. A pressão de entrada prescrita mantém sua fronteira de trabalho de pressão. Admissão/escape gasoso ainda podem transportar energia química.
+
+Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
+
+[LIQUID_FUEL_TANK.pt-BR.md](LIQUID_FUEL_TANK.pt-BR.md)
+
+## Retorno de alívio de combustível rastreado
+
+`liquid_rail_return` associa alimentação a um `hydraulic_relief` unidirecional exclusivo. A válvula liga o rail à mesma pressão de entrada prescrita da bomba. Registrar cada rota; portas incompatíveis, propriedade duplicada e rotas não rastreadas são rejeitadas.
+
+`fluid_heat_fraction` escolhe explicitamente a fração [0,1] da perda transportada pelo combustível retornado. O restante segue a rota térmica declarada. Mistura simultânea rail/tanque conserva massa, química, trabalho de pressão e calor. Retorno à fonte externa leva massa/energia pela fronteira.
+
+[LIQUID_FUEL_RETURN.pt-BR.md](LIQUID_FUEL_RETURN.pt-BR.md)
+
+## Geometria do tanque e espaço gasoso finito
+
+`liquid_fuel_tank.parameters.headspace` declara `capacity` em `m3` ou `l` e `gas_node`. O gás omite `storage`: volume `capacity - liquid_mass / density`, um proprietário e volume positivo. Bomba e retorno usam pressão prescrita nula: o gás finito determina a pressão de entrada.
+
+O solver acoplado troca trabalho de pressão entre eixo, trilho e gás sem fonte externa. Orifícios gasosos e conexões térmicas fornecem ventilação/calor explícitos. Ler `pressure`, `fill_fraction`, `hydraulic_work` acumulado com sinal e massa, energia, volume do gás. Dose, líquido, evaporação e combustão continuam separados.
+
+[Geometria do tanque e espaço gasoso finito](TANK_HEADSPACE.pt-BR.md)
+
+## Equilíbrio de fases do combustível e limites de suprimento
+
+A opção `fuel_film.parameters.phase_equilibrium` declara `reference_pressure` em `pa` ou `bar` e `minimum_temperature` / `maximum_temperature` em `k`. `saturation_temperature` é a temperatura de referência; `latent_internal_energy` é a diferença de energia interna vapor-líquido nela. Cada receptor em equilíbrio possui um filme. O snapshot inicial é mantido; intervalos aceitos equilibram gás e líquido com troca de calor com a parede finita.
+
+`mass_flow` é a transferência líquida com sinal do passo físico completo. `evaporated_fuel_mass` e `condensed_fuel_mass` acumulam suas massas positiva e negativa sem duplicar projeções que se cancelam. `vapor_partial_pressure` mostra a pressão parcial do combustível. Balanços térmicos, de massa e químicos incluem ambas as fases.
+
+O suprimento padrão rejeita líquido sob saturação. O tanque finito opcional resolve vapor da fonte com potenciais corrigidos por pressão. Trilho e captação ainda levam líquido separado; bolhas e fluxo cavitante precisam de mais física.
+
+A comparação só admite arredondamento binary64: `64 * epsilon * max(p, p_sat)`, com `epsilon = 2^-52`. A margem informada não é limitada. É uma verificação de saturação global; perdas locais e NPSH da bomba exigem modelo de fluxo resolvido. As verificações independentes também exigem entropia total não decrescente no flash adiabático e na troca com parede finita.
+
+[Equilíbrio de fases do combustível e limites de suprimento](FUEL_PHASE_EQUILIBRIUM.pt-BR.md)
+
+## Equilíbrio do tanque com volume líquido finito
+
+Definir `liquid_fuel_tank.parameters.headspace.phase_equilibrium` como `true` para resolver evaporação e condensação do tanque. O filme pareado fornece propriedades `phase_equilibrium`; o gás rastreado compartilha R, cv, poder calorífico e estequiometria. Tanque molhado declara temperatura inicial comum e pressão parcial saturada; tanque seco começa no máximo em saturação. A densidade total fica abaixo da líquida.
+
+`evaporated_fuel_mass`, `condensed_fuel_mass` e `mass_flow` com sinal contam transferência líquida de fase por passo físico. Ler juntos `vapor_partial_pressure`, `saturation_pressure` corrigida, inventário líquido e volume gasoso. A bomba capta líquido separado; transporte bifásico, arraste de bolhas e NPSH local seguem abertos.
+
+[Equilíbrio do tanque com volume líquido finito](TANK_PHASE_EQUILIBRIUM.pt-BR.md)
+
+## Rede de transporte de combustível em equilíbrio
+
+Pedir `equilibrium-fuel-network` ou `electrothermal-fuel-network` pelo MCP ou executar o mesmo JSON pela CLI. Ler `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy`, `specific_enthalpy`. Aqui `internal_energy` inclui parede elástica e a energia química é separada. Os elos mostram vazões com sinal, massa acumulada, `transport_energy` e mudança de entropia do par.
+
+Euler implícito limitado resolve as mesmas massa q e entalpia H aceitas nos dois recipientes. Elos avançam por ID estável; o banho finito usa outro subpasso conservativo. O acoplamento é de primeira ordem. Massa, temperatura ou pressão fora dos limites e falhas rejeitam todo o lote, incluindo entradas, históricos compensados e intervalos especulativos de embreagem.
+
+[Rede de transporte de combustível em equilíbrio](EQUILIBRIUM_FUEL_NETWORK.pt-BR.md)
+
+## Bomba de combustível com mudança de fase acionada por eixo
+
+Pedir `equilibrium-fuel-pump` ou `electric-equilibrium-fuel-pump` pelo MCP ou executar JSON na CLI. Ler massa, temperatura, pressão, vapor e energia junto à entrega de válvulas e velocidade do eixo. `volume` do componente é geométrico; o do nó inclui expansão da parede. `torque`, `hydraulic_power`, `hydraulic_work` mostram a troca interna.
+
+O subpasso mecânico fechado mantém massa e entropia. A energia inclui fluido e parede elástica, então o trabalho do eixo usa o volume geométrico de referência. A mesma mudança aceita determina torque no solver mecânico conjunto com engrenagens, conversores, hidráulica e intervalos especulativos da embreagem. A expansão empurra o eixo; `hydraulic_work` positivo entra na câmara. Nenhuma fonte externa adicional de pressão é incluída.
+
+[Bomba de combustível com mudança de fase acionada por eixo](FUEL_CHAMBER_PUMP.pt-BR.md)
+
+## Dutos de combustível compressível em equilíbrio
+
+Um `equilibrium_fuel_duct` transporta massa, quantidade de movimento e energia total por células explícitas `compressible_fuel`. O líquido é compressível e o vapor ideal; as fases compartilham pressão, temperatura e velocidade. O equilíbrio local permite condensação e vaporização súbita. Dois reservatórios finitos estacionários e uma parede térmica finita fecham os balanços.
+
+Declare `liquid_bulk_modulus`, omita `compliance` e forneça `initial_velocity` explicitamente em cada nó. Declare 1–24 `cells` internas ordenadas e distintas, cada uma pertencente a um duto. O comprimento é o volume dividido por `area`. Reservatórios têm velocidade zero e não podem ser células internas. Todas as portas compartilham material. `linear_resistance` e `quadratic_resistance` representam a resistência total, distribuída por volume; `fluid_heat_fraction` divide o calor de atrito entre fluido e parede. Não existe entrada direta de abertura.
+
+[Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
+
+## Câmaras de combustível compressível acionadas por eixo
+
+Uma `compressible_fuel_chamber` conecta um eixo a um reservatório finito `compressible_fuel`. O movimento muda o volume; o mesmo trabalho de pressão muda energia do fluido e torque. O reservatório pode alimentar ou receber um `equilibrium_fuel_duct`, com vaporização súbita e condensação em equilíbrio.
+
+`node_a` é rotacional e `node_b` tem um único proprietário geométrico. Declare `minimum_reference_volume`, `swept_volume` e `phase`; o volume inicial deve corresponder ao ângulo inicial. O reservatório misturado tem velocidade média zero e não pode ser célula interna. O mecanismo senoidal sem massa não acrescenta inércia de pistão ou came; a inércia do eixo é explícita. A pressão externa da carcaça é zero.
+
+[Câmaras de combustível compressível acionadas por eixo](COMPRESSIBLE_FUEL_CHAMBER.pt-BR.md)
+
+## Bocais de combustível compressível com título congelado
+
+Um `compressible_fuel_nozzle` leva fluxo unidirecional entre reservatórios finitos `compressible_fuel`, incluindo câmaras acionadas por eixo. Compressão líquida e vapor ideal compartilham o material. Declare `phase_mode` como `frozen`: o título mássico fica constante no trânsito e os reservatórios se reequilibram.
+
+Declare área, coeficiente de área efetiva e `wall_kinetic_fraction`, com parede térmica finita. `initial_input` é abertura em [0,1], alterável por canal opcional. Os opcionais `needle_node`, `closed_position` e `full_open_position` multiplicam o comando pela abertura real da agulha translacional. As portas têm velocidade média zero, mesmo material e poder calorífico e não podem ser células internas. Pressão reversa fecha a fronteira ideal sem limiar de abertura.
+
+[Bocais de combustível compressível com título congelado](COMPRESSIBLE_FUEL_NOZZLE.pt-BR.md)
+
+## Trânsito de combustível em equilíbrio nos bocais
+
+Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equilíbrio homogêneo instantâneo durante o trânsito. Líquido e vapor compartilham pressão, temperatura e velocidade; o título muda na isentrópica. Bocal e reservatórios finitos usam o mesmo potencial líquido compressível e referência de vapor ideal. `frozen` permanece uma hipótese separada suportada.
+
+Pressão e entropia específica determinam líquido estável, vapor ou coexistência. O fechamento usa igualdade dos potenciais químicos e limites térmicos e de pressão existentes. Extremos térmicos permitem somente vizinhanças de arredondamento binary64. Área, calor, comando e agulha real seguem o contrato comum. O jato expande idealmente até o receptor; o impulso estacionário não acrescenta força axial nem trabalho mecânico.
+
+[Trânsito de combustível em equilíbrio nos bocais](EQUILIBRIUM_FUEL_NOZZLE.pt-BR.md)
+
+## Relaxação de fase do combustível com taxa finita
+
+Um nó `relaxing_fuel` tem fração mássica de vapor independente. Líquido e vapor compartilham pressão, temperatura e velocidade, mas o equilíbrio químico exige um tempo finito declarado. Um `relaxing_fuel_duct` transporta massa, quantidade de movimento, energia total e massa de vapor em células explícitas. A residência depende da geometria e da velocidade real.
+
+Execute `relaxing-fuel-evaporation` ou `relaxing-fuel-duct`. Observe frações real e de equilíbrio, afinidade, entropia de fase, balanços de vapor nas portas e resíduo global. Históricos de evaporação e condensação separam por sinal a transferência líquida da fonte em cada passo aceito; não contam trocas microscópicas brutas. As verificações cobrem solução exponencial independente, derivadas de entropia, acústica congelada, limite rígido de equilíbrio, autorrefinamento temporal e refinamento espacial acústico linear independente. Transações, reprodução portátil e MCP real são verificados separadamente; os números ficam nas evidências de validação.
+
+[Relaxação de fase do combustível com taxa finita](RELAXING_FUEL.pt-BR.md)
+
+## Bombas de combustível com relaxação e dosagem congelada
+
+Um `compressible_fuel_chamber` pode controlar o volume de um reservatório `relaxing_fuel`. O trabalho reversível do eixo mantém a fração de vapor fixa; a relaxação química é uma fonte separada que conserva energia. Um `compressible_fuel_nozzle` conecta dois reservatórios relaxantes com `phase_mode` em `frozen`, transportando massa total, vapor e entalpia de estagnação. Uma agulha física com bobina, mola e batente pode dosar a abertura.
+
+Execute `relaxing-fuel-chamber` ou `relaxing-pump-needle`. Observe volume/trabalho, frações real e de equilíbrio, entropia de fase, `total_vapor_delivered`, inventários das portas e resíduo global de vapor. As verificações comparam adiabáticas puras, quadratura independente da pressão com fração fixa, trabalho infinitesimal, ciclo reversível e ODE independente do eixo com vapor ideal. Refinamento acoplado, tempo de fonte compartilhado, balanços completos, cancelamento, reversão, ramificações, alocações, reprodução portátil e MCP real são verificados separadamente. Os números estão nas evidências de validação.
+
+[Bombas de combustível com relaxação e dosagem congelada](RELAXING_FUEL_BOUNDARIES.pt-BR.md)

@@ -7,4 +7,8 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
   <ItemGroup><ProjectReference Include="../Power.Core/Power.Core.csproj" /><ProjectReference Include="../Power.Assets/Power.Assets.csproj" /></ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="../../assets/labs/catalog.json" LogicalName="power.laboratory-catalog.json" />
+    <EmbeddedResource Include="../../assets/labs/*.power.json" LogicalName="power.%(Filename)%(Extension)" />
+  </ItemGroup>
 </Project>

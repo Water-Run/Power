@@ -1,0 +1,217 @@
+{
+  "schema": "power.model.v1",
+  "description": "Research constant-property pseudo-fluid in a fixed gas volume with negligible liquid displacement. A finite cold wall condenses fuel; an explicit vent opens and closes to produce evaporation and condensation. The common gas constant, caloric properties and saturation reference are explicit and unverified. The bounded equilibrium flash conserves total fuel and internal energy, with first-order finite-wall and transport coupling. Multicomponent fuel, finite-rate nucleation/phase kinetics, liquid-volume displacement, cavitating flow and OEM calibration remain open.",
+  "step_ns": 1000000,
+  "nodes": [
+    {
+      "id": 2,
+      "domain": "gas",
+      "storage": {
+        "value": 0.01,
+        "unit": "m3"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "position": {
+        "value": 100000,
+        "unit": "pa"
+      },
+      "gas": {
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "gamma": 1.4,
+        "premixed": {
+          "lower_heating_value": {
+            "value": 44000000.0,
+            "unit": "j_kg"
+          },
+          "stoichiometric_air_fuel_ratio": 14.7,
+          "initial_fractions": {
+            "fuel": 0.3,
+            "fresh_air": 0.7
+          }
+        }
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 20,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 300,
+        "unit": "k"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "fuel_film",
+      "node_a": 2,
+      "node_b": 3,
+      "parameters": {
+        "initial_mass": {
+          "value": 0.003,
+          "unit": "kg"
+        },
+        "initial_temperature": {
+          "value": 350,
+          "unit": "k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "saturation_temperature": {
+          "value": 350,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "conductance": {
+          "value": 1,
+          "unit": "w_k"
+        },
+        "phase_equilibrium": {
+          "reference_pressure": {
+            "value": 30000,
+            "unit": "pa"
+          },
+          "minimum_temperature": {
+            "value": 200,
+            "unit": "k"
+          },
+          "maximum_temperature": {
+            "value": 550,
+            "unit": "k"
+          }
+        }
+      }
+    },
+    {
+      "id": 12,
+      "kind": "gas_orifice",
+      "node_a": 2,
+      "input_channel": 960,
+      "initial_input": {
+        "value": 0,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "area": {
+          "value": 1e-05,
+          "unit": "m2"
+        },
+        "discharge_coefficient": 0.7,
+        "reservoir_pressure": {
+          "value": 1000,
+          "unit": "pa"
+        },
+        "reservoir_temperature": {
+          "value": 350,
+          "unit": "k"
+        }
+      },
+      "reservoir_fractions": {
+        "fuel": 0,
+        "fresh_air": 1
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 600000000,
+    "sample_every_ns": 10000000,
+    "events": [
+      {
+        "time_ns": 200000000,
+        "values": [
+          {
+            "channel": 960,
+            "value": 1
+          }
+        ]
+      },
+      {
+        "time_ns": 400000000,
+        "values": [
+          {
+            "channel": 960,
+            "value": 0
+          }
+        ]
+      }
+    ],
+    "checks": [
+      {
+        "object_id": 2,
+        "field": "temperature",
+        "min": 200,
+        "max": 550
+      },
+      {
+        "object_id": 2,
+        "field": "pressure",
+        "min": 1000,
+        "max": 200000
+      },
+      {
+        "object_id": 10,
+        "field": "mass",
+        "min": 0,
+        "max": 0.006
+      },
+      {
+        "object_id": 10,
+        "field": "evaporated_fuel_mass",
+        "min": 1e-06,
+        "max": 0.006
+      },
+      {
+        "object_id": 10,
+        "field": "condensed_fuel_mass",
+        "min": 1e-06,
+        "max": 0.006
+      },
+      {
+        "object_id": 10,
+        "field": "mass_flow",
+        "max": 0
+      },
+      {
+        "object_id": 10,
+        "field": "vapor_partial_pressure",
+        "min": 1,
+        "max": 200000
+      },
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 1e-07
+      },
+      {
+        "object_id": 0,
+        "field": "mass_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "fuel_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "fresh_air_residual",
+        "abs_max": 1e-14
+      }
+    ]
+  }
+}

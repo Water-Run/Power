@@ -42,7 +42,7 @@ Windows も同じ `dotnet` コマンドと、DLL への絶対パスを使いま�
 
 ## ツールと結果
 
-エージェント API バージョン 0.29.0 では、`get_example_model` は任意の `name` を受け付けます。`electrothermal`（既定）、`sealed-cylinder`、`gas-network`、`moving-cylinder`、`crank-timed-cylinder`、`fired-cylinder`、`fired-clutch`、`fired-planetary`、`fired-converter`、`fired-hydraulic`、`fired-pump`、`fired-pump-losses`、`electric-pump`、`pressure-regulated-pump`、`battery-regulated-pump`、`piston-actuated-clutch`、`spool-regulated-pump`、`gas-accumulator-pump`、`metered-fired-cylinder`、`film-fired-cylinder`、`liquid-injected-cylinder`、`needle-actuated-cylinder`、`closure-compensated-cylinder`、`dual-clutch-transmission`、`fired-dual-clutch`、`controlled-dual-clutch`、`controlled-fired-dual-clutch`、`ravigneaux-transmission`、`fired-ravigneaux-converter`、`resolved-ravigneaux-transmission`、`fired-resolved-ravigneaux-converter`、`hydraulic-ravigneaux-transmission`、`fired-hydraulic-ravigneaux` です。`get_capabilities` は、サポートされる忠実度、読み取れるアセットバージョン、ソルバー制限、入力境界を知らせます。エクスポートは `power.asset.v24` を使います。v1–v23 のアセットは読み取れるままです。出力チャンネルとその単位は、モデル検証とセッション作成が返します。ラボラトリーの KPI に合格しても、完全な、またはキャリブレーション済みのパワートレインであることにはなりません。
+エージェント API バージョン 0.46.0 の `get_example_model` は任意の `name` を受け取り、既定値は `electrothermal` です。`get_capabilities.examples` は有限タンクと循環燃料モデルを含む全 67 サンプルを列挙します。CLI `list-labs` は全 68 ラボを [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON で返します。`thermal-network` は設計上 CLI 専用です。機能には対応コンポーネント、忠実度、ソルバー制限と入力範囲も含まれます。出力は `power.asset.v41` を使い、v1-v40 の読み込みを保持します。検証とセッション作成は出力チャネルと単位を返します。ラボ KPI の合格は完全または較正済みのパワートレインを示しません。
 
 | ツール | 役割 |
 |---|---|
@@ -287,3 +287,133 @@ KPI とリプレイのエビデンスを評価するには `run_experiment` を�
 `hydraulic-ravigneaux-transmission` または `fired-hydraulic-ravigneaux` を要求します。700/701 から 708/709 まで、明示的な充填/排出の割合を使ってください。燃焼側のロックアップは 710/711 を使います。以前のレンジ係合 ID はありません。書く前に、チャンネルを検証し、見つけてください。容量を決めるのは、ピストンの圧力/行程/接触です。API が受理した指令は、物理的なロックを確認しません。
 
 レポートは、ライン/室の圧力、行程、接触容量、ポンプ仕事、押しのけ容積、摩擦/絞り/減衰の熱、すべてのモデルハッシュを保持します。完全なリビジョン、キャンセル、遅いロールバック、独立したバルブ解放の分岐は、通常の契約を使います。グラフは、新しい直列化形式ではなく、既存のアセット v24 レコードを使います。[AT_HYDRAULIC_ACTUATION.md](AT_HYDRAULIC_ACTUATION.ja.md) を参照してください。
+
+## 油圧 AT フィードバック
+
+`at_controller` は [-1,4] の整数目標段を受け取り、ゼロはニュートラルです。五組の充填/排油弁と任意のトルクコンバーターのロックアップを管理します。経路の順序はキャリア入力、小サン入力、大サン入力、キャリアブレーキ、大サンブレーキ、最後にロックアップです。
+
+例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v41 は経路、ゲイン、時計を保存し、v1-v40 を読みます。
+
+研究用の制御であり、パラメーターは `unverified` のままです。ECU トルク協調、詳細なセンサー/弁、包括的な車両故障、OEM 校正は未完成です。managed と Standard の検査は実際の Unity Editor/Play/Player/IL2CPP の受入を証明しません。
+
+[AT_CONTROL.ja.md](AT_CONTROL.ja.md)
+
+## ポンプ供給の液体燃料レール
+
+`liquid_rail_feed` は液体噴射器を既存の容積ポンプと明示的な物質/熱境界に結びます。油圧出口ノードはレールのコンプライアンスと初期絶対圧に一致する必要があります。ポンプと噴射器がこの圧力ノードを所有し、未追跡の他の流体経路は拒否されます。
+
+v41 は補給接続と源温度を保存し v1-v40 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
+
+剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、実混合物の熱力学、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
+
+[PUMP_FED_FUEL.ja.md](PUMP_FED_FUEL.ja.md)
+
+## 有限液体燃料タンク
+
+`liquid_fuel_tank` は対応する噴射器の密度、フィルム熱基準、発熱量を使い、有限液体質量と熱エネルギーを保存します。補給は `tank_component` で選び、`supply_temperature` を省略します。各タンクは燃料物性が一致する一つの補給に属します。
+
+タンクの熱/化学エネルギーは全貯蔵台帳に入ります。内部移送は外部質量や化学供給を追加しません。明示したポンプ入口規定圧は圧力仕事境界を保持します。ガス吸排気は化学境界エネルギーを運ぶ場合があります。
+
+剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、実混合物の熱力学、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
+
+[LIQUID_FUEL_TANK.ja.md](LIQUID_FUEL_TANK.ja.md)
+
+## 追跡可能な燃料リリーフ戻り流れ
+
+`liquid_rail_return` は補給を排他的な一方向 `hydraulic_relief` に結びます。弁はレールをポンプと同じ規定入口圧へ接続します。すべての流体経路を登録し、不適合ポート、重複所有、未追跡経路は拒否します。
+
+`fluid_heat_fraction` は戻り燃料が運ぶ弁損失の割合 [0,1] を明示します。残る熱は宣言した弁熱経路へ流れます。レール/タンク同時熱混合は質量、化学、圧力仕事、熱台帳を保存し、外部源への戻りは境界から質量/エネルギーを出します。
+
+[LIQUID_FUEL_RETURN.ja.md](LIQUID_FUEL_RETURN.ja.md)
+
+## タンク形状と有限ヘッドスペース
+
+`liquid_fuel_tank.parameters.headspace` は `m3` または `l` の `capacity` と `gas_node` を指定します。気体ノードは `storage` を省略し、体積は `capacity - liquid_mass / density` です。所有者は一つで体積は正を維持します。有限気体が入口圧力を決めるため、ポンプと戻りの指定リザーバー圧力はゼロです。
+
+連成計算は外部圧力源を加えず、軸・レール・気体間で圧力仕事を交換します。気体オリフィスと熱接続が明示的な通気/伝熱を提供します。`pressure`、`fill_fraction`、符号付き累積 `hydraulic_work` と気体質量・エネルギー・体積を読みます。投与、液体供給、蒸発、燃焼は分離されます。
+
+[タンク形状と有限ヘッドスペース](TANK_HEADSPACE.ja.md)
+
+## 燃料の相平衡と液体供給の境界
+
+任意の `fuel_film.parameters.phase_equilibrium` は `pa` または `bar` の `reference_pressure` と、`k` の `minimum_temperature` / `maximum_temperature` を指定します。既存の `saturation_temperature` は基準温度、`latent_internal_energy` はそこでの蒸気と液体の比内部エネルギー差です。平衡受け側は一つの膜が所有します。初期スナップショットを保持し、受理した区間で気液平衡と有限壁の熱交換を計算します。
+
+`mass_flow` は完全な物理刻みの符号付き正味相移動です。`evaporated_fuel_mass` と `condensed_fuel_mass` は正負の質量を別々に累積し、相殺する分割演算を二重計上しません。`vapor_partial_pressure` は受け側の燃料分圧です。熱・質量・化学エネルギー収支は両相を含みます。
+
+既定の液体供給は飽和未満の湿潤状態を拒否します。任意の有限タンク平衡は補正化学ポテンシャルで供給蒸気移動を解きます。レールと吸入口は分離液体のままで、気泡巻込みとキャビテーション輸送には追加物理が必要です。
+
+圧力比較は binary64 の丸め幅 `64 * epsilon * max(p, p_sat)` のみを許容し、`epsilon = 2^-52` です。表示余裕はクランプしません。これはバルクの飽和検査で、局所圧力損失とポンプ NPSH には流れを解くモデルが必要です。独立検査では断熱フラッシュと有限壁熱交換の総エントロピーが減少しないことも求めます。
+
+[燃料の相平衡と液体供給の境界](FUEL_PHASE_EQUILIBRIUM.ja.md)
+
+## 有限体積燃料タンクの相平衡
+
+`liquid_fuel_tank.parameters.headspace.phase_equilibrium` を `true` にするとタンク内の蒸発と凝縮を解きます。対応する膜が `phase_equilibrium` 物性を与え、追跡ヘッドスペースは R、cv、発熱量と化学量論比を共有します。湿潤タンクは共通初期温度と飽和燃料分圧を、乾燥タンクは飽和以下の分圧を宣言します。総密度は液体密度未満です。
+
+タンクの `evaporated_fuel_mass`、`condensed_fuel_mass` と符号付き `mass_flow` は完全刻みの正味相移動を累積します。`vapor_partial_pressure`、補正 `saturation_pressure`、液量と気体容積を併読します。ポンプは分離液体だけを吸い、二相ポンプ/レール輸送、気泡巻込みと局所 NPSH は未完成です。
+
+[有限体積燃料タンクの相平衡](TANK_PHASE_EQUILIBRIUM.ja.md)
+
+## 相平衡燃料輸送ネットワーク
+
+MCP で `equilibrium-fuel-network` または `electrothermal-fuel-network` を要求するか、同じ JSON を CLI で実行します。各容器の `mass`、`internal_energy`、`elastic_energy`、`vapor_mass`、`vapor_mass_fraction`、`vapor_volume_fraction`、`entropy`、`specific_enthalpy` を確認します。`internal_energy` は弾性壁を含み、化学エネルギーは別です。リンクは符号付き流量、累積質量、`transport_energy`、対エントロピー変化を公開します。
+
+有界後退 Euler が両容器に同じ採用質量 q とエンタルピー H を求めます。リンクは安定したコンポーネント ID 順に進み、有限熱浴は別の保存的部分ステップを使います。結合は一次精度です。質量・温度・圧力範囲外や求解失敗は入力、補償履歴、クラッチ試行区間を含むバッチ全体を拒否します。
+
+[相平衡燃料輸送ネットワーク](EQUILIBRIUM_FUEL_NETWORK.ja.md)
+
+## 軸駆動の相変化燃料ポンプ
+
+MCP で `equilibrium-fuel-pump` または `electric-equilibrium-fuel-pump` を要求するか JSON を CLI で実行します。室の質量、温度、圧力、蒸気割合、エネルギーを弁供給と軸速度に並べて確認します。コンポーネント `volume` は幾何基準、ノード `volume` は壁膨張込みです。`torque`、`hydraulic_power`、`hydraulic_work` が内部軸交換を示します。
+
+閉じた機械部分ステップは質量とエントロピーを保ちます。流体と弾性壁を含む蓄積エネルギーのため、軸仕事には幾何基準体積変化を使います。同じ採用エネルギー変化が歯車、コンバーター、油圧、クラッチ試行を含む連成解のトルクを決めます。膨張は軸を押し、正の `hydraulic_work` は軸から室への仕事です。外部圧力源は追加しません。
+
+[軸駆動の相変化燃料ポンプ](FUEL_CHAMBER_PUMP.ja.md)
+
+## 圧縮性平衡燃料ダクト
+
+`equilibrium_fuel_duct` は明示的な `compressible_fuel` セル間で質量、運動量、全エネルギーを輸送します。液体は圧縮性、蒸気は理想気体で、両相の圧力、温度、速度は共通です。局所平衡により凝縮とフラッシュ蒸発が生じます。有限の静止貯槽 2 個と有限熱壁が収支を閉じます。
+
+`liquid_bulk_modulus` を指定し、`compliance` を省略して、各ノードの `initial_velocity` を明示します。順序付きで重複しない内部 `cells` を 1–24 個指定し、各セルは一つのダクトに所属します。セル長は体積を `area` で割った値です。貯槽の速度はゼロで、内部セルを兼用できません。全ポートで同じ物性を使用します。`linear_resistance` と `quadratic_resistance` は管全体の抵抗を表し、セル体積に応じて配分します。`fluid_heat_fraction` は摩擦熱を流体と壁に配分します。直接の開度入力はありません。
+
+[圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md)
+
+## 軸駆動の圧縮性燃料室
+
+`compressible_fuel_chamber` は回転軸と有限の `compressible_fuel` 貯槽を結びます。軸の運動で容積が変わり、同じ圧力仕事が流体エネルギーと軸トルクを変えます。貯槽は `equilibrium_fuel_duct` と燃料を交換し、平衡フラッシュ蒸発や凝縮を扱えます。
+
+`node_a` は回転ポート、`node_b` の幾何所有者は一つです。`minimum_reference_volume`、`swept_volume`、`phase` を指定し、初期容積を初期軸角の幾何に合わせます。混合貯槽のバルク速度はゼロで、内部セルを兼用できません。質量のない正弦機構はピストンやカムの慣性を加えず、軸慣性を明示します。外部ケース圧力はゼロです。
+
+[軸駆動の圧縮性燃料室](COMPRESSIBLE_FUEL_CHAMBER.ja.md)
+
+## 相分率を凍結した圧縮性燃料ノズル
+
+`compressible_fuel_nozzle` は軸駆動室を含む有限の `compressible_fuel` 貯槽間に一方向の流れを与えます。液体圧縮エネルギーと理想蒸気は貯槽と同じ物性を使います。`phase_mode` を `frozen` と明示し、通過中の蒸気質量分率を一定に保ち、貯槽は再平衡させます。
+
+面積、有効面積の流量係数、`wall_kinetic_fraction` と有限熱壁を指定します。`initial_input` は [0,1] の開度で、任意の入力チャンネルで変更します。任意の `needle_node`、`closed_position`、`full_open_position` は指令に実際の並進ニードル開度を掛けます。両ポートのバルク速度はゼロで、物性と発熱量は一致し、内部セルには接続できません。逆圧差では理想的な開弁圧差ゼロの境界が閉じます。
+
+[相分率を凍結した圧縮性燃料ノズル](COMPRESSIBLE_FUEL_NOZZLE.ja.md)
+
+## 燃料ノズルの平衡相変化輸送
+
+`compressible_fuel_nozzle` の `phase_mode` を `equilibrium` にすると、通過中に瞬時の均質相平衡を仮定します。液体と蒸気は圧力、温度、速度を共有し、等エントロピー線に沿って蒸気分率が変化します。有限貯槽とノズルは同じ圧縮性液体ポテンシャルと理想蒸気基準を使います。`frozen` も独立した仮定として引き続き使えます。
+
+圧力と比エントロピーから安定な液体、蒸気、共存状態を求めます。化学ポテンシャル一致と既存の温圧範囲を使い、温度端点では binary64 の丸め近傍だけを許容します。面積、壁熱配分、開度、実ニードルは共通契約に従います。噴流は受入圧力まで理想完全膨張し、静止力積はニードル軸力や機械仕事を追加しません。
+
+[燃料ノズルの平衡相変化輸送](EQUILIBRIUM_FUEL_NOZZLE.ja.md)
+
+## 有限速度の燃料相変化緩和
+
+`relaxing_fuel` ノードは独立した蒸気質量分率を持ちます。液体と蒸気は圧力、温度、速度を共有しますが、化学平衡には明示した有限時間を要します。`relaxing_fuel_duct` は明示セルで質量、運動量、全エネルギー、蒸気質量を輸送します。滞留時間はセル形状と実際の流速から決まります。
+
+`relaxing-fuel-evaporation` または `relaxing-fuel-duct` を実行します。実際と平衡の分率、化学親和力、相変化エントロピー、ポートの蒸気収支、全体の蒸気残差を観測できます。蒸発・凝縮履歴は受理した各刻みの正味源項を符号で分けた値で、微視的な順逆の総流量ではありません。独立指数解、エントロピー微分、凍結音響、剛な平衡極限、時間自己細分化、独立線形音響による格子細分化を確認します。トランザクション、可搬再生、実 MCP は別々に検証し、数値は検証証拠に記録します。
+
+[有限速度の燃料相変化緩和](RELAXING_FUEL.ja.md)
+
+## 相変化緩和燃料ポンプと凍結相計量
+
+`compressible_fuel_chamber` は `relaxing_fuel` 貯槽の体積を制御できます。可逆な軸仕事では蒸気質量分率を固定し、化学緩和はエネルギー保存の独立源項として扱います。`compressible_fuel_nozzle` は `phase_mode` が `frozen` のとき二つの緩和貯槽を結び、全質量、蒸気質量、よどみエンタルピーを輸送します。実際のソレノイド、ばね、ストッパーを備えた物理針弁で開度を計量できます。
+
+`relaxing-fuel-chamber` または `relaxing-pump-needle` を実行します。体積と仕事、実際と平衡の分率、相変化エントロピー、`total_vapor_delivered`、ポート在庫、全体蒸気残差を観測します。純相断熱線、独立した分率固定の圧力積分、微小仕事、可逆サイクル、独立理想蒸気軸 ODE と比較します。有限速度結合の細分化、共有貯槽の源項時間、全収支、取消、ロールバック、分岐、割当、可搬再生、実 MCP は個別に検証し、数値は検証証拠に記録します。
+
+[相変化緩和燃料ポンプと凍結相計量](RELAXING_FUEL_BOUNDARIES.ja.md)

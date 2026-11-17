@@ -429,6 +429,14 @@ namespace Power.Studio
                     Shape("Hydraulic chamber " + node.Id, PrimitiveType.Cylinder, position, new Vector3(1.0f, 0.65f, 1.0f), blue);
                     Shape("Hydraulic compliance marker " + node.Id, PrimitiveType.Cube, position + Vector3.up * 0.7f, new Vector3(0.7f, 0.08f, 0.7f), steel);
                 }
+                else if (node.Domain == Domain.Fuel)
+                {
+                    position.y = 1.0f;
+                    var surface = Surface(new Color(0.15f, 0.48f, 0.35f));
+                    _thermalMaterials.Add(node.Id, surface);
+                    Shape("Fuel vessel " + node.Id, PrimitiveType.Cylinder, position, new Vector3(1.3f, 0.8f, 1.3f), surface);
+                    Shape("Fuel vessel lid " + node.Id, PrimitiveType.Cylinder, position + Vector3.up * 0.85f, new Vector3(1.4f, 0.05f, 1.4f), steel);
+                }
                 else if (node.Domain == Domain.Gas)
                 {
                     position.y = 1.0f;
@@ -472,6 +480,16 @@ namespace Power.Studio
                 if (component.Kind == ComponentKind.Shaft || component.Kind == ComponentKind.ThermalLink)
                     Connection("Component " + component.Id, a, component.NodeB == 0 ? new Vector3(a.x, 0.05f, a.z + 1) : positions[component.NodeB],
                         component.Kind == ComponentKind.Shaft ? steel : copper, component.Kind == ComponentKind.Shaft ? 0.15f : 0.07f);
+                if (component.Kind == ComponentKind.FuelRestriction || component.Kind == ComponentKind.FuelCheckValve || component.Kind == ComponentKind.FuelHeatLink)
+                    Connection((component.Kind == ComponentKind.FuelHeatLink ? "Fuel heat link " : "Fuel restriction ") + component.Id,
+                        a, positions[component.NodeB], component.Kind == ComponentKind.FuelHeatLink ? copper : blue, 0.08f);
+                if (component.Kind == ComponentKind.FuelChamber)
+                {
+                    Vector3 fuel = positions[component.NodeB], center = (a + fuel) * 0.5f + Vector3.up * 0.6f;
+                    Shape("Fuel chamber " + component.Id, PrimitiveType.Cylinder, center, new Vector3(0.7f, 0.4f, 0.7f), copper);
+                    Connection("Fuel chamber shaft " + component.Id, a, center, steel, 0.1f);
+                    Connection("Fuel chamber port " + component.Id, center, fuel, blue, 0.08f);
+                }
                 if (component.Kind == ComponentKind.GasOrifice)
                 {
                     Vector3 b = component.NodeB == 0 ? a + new Vector3(0, 0, 1.5f) : positions[component.NodeB];
@@ -559,6 +577,29 @@ namespace Power.Studio
                     Connection((component.Kind == ComponentKind.CarrierGear ? "Carrier mesh port B " : "Planetary ring ") + component.Id, ring, center, steel, 0.08f);
                     Connection("Planetary carrier " + component.Id, carrier, center, blue, 0.08f);
                 }
+                if (component.Kind == ComponentKind.LiquidRailFeed)
+                {
+                    Shape("Liquid rail feed " + component.Id, PrimitiveType.Cube, a + Vector3.up * 1.1f, new Vector3(0.45f, 0.3f, 0.45f), blue);
+                    continue;
+                }
+                if (component.Kind == ComponentKind.LiquidFuelTank)
+                {
+                    Vector3 tankCenter = a + Vector3.right * 1.2f + Vector3.up * 0.7f;
+                    Shape("Liquid fuel tank " + component.Id, PrimitiveType.Cylinder, tankCenter, new Vector3(0.55f, 0.4f, 0.55f), blue);
+                    if (component.LiquidFuelTank != null && component.LiquidFuelTank.Headspace != null && component.LiquidFuelTank.Headspace.PhaseEquilibrium)
+                        Connection("Tank phase exchange " + component.Id, tankCenter, positions[component.LiquidFuelTank.Headspace.GasNode], copper, 0.05f);
+                    continue;
+                }
+                if (component.Kind == ComponentKind.LiquidRailReturn)
+                {
+                    Shape("Liquid rail return " + component.Id, PrimitiveType.Cube, a + Vector3.left * 1.2f + Vector3.up * 0.8f, new Vector3(0.4f, 0.25f, 0.4f), blue);
+                    continue;
+                }
+                if (component.Kind == ComponentKind.HydraulicAtController)
+                {
+                    Shape("AT feedback controller " + component.Id, PrimitiveType.Cube, a + Vector3.up * 1.4f, new Vector3(0.55f, 0.35f, 0.45f), blue);
+                    continue;
+                }
                 if (component.Kind == ComponentKind.DualClutchController)
                 {
                     Shape("DCT sampled controller " + component.Id, PrimitiveType.Cube, a + Vector3.up * 1.4f, new Vector3(0.55f, 0.35f, 0.45f), blue);
@@ -592,7 +633,8 @@ namespace Power.Studio
                     Vector3 center=(a+positions[component.NodeB])*0.5f+Vector3.up*0.4f;
                     Shape("Liquid fuel film "+component.Id,PrimitiveType.Cube,center,new Vector3(0.7f,0.08f,0.6f),copper);
                     Connection("Film heat source "+component.Id,positions[component.NodeB],center,copper,0.05f);
-                    Connection("Fuel vapor admission "+component.Id,center,a,copper,0.06f);
+                    string exchange = component.FuelFilm != null && component.FuelFilm.PhaseEquilibrium != null ? "Fuel phase exchange " : "Fuel vapor admission ";
+                    Connection(exchange+component.Id,center,a,copper,0.06f);
                 }
                 if (component.Kind == ComponentKind.GasFuelInjector)
                 {

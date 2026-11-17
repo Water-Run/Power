@@ -5,6 +5,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using Power.Agent;
+using Power.Experiments;
 using static Power.Tests.CoreChecks;
 
 namespace Power.Tests;
@@ -14,6 +15,8 @@ internal static class AgentChecks
     internal static IEnumerable<(string Name, Action Run)> All =>
     [
         ("agent discovery / structured model repair", Discovery),
+        ("laboratory catalog / complete sources bundled examples and immutable inventory", LaboratoryInventory),
+        ("agent capabilities / exact schema components and complete example discovery", CapabilityCoverage),
         ("agent revision conflicts / input atomicity / cancellation", Revisions),
         ("agent branch isolation / filtered snapshots / close", Branches),
         ("agent session capacity / reclamation", Capacity),
@@ -45,6 +48,66 @@ internal static class AgentChecks
         Require(!error.Ok && error.Error is { Code: "model_unit", ObjectId: 1, Field: "storage" });
         using var typo = JsonDocument.Parse(Example.GetRawText().Replace("\"description\"", "\"descripton\""));
         Require(AgentWorkspace.ValidateModel(typo.RootElement).Error?.Code == "invalid_argument");
+    }
+
+    private static void LaboratoryInventory()
+    {
+        var entries = LaboratoryCatalog.Entries;
+        var sources = Directory.EnumerateFiles(AppContext.BaseDirectory, "*.power.json")
+            .Select(path => Path.GetFileName(path)[..^".power.json".Length]).ToHashSet(StringComparer.Ordinal);
+        Require(sources.SetEquals(entries.Select(lab => lab.Name)) && entries.Count == sources.Count);
+        Require(entries.Select(lab => lab.AssetName).Distinct(StringComparer.OrdinalIgnoreCase).Count() == entries.Count);
+        foreach (var lab in entries)
+        {
+            string source = File.ReadAllText(Path.Combine(AppContext.BaseDirectory, lab.Name + ".power.json"));
+            Require(LaboratoryCatalog.ReadSource(lab.Name) == source, "Bundled source differs: " + lab.Name);
+            Require(!string.IsNullOrWhiteSpace(lab.DisplayName));
+            Require(ExperimentRunner.Validate(ModelDocument.Parse(source)).Calibration == "unverified");
+        }
+        Throws<NotSupportedException>(() => ((IList<LaboratoryEntry>)entries)[0] = entries[0] with { Name = "changed" });
+        Throws<ArgumentException>(() => LaboratoryCatalog.ReadSource("../electrothermal"));
+        Require(entries.Single(lab => !lab.AgentExample).Name == "thermal-network");
+    }
+
+    private static void CapabilityCoverage()
+    {
+        var capabilities = Data(AgentWorkspace.Capabilities());
+        var advertised = capabilities.GetProperty("examples").EnumerateArray().Select(value => value.GetString()!).ToArray();
+        var expected = LaboratoryCatalog.Entries.Where(lab => lab.AgentExample).Select(lab => lab.Name).ToArray();
+        Require(advertised.SequenceEqual(expected) && advertised.Distinct().Count() == advertised.Length);
+        var components = capabilities.GetProperty("components").EnumerateArray().Select(value => value.GetString()!).ToArray();
+        var schemaComponents = new HashSet<string>(StringComparer.Ordinal);
+        void CollectKinds(JsonElement element)
+        {
+            if (element.ValueKind == JsonValueKind.Object)
+            {
+                if (element.TryGetProperty("properties", out var properties) && properties.TryGetProperty("kind", out var kind) &&
+                    kind.TryGetProperty("const", out var name)) schemaComponents.Add(name.GetString()!);
+                foreach (var property in element.EnumerateObject()) CollectKinds(property.Value);
+            }
+            else if (element.ValueKind == JsonValueKind.Array)
+                foreach (var value in element.EnumerateArray()) CollectKinds(value);
+        }
+        CollectKinds(Data(AgentWorkspace.ModelSchema()));
+        Require(schemaComponents.SetEquals(components) && components.Distinct().Count() == components.Length,
+            "Components must match the model schema once each. Missing: " + string.Join(", ", schemaComponents.Except(components)) +
+            "; unexpected: " + string.Join(", ", components.Except(schemaComponents)) +
+            "; duplicates: " + string.Join(", ", components.GroupBy(name => name).Where(group => group.Count() > 1).Select(group => group.Key)));
+        foreach (string name in advertised)
+        {
+            var example = Data(AgentWorkspace.ExampleModel(name));
+            var actual = Data(AgentWorkspace.ValidateModel(example)).GetProperty("model");
+            var model = ExperimentRunner.Validate(ModelDocument.Parse(LaboratoryCatalog.ReadSource(name)));
+            Require(actual.GetProperty("fingerprint").GetString() == model.Fingerprint.ToString("x16"));
+            Require(example.GetProperty("components").EnumerateArray().All(component => schemaComponents.Contains(component.GetProperty("kind").GetString()!)));
+        }
+        Require(Data(AgentWorkspace.ExampleModel()).GetRawText() == Data(AgentWorkspace.ExampleModel("electrothermal")).GetRawText());
+        foreach (string name in new[] { "unknown", "thermal-network", "Electrothermal", "../electrothermal" })
+        {
+            var error = AgentWorkspace.ExampleModel(name).Error;
+            Require(error is { Code: "unknown_example", Field: "name" } &&
+                error.Message == "Available examples: " + string.Join(", ", advertised) + ".");
+        }
     }
 
     private static void Revisions()

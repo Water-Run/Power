@@ -14,7 +14,352 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 24 и сохранённые читатели
+## Текущая версия 41
+
+`compressible_fuel_chamber` может задавать объём резервуара `relaxing_fuel`. Обратимая работа вала сохраняет массовую долю пара; химическая релаксация служит отдельным энергосохраняющим источником. `compressible_fuel_nozzle` соединяет два релаксирующих резервуара при `phase_mode` равном `frozen`, перенося общую массу, массу пара и энтальпию торможения. Физическая игла с катушкой, пружиной и упором регулирует открытие.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_boundaries | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| relaxing_nozzle_phase_mode | 1 frozen |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| retained_asset_readers | power.asset.v1..v40 |
+
+[Релаксационные топливные насосы и дозирование с замороженной фазой](RELAXING_FUEL_BOUNDARIES.ru.md)
+
+## Сохранённая версия 40
+
+Узел `relaxing_fuel` имеет независимую массовую долю пара. Жидкость и пар имеют общие давление, температуру и скорость, но химическое равновесие достигается за заданное конечное время. `relaxing_fuel_duct` переносит массу, импульс, полную энергию и массу пара через явные ячейки. Время пребывания определяется геометрией и фактической скоростью.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_fuel | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| initial_vapor_mass_fraction | fraction, [0,1] |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| equilibrium_fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| relaxing_fuel_material_record_bytes | 180 |
+| relaxing_material_extension | uint64 phase_relaxation_time_ns, quantity initial_vapor_mass_fraction |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117 equilibrium_vapor_mass_fraction, 118 chemical_affinity, 119 vapor_mass_residual, 120 vapor_mass_at_a, 121 vapor_mass_at_b |
+| retained_asset_readers | power.asset.v1..v39 |
+
+[Фазовая релаксация топлива с конечной скоростью](RELAXING_FUEL.ru.md)
+
+## Сохранённая версия 39
+
+Установите `phase_mode` компонента `compressible_fuel_nozzle` в `equilibrium` для мгновенного однородного равновесия при прохождении. Жидкость и пар имеют общие давление, температуру и скорость; паросодержание меняется вдоль изоэнтропы. Сопло и конечные резервуары используют одинаковый потенциал сжимаемой жидкости и опорный идеальный пар. `frozen` остаётся отдельным поддерживаемым предположением.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_equilibrium_nozzle | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| phase_mode_frozen | 1 |
+| phase_mode_equilibrium | 2 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 flux_relative_uncertainty |
+| retained_asset_readers | power.asset.v1..v38 |
+
+[Равновесное прохождение топлива через сопло](EQUILIBRIUM_FUEL_NOZZLE.ru.md)
+
+
+## Сохранённая версия 38
+
+`compressible_fuel_nozzle` обеспечивает односторонний поток между конечными резервуарами `compressible_fuel`, включая камеры с приводом от вала. Сжатие жидкости и идеальный пар используют материал резервуара. Явно задайте `phase_mode` как `frozen`: массовое паросодержание фиксировано при прохождении сопла, а резервуары возвращаются к равновесию.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_record_count | count(kind == compressible_fuel_nozzle) |
+| compressible_nozzle_record_order | component_index, area, discharge_coefficient, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| compressible_nozzle_quantity_fields | 4 |
+| compressible_nozzle_phase_mode_frozen | 1 |
+| absent_needle | needle_node=0; positions=default quantities |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| additional_reported_states_per_nozzle | 13 |
+| retained_asset_readers | power.asset.v1..v37 |
+
+[Сжимаемые топливные сопла с замороженным составом](COMPRESSIBLE_FUEL_NOZZLE.ru.md)
+
+
+## Сохранённая версия 37
+
+`compressible_fuel_chamber` соединяет вращающийся вал с конечным резервуаром `compressible_fuel`. Движение меняет объём, а одна и та же работа давления меняет энергию среды и момент вала. Резервуар связан с `equilibrium_fuel_duct`, включая равновесное вскипание и конденсацию.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 42 |
+| compressible_fuel_chamber_kind | 50 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_record_bytes | 40 |
+| fuel_chamber_record_count | count(kind in [fuel_chamber, compressible_fuel_chamber]) |
+| fuel_chamber_record_order | component_index, minimum_reference_volume, swept_volume, phase |
+| fuel_chamber_quantity_fields | 3 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_compressible_chamber | 4 |
+| retained_asset_readers | power.asset.v1..v36 |
+
+[Топливные камеры сжимаемой среды с приводом от вала](COMPRESSIBLE_FUEL_CHAMBER.ru.md)
+
+
+## Сохранённая версия 36
+
+`equilibrium_fuel_duct` переносит массу, импульс и полную энергию через явные ячейки `compressible_fuel`. Жидкость сжимаема, пар идеален; обе фазы имеют общие давление, температуру и скорость. Локальное равновесие допускает конденсацию и вскипание. Два конечных неподвижных резервуара и конечная тепловая стенка замыкают балансы.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 41 |
+| compressible_fuel_domain | 8 |
+| equilibrium_fuel_duct_kind | 49 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| compressible_fuel_material_first_quantity | liquid_bulk_modulus replaces compliance |
+| compressible_fuel_material_appended_quantity | initial_velocity |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| fuel_duct_cell_count | 1..24 |
+| fuel_duct_record_order | component_index, cell_count, area, linear_resistance, quadratic_resistance, fluid_heat_fraction, cells |
+| fuel_duct_record_count | count(component.kind == equilibrium_fuel_duct) |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> inputs |
+| additional_reported_states_per_node | 3 |
+| additional_reported_states_per_duct | 11 |
+| additional_output_fields | 112 density; 113 sound_speed; 114 mass_at_a; 115 mass_at_b |
+| retained_asset_readers | power.asset.v1..v35 |
+
+[Сжимаемые равновесные топливные каналы](EQUILIBRIUM_FUEL_DUCT.ru.md)
+
+
+## Сохранённая версия 35
+
+`fuel_inertial_pipe` соединяет два конечных топливных узла и конечную тепловую стенку. Горизонтальная жёсткая линия имеет собственные массу жидкости, калорическую и кинетическую энергии сверх запасов сосудов. Плотность постоянна, температура переменна при полном смешении. Порты и линия остаются жидкими; квазистатические связи сохраняют отдельную двухфазную модель.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 40 |
+| component_kind | 48 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_pipe_record_bytes | 88 |
+| fuel_pipe_record_count | count(component.kind == fuel_inertial_pipe) |
+| fuel_pipe_quantity_fields | 7 |
+| fuel_pipe_quantity_order | length, area, linear_resistance, quadratic_resistance, initial_flow, initial_temperature, fluid_heat_fraction |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> inputs |
+| additional_reported_states_per_pipe | 13 |
+| resistance_units | pa_s_m3 / 53; pa_s2_m6 / 54 |
+| additional_output_fields | 107-111 |
+| retained_asset_readers | power.asset.v1..v34 |
+
+[Импульс конечной линии жидкого топлива](FUEL_INERTIAL_PIPE.ru.md)
+
+
+## Сохранённая версия 34
+
+`fuel_discharge` связывает конечный источник топливного домена с газовым узлом `finite_fuel_film`. Задайте `phase_mode` как `frozen`: массовая доля пара постоянна в сопле, а объёмы на концах вновь уравновешиваются. Однородные фазы имеют общие температуру и скорость; жидкость несжимаема, пар — идеальная псевдокомпонента. Свойства и плотность жидкости должны совпадать.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tags | 38, 39 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_discharge_kind | 46 |
+| finite_fuel_film_kind | 47 |
+| finite_fuel_film_record_bytes | 112 |
+| regular_fuel_film_record_bytes | 100 |
+| finite_fuel_film_added_quantity | finite_volume_density |
+| fuel_discharge_record_bytes | 52 |
+| fuel_discharge_record_order | component_index, film_component, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| phase_mode_frozen | 1 |
+| fuel_discharge_orifice_extension_bytes | 36 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> inputs |
+| additional_reported_states_per_discharge | 11 |
+| jet_impulse_unit | n_s / NewtonSecond / 52 |
+| additional_output_fields | 101-106 |
+| retained_asset_readers | power.asset.v1..v33 |
+
+[Подача топлива с замороженным паросодержанием в конечный приёмник](FUEL_DISCHARGE.ru.md)
+
+
+## Сохранённая версия 33
+
+`fuel_chamber` связывает фактический вал с конечной камерой топлива. Входной и выходной `fuel_check_valve` обеспечивают наполнение и подачу по перепаду давления. Жидкость, пар и упругая энергия используют одно замыкание. При недостаточном притоке камера может испарять топливо на всасывании; подача следует рассчитанным массе и давлению.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 37 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_chamber_kind | 44 |
+| fuel_check_valve_kind | 45 |
+| fuel_chamber_geometry_bytes | 40 |
+| fuel_chamber_quantity_fields | 3 |
+| fuel_chamber_record_count | count(component.kind == fuel_chamber) |
+| fuel_geometry_quantity_order | minimum_reference_volume, swept_volume, phase |
+| extension_table_order | fuel_material -> fuel_chamber -> inputs |
+| additional_reported_states_per_chamber | 3 |
+
+[Фазоразрешающий топливный насос с приводом от вала](FUEL_CHAMBER_PUMP.ru.md)
+
+
+## Сохранённая версия 32
+
+Домен `fuel` переносит чистую жидкость и пар вместе в конечных упругих сосудах. Каждый сосуд независимо хранит полную массу и калорическую плюс упругую энергию; фазовый flash определяет температуру, давление и доли пара. `fuel_restriction` обменивает однородную среду донора, `fuel_heat_link` обменивается теплом с конечным тепловым узлом. Химическая энергия теплоты сгорания учитывается отдельно.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 36 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_domain | 7 |
+| fuel_restriction_kind | 42 |
+| fuel_heat_link_kind | 43 |
+| fuel_material_record_bytes | 148 |
+| fuel_material_quantity_fields | 12 |
+| fuel_material_count | count(node.domain == fuel) |
+| fuel_table_order | liquid_returns -> fuel_material -> inputs |
+| fuel_quantity_order | compliance, liquid_density, maximum_pressure, gas_constant, vapor_specific_heat, liquid_specific_heat, reference_temperature, latent_internal_energy, reference_pressure, minimum_temperature, maximum_temperature, lower_heating_value |
+| additional_states_per_fuel_node | 2 |
+| additional_states_per_fuel_link | 5 |
+
+[Сеть переноса равновесного топлива](EQUILIBRIUM_FUEL_NETWORK.ru.md)
+
+
+## Сохранённая версия 31
+
+Задать `liquid_fuel_tank.parameters.headspace.phase_equilibrium` как `true` для испарения и конденсации в баке. Связанная плёнка задаёт свойства `phase_equilibrium`; отслеживаемый газ имеет те же R, cv, теплоту сгорания и стехиометрию. Для влажного бака задаются общая начальная температура и насыщенное парциальное давление; сухой бак начинается не выше насыщения. Общая плотность ниже плотности жидкости.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 35 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 52 |
+| tank_phase_flag_offset | 48 |
+| tank_phase_flag_int32 | 0, 1 |
+| additional_states_per_equilibrium_tank | 3 |
+
+[Равновесие топлива в баке конечного объёма](TANK_PHASE_EQUILIBRIUM.ru.md)
+
+## Сохранённая версия 30
+
+Необязательный `fuel_film.parameters.phase_equilibrium` задаёт `reference_pressure` в `pa` или `bar`, а `minimum_temperature` / `maximum_temperature` в `k`. `saturation_temperature` обозначает опорную температуру; `latent_internal_energy` — разность удельной внутренней энергии пара и жидкости при ней. Каждый равновесный приёмник имеет одну плёнку. Начальный снимок сохраняется; принятые интервалы уравновешивают газ и жидкость с теплообменом с конечной стенкой.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 34 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| fuel_film_record_bytes | 100 |
+| phase_equilibrium_extension_bytes | 36 |
+| condensed_fuel_mass_field | 89 |
+| vapor_partial_pressure_field | 90 |
+| saturation_pressure_field | 91 |
+| cavitation_margin_field | 92 |
+| additional_states_per_equilibrium_film | 1 |
+
+[Фазовое равновесие топлива и границы жидкой подачи](FUEL_PHASE_EQUILIBRIUM.ru.md)
+
+## Сохранённая версия 29
+
+`liquid_fuel_tank.parameters.headspace` задаёт `capacity` в `m3` или `l` и `gas_node`. Узел газа не задаёт `storage`: объём равен `capacity - liquid_mass / density`, имеет одного владельца и остаётся положительным. Заданное давление насоса и возврата равно нулю: конечный газ определяет давление входа.
+
+Примеры `vented-tank-liquid-cylinder` и `vented-tank-needle-cylinder` используют бак 1513, газ 1520 и вход вентиляции 960. Asset v29 хранит геометрию и читает v1-v28. Проходят аналитические работа/производные, независимая сходимость ODE, балансы, portable/MCP воспроизведение, откат и шаг без аллокаций.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 33 (headspace geometry) |
+| fill_fraction_field | 88 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_tank_record_bytes | 48 |
+| headspace_extension_bytes | 16 (capacity quantity + gas_node) |
+
+[Геометрия бака и конечное газовое пространство](TANK_HEADSPACE.ru.md)
+
+## Сохранённая версия 28
+
+`recirculating-liquid-cylinder` и `recirculating-needle-cylinder` сохраняют конечное топливо, фактическую инжекцию, испарение и необязательную иглу. v28 хранит связи/долю и читает v1-v27. Каждый возврат добавляет 8 состояний в прежних границах.
+
+| Identifier | Value |
+|---|---|
+| kind | 41 (`liquid_rail_return`) |
+| fingerprint_tag | 32 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| liquid_return_record_bytes | 24 |
+
+[LIQUID_FUEL_RETURN.ru.md](LIQUID_FUEL_RETURN.ru.md)
+
+## Сохранённая версия 27
+
+v27 сохраняет бак и выбор подачи и читает v1-v26. Каждый бак добавляет 4 состояния в прежних границах. Независимый мокрый обмен, аналитические давление/энергия вала после опустошения, обратное смешение, полные балансы, rollback, ветви и шаги без выделений проверены.
+
+| Identifier | Value |
+|---|---|
+| kind | 40 (`liquid_fuel_tank`) |
+| fingerprint_tag | 31 |
+| tank_state_field | 87 |
+| count_table_int32 | 39 |
+| count_table_bytes | 156 |
+| header_bytes | 234 + UTF-8 name length |
+| liquid_feed_record_bytes | 28 |
+| liquid_tank_record_bytes | 32 |
+
+[LIQUID_FUEL_TANK.ru.md](LIQUID_FUEL_TANK.ru.md)
+
+## Сохранённая версия 26
+
+Кодировщик пишет `power.asset.v26` и читает v1-v26. Содержатся 38 счётчиков int32 (152 bytes); заголовок занимает 230 + длина имени UTF-8 bytes. Тип 39 — `liquid_rail_feed`, тег отпечатка 30. Запись 24 bytes хранит индекс, ID инжектора/насоса и температуру источника. Проверяются типы и исключительное владение; переподписанное понижение v25 отклоняет новый тип.
+
+## Сохранённая версия 25
+
+Кодировщик пишет `power.asset.v25` и читает v1-v25. Таблица содержит 37 значений int32 (148 bytes); заголовок занимает 226 + длина имени UTF-8 bytes. Тип 38 — `at_controller`, тег отпечатка 29. Запись содержит 208 фиксированных bytes и 12 bytes на маршрут. Число маршрутов — 5 или 6; ограниченная сумма объявляется отдельно. Проверяются типы, часы, единицы, владение и топология. Понижение до v24 с обновлённым digest отклоняет новый тип.
+
+## Сохранённая версия 24
 
 Кодировщик пишет `power.asset.v24`; версии с 1 по 24 остаются читаемыми. Таблица счётчиков и размеры записей остаются теми же, что у v23. Вид 37 — `carrier_gear`: его базовое отношение конечно, со знаком и не равно нулю; его 8-байтовое расширение шестерни сохраняет индекс компонента и отдельное подвижное водило. Типизированные счётчики покрывают каждое зацепление водила. Понижение v23 с пересчитанным дайджестом отклоняет новый вид.
 

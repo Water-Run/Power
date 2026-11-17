@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "power.laboratory_catalog.v1.schema.json",
+  "title": "Power! laboratory catalog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema", "laboratories"],
+  "properties": {
+    "schema": { "const": "power.laboratory_catalog.v1" },
+    "calibration": { "const": "unverified" },
+    "laboratories": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "asset_name", "display_name", "agent_example"],
+        "properties": {
+          "name": { "type": "string", "pattern": "^[a-z][a-z0-9-]*$" },
+          "asset_name": { "type": "string", "pattern": "^[A-Za-z][A-Za-z0-9]*$" },
+          "display_name": { "type": "string", "minLength": 1 },
+          "agent_example": { "type": "boolean" }
+        }
+      }
+    }
+  }
+}
