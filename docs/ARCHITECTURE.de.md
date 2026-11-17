@@ -250,7 +250,7 @@ Die [Baugruppe der AT-Ansteuerung](AT_HYDRAULIC_ACTUATION.de.md) senkt 1..6 erkl
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v38 speichert Routen, Verstärkungen und Uhren und liest v1-v37.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v39 speichert Routen, Verstärkungen und Uhren und liest v1-v38.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -260,7 +260,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v38 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v37. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v39 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v38. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -345,3 +345,11 @@ Beide Phasen teilen Druck, Temperatur und Geschwindigkeit; Phasenmassenübertrag
 Konservative Teilschritte erster Ordnung übertragen dieselbe Masse und Enthalpie; Strahlenergie verteilt sich auf Fluid und Wand. Stoffzustände und gesamte Paarentropie werden geprüft. Grenzen: 4096 Teilschritte, 64 Halbierungen je Kandidat, anfänglich höchstens 0.1 der kleineren Behältermasse. Die Schließgrenze erlaubt 128 binary64 epsilon mal maximalen Kompressionsmodul oder Portdruck, ohne Ausgabedruck zu begrenzen. Fehler nehmen den ganzen Stapel zurück. Schritt, Bestand, Stoffgrenzen, Nadelhub und Fläche prüfen.
 
 [Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil](COMPRESSIBLE_FUEL_NOZZLE.de.md)
+
+## Kraftstoffdüsentransit im Phasengleichgewicht
+
+Positive Gleichgewichtsschallgeschwindigkeit im Quadrat liefert steigende Dichte mit Druck bei fester Entropie; der Enthalpieabfall sinkt. Diese monotonen Faktoren begrenzen den Intervallfluss einschließlich Phasengrenzen und mehrerer Extrema. Verzweigen und Begrenzen liefert abgetastete Untergrenze und verbleibende Obergrenze mit relativer Breite höchstens 1e-4. Grenzen sind 512 Stackintervalle und 8192 Teilungen. Kalorische Differenzen nutzen Rundungsspielraum und monotone Integralgrenzen mit bis zu 256 Riemann-Feldern und 80 Schließungsiterationen. Ungelöste Fälle verwerfen den Stapel. Ein glattes inneres Maximum ist sonisch; ein Phasengrenzenmaximum kann nicht glatt sein.
+
+Konservative Teilschritte erster Ordnung übertragen dieselbe Masse und Enthalpie; Strahlenergie verteilt sich auf Fluid und Wand. Stoffzustände und gesamte Paarentropie werden geprüft. Grenzen: 4096 Teilschritte, 64 Halbierungen je Kandidat, anfänglich höchstens 0.1 der kleineren Behältermasse. Die Schließgrenze erlaubt 128 binary64 epsilon mal maximalen Kompressionsmodul oder Portdruck, ohne Ausgabedruck zu begrenzen. Fehler nehmen den ganzen Stapel zurück. Schritt, Bestand, Stoffgrenzen, Nadelhub und Fläche prüfen.
+
+[Kraftstoffdüsentransit im Phasengleichgewicht](EQUILIBRIUM_FUEL_NOZZLE.de.md)

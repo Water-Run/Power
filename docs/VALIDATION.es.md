@@ -2,6 +2,85 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · **Español** · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: Tránsito de combustible en equilibrio por toberas
+
+Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equilibrio homogéneo instantáneo durante el tránsito. Líquido y vapor comparten presión, temperatura y velocidad; la calidad cambia sobre la isentrópica. Tobera y depósitos finitos usan el mismo potencial líquido compresible y referencia de vapor ideal. `frozen` sigue siendo una hipótesis independiente admitida.
+
+Ejecute `equilibrium-flashing-nozzle` o `equilibrium-pump-needle`. `flux_relative_uncertainty` describe la última envolvente constitutiva local aceptada; no limita caudal medio, masa entregada, integración temporal de primer orden ni calibración. Se comparan inversión independiente de saturación/entropía, bloqueo analítico gas/líquido, búsqueda global densa separada, identidades de energía/entropía y refinamiento analítico de vaciado de vapor. Inventarios, eje/conducto/aguja, reversión, cancelación, ramas, asignaciones, assets y MCP real se verifican aparte. Números y fronteras anteriores están en la evidencia de validación.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 566/566 |
+| standard_checks_on_dotnet | 446/446 |
+| actual_mcp_groups | 68/68 |
+| laboratories | 64 |
+| agent_examples | 63 |
+| unchanged_laboratories | 62 |
+| identical_complete_sample_boundaries | 7597 |
+| all_sample_boundaries | 7619 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_global_pressure_scan_intervals | 4000 |
+| maximum_local_flux_relative_uncertainty | 0.0001 |
+| stack_intervals | 512 |
+| global_splits | 8192 |
+| pressure_integral_panels | 256 |
+| closure_iterations | 80 |
+| asset_version | power.asset.v39 |
+| agent_api_version | 0.44.0 |
+| fingerprint_tag | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 |
+| v38_fixture_sha256 | b8469401c7a4469a603aa81ef34ca70d9fc98bbc7e56aa7877a4fa65a153e195 |
+| verification_log_sha256 | 2be9921f4634380f8b9ce177c8da5c922413f4eb0422b761561ac6ab8d92ba65 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 64 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 240 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.9392239954291264e-08, 2.4695055752880482e-08, 1.2347261926729528e-08, 6.1735645367117e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k | last_flux_relative_uncertainty | last_equilibrium_exit_vapor_fraction |
+|---|---|---|---|---|---|---|---|---|
+| equilibrium-flashing-nozzle | 8099b7425ea5b4d9 | 557164f82f2dd0e3 | 11 | 1.1641532182693481e-10 | 1.7661137765032928e-07 | 6.957073803745578e-06 | 1.1571916635366719e-05 | 0.21267793887461828 |
+| equilibrium-pump-needle | a20286a9c7bbf3c1 | 30337e4b5d9e0b28 | 11 | 2.218044357904514e-08 | 1.6315747705993148e-05 | 8.685222016514312e-05 | 2.7755575615628914e-13 | 0 |
+
+- `artifacts/reports/equilibrium-nozzle-final-2026-11-17.log`
+- `artifacts/reports/equilibrium-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-doc-audit-2026-11-17.json`
+
+La velocidad del sonido de equilibrio al cuadrado positiva implica densidad creciente con presión a entropía fija; la caída de entalpía disminuye. Estos factores monótonos acotan el flujo en intervalos, incluidas fronteras de fase y varios extremos. Ramificación y acotación devuelve cota inferior muestreada y superior restante con ancho relativo máximo 1e-4. Límites: 512 intervalos en pila y 8192 divisiones. Diferencias calóricas usan márgenes de redondeo y cotas integrales monótonas con hasta 256 paneles Riemann y 80 iteraciones. Lo no resuelto rechaza el lote. Un máximo interior suave es sónico; uno de frontera puede no ser suave.
+
+Los parámetros siguen `unverified`. El límite de equilibrio supone pseudofluido puro, vapor ideal, expansión térmica líquida nula y velocidad común. Omite tiempos finitos de nucleación/relajación, deslizamiento, pulverización, gas portador y receptor con combustión. La envolvente usa márgenes binary64 declarados; no es una prueba formal de intervalos con redondeo dirigido. La clasificación de garganta cerca de transiciones debe leerse con la envolvente. Validez medida y Unity real siguen pendientes.
+
 ## 2026-11-17: Toberas de combustible compresible de calidad congelada
 
 Una `compressible_fuel_nozzle` transporta flujo unidireccional entre depósitos finitos `compressible_fuel`, incluidas cámaras accionadas por eje. Compresión líquida y vapor ideal comparten el material. Declare `phase_mode` como `frozen`: la calidad másica permanece fija durante el tránsito y los depósitos se reequilibran.

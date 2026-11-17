@@ -14,7 +14,30 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 38
+## Current version 39
+
+Set `compressible_fuel_nozzle` `phase_mode` to `equilibrium` for instantaneous homogeneous phase equilibrium during transit. Liquid and vapor share pressure, temperature and velocity, and vapor quality changes along the isentrope. The same compressible liquid cold potential and ideal-vapor reference supply both nozzle and finite reservoirs. The `frozen` mode remains a separate supported assumption.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_equilibrium_nozzle | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| phase_mode_frozen | 1 |
+| phase_mode_equilibrium | 2 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 flux_relative_uncertainty |
+| retained_asset_readers | power.asset.v1..v38 |
+
+[Equilibrium fuel nozzle transit](EQUILIBRIUM_FUEL_NOZZLE.md)
+
+
+## Retained version 38
 
 A `compressible_fuel_nozzle` carries one-way flow between finite `compressible_fuel` reservoirs, including shaft-driven chambers. Liquid compression energy and ideal vapor share the reservoir material. Declare `phase_mode` as `frozen`: mass quality stays constant during transit while bulk reservoirs re-equilibrate.
 

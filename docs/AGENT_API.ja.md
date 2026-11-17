@@ -42,7 +42,7 @@ Windows も同じ `dotnet` コマンドと、DLL への絶対パスを使いま�
 
 ## ツールと結果
 
-エージェント API バージョン 0.43.0 の `get_example_model` は任意の `name` を受け取り、既定値は `electrothermal` です。`get_capabilities.examples` は有限タンクと循環燃料モデルを含む全 61 サンプルを列挙します。CLI `list-labs` は全 62 ラボを [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON で返します。`thermal-network` は設計上 CLI 専用です。機能には対応コンポーネント、忠実度、ソルバー制限と入力範囲も含まれます。出力は `power.asset.v38` を使い、v1-v37 の読み込みを保持します。検証とセッション作成は出力チャネルと単位を返します。ラボ KPI の合格は完全または較正済みのパワートレインを示しません。
+エージェント API バージョン 0.44.0 の `get_example_model` は任意の `name` を受け取り、既定値は `electrothermal` です。`get_capabilities.examples` は有限タンクと循環燃料モデルを含む全 63 サンプルを列挙します。CLI `list-labs` は全 64 ラボを [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON で返します。`thermal-network` は設計上 CLI 専用です。機能には対応コンポーネント、忠実度、ソルバー制限と入力範囲も含まれます。出力は `power.asset.v39` を使い、v1-v38 の読み込みを保持します。検証とセッション作成は出力チャネルと単位を返します。ラボ KPI の合格は完全または較正済みのパワートレインを示しません。
 
 | ツール | 役割 |
 |---|---|
@@ -292,7 +292,7 @@ KPI とリプレイのエビデンスを評価するには `run_experiment` を�
 
 `at_controller` は [-1,4] の整数目標段を受け取り、ゼロはニュートラルです。五組の充填/排油弁と任意のトルクコンバーターのロックアップを管理します。経路の順序はキャリア入力、小サン入力、大サン入力、キャリアブレーキ、大サンブレーキ、最後にロックアップです。
 
-例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v38 は経路、ゲイン、時計を保存し、v1-v37 を読みます。
+例 `controlled-hydraulic-ravigneaux` と `controlled-fired-hydraulic-ravigneaux` は要求チャンネル 900 とコントローラー ID 1400 を使います。変更していない 128 状態の上限内で 99 と 122 の報告状態を保ちます。v39 は経路、ゲイン、時計を保存し、v1-v38 を読みます。
 
 研究用の制御であり、パラメーターは `unverified` のままです。ECU トルク協調、詳細なセンサー/弁、包括的な車両故障、OEM 校正は未完成です。managed と Standard の検査は実際の Unity Editor/Play/Player/IL2CPP の受入を証明しません。
 
@@ -302,7 +302,7 @@ KPI とリプレイのエビデンスを評価するには `run_experiment` を�
 
 `liquid_rail_feed` は液体噴射器を既存の容積ポンプと明示的な物質/熱境界に結びます。油圧出口ノードはレールのコンプライアンスと初期絶対圧に一致する必要があります。ポンプと噴射器がこの圧力ノードを所有し、未追跡の他の流体経路は拒否されます。
 
-v38 は補給接続と源温度を保存し v1-v37 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
+v39 は補給接続と源温度を保存し v1-v38 を読みます。軸/圧力の解析交換、独立した同時 ODE 細化、熱混合、質量/燃料/エネルギー/体積台帳、逆流と完全 rollback は別々に検査します。
 
 剛体混合タンク、非圧縮液体と理想気体です。スロッシング/静水圧形状、実混合物の熱力学、キャビテーション、実測ポンプ/弁マップ、OEM 較正と実際の Unity Editor/Play/Player/IL2CPP は未完成です。パラメーターは `unverified` です。
 
@@ -393,3 +393,11 @@ MCP で `equilibrium-fuel-pump` または `electric-equilibrium-fuel-pump` を�
 面積、有効面積の流量係数、`wall_kinetic_fraction` と有限熱壁を指定します。`initial_input` は [0,1] の開度で、任意の入力チャンネルで変更します。任意の `needle_node`、`closed_position`、`full_open_position` は指令に実際の並進ニードル開度を掛けます。両ポートのバルク速度はゼロで、物性と発熱量は一致し、内部セルには接続できません。逆圧差では理想的な開弁圧差ゼロの境界が閉じます。
 
 [相分率を凍結した圧縮性燃料ノズル](COMPRESSIBLE_FUEL_NOZZLE.ja.md)
+
+## 燃料ノズルの平衡相変化輸送
+
+`compressible_fuel_nozzle` の `phase_mode` を `equilibrium` にすると、通過中に瞬時の均質相平衡を仮定します。液体と蒸気は圧力、温度、速度を共有し、等エントロピー線に沿って蒸気分率が変化します。有限貯槽とノズルは同じ圧縮性液体ポテンシャルと理想蒸気基準を使います。`frozen` も独立した仮定として引き続き使えます。
+
+圧力と比エントロピーから安定な液体、蒸気、共存状態を求めます。化学ポテンシャル一致と既存の温圧範囲を使い、温度端点では binary64 の丸め近傍だけを許容します。面積、壁熱配分、開度、実ニードルは共通契約に従います。噴流は受入圧力まで理想完全膨張し、静止力積はニードル軸力や機械仕事を追加しません。
+
+[燃料ノズルの平衡相変化輸送](EQUILIBRIUM_FUEL_NOZZLE.ja.md)

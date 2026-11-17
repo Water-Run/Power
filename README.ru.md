@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — эксперименты без интерфейса"]
     mcp["Power.Mcp — 12 инструментов MCP через stdio"]
-    assets["Power.Assets — .powerasset v38"]
+    assets["Power.Assets — .powerasset v39"]
     unity["Студия Unity 6.6 — 3D-лаборатории"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | Узнать модели, ограничения, соглашения о времени и ревизиях. Начните отсюда. |
 | `get_model_schema` | JSON Schema 2020-12 для `power.model.v1` |
-| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (61 примера) |
+| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (63 примера) |
 | `validate_model` | Проверить модель без запуска; структурированная диагностика исправлений |
 | `run_experiment` | Ограниченный запуск без интерфейса с пакетным повтором, KPI и происхождением |
 | `export_model_asset` | Экспортировать переносимый `.powerasset` |
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > Все параметры образцов — `unverified`: исследовательские значения, а не калиброванные измерения.
 
-Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v38`, читатели прежних активов сохранены.
+Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v39`, читатели прежних активов сохранены.
 
 Насос топливного домена теперь питает физическую иглу и сопло с замороженным паросодержанием в работающий цилиндр с конечным объёмом жидкости. Полные запасы включают фазовый переход, работу вытеснения, кинетическую энергию и импульс неподвижной стенке. [Подача топлива с замороженным паросодержанием в конечный приёмник](docs/FUEL_DISCHARGE.ru.md) [Фазоразрешающий топливный насос с приводом от вала](docs/FUEL_CHAMBER_PUMP.ru.md)
 
@@ -159,8 +159,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 `compressible_fuel_nozzle` обеспечивает односторонний поток между конечными резервуарами `compressible_fuel`, включая камеры с приводом от вала. Сжатие жидкости и идеальный пар используют материал резервуара. Явно задайте `phase_mode` как `frozen`: массовое паросодержание фиксировано при прохождении сопла, а резервуары возвращаются к равновесию. [Сжимаемые топливные сопла с замороженным составом](docs/COMPRESSIBLE_FUEL_NOZZLE.ru.md)
 
+Установите `phase_mode` компонента `compressible_fuel_nozzle` в `equilibrium` для мгновенного однородного равновесия при прохождении. Жидкость и пар имеют общие давление, температуру и скорость; паросодержание меняется вдоль изоэнтропы. Сопло и конечные резервуары используют одинаковый потенциал сжимаемой жидкости и опорный идеальный пар. `frozen` остаётся отдельным поддерживаемым предположением. [Равновесное прохождение топлива через сопло](docs/EQUILIBRIUM_FUEL_NOZZLE.ru.md)
+
 <details>
-<summary>Доступные лаборатории (62)</summary>
+<summary>Доступные лаборатории (64)</summary>
 
 | Имя образца (`get_example_model`) | Лаборатория | Что проверяет |
 |---|---|---|
@@ -226,6 +228,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | Работа давления вала в сжимаемом топливном переносе |
 | `compressible-fuel-nozzle` | `assets/labs/compressible-fuel-nozzle.power.json` | Замороженное критическое течение, конечное истечение и реальная игла |
 | `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Замороженное критическое течение, конечное истечение и реальная игла |
+| `equilibrium-flashing-nozzle` | `assets/labs/equilibrium-flashing-nozzle.power.json` | Равновесное вскипание, глобальные границы потока и реальная игла |
+| `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | Равновесное вскипание, глобальные границы потока и реальная игла |
 
 </details>
 

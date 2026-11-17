@@ -2,6 +2,85 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · **Français** · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: Transit de carburant à l’équilibre dans les buses
+
+Régler `phase_mode` de `compressible_fuel_nozzle` sur `equilibrium` impose l’équilibre homogène instantané pendant le transit. Liquide et vapeur partagent pression, température et vitesse ; le titre change sur l’isentrope. La buse et les réservoirs finis utilisent le même potentiel liquide compressible et la même référence de vapeur idéale. `frozen` reste une hypothèse distincte prise en charge.
+
+Exécuter `equilibrium-flashing-nozzle` ou `equilibrium-pump-needle`. `flux_relative_uncertainty` décrit le dernier encadrement constitutif local accepté ; il ne borne ni débit moyen, ni masse livrée, ni intégration temporelle du premier ordre, ni étalonnage. Les vérifications emploient inversion indépendante de saturation/entropie, blocage analytique gaz/liquide, recherche globale dense distincte, identités d’énergie/entropie et raffinement analytique de vidange vapeur. Inventaires, arbre/conduite/aiguille, restauration, annulation, branches, allocations, assets et MCP réel sont vérifiés séparément. Résultats et anciennes frontières figurent dans les preuves de validation.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 566/566 |
+| standard_checks_on_dotnet | 446/446 |
+| actual_mcp_groups | 68/68 |
+| laboratories | 64 |
+| agent_examples | 63 |
+| unchanged_laboratories | 62 |
+| identical_complete_sample_boundaries | 7597 |
+| all_sample_boundaries | 7619 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_global_pressure_scan_intervals | 4000 |
+| maximum_local_flux_relative_uncertainty | 0.0001 |
+| stack_intervals | 512 |
+| global_splits | 8192 |
+| pressure_integral_panels | 256 |
+| closure_iterations | 80 |
+| asset_version | power.asset.v39 |
+| agent_api_version | 0.44.0 |
+| fingerprint_tag | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 |
+| v38_fixture_sha256 | b8469401c7a4469a603aa81ef34ca70d9fc98bbc7e56aa7877a4fa65a153e195 |
+| verification_log_sha256 | 2be9921f4634380f8b9ce177c8da5c922413f4eb0422b761561ac6ab8d92ba65 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 64 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 240 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.9392239954291264e-08, 2.4695055752880482e-08, 1.2347261926729528e-08, 6.1735645367117e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k | last_flux_relative_uncertainty | last_equilibrium_exit_vapor_fraction |
+|---|---|---|---|---|---|---|---|---|
+| equilibrium-flashing-nozzle | 8099b7425ea5b4d9 | 557164f82f2dd0e3 | 11 | 1.1641532182693481e-10 | 1.7661137765032928e-07 | 6.957073803745578e-06 | 1.1571916635366719e-05 | 0.21267793887461828 |
+| equilibrium-pump-needle | a20286a9c7bbf3c1 | 30337e4b5d9e0b28 | 11 | 2.218044357904514e-08 | 1.6315747705993148e-05 | 8.685222016514312e-05 | 2.7755575615628914e-13 | 0 |
+
+- `artifacts/reports/equilibrium-nozzle-final-2026-11-17.log`
+- `artifacts/reports/equilibrium-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-doc-audit-2026-11-17.json`
+
+Le carré positif de la vitesse du son d’équilibre donne une densité croissante avec la pression à entropie fixe. La chute d’enthalpie décroît. Ces facteurs monotones bornent le flux sur chaque intervalle, y compris frontières de phase et extrema multiples. La séparation-évaluation renvoie débit inférieur échantillonné et borne supérieure restante à largeur relative au plus 1e-4. Limites : 512 intervalles sur pile et 8192 divisions. Différences caloriques, marges d’arrondi et bornes d’intégrales monotones utilisent jusqu’à 256 panneaux de Riemann et 80 itérations de fermeture. Un cas non résolu rejette le lot. Un maximum intérieur lisse est sonique ; une frontière de phase peut être non lisse.
+
+Les paramètres restent `unverified`. Cette limite suppose un pseudo-fluide pur, vapeur idéale, dilatation liquide nulle et vitesse commune. Temps finis de nucléation/relaxation, glissement, pulvérisation, gaz porteur et récepteur avec combustion sont omis. L’encadrement utilise des marges binary64 déclarées, sans preuve formelle par arrondis dirigés. Près des transitions critiques, interpréter la gorge avec l’enveloppe de flux. Validité mesurée et acceptation Unity réelle restent ouvertes.
+
 ## 2026-11-17: Buses de carburant compressible à qualité figée
 
 Un `compressible_fuel_nozzle` transporte le fluide dans un seul sens entre réservoirs finis `compressible_fuel`, y compris les chambres entraînées par arbre. Compression liquide et vapeur idéale partagent leur matériau. Déclarer `phase_mode` comme `frozen` : la qualité massique reste fixe pendant le transit, puis les réservoirs se rééquilibrent.

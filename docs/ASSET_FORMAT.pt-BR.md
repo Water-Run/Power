@@ -14,7 +14,30 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, conferir a impressão digital]
 ```
 
-## Versão atual 38
+## Versão atual 39
+
+Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equilíbrio homogêneo instantâneo durante o trânsito. Líquido e vapor compartilham pressão, temperatura e velocidade; o título muda na isentrópica. Bocal e reservatórios finitos usam o mesmo potencial líquido compressível e referência de vapor ideal. `frozen` permanece uma hipótese separada suportada.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_equilibrium_nozzle | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| phase_mode_frozen | 1 |
+| phase_mode_equilibrium | 2 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 flux_relative_uncertainty |
+| retained_asset_readers | power.asset.v1..v38 |
+
+[Trânsito de combustível em equilíbrio nos bocais](EQUILIBRIUM_FUEL_NOZZLE.pt-BR.md)
+
+
+## Versão preservada 38
 
 Um `compressible_fuel_nozzle` leva fluxo unidirecional entre reservatórios finitos `compressible_fuel`, incluindo câmaras acionadas por eixo. Compressão líquida e vapor ideal compartilham o material. Declare `phase_mode` como `frozen`: o título mássico fica constante no trânsito e os reservatórios se reequilibram.
 

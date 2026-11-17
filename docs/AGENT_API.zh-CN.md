@@ -42,7 +42,7 @@ Windows 使用同一条 `dotnet` 命令,以及指向 DLL 的绝对路径。生�
 
 ## 工具与结果
 
-智能体 API 版本 0.43.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 61 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 62 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v38`，并保留 v1-v37 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
+智能体 API 版本 0.44.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 63 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 64 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v39`，并保留 v1-v38 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
 
 | 工具 | 作用 |
 |---|---|
@@ -292,7 +292,7 @@ flowchart TD
 
 `at_controller` 接受 [-1,4] 范围内的整数目标挡位；零表示空挡。它管理五组充油/泄压阀以及可选的变矩器锁止支路。支路顺序为行星架输入、小太阳轮输入、大太阳轮输入、行星架制动、大太阳轮制动，最后是锁止。
 
-示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v38 保留支路、增益和时钟，并可读取 v1-v37。
+示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v39 保留支路、增益和时钟，并可读取 v1-v38。
 
 这是研究控制，参数仍为 `unverified`。协调 ECU 扭矩融合、详细传感器/阀模型、完整车辆故障及 OEM 标定仍待完成。托管和 Standard 检查不能证明实际 Unity Editor/Play/Player/IL2CPP 验收。
 
@@ -302,7 +302,7 @@ flowchart TD
 
 `liquid_rail_feed` 将液体喷射器与现有排量泵及显式质量/热边界配对。液压出口节点必须与燃轨的顺应性和初始绝对压力一致。配对泵和喷射器管理该压力节点；其他未计入的流体路径会被拒绝。
 
-资产 v38 保留补给连接和源温度，并读取 v1-v37。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
+资产 v39 保留补给连接和源温度，并读取 v1-v38。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
 
 该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、真实流体混合物热力学、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
 
@@ -393,3 +393,11 @@ flowchart TD
 声明截面积、有效面积流量系数和 `wall_kinetic_fraction`，并连接有限热壁面。`initial_input` 是 [0,1] 内的开度，可选输入通道用于改变它。可选的 `needle_node`、`closed_position` 和 `full_open_position` 将指令乘以实际平动针阀开度。两端主体速度为零，材料与热值一致，且不能是管路内部单元。反向压差会关闭这个理想零开启压差边界。
 
 [冻结相态可压缩燃料喷嘴](COMPRESSIBLE_FUEL_NOZZLE.zh-CN.md)
+
+## 平衡燃料喷嘴输运
+
+将 `compressible_fuel_nozzle` 的 `phase_mode` 设为 `equilibrium`，即可在穿越过程中采用瞬时均相相平衡。液体与蒸气共享压力、温度和速度，蒸气质量分数沿等熵线变化。喷嘴与有限储腔使用相同的可压缩液体冷势能和理想蒸气参考。`frozen` 模式作为另一种明确假设继续支持。
+
+压力与比熵共同确定稳定液体、蒸气或两相共存状态。闭合关系使用化学势相等条件及既有温压边界；温度端点只允许 binary64 舍入邻域。面积、壁面热分配、开度指令和实际针阀沿用共同喷嘴契约。喷流能量表示完全膨胀到接收腔压力的理想状态；静止喷流冲量不额外产生针阀轴向力或机械功。
+
+[平衡燃料喷嘴输运](EQUILIBRIUM_FUEL_NOZZLE.zh-CN.md)

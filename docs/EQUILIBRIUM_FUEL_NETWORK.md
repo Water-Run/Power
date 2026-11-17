@@ -32,7 +32,7 @@ Compatible material thermodynamics and positive pressure-driven conductance give
 
 Request `equilibrium-fuel-network` or `electrothermal-fuel-network` through MCP, or run the same JSON through CLI. Read `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy` and `specific_enthalpy` on each vessel. Here `internal_energy` includes the elastic wall; chemical energy is reported separately. Links expose signed mass/volume flow, cumulative transferred mass, `transport_energy` and pair entropy change.
 
-The laboratories exercise liquid discharge into coexistence, reverse flow, opening changes and finite-wall/electromechanical heat coupling. An independent liquid-pressure exponential, simultaneous two-phase mass/enthalpy/heat ODE, heat-driven reversal and speculative clutch capture check accuracy and composition. Portable assets and actual MCP preserve every sampled value and hash. Asset v38 retains the new material records and reads v1-v37. Actual Unity Editor/Play/Player/IL2CPP remains unverified.
+The laboratories exercise liquid discharge into coexistence, reverse flow, opening changes and finite-wall/electromechanical heat coupling. An independent liquid-pressure exponential, simultaneous two-phase mass/enthalpy/heat ODE, heat-driven reversal and speculative clutch capture check accuracy and composition. Portable assets and actual MCP preserve every sampled value and hash. Asset v39 retains the new material records and reads v1-v38. Actual Unity Editor/Play/Player/IL2CPP remains unverified.
 
 ## Remaining work
 

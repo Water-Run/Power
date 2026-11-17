@@ -44,7 +44,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     };
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
-        ["density"] = Field.Density, ["sound_speed"] = Field.SoundSpeed, ["mass_at_a"] = Field.MassAtA, ["mass_at_b"] = Field.MassAtB,
+        ["flux_relative_uncertainty"] = Field.FluxRelativeUncertainty, ["density"] = Field.Density, ["sound_speed"] = Field.SoundSpeed, ["mass_at_a"] = Field.MassAtA, ["mass_at_b"] = Field.MassAtB,
         ["jet_kinetic_energy"] = Field.JetKineticEnergy, ["jet_impulse"] = Field.JetImpulse, ["throat_pressure"] = Field.ThroatPressure,
         ["exit_temperature"] = Field.ExitTemperature, ["exit_velocity"] = Field.ExitVelocity, ["choked"] = Field.Choked,
         ["forward_volume"] = Field.ForwardVolume, ["reverse_volume"] = Field.ReverseVolume, ["kinetic_energy"] = Field.KineticEnergy, ["energy_at_a"] = Field.EnergyAtA, ["energy_at_b"] = Field.EnergyAtB,
@@ -249,9 +249,9 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             if(kind==ComponentKind.CompressibleFuelNozzle)
             {
                 var p=c.GetProperty("parameters");Object(p,["area","discharge_coefficient","phase_mode","wall_kinetic_fraction"],"needle_node","closed_position","full_open_position");
-                if(Text(p.GetProperty("phase_mode"))!="frozen")throw new ArgumentException("Declare frozen compressible nozzle transit explicitly.");
+                var phase=Text(p.GetProperty("phase_mode")) switch{"frozen"=>FuelDischargePhaseModel.Frozen,"equilibrium"=>FuelDischargePhaseModel.Equilibrium,_=>throw new ArgumentException("Declare frozen or equilibrium compressible nozzle transit explicitly.")};
                 bool needle=p.TryGetProperty("needle_node",out _);if(needle!=p.TryGetProperty("closed_position",out _)||needle!=p.TryGetProperty("full_open_position",out _))throw new ArgumentException("Declare nozzle needle node and both positions together.");
-                return result with{CompressibleNozzle=new(){Area=Quantity(p.GetProperty("area")),DischargeCoefficient=Number(p.GetProperty("discharge_coefficient")),PhaseModel=FuelDischargePhaseModel.Frozen,WallKineticFraction=Quantity(p.GetProperty("wall_kinetic_fraction")),
+                return result with{CompressibleNozzle=new(){Area=Quantity(p.GetProperty("area")),DischargeCoefficient=Number(p.GetProperty("discharge_coefficient")),PhaseModel=phase,WallKineticFraction=Quantity(p.GetProperty("wall_kinetic_fraction")),
                     Needle=needle?new(){NeedleNode=Id(p,"needle_node"),ClosedPosition=Quantity(p.GetProperty("closed_position")),FullOpenPosition=Quantity(p.GetProperty("full_open_position"))}:null}};
             }
             if(kind==ComponentKind.EquilibriumFuelDuct)

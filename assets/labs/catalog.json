@@ -372,6 +372,18 @@
       "asset_name": "CompressiblePumpNeedle",
       "display_name": "Compressible pump and physical needle laboratory",
       "agent_example": true
+    },
+    {
+      "name": "equilibrium-flashing-nozzle",
+      "asset_name": "EquilibriumFlashingNozzle",
+      "display_name": "Equilibrium flashing nozzle laboratory",
+      "agent_example": true
+    },
+    {
+      "name": "equilibrium-pump-needle",
+      "asset_name": "EquilibriumPumpNeedle",
+      "display_name": "Equilibrium pump and physical needle laboratory",
+      "agent_example": true
     }
   ]
 }

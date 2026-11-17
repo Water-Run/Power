@@ -18,9 +18,11 @@
 
 `compressible_fuel_nozzle` 在有限 `compressible_fuel` 储腔之间提供单向流动，可连接轴驱动腔室。液体压缩能与理想蒸气使用同一储腔材料。显式声明 `phase_mode` 为 `frozen`：通过喷嘴时蒸气质量分数不变，主体储腔则重新达到相平衡。 [冻结相态可压缩燃料喷嘴](COMPRESSIBLE_FUEL_NOZZLE.zh-CN.md)
 
+将 `compressible_fuel_nozzle` 的 `phase_mode` 设为 `equilibrium`，即可在穿越过程中采用瞬时均相相平衡。液体与蒸气共享压力、温度和速度，蒸气质量分数沿等熵线变化。喷嘴与有限储腔使用相同的可压缩液体冷势能和理想蒸气参考。`frozen` 模式作为另一种明确假设继续支持。 [平衡燃料喷嘴输运](EQUILIBRIUM_FUEL_NOZZLE.zh-CN.md)
+
 ## 下一步开发
 
-将喷嘴穿越扩展到平衡和有限速率相态模型，再加入解析喷雾及相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。 [可压缩平衡燃料管路](EQUILIBRIUM_FUEL_DUCT.zh-CN.md)
+在明确的停留时间和材料证据基础上增加有限速率相变弛豫，再加入解析喷雾和相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。 [可压缩平衡燃料管路](EQUILIBRIUM_FUEL_DUCT.zh-CN.md)
 
 ## 验收
 

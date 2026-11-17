@@ -1,0 +1,223 @@
+{
+  "schema": "power.model.v1",
+  "description": "Unverified homogeneous-equilibrium compressible fuel nozzle. Pressure/entropy closure permits equilibrium flashing during isentropic transit. A global flux enclosure covers phase-boundary and smooth extrema; finite reservoirs, wall jet heat, momentum and complete inventories remain explicit. Numerical flux uncertainty is not measured calibration. No finite-rate nucleation, slip, spray or fired receiver coupling.",
+  "step_ns": 10000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 1e-05,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 0.0075025000000000005,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 0.0001,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 0.00012073564394395675,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 288.2192227853121,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 1,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "compressible_fuel_nozzle",
+      "node_a": 1,
+      "node_b": 2,
+      "heat_node": 3,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "area": {
+          "value": 1e-08,
+          "unit": "m2"
+        },
+        "discharge_coefficient": 0.7,
+        "phase_mode": "equilibrium",
+        "wall_kinetic_fraction": {
+          "value": 0.4,
+          "unit": "fraction"
+        }
+      },
+      "input_channel": 100
+    }
+  ],
+  "experiment": {
+    "duration_ns": 1000000,
+    "sample_every_ns": 100000,
+    "events": [],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 2e-07
+      },
+      {
+        "object_id": 0,
+        "field": "mass_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "fuel_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 10,
+        "field": "total_fuel_delivered",
+        "min": 1e-12
+      },
+      {
+        "object_id": 10,
+        "field": "vapor_mass_fraction",
+        "min": 0.001
+      },
+      {
+        "object_id": 10,
+        "field": "flux_relative_uncertainty",
+        "min": 0,
+        "max": 0.0001
+      }
+    ]
+  }
+}

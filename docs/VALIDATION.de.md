@@ -2,6 +2,85 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · **Deutsch** · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: Kraftstoffdüsentransit im Phasengleichgewicht
+
+`phase_mode` von `compressible_fuel_nozzle` auf `equilibrium` setzen, um sofortiges homogenes Phasengleichgewicht im Transit zu verwenden. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; der Dampfanteil ändert sich entlang der Isentrope. Düse und endliche Behälter nutzen dasselbe kompressible Flüssigkeitspotenzial und dieselbe ideale Dampfreferenz. `frozen` bleibt eine getrennte unterstützte Annahme.
+
+`equilibrium-flashing-nozzle` oder `equilibrium-pump-needle` ausführen. `flux_relative_uncertainty` beschreibt die letzte akzeptierte lokale Stoffgesetz-Flusseinschließung, nicht mittlere Strömung, Liefermasse, Zeitintegration erster Ordnung oder Kalibrierfehler. Unabhängige Sättigungs-/Entropieinversion, analytische Gas-/Flüssigkeitskritik, separater dichter globaler Suchlauf, Energie-/Entropieidentitäten und analytische Dampfausblasverfeinerung werden verglichen. Bestände, Welle/Leitung/Nadel, Rücknahme, Abbruch, Zweige, Allokationen, portable Assets und tatsächliches MCP werden getrennt geprüft. Zahlen und ältere Grenzen stehen in den Validierungsnachweisen.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 566/566 |
+| standard_checks_on_dotnet | 446/446 |
+| actual_mcp_groups | 68/68 |
+| laboratories | 64 |
+| agent_examples | 63 |
+| unchanged_laboratories | 62 |
+| identical_complete_sample_boundaries | 7597 |
+| all_sample_boundaries | 7619 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_global_pressure_scan_intervals | 4000 |
+| maximum_local_flux_relative_uncertainty | 0.0001 |
+| stack_intervals | 512 |
+| global_splits | 8192 |
+| pressure_integral_panels | 256 |
+| closure_iterations | 80 |
+| asset_version | power.asset.v39 |
+| agent_api_version | 0.44.0 |
+| fingerprint_tag | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 |
+| v38_fixture_sha256 | b8469401c7a4469a603aa81ef34ca70d9fc98bbc7e56aa7877a4fa65a153e195 |
+| verification_log_sha256 | 2be9921f4634380f8b9ce177c8da5c922413f4eb0422b761561ac6ab8d92ba65 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 64 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 240 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.9392239954291264e-08, 2.4695055752880482e-08, 1.2347261926729528e-08, 6.1735645367117e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k | last_flux_relative_uncertainty | last_equilibrium_exit_vapor_fraction |
+|---|---|---|---|---|---|---|---|---|
+| equilibrium-flashing-nozzle | 8099b7425ea5b4d9 | 557164f82f2dd0e3 | 11 | 1.1641532182693481e-10 | 1.7661137765032928e-07 | 6.957073803745578e-06 | 1.1571916635366719e-05 | 0.21267793887461828 |
+| equilibrium-pump-needle | a20286a9c7bbf3c1 | 30337e4b5d9e0b28 | 11 | 2.218044357904514e-08 | 1.6315747705993148e-05 | 8.685222016514312e-05 | 2.7755575615628914e-13 | 0 |
+
+- `artifacts/reports/equilibrium-nozzle-final-2026-11-17.log`
+- `artifacts/reports/equilibrium-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-doc-audit-2026-11-17.json`
+
+Positive Gleichgewichtsschallgeschwindigkeit im Quadrat liefert steigende Dichte mit Druck bei fester Entropie; der Enthalpieabfall sinkt. Diese monotonen Faktoren begrenzen den Intervallfluss einschließlich Phasengrenzen und mehrerer Extrema. Verzweigen und Begrenzen liefert abgetastete Untergrenze und verbleibende Obergrenze mit relativer Breite höchstens 1e-4. Grenzen sind 512 Stackintervalle und 8192 Teilungen. Kalorische Differenzen nutzen Rundungsspielraum und monotone Integralgrenzen mit bis zu 256 Riemann-Feldern und 80 Schließungsiterationen. Ungelöste Fälle verwerfen den Stapel. Ein glattes inneres Maximum ist sonisch; ein Phasengrenzenmaximum kann nicht glatt sein.
+
+Parameter bleiben `unverified`. Die Gleichgewichtsgrenze verwendet ein reines Pseudofluid, idealen Dampf, keine Flüssigkeitswärmeausdehnung und gemeinsame Geschwindigkeit. Endliche Keimbildungs-/Relaxationszeiten, Schlupf, Spray, Trägergas und brennender Empfänger fehlen. Die Einschließung verwendet deklarierte binary64-Spielräume, keinen formalen Intervallbeweis mit gerichteter Rundung. Halsklassifikation nahe kritischer Übergänge ist mit der Flusseinschließung zu lesen. Messgültigkeit und tatsächliche Unity-Abnahme bleiben offen.
+
 ## 2026-11-17: Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil
 
 Eine `compressible_fuel_nozzle` verbindet endliche `compressible_fuel`-Behälter, auch wellengetriebene Kammern, mit gerichteter Strömung. Flüssigkeitskompression und idealer Dampf teilen deren Stoffdaten. `phase_mode` muss `frozen` sein: Der Dampfmassenanteil bleibt im Durchgang konstant, die Behälter stellen Gleichgewicht wieder her.

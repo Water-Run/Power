@@ -14,7 +14,30 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現在のバージョン 38
+## 現在のバージョン 39
+
+`compressible_fuel_nozzle` の `phase_mode` を `equilibrium` にすると、通過中に瞬時の均質相平衡を仮定します。液体と蒸気は圧力、温度、速度を共有し、等エントロピー線に沿って蒸気分率が変化します。有限貯槽とノズルは同じ圧縮性液体ポテンシャルと理想蒸気基準を使います。`frozen` も独立した仮定として引き続き使えます。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_equilibrium_nozzle | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| phase_mode_frozen | 1 |
+| phase_mode_equilibrium | 2 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 flux_relative_uncertainty |
+| retained_asset_readers | power.asset.v1..v38 |
+
+[燃料ノズルの平衡相変化輸送](EQUILIBRIUM_FUEL_NOZZLE.ja.md)
+
+
+## 保持バージョン 38
 
 `compressible_fuel_nozzle` は軸駆動室を含む有限の `compressible_fuel` 貯槽間に一方向の流れを与えます。液体圧縮エネルギーと理想蒸気は貯槽と同じ物性を使います。`phase_mode` を `frozen` と明示し、通過中の蒸気質量分率を一定に保ち、貯槽は再平衡させます。
 

@@ -18,9 +18,11 @@ Uma `compressible_fuel_chamber` conecta um eixo a um reservatório finito `compr
 
 Um `compressible_fuel_nozzle` leva fluxo unidirecional entre reservatórios finitos `compressible_fuel`, incluindo câmaras acionadas por eixo. Compressão líquida e vapor ideal compartilham o material. Declare `phase_mode` como `frozen`: o título mássico fica constante no trânsito e os reservatórios se reequilibram. [Bocais de combustível compressível com título congelado](COMPRESSIBLE_FUEL_NOZZLE.pt-BR.md)
 
+Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equilíbrio homogêneo instantâneo durante o trânsito. Líquido e vapor compartilham pressão, temperatura e velocidade; o título muda na isentrópica. Bocal e reservatórios finitos usam o mesmo potencial líquido compressível e referência de vapor ideal. `frozen` permanece uma hipótese separada suportada. [Trânsito de combustível em equilíbrio nos bocais](EQUILIBRIUM_FUEL_NOZZLE.pt-BR.md)
+
 ## Próximo incremento
 
-Estender o trânsito com modelos de fase em equilíbrio e com taxas finitas, depois acrescentar spray resolvido e receptor com combustão compatível. Continuar ignição, admissão/escape, perdas mecânicas, atuação de transmissão e coordenação ECU/TCU. Calibração medida e aceitação real no Unity permanecem separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
+Adicionar relaxação finita com evidência explícita de residência e material, depois spray resolvido e receptor com combustão compatível. Continuar ignição, admissão/escape, perdas mecânicas, atuação da transmissão e ECU/TCU. Calibração medida e aceitação real no Unity ficam separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
 
 ## Aceitação
 

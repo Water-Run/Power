@@ -36,6 +36,6 @@ Solução harmônica independente com flexibilidade finita e RK4 independente de
 
 Os parâmetros seguem `unverified`. Respeite intervalos materiais e estabilidade líquida corrigida pela pressão. Falhas revertem todo o intervalo; reduza passo e confira esgotamento, pressão e fase. Faltam movimento bifásico com densidade variável, cavitação, acústica, gravidade, geometria móvel e frentes térmicas. Combustão prescrita não prova química de equilíbrio ou entropia de reação detalhadas.
 
-Estender o trânsito com modelos de fase em equilíbrio e com taxas finitas, depois acrescentar spray resolvido e receptor com combustão compatível. Continuar ignição, admissão/escape, perdas mecânicas, atuação de transmissão e coordenação ECU/TCU. Calibração medida e aceitação real no Unity permanecem separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
+Adicionar relaxação finita com evidência explícita de residência e material, depois spray resolvido e receptor com combustão compatível. Continuar ignição, admissão/escape, perdas mecânicas, atuação da transmissão e ECU/TCU. Calibração medida e aceitação real no Unity ficam separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: dynamic pipe boundaries](https://doc.modelica.org/om/Modelica.Fluid.Pipes.DynamicPipe.html) · [VALIDATION.md](VALIDATION.md)

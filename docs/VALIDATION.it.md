@@ -2,6 +2,85 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · **Italiano** · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: Transito di combustibile all’equilibrio negli ugelli
+
+Impostare `phase_mode` di `compressible_fuel_nozzle` su `equilibrium` per l’equilibrio omogeneo istantaneo durante il transito. Liquido e vapore condividono pressione, temperatura e velocità; il titolo cambia lungo l’isentropica. Ugello e serbatoi finiti usano lo stesso potenziale liquido comprimibile e riferimento di vapore ideale. `frozen` resta un’ipotesi distinta supportata.
+
+Eseguire `equilibrium-flashing-nozzle` o `equilibrium-pump-needle`. `flux_relative_uncertainty` descrive l’ultimo involucro costitutivo locale accettato e non limita portata media, massa consegnata, integrazione temporale del primo ordine o calibrazione. Si confrontano inversione indipendente di saturazione/entropia, blocco analitico gas/liquido, ricerca globale densa separata, identità energetiche/entropiche e raffinamento analitico dello svuotamento di vapore. Inventari, albero/condotto/ago, rollback, annullamento, rami, allocazioni, asset e MCP reale sono verificati separatamente. Numeri e vecchi confini restano nelle prove di validazione.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 566/566 |
+| standard_checks_on_dotnet | 446/446 |
+| actual_mcp_groups | 68/68 |
+| laboratories | 64 |
+| agent_examples | 63 |
+| unchanged_laboratories | 62 |
+| identical_complete_sample_boundaries | 7597 |
+| all_sample_boundaries | 7619 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_global_pressure_scan_intervals | 4000 |
+| maximum_local_flux_relative_uncertainty | 0.0001 |
+| stack_intervals | 512 |
+| global_splits | 8192 |
+| pressure_integral_panels | 256 |
+| closure_iterations | 80 |
+| asset_version | power.asset.v39 |
+| agent_api_version | 0.44.0 |
+| fingerprint_tag | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 |
+| v38_fixture_sha256 | b8469401c7a4469a603aa81ef34ca70d9fc98bbc7e56aa7877a4fa65a153e195 |
+| verification_log_sha256 | 2be9921f4634380f8b9ce177c8da5c922413f4eb0422b761561ac6ab8d92ba65 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 64 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 240 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.9392239954291264e-08, 2.4695055752880482e-08, 1.2347261926729528e-08, 6.1735645367117e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k | last_flux_relative_uncertainty | last_equilibrium_exit_vapor_fraction |
+|---|---|---|---|---|---|---|---|---|
+| equilibrium-flashing-nozzle | 8099b7425ea5b4d9 | 557164f82f2dd0e3 | 11 | 1.1641532182693481e-10 | 1.7661137765032928e-07 | 6.957073803745578e-06 | 1.1571916635366719e-05 | 0.21267793887461828 |
+| equilibrium-pump-needle | a20286a9c7bbf3c1 | 30337e4b5d9e0b28 | 11 | 2.218044357904514e-08 | 1.6315747705993148e-05 | 8.685222016514312e-05 | 2.7755575615628914e-13 | 0 |
+
+- `artifacts/reports/equilibrium-nozzle-final-2026-11-17.log`
+- `artifacts/reports/equilibrium-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-doc-audit-2026-11-17.json`
+
+Il quadrato positivo del suono d’equilibrio dà densità crescente con pressione a entropia fissa; il salto d’entalpia diminuisce. I fattori monotoni limitano il flusso di ogni intervallo, incluse frontiere di fase ed estremi multipli. La separazione e valutazione restituisce limite inferiore campionato e superiore residuo con ampiezza relativa massima 1e-4. Limiti: 512 intervalli sullo stack e 8192 divisioni. Differenze caloriche usano margini d’arrotondamento e limiti integrali monotoni fino a 256 pannelli Riemann e 80 iterazioni. Casi irrisolti rifiutano il lotto. Un massimo interno regolare è sonico; uno alla frontiera può essere non regolare.
+
+I parametri restano `unverified`. Il limite d’equilibrio usa pseudofluido puro, vapore ideale, dilatazione liquida nulla e velocità comune. Esclude tempi finiti di nucleazione/rilassamento, scorrimento, spray, gas portante e ricevitore con combustione. L’involucro usa margini binary64 dichiarati, non una prova formale d’intervalli con arrotondamento diretto. Interpretare la gola vicino alle transizioni insieme all’involucro. Validità misurata e Unity effettivo restano aperti.
+
 ## 2026-11-17: Ugelli di combustibile comprimibile a titolo congelato
 
 Un `compressible_fuel_nozzle` porta flusso unidirezionale tra serbatoi finiti `compressible_fuel`, incluse camere azionate da albero. Compressione liquida e vapore ideale condividono il materiale. Dichiarare `phase_mode` come `frozen`: il titolo massico resta costante nel transito, mentre i serbatoi si riequilibrano.

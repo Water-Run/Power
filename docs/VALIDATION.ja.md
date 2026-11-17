@@ -2,6 +2,85 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 燃料ノズルの平衡相変化輸送
+
+`compressible_fuel_nozzle` の `phase_mode` を `equilibrium` にすると、通過中に瞬時の均質相平衡を仮定します。液体と蒸気は圧力、温度、速度を共有し、等エントロピー線に沿って蒸気分率が変化します。有限貯槽とノズルは同じ圧縮性液体ポテンシャルと理想蒸気基準を使います。`frozen` も独立した仮定として引き続き使えます。
+
+`equilibrium-flashing-nozzle` または `equilibrium-pump-needle` を実行します。`flux_relative_uncertainty` は最後に採用した局所構成則の流束包絡で、平均流量、送出質量、一次時間積分、校正誤差の界ではありません。独立した飽和／エントロピー反転、気体・液体の解析的チョーク、別実装の密な大域探索、エネルギー／エントロピー恒等式、解析蒸気排出の細分化を比較します。在庫、軸／管／ニードル、ロールバック、取消、分岐、割り当て、可搬 asset、実 MCP は別々に検証します。数値と旧境界は検証証拠に残します。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 566/566 |
+| standard_checks_on_dotnet | 446/446 |
+| actual_mcp_groups | 68/68 |
+| laboratories | 64 |
+| agent_examples | 63 |
+| unchanged_laboratories | 62 |
+| identical_complete_sample_boundaries | 7597 |
+| all_sample_boundaries | 7619 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_global_pressure_scan_intervals | 4000 |
+| maximum_local_flux_relative_uncertainty | 0.0001 |
+| stack_intervals | 512 |
+| global_splits | 8192 |
+| pressure_integral_panels | 256 |
+| closure_iterations | 80 |
+| asset_version | power.asset.v39 |
+| agent_api_version | 0.44.0 |
+| fingerprint_tag | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 |
+| v38_fixture_sha256 | b8469401c7a4469a603aa81ef34ca70d9fc98bbc7e56aa7877a4fa65a153e195 |
+| verification_log_sha256 | 2be9921f4634380f8b9ce177c8da5c922413f4eb0422b761561ac6ab8d92ba65 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 64 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 240 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.9392239954291264e-08, 2.4695055752880482e-08, 1.2347261926729528e-08, 6.1735645367117e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k | last_flux_relative_uncertainty | last_equilibrium_exit_vapor_fraction |
+|---|---|---|---|---|---|---|---|---|
+| equilibrium-flashing-nozzle | 8099b7425ea5b4d9 | 557164f82f2dd0e3 | 11 | 1.1641532182693481e-10 | 1.7661137765032928e-07 | 6.957073803745578e-06 | 1.1571916635366719e-05 | 0.21267793887461828 |
+| equilibrium-pump-needle | a20286a9c7bbf3c1 | 30337e4b5d9e0b28 | 11 | 2.218044357904514e-08 | 1.6315747705993148e-05 | 8.685222016514312e-05 | 2.7755575615628914e-13 | 0 |
+
+- `artifacts/reports/equilibrium-nozzle-final-2026-11-17.log`
+- `artifacts/reports/equilibrium-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-doc-audit-2026-11-17.json`
+
+平衡音速の二乗が正なので、等エントロピー密度は圧力とともに増え、エンタルピー降下は減ります。この単調性から相境界や複数極値を含む各区間の流束上限を求めます。分枝限定法は標本下限と残存上限の相対幅を 1e-4 以下にします。最大 512 個のスタック区間と 8192 分割です。熱量差の丸め余裕と単調圧力積分の界を用い、最大 256 Riemann 区間、80 回の閉合反復を行います。解決できなければバッチを拒否します。滑らかな内部最大値は音速条件を満たし、相境界最大値は非平滑になり得ます。
+
+パラメータは `unverified` です。純疑似流体、理想蒸気、液体熱膨張ゼロ、共通速度を仮定します。有限の核生成・緩和時間、相間滑り、噴霧、キャリアガス、燃焼受入室は含みません。包絡は宣言した binary64 余裕を用い、方向付き丸めによる形式的区間証明ではありません。臨界遷移付近の喉部分類は流束包絡と併せて読みます。実測妥当性と実 Unity 受入検証は未完了です。
+
 ## 2026-11-17: 相分率を凍結した圧縮性燃料ノズル
 
 `compressible_fuel_nozzle` は軸駆動室を含む有限の `compressible_fuel` 貯槽間に一方向の流れを与えます。液体圧縮エネルギーと理想蒸気は貯槽と同じ物性を使います。`phase_mode` を `frozen` と明示し、通過中の蒸気質量分率を一定に保ち、貯槽は再平衡させます。

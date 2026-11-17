@@ -36,6 +36,6 @@ Delta_E_vapor = M cv (T_next-T_old)
 
 参数仍为 `unverified`。模型采用平衡纯伪流体：可压缩且零热膨胀的液体、理想蒸气、混合储腔和刚性管路单元。须遵守声明的温压边界。腔室不解析主体动能，也不自动附带止回阀。有限速率成核、相间滑移、真实流体临界行为、实测标定与实际 Unity 验收仍待完成。
 
-将喷嘴穿越扩展到平衡和有限速率相态模型，再加入解析喷雾及相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。
+在明确的停留时间和材料证据基础上增加有限速率相变弛豫，再加入解析喷雾和相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。
 
 [Modelica: swept volume and pressure work](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [NIST: consistent thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html)

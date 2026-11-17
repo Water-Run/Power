@@ -2,6 +2,85 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 연료 노즐의 평형 상변화 수송
+
+`compressible_fuel_nozzle`의 `phase_mode`를 `equilibrium`으로 설정하면 통과 중 순간 균질 상평형을 가정합니다. 액체와 증기는 압력, 온도, 속도를 공유하며 증기분율은 등엔트로피선을 따라 변합니다. 노즐과 유한 저장조는 같은 압축성 액체 퍼텐셜과 이상증기 기준을 사용합니다. `frozen`도 별도의 지원 가정으로 유지됩니다.
+
+`equilibrium-flashing-nozzle` 또는 `equilibrium-pump-needle`를 실행합니다. `flux_relative_uncertainty`는 마지막 채택 국소 구성식 유속 포락이며 평균 유량, 전달 질량, 1차 시간 적분, 보정 오차를 제한하지 않습니다. 독립 포화/엔트로피 역산, 기체·액체 해석 초킹, 별도 조밀 전역 탐색, 에너지·엔트로피 항등식, 해석 증기 배출 세분화를 비교합니다. 재고, 축/관/니들, 롤백, 취소, 분기, 할당, 이식 asset, 실제 MCP는 별도로 검증합니다. 수치와 이전 경계는 검증 증거에 보존합니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 566/566 |
+| standard_checks_on_dotnet | 446/446 |
+| actual_mcp_groups | 68/68 |
+| laboratories | 64 |
+| agent_examples | 63 |
+| unchanged_laboratories | 62 |
+| identical_complete_sample_boundaries | 7597 |
+| all_sample_boundaries | 7619 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_global_pressure_scan_intervals | 4000 |
+| maximum_local_flux_relative_uncertainty | 0.0001 |
+| stack_intervals | 512 |
+| global_splits | 8192 |
+| pressure_integral_panels | 256 |
+| closure_iterations | 80 |
+| asset_version | power.asset.v39 |
+| agent_api_version | 0.44.0 |
+| fingerprint_tag | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 |
+| v38_fixture_sha256 | b8469401c7a4469a603aa81ef34ca70d9fc98bbc7e56aa7877a4fa65a153e195 |
+| verification_log_sha256 | 2be9921f4634380f8b9ce177c8da5c922413f4eb0422b761561ac6ab8d92ba65 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 64 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 240 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.9392239954291264e-08, 2.4695055752880482e-08, 1.2347261926729528e-08, 6.1735645367117e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k | last_flux_relative_uncertainty | last_equilibrium_exit_vapor_fraction |
+|---|---|---|---|---|---|---|---|---|
+| equilibrium-flashing-nozzle | 8099b7425ea5b4d9 | 557164f82f2dd0e3 | 11 | 1.1641532182693481e-10 | 1.7661137765032928e-07 | 6.957073803745578e-06 | 1.1571916635366719e-05 | 0.21267793887461828 |
+| equilibrium-pump-needle | a20286a9c7bbf3c1 | 30337e4b5d9e0b28 | 11 | 2.218044357904514e-08 | 1.6315747705993148e-05 | 8.685222016514312e-05 | 2.7755575615628914e-13 | 0 |
+
+- `artifacts/reports/equilibrium-nozzle-final-2026-11-17.log`
+- `artifacts/reports/equilibrium-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/equilibrium-nozzle-doc-audit-2026-11-17.json`
+
+평형 음속 제곱이 양수이므로 등엔트로피 밀도는 압력과 함께 증가하고 엔탈피 강하는 감소합니다. 이 단조 인자로 상경계와 여러 극값을 포함한 구간 유속 상한을 구합니다. 분기 한정은 표본 하한과 잔여 상한의 상대 폭을 1e-4 이하로 만듭니다. 스택 구간 최대 512개, 분할 8192회입니다. 열량 차이의 반올림 여유와 단조 압력 적분 경계를 사용하며 최대 256 Riemann 구간과 80회 폐쇄 반복을 수행합니다. 해결할 수 없으면 배치를 거부합니다. 매끄러운 내부 최대값은 음속 조건을 만족하지만 상경계 최대값은 비매끄러울 수 있습니다.
+
+매개변수는 `unverified`입니다. 순수 의사유체, 이상증기, 액체 열팽창 0, 공통 속도를 가정합니다. 유한 핵생성·완화 시간, 상간 미끄럼, 분무, 운반기체, 연소 수신 챔버는 포함하지 않습니다. 포락은 선언한 binary64 여유를 사용하며 방향 반올림에 의한 형식 구간 증명은 아닙니다. 임계 전이 부근 목 분류는 유속 포락과 함께 해석해야 합니다. 실측 타당성과 실제 Unity 검증은 남아 있습니다.
+
 ## 2026-11-17: 상분율을 동결한 압축성 연료 노즐
 
 `compressible_fuel_nozzle`는 축 구동 챔버를 포함한 유한 `compressible_fuel` 저장조 사이에 단방향 유동을 제공합니다. 액체 압축 에너지와 이상증기는 저장조 물성을 공유합니다. `phase_mode`를 `frozen`으로 명시하여 통과 중 증기 질량분율을 유지하고 저장조는 다시 평형을 이루게 합니다.

@@ -18,9 +18,11 @@ A `compressible_fuel_chamber` connects a rotational shaft to a finite `compressi
 
 A `compressible_fuel_nozzle` carries one-way flow between finite `compressible_fuel` reservoirs, including shaft-driven chambers. Liquid compression energy and ideal vapor share the reservoir material. Declare `phase_mode` as `frozen`: mass quality stays constant during transit while bulk reservoirs re-equilibrate. [Frozen compressible fuel nozzles](COMPRESSIBLE_FUEL_NOZZLE.md)
 
+Set `compressible_fuel_nozzle` `phase_mode` to `equilibrium` for instantaneous homogeneous phase equilibrium during transit. Liquid and vapor share pressure, temperature and velocity, and vapor quality changes along the isentrope. The same compressible liquid cold potential and ideal-vapor reference supply both nozzle and finite reservoirs. The `frozen` mode remains a separate supported assumption. [Equilibrium fuel nozzle transit](EQUILIBRIUM_FUEL_NOZZLE.md)
+
 ## Next increment
 
-Extend nozzle transit with equilibrium and finite-rate phase models, then add resolved spray and compatible fired receiver coupling. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
+Add finite-rate phase relaxation with explicit residence and material evidence, then resolved spray and compatible fired receiver coupling. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
 
 ## Acceptance
 

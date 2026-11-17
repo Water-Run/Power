@@ -41,6 +41,6 @@ Delta_E_wall = xi Delta_m D(p_receiver)
 
 参数仍为 `unverified`。模型采用理想蒸气及可压缩、零热膨胀液体组成的纯伪流体。须遵守声明的温压范围，包括理想喷流温度。冻结穿越可保留过热液体，但不预测实测成核或亚稳态极限。有限速率弛豫、相间滑移、解析喷雾、不凝载气、燃烧接收腔耦合、实测特性图及实际 Unity 验收仍待完成。守恒与回放不能证明硬件有效性。
 
-将喷嘴穿越扩展到平衡和有限速率相态模型，再加入解析喷雾及相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。
+在明确的停留时间和材料证据基础上增加有限速率相变弛豫，再加入解析喷雾和相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。
 
 [NASA: injector flow and finite phase-transfer times](https://ntrs.nasa.gov/api/citations/20190001326/downloads/20190001326.pdf) · [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf)

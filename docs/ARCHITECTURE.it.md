@@ -250,7 +250,7 @@ L'[assemblaggio di azionamento AT](AT_HYDRAULIC_ACTUATION.it.md) abbassa i bersa
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v38 conserva percorsi, guadagni e clock e legge v1-v37.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v39 conserva percorsi, guadagni e clock e legge v1-v38.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -260,7 +260,7 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v38 conserva collegamenti e temperatura sorgente e legge v1-v37. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v39 conserva collegamenti e temperatura sorgente e legge v1-v38. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
@@ -345,3 +345,11 @@ Le fasi condividono pressione, temperatura e velocità; il trasferimento massico
 Sottopassi conservativi del primo ordine trasferiscono la stessa massa ed entalpia e dividono l’energia cinetica fra fluido e parete. Si verificano stati ed entropia totale della coppia. Limiti: 4096 sottopassi, 64 dimezzamenti per candidato, trasferimento iniziale entro 0.1 della massa minore. La chiusura tollera 128 epsilon binary64 per il massimo modulo volumetrico o pressione senza limitare i valori riportati. Un errore annulla l’intero lotto. Controllare passo, inventario, limiti, corsa e area.
 
 [Ugelli di combustibile comprimibile a titolo congelato](COMPRESSIBLE_FUEL_NOZZLE.it.md)
+
+## Transito di combustibile all’equilibrio negli ugelli
+
+Il quadrato positivo del suono d’equilibrio dà densità crescente con pressione a entropia fissa; il salto d’entalpia diminuisce. I fattori monotoni limitano il flusso di ogni intervallo, incluse frontiere di fase ed estremi multipli. La separazione e valutazione restituisce limite inferiore campionato e superiore residuo con ampiezza relativa massima 1e-4. Limiti: 512 intervalli sullo stack e 8192 divisioni. Differenze caloriche usano margini d’arrotondamento e limiti integrali monotoni fino a 256 pannelli Riemann e 80 iterazioni. Casi irrisolti rifiutano il lotto. Un massimo interno regolare è sonico; uno alla frontiera può essere non regolare.
+
+Sottopassi conservativi del primo ordine trasferiscono la stessa massa ed entalpia e dividono l’energia cinetica fra fluido e parete. Si verificano stati ed entropia totale della coppia. Limiti: 4096 sottopassi, 64 dimezzamenti per candidato, trasferimento iniziale entro 0.1 della massa minore. La chiusura tollera 128 epsilon binary64 per il massimo modulo volumetrico o pressione senza limitare i valori riportati. Un errore annulla l’intero lotto. Controllare passo, inventario, limiti, corsa e area.
+
+[Transito di combustibile all’equilibrio negli ugelli](EQUILIBRIUM_FUEL_NOZZLE.it.md)

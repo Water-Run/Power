@@ -18,9 +18,11 @@ Un `compressible_fuel_chamber` relie un arbre à un réservoir fini `compressibl
 
 Un `compressible_fuel_nozzle` transporte le fluide dans un seul sens entre réservoirs finis `compressible_fuel`, y compris les chambres entraînées par arbre. Compression liquide et vapeur idéale partagent leur matériau. Déclarer `phase_mode` comme `frozen` : la qualité massique reste fixe pendant le transit, puis les réservoirs se rééquilibrent. [Buses de carburant compressible à qualité figée](COMPRESSIBLE_FUEL_NOZZLE.fr.md)
 
+Régler `phase_mode` de `compressible_fuel_nozzle` sur `equilibrium` impose l’équilibre homogène instantané pendant le transit. Liquide et vapeur partagent pression, température et vitesse ; le titre change sur l’isentrope. La buse et les réservoirs finis utilisent le même potentiel liquide compressible et la même référence de vapeur idéale. `frozen` reste une hypothèse distincte prise en charge. [Transit de carburant à l’équilibre dans les buses](EQUILIBRIUM_FUEL_NOZZLE.fr.md)
+
 ## Prochaine étape
 
-Étendre le transit aux modèles de phase à l’équilibre et à vitesse finie, puis ajouter pulvérisation résolue et récepteur avec combustion compatible. Poursuivre allumage, admission/échappement, pertes mécaniques, actionnement de transmission et coordination ECU/TCU. Étalonnage mesuré et acceptation Unity restent distincts. [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md)
+Ajouter une relaxation de phase à vitesse finie avec preuves explicites de temps de séjour et de matériau, puis pulvérisation résolue et récepteur avec combustion compatible. Continuer allumage, admission/échappement, pertes mécaniques, actionnement de transmission et ECU/TCU. Étalonnage mesuré et acceptation Unity restent distincts. [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md)
 
 ## Acceptation
 

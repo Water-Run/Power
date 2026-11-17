@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 38, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v38";
+    public const int FormatVersion = 39, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v39";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -792,6 +792,7 @@ public static class AssetCodec
             {
                 int index=reader.ReadInt32();if(index<0||index>=components||cs[index].Kind!=ComponentKind.CompressibleFuelNozzle||cs[index].CompressibleNozzle is not null)throw new AssetFormatException("Nozzle record must reference a distinct compressible fuel nozzle.");
                 var area=Quantity();double coefficient=reader.ReadDouble();var phase=(FuelDischargePhaseModel)reader.ReadInt32();var fraction=Quantity();uint needle=reader.ReadUInt32();var closed=Quantity();var open=Quantity();
+                if(version<39&&phase!=FuelDischargePhaseModel.Frozen)throw new AssetFormatException("Equilibrium nozzle transit requires version 39.");
                 if(needle==0&&(closed!=default||open!=default))throw new AssetFormatException("Unused nozzle needle quantities must be zero.");
                 cs[index]=cs[index] with{CompressibleNozzle=new(){Area=area,DischargeCoefficient=coefficient,PhaseModel=phase,WallKineticFraction=fraction,Needle=needle==0?null:new(){NeedleNode=needle,ClosedPosition=closed,FullOpenPosition=open}}};
             }

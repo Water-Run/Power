@@ -18,9 +18,11 @@ Una `compressible_fuel_chamber` collega un albero a un serbatoio finito `compres
 
 Un `compressible_fuel_nozzle` porta flusso unidirezionale tra serbatoi finiti `compressible_fuel`, incluse camere azionate da albero. Compressione liquida e vapore ideale condividono il materiale. Dichiarare `phase_mode` come `frozen`: il titolo massico resta costante nel transito, mentre i serbatoi si riequilibrano. [Ugelli di combustibile comprimibile a titolo congelato](COMPRESSIBLE_FUEL_NOZZLE.it.md)
 
+Impostare `phase_mode` di `compressible_fuel_nozzle` su `equilibrium` per l’equilibrio omogeneo istantaneo durante il transito. Liquido e vapore condividono pressione, temperatura e velocità; il titolo cambia lungo l’isentropica. Ugello e serbatoi finiti usano lo stesso potenziale liquido comprimibile e riferimento di vapore ideale. `frozen` resta un’ipotesi distinta supportata. [Transito di combustibile all’equilibrio negli ugelli](EQUILIBRIUM_FUEL_NOZZLE.it.md)
+
 ## Prossimo incremento
 
-Estendere il transito a modelli di fase d’equilibrio e a velocità finita, poi aggiungere spray risolto e ricevitore con combustione compatibile. Continuare accensione, aspirazione/scarico, perdite meccaniche, attuazione trasmissione e coordinamento ECU/TCU. Calibrazione misurata e accettazione Unity restano separate. [Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md)
+Aggiungere rilassamento finito con prove esplicite di residenza e materiale, poi spray risolto e ricevitore con combustione compatibile. Continuare accensione, aspirazione/scarico, perdite meccaniche, attuazione trasmissione ed ECU/TCU. Calibrazione e accettazione Unity restano separate. [Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md)
 
 ## Accettazione
 

@@ -36,6 +36,6 @@ Delta_E_vapor = M cv (T_next-T_old)
 
 매개변수는 `unverified`입니다. 압축성이고 열팽창이 0인 액체와 이상증기의 평형 순수 의사유체, 혼합 챔버, 강체 셀을 가정합니다. 온도와 압력 범위를 지켜야 합니다. 챔버 벌크 운동에너지는 해석하지 않으며 자동 체크 밸브가 없습니다. 유한 속도 핵생성, 상간 미끄럼, 실제 유체 임계 거동, 실측 보정, 실제 Unity 인수 검증은 남아 있습니다.
 
-통과를 평형 및 유한 속도 상 모델로 확장하고 해상된 분무와 호환 연소 수신 챔버를 추가합니다. 점화, 흡배기, 기계 손실, 변속기 구동, ECU/TCU 협조를 계속합니다. 실측 보정과 실제 Unity 검증은 별도로 수행합니다.
+체류 시간과 물성의 명시적 증거를 바탕으로 유한 속도 상완화를 추가하고 해상된 분무 및 호환 연소 수신 챔버를 연결합니다. 점화, 흡배기, 기계 손실, 변속기 구동, ECU/TCU 협조를 계속합니다. 실측 보정과 실제 Unity 검증은 별도로 수행합니다.
 
 [Modelica: swept volume and pressure work](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [NIST: consistent thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html)

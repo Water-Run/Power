@@ -49,6 +49,6 @@ a_max = max_ports(abs(velocity)) + sqrt(max(K/rho0, (1+R/cv) R Tmax))
 
 パラメータは `unverified` のままです。指定温度・圧力範囲、正の潜エンタルピー、分離した共存比体積、希薄蒸気の条件を守ってください。剛体・等断面・水平管で瞬時均質平衡を仮定します。有限速度の核生成、相間滑り、表面張力、重力、管弾性、実流体の臨界挙動は含みません。一次数値拡散は相変化と音響の前線をぼかします。保存と再生だけでは空間精度や実測機器への妥当性を証明できません。実 Unity の受入検証は未完了です。
 
-通過を平衡および有限速度の相モデルへ拡張し、解像した噴霧と互換性のある燃焼受入室を追加します。点火、吸排気、機械損失、変速機駆動、ECU/TCU 協調を続けます。実測校正と実 Unity 受入検証は別に行います。
+滞留時間と物性の明示的な証拠を伴う有限速度相緩和を追加し、その後に解像した噴霧と互換性のある燃焼受入室を接続します。点火、吸排気、機械損失、変速機駆動、ECU/TCU 協調を続けます。実測校正と実 Unity 検証は別に行います。
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

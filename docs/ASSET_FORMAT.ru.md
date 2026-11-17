@@ -14,7 +14,30 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 38
+## Текущая версия 39
+
+Установите `phase_mode` компонента `compressible_fuel_nozzle` в `equilibrium` для мгновенного однородного равновесия при прохождении. Жидкость и пар имеют общие давление, температуру и скорость; паросодержание меняется вдоль изоэнтропы. Сопло и конечные резервуары используют одинаковый потенциал сжимаемой жидкости и опорный идеальный пар. `frozen` остаётся отдельным поддерживаемым предположением.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_equilibrium_nozzle | 44 |
+| compressible_fuel_nozzle_kind | 51 |
+| phase_mode_frozen | 1 |
+| phase_mode_equilibrium | 2 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| reported_states_per_frozen_nozzle | 13 |
+| reported_states_per_equilibrium_nozzle | 14 |
+| additional_output_field | 116 flux_relative_uncertainty |
+| retained_asset_readers | power.asset.v1..v38 |
+
+[Равновесное прохождение топлива через сопло](EQUILIBRIUM_FUEL_NOZZLE.ru.md)
+
+
+## Сохранённая версия 38
 
 `compressible_fuel_nozzle` обеспечивает односторонний поток между конечными резервуарами `compressible_fuel`, включая камеры с приводом от вала. Сжатие жидкости и идеальный пар используют материал резервуара. Явно задайте `phase_mode` как `frozen`: массовое паросодержание фиксировано при прохождении сопла, а резервуары возвращаются к равновесию.
 

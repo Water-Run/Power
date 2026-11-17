@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 无头实验"]
     mcp["Power.Mcp — 12 个 stdio MCP 工具"]
-    assets["Power.Assets — .powerasset v38"]
+    assets["Power.Assets — .powerasset v39"]
     unity["Unity 6.6 工作室 — 3D 实验室"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | 发现模型、限制、时间与修订约定。从这里开始。 |
 | `get_model_schema` | `power.model.v1` 的 JSON Schema 2020-12 |
-| `get_example_model` | 获取可编辑的合成模型与实验(61 个示例) |
+| `get_example_model` | 获取可编辑的合成模型与实验(63 个示例) |
 | `validate_model` | 不运行即校验模型;结构化修复诊断 |
 | `run_experiment` | 有界无头运行,含批量回放、KPI 与溯源 |
 | `export_model_asset` | 导出可移植的 `.powerasset` |
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 所有示例参数均为 `unverified`——研究取值,不是标定测量值。
 
-下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v38`,并保留对更早资产的读取。
+下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v39`,并保留对更早资产的读取。
 
 燃油域泵现在可向物理针阀和冻结汽相质量分数喷嘴供油，并进入有限液体体积的燃烧接收腔。完整库存包括相变、排量功、射流动能和静止壁面冲量。 [冻结汽相质量分数的燃油喷流与有限体积接收腔](docs/FUEL_DISCHARGE.zh-CN.md) [轴驱动相变燃料泵](docs/FUEL_CHAMBER_PUMP.zh-CN.md)
 
@@ -159,8 +159,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 `compressible_fuel_nozzle` 在有限 `compressible_fuel` 储腔之间提供单向流动，可连接轴驱动腔室。液体压缩能与理想蒸气使用同一储腔材料。显式声明 `phase_mode` 为 `frozen`：通过喷嘴时蒸气质量分数不变，主体储腔则重新达到相平衡。 [冻结相态可压缩燃料喷嘴](docs/COMPRESSIBLE_FUEL_NOZZLE.zh-CN.md)
 
+将 `compressible_fuel_nozzle` 的 `phase_mode` 设为 `equilibrium`，即可在穿越过程中采用瞬时均相相平衡。液体与蒸气共享压力、温度和速度，蒸气质量分数沿等熵线变化。喷嘴与有限储腔使用相同的可压缩液体冷势能和理想蒸气参考。`frozen` 模式作为另一种明确假设继续支持。 [平衡燃料喷嘴输运](docs/EQUILIBRIUM_FUEL_NOZZLE.zh-CN.md)
+
 <details>
-<summary>可用实验室(62 个)</summary>
+<summary>可用实验室(64 个)</summary>
 
 | 示例名(`get_example_model`) | 实验室 | 验证内容 |
 |---|---|---|
@@ -226,6 +228,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | 轴压力功与可压缩燃料输运耦合 |
 | `compressible-fuel-nozzle` | `assets/labs/compressible-fuel-nozzle.power.json` | 冻结相态可压缩阻塞、有限排放与实际针阀控制 |
 | `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | 冻结相态可压缩阻塞、有限排放与实际针阀控制 |
+| `equilibrium-flashing-nozzle` | `assets/labs/equilibrium-flashing-nozzle.power.json` | 平衡闪蒸、全局临界通量包络与实际针阀输送 |
+| `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | 平衡闪蒸、全局临界通量包络与实际针阀输送 |
 
 </details>
 

@@ -41,6 +41,6 @@ Delta_E_wall = xi Delta_m D(p_receiver)
 
 매개변수는 `unverified`입니다. 이상증기와 압축성·열팽창 0의 액체로 구성된 순수 의사유체입니다. 이상 제트 온도를 포함한 선언 범위를 지켜야 합니다. 동결 통과는 과열 액체를 유지할 수 있지만 실측 핵생성이나 준안정 한계는 예측하지 않습니다. 유한 속도 완화, 상간 미끄럼, 해상된 분무, 비응축 운반기체, 연소 수신 챔버, 실측 맵, 실제 Unity 인수 검증은 남아 있습니다. 보존과 재생은 하드웨어 타당성을 입증하지 않습니다.
 
-통과를 평형 및 유한 속도 상 모델로 확장하고 해상된 분무와 호환 연소 수신 챔버를 추가합니다. 점화, 흡배기, 기계 손실, 변속기 구동, ECU/TCU 협조를 계속합니다. 실측 보정과 실제 Unity 검증은 별도로 수행합니다.
+체류 시간과 물성의 명시적 증거를 바탕으로 유한 속도 상완화를 추가하고 해상된 분무 및 호환 연소 수신 챔버를 연결합니다. 점화, 흡배기, 기계 손실, 변속기 구동, ECU/TCU 협조를 계속합니다. 실측 보정과 실제 Unity 검증은 별도로 수행합니다.
 
 [NASA: injector flow and finite phase-transfer times](https://ntrs.nasa.gov/api/citations/20190001326/downloads/20190001326.pdf) · [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf)

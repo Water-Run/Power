@@ -42,7 +42,7 @@ Windows도 같은 `dotnet` 명령과 DLL의 절대 경로를 사용합니다. �
 
 ## 도구와 결과
 
-에이전트 API 버전 0.43.0의 `get_example_model`은 선택적 `name`을 받고 기본값은 `electrothermal`입니다. `get_capabilities.examples`는 유한 탱크와 순환 연료 모델을 포함한 47개 예제를 모두 나열합니다. CLI `list-labs`는 48개 실험실을 모두 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON으로 반환합니다. `thermal-network`는 설계상 CLI 전용입니다. 기능에는 지원 구성요소, 충실도, 솔버 제한과 입력 범위도 포함됩니다. 내보내기는 `power.asset.v38`을 사용하며 v1-v37 읽기를 유지합니다. 검증과 세션 생성은 출력 채널과 단위를 반환합니다. 실험실 KPI 통과가 완전하거나 보정된 파워트레인을 입증하지 않습니다.
+에이전트 API 버전 0.44.0의 `get_example_model`은 선택적 `name`을 받고 기본값은 `electrothermal`입니다. `get_capabilities.examples`는 유한 탱크와 순환 연료 모델을 포함한 47개 예제를 모두 나열합니다. CLI `list-labs`는 48개 실험실을 모두 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON으로 반환합니다. `thermal-network`는 설계상 CLI 전용입니다. 기능에는 지원 구성요소, 충실도, 솔버 제한과 입력 범위도 포함됩니다. 내보내기는 `power.asset.v39`을 사용하며 v1-v38 읽기를 유지합니다. 검증과 세션 생성은 출력 채널과 단위를 반환합니다. 실험실 KPI 통과가 완전하거나 보정된 파워트레인을 입증하지 않습니다.
 
 | 도구 | 목적 |
 |---|---|
@@ -292,7 +292,7 @@ KPI와 리플레이 증거를 평가하려면 `run_experiment`를, 개정 검사
 
 `at_controller`는 [-1,4] 범위의 정수 목표 단을 받으며 0은 중립입니다. 다섯 쌍의 충전/배출 밸브와 선택적인 토크 컨버터 록업을 관리합니다. 경로 순서는 캐리어 입력, 작은 선기어 입력, 큰 선기어 입력, 캐리어 브레이크, 큰 선기어 브레이크, 마지막으로 록업입니다.
 
-예제 `controlled-hydraulic-ravigneaux`와 `controlled-fired-hydraulic-ravigneaux`는 요청 채널 900과 컨트롤러 ID 1400을 사용합니다. 변경되지 않은 128 상태 한도 안에서 99와 122개의 보고 상태를 보존합니다. v38는 경로, 게인과 클록을 저장하고 v1-v37를 읽습니다.
+예제 `controlled-hydraulic-ravigneaux`와 `controlled-fired-hydraulic-ravigneaux`는 요청 채널 900과 컨트롤러 ID 1400을 사용합니다. 변경되지 않은 128 상태 한도 안에서 99와 122개의 보고 상태를 보존합니다. v39는 경로, 게인과 클록을 저장하고 v1-v38를 읽습니다.
 
 연구용 제어이며 매개변수는 `unverified`입니다. ECU 토크 협조, 상세 센서/밸브, 전체 차량 고장과 OEM 보정은 아직 미완성입니다. managed 및 Standard 검사는 실제 Unity Editor/Play/Player/IL2CPP 검증을 입증하지 않습니다.
 
@@ -302,7 +302,7 @@ KPI와 리플레이 증거를 평가하려면 `run_experiment`를, 개정 검사
 
 `liquid_rail_feed`는 액체 인젝터를 기존 용적 펌프와 명시적인 물질/열 경계에 연결합니다. 유압 출구 노드는 레일 컴플라이언스와 초기 절대압에 일치해야 합니다. 펌프와 인젝터가 이 압력 노드를 소유하고 다른 미추적 유체 경로는 거부됩니다.
 
-v38은 공급 연결과 원천 온도를 저장하고 v1-v37를 읽습니다. 축/압력 해석 교환, 독립 동시 ODE 세분화, 열 혼합, 질량/연료/에너지/체적 원장, 역류와 완전 rollback을 각각 확인합니다.
+v39은 공급 연결과 원천 온도를 저장하고 v1-v38를 읽습니다. 축/압력 해석 교환, 독립 동시 ODE 세분화, 열 혼합, 질량/연료/에너지/체적 원장, 역류와 완전 rollback을 각각 확인합니다.
 
 강체 혼합 탱크, 비압축 액체와 이상기체 모델입니다. 슬로싱/정수압 형상, 실제 혼합물 열역학, 캐비테이션, 실측 펌프/밸브 맵, OEM 보정과 실제 Unity Editor/Play/Player/IL2CPP는 미완성입니다. 매개변수는 `unverified`입니다.
 
@@ -393,3 +393,11 @@ MCP에서 `equilibrium-fuel-pump` 또는 `electric-equilibrium-fuel-pump`를 요
 면적, 유효면적 유량계수, `wall_kinetic_fraction`, 유한 열벽을 선언합니다. `initial_input`은 [0,1] 개도이며 선택 입력 채널로 변경합니다. 선택적인 `needle_node`, `closed_position`, `full_open_position`은 명령에 실제 병진 니들 개도를 곱합니다. 두 포트의 벌크 속도는 0이고 물성과 발열량이 같으며 내부 셀은 사용할 수 없습니다. 역압은 이상적인 개방 차압 0의 경계를 닫습니다.
 
 [상분율을 동결한 압축성 연료 노즐](COMPRESSIBLE_FUEL_NOZZLE.ko.md)
+
+## 연료 노즐의 평형 상변화 수송
+
+`compressible_fuel_nozzle`의 `phase_mode`를 `equilibrium`으로 설정하면 통과 중 순간 균질 상평형을 가정합니다. 액체와 증기는 압력, 온도, 속도를 공유하며 증기분율은 등엔트로피선을 따라 변합니다. 노즐과 유한 저장조는 같은 압축성 액체 퍼텐셜과 이상증기 기준을 사용합니다. `frozen`도 별도의 지원 가정으로 유지됩니다.
+
+압력과 비엔트로피가 안정 액체, 증기 또는 공존 상태를 결정합니다. 화학 퍼텐셜 일치와 기존 온압 범위를 사용하며 온도 끝점은 binary64 반올림 근방만 허용합니다. 면적, 벽열 배분, 개도, 실제 니들은 공통 노즐 계약을 따릅니다. 제트는 수신 압력까지 이상 완전 팽창하며 정지 충격량은 니들 축력이나 기계적 일을 추가하지 않습니다.
+
+[연료 노즐의 평형 상변화 수송](EQUILIBRIUM_FUEL_NOZZLE.ko.md)

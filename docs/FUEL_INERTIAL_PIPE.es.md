@@ -36,6 +36,6 @@ Solución armónica independiente de flexibilidad finita y RK4 independiente de 
 
 Los parámetros siguen `unverified`. Respete rangos materiales y estabilidad líquida corregida por presión. El fallo revierte todo el intervalo; reduzca paso e inspeccione agotamiento, presión y fase. Se omiten movimiento bifásico de densidad variable, cavitación, acústica, gravedad, geometría móvil y frentes térmicos. La combustión prescrita no prueba equilibrio químico ni entropía de reacción detallados.
 
-Extender el tránsito con equilibrio y tasas finitas de fase, después añadir pulverización resuelta y receptor con combustión compatible. Continuar encendido, admisión/escape, pérdidas mecánicas, actuación de transmisión y coordinación ECU/TCU. Calibración medida y aceptación real de Unity siguen separadas. [Conductos de combustible compresible en equilibrio](EQUILIBRIUM_FUEL_DUCT.es.md)
+Añadir relajación de fase finita con evidencia explícita de residencia y material, después pulverización resuelta y receptor con combustión compatible. Continuar encendido, admisión/escape, pérdidas mecánicas, transmisión y ECU/TCU. Calibración medida y Unity real siguen separados. [Conductos de combustible compresible en equilibrio](EQUILIBRIUM_FUEL_DUCT.es.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: dynamic pipe boundaries](https://doc.modelica.org/om/Modelica.Fluid.Pipes.DynamicPipe.html) · [VALIDATION.md](VALIDATION.md)

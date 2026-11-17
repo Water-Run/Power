@@ -4,7 +4,7 @@
 
 namespace Power.Core;
 
-public enum FuelDischargePhaseModel { Frozen = 1 }
+public enum FuelDischargePhaseModel { Frozen = 1, Equilibrium = 2 }
 public sealed record FuelDischargeDefinition
 {
     public uint FilmComponent { get; init; }

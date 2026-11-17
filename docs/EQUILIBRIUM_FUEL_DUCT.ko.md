@@ -49,6 +49,6 @@ a_max = max_ports(abs(velocity)) + sqrt(max(K/rho0, (1+R/cv) R Tmax))
 
 매개변수는 `unverified` 상태입니다. 선언된 온도와 압력 범위, 양의 잠재 엔탈피, 분리된 공존 비체적, 희박 증기 조건을 지켜야 합니다. 순간 균질 평형을 가정한 강체 등단면 수평 덕트입니다. 유한 속도 핵생성, 상간 미끄럼, 표면장력, 중력, 관 탄성, 실제 유체 임계 거동은 제외합니다. 1차 수치 확산은 상변화와 음향 전면을 흐리게 할 수 있습니다. 보존과 재생은 공간 정확도나 실측 하드웨어 타당성을 입증하지 않습니다. 실제 Unity 인수 검증은 남아 있습니다.
 
-통과를 평형 및 유한 속도 상 모델로 확장하고 해상된 분무와 호환 연소 수신 챔버를 추가합니다. 점화, 흡배기, 기계 손실, 변속기 구동, ECU/TCU 협조를 계속합니다. 실측 보정과 실제 Unity 검증은 별도로 수행합니다.
+체류 시간과 물성의 명시적 증거를 바탕으로 유한 속도 상완화를 추가하고 해상된 분무 및 호환 연소 수신 챔버를 연결합니다. 점화, 흡배기, 기계 손실, 변속기 구동, ECU/TCU 협조를 계속합니다. 실측 보정과 실제 Unity 검증은 별도로 수행합니다.
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)

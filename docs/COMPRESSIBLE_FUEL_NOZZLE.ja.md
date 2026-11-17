@@ -41,6 +41,6 @@ Delta_E_wall = xi Delta_m D(p_receiver)
 
 パラメータは `unverified` です。理想蒸気と熱膨張ゼロの圧縮性液体からなる純疑似流体です。理想噴流温度を含む指定温圧範囲を守ってください。凍結通過は過熱液体を保持できますが、実測の核生成や準安定限界は予測しません。有限速度緩和、相間滑り、解像した噴霧、不凝縮キャリアガス、燃焼受入室、実測マップ、実 Unity 受入検証は残っています。保存と再生は機器の妥当性を証明しません。
 
-通過を平衡および有限速度の相モデルへ拡張し、解像した噴霧と互換性のある燃焼受入室を追加します。点火、吸排気、機械損失、変速機駆動、ECU/TCU 協調を続けます。実測校正と実 Unity 受入検証は別に行います。
+滞留時間と物性の明示的な証拠を伴う有限速度相緩和を追加し、その後に解像した噴霧と互換性のある燃焼受入室を接続します。点火、吸排気、機械損失、変速機駆動、ECU/TCU 協調を続けます。実測校正と実 Unity 検証は別に行います。
 
 [NASA: injector flow and finite phase-transfer times](https://ntrs.nasa.gov/api/citations/20190001326/downloads/20190001326.pdf) · [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf)

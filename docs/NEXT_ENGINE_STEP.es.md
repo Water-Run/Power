@@ -18,9 +18,11 @@ Una `compressible_fuel_chamber` conecta un eje a un depósito finito `compressib
 
 Una `compressible_fuel_nozzle` transporta flujo unidireccional entre depósitos finitos `compressible_fuel`, incluidas cámaras accionadas por eje. Compresión líquida y vapor ideal comparten el material. Declare `phase_mode` como `frozen`: la calidad másica permanece fija durante el tránsito y los depósitos se reequilibran. [Toberas de combustible compresible de calidad congelada](COMPRESSIBLE_FUEL_NOZZLE.es.md)
 
+Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equilibrio homogéneo instantáneo durante el tránsito. Líquido y vapor comparten presión, temperatura y velocidad; la calidad cambia sobre la isentrópica. Tobera y depósitos finitos usan el mismo potencial líquido compresible y referencia de vapor ideal. `frozen` sigue siendo una hipótesis independiente admitida. [Tránsito de combustible en equilibrio por toberas](EQUILIBRIUM_FUEL_NOZZLE.es.md)
+
 ## Próximo incremento
 
-Extender el tránsito con equilibrio y tasas finitas de fase, después añadir pulverización resuelta y receptor con combustión compatible. Continuar encendido, admisión/escape, pérdidas mecánicas, actuación de transmisión y coordinación ECU/TCU. Calibración medida y aceptación real de Unity siguen separadas. [Conductos de combustible compresible en equilibrio](EQUILIBRIUM_FUEL_DUCT.es.md)
+Añadir relajación de fase finita con evidencia explícita de residencia y material, después pulverización resuelta y receptor con combustión compatible. Continuar encendido, admisión/escape, pérdidas mecánicas, transmisión y ECU/TCU. Calibración medida y Unity real siguen separados. [Conductos de combustible compresible en equilibrio](EQUILIBRIUM_FUEL_DUCT.es.md)
 
 ## Aceptación
 

@@ -122,7 +122,7 @@ public sealed partial class Simulation
                 FuelDischarges = model.HasFuelDischarge ? new(model.FuelDischarges.Length) : null,
                 FuelPipes = model.HasFuelPipes ? new(model.FuelPipes.Length) : null,
                 CompressibleFuel = model.CompressibleFuels.Length != 0 ? new(model.CompressibleFuels.Length, model.FuelDucts.Length, model.HasCompressibleFuelChambers) : null,
-                CompressibleNozzles = model.HasCompressibleFuelNozzles ? new(model.CompressibleNozzles.Length) : null,
+                CompressibleNozzles = model.HasCompressibleFuelNozzles ? new(model.CompressibleNozzles.Length,model.HasEquilibriumFuelNozzles) : null,
                 CompressibleChambers = model.HasCompressibleFuelChambers ? new(model.CompressibleChambers.Length) : null,
                 FuelChambers = model.HasFuelChambers ? new(model.FuelChambers.Length) : null,
                 Fuel = model.HasEquilibriumFuelNetwork ? new(model.FuelVolumes.Length, model.FuelLinks.Length, model.HasFuelChambers) : null,
@@ -1208,7 +1208,7 @@ public sealed partial class Simulation
                     var state=_state.CompressibleNozzles!;var d=_model.CompressibleNozzles[nozzleSlot];
                     int history=b.Field switch{Field.TotalFuelDelivered=>0,Field.TransportEnergy=>1,Field.JetKineticEnergy=>2,Field.HeatRejected=>3,Field.JetImpulse=>4,Field.EntropyProduced=>5,_=>-1};
                     int last=b.Field switch{Field.MassFlow=>0,Field.Force=>1,Field.ThroatPressure=>2,Field.ExitTemperature=>3,Field.ExitVelocity=>4,Field.Choked=>5,Field.VaporMassFraction=>6,_=>-1};
-                    value=history>=0?state.History[nozzleSlot,history]:last>=0?state.Last[nozzleSlot,last]:b.Field==Field.FluidHeat?state.History[nozzleSlot,2]-state.History[nozzleSlot,3]:CompressibleNozzleSolver.Opening(d,_state.Inputs,_state.X);
+                    value=b.Field==Field.FluxRelativeUncertainty?state.Uncertainty![nozzleSlot]:history>=0?state.History[nozzleSlot,history]:last>=0?state.Last[nozzleSlot,last]:b.Field==Field.FluidHeat?state.History[nozzleSlot,2]-state.History[nozzleSlot,3]:CompressibleNozzleSolver.Opening(d,_state.Inputs,_state.X);
                     destination[i]=new(Channels.Output(b.ObjectId,b.Field),value);continue;
                 }
                 int compressibleChamber = b.IsComponent ? _model.CompressibleChamberByComponent[b.Index] : -1;

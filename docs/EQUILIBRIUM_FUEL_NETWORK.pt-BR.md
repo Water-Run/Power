@@ -32,7 +32,7 @@ Termodinâmica compatível e condutância positiva movida por pressão dão prod
 
 Pedir `equilibrium-fuel-network` ou `electrothermal-fuel-network` pelo MCP ou executar o mesmo JSON pela CLI. Ler `mass`, `internal_energy`, `elastic_energy`, `vapor_mass`, `vapor_mass_fraction`, `vapor_volume_fraction`, `entropy`, `specific_enthalpy`. Aqui `internal_energy` inclui parede elástica e a energia química é separada. Os elos mostram vazões com sinal, massa acumulada, `transport_energy` e mudança de entropia do par.
 
-Os laboratórios cobrem descarga líquida em coexistência, fluxo reverso, abertura e calor finito/eletromecânico. Exponencial independente de pressão líquida, EDO bifásica simultânea massa/entalpia/calor, reversão térmica e captura especulativa da embreagem verificam precisão e composição. Artefatos e MCP real preservam todos os valores e hashes. Asset v38 guarda propriedades e lê v1-v37. Unity Editor/Play/Player/IL2CPP real segue não verificado.
+Os laboratórios cobrem descarga líquida em coexistência, fluxo reverso, abertura e calor finito/eletromecânico. Exponencial independente de pressão líquida, EDO bifásica simultânea massa/entalpia/calor, reversão térmica e captura especulativa da embreagem verificam precisão e composição. Artefatos e MCP real preservam todos os valores e hashes. Asset v39 guarda propriedades e lê v1-v38. Unity Editor/Play/Player/IL2CPP real segue não verificado.
 
 ## Trabalho restante
 

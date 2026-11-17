@@ -980,7 +980,8 @@
             "density",
             "sound_speed",
             "mass_at_a",
-            "mass_at_b"
+            "mass_at_b",
+            "flux_relative_uncertainty"
           ]
         },
         "min": {
@@ -8552,7 +8553,10 @@
               "maximum": 1
             },
             "phase_mode": {
-              "const": "frozen"
+              "enum": [
+                "frozen",
+                "equilibrium"
+              ]
             },
             "wall_kinetic_fraction": {
               "type": "object",

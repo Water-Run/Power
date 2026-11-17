@@ -36,6 +36,6 @@ Exécuter `compressible-fuel-chamber-duct` ou `electric-compressible-fuel-duct`.
 
 Les paramètres restent `unverified`. Le pseudo-fluide pur à l’équilibre comprend un liquide compressible sans dilatation thermique et une vapeur idéale, avec chambre mélangée et cellules rigides. Respecter les limites thermiques et de pression. La chambre ne résout pas d’énergie cinétique globale et n’inclut pas de clapet automatique. Nucléation à vitesse finie, glissement, comportement critique réel, étalonnage mesuré et acceptation Unity restent ouverts.
 
-Étendre le transit aux modèles de phase à l’équilibre et à vitesse finie, puis ajouter pulvérisation résolue et récepteur avec combustion compatible. Poursuivre allumage, admission/échappement, pertes mécaniques, actionnement de transmission et coordination ECU/TCU. Étalonnage mesuré et acceptation Unity restent distincts.
+Ajouter une relaxation de phase à vitesse finie avec preuves explicites de temps de séjour et de matériau, puis pulvérisation résolue et récepteur avec combustion compatible. Continuer allumage, admission/échappement, pertes mécaniques, actionnement de transmission et ECU/TCU. Étalonnage mesuré et acceptation Unity restent distincts.
 
 [Modelica: swept volume and pressure work](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [NIST: consistent thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html)

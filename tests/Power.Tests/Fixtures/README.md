@@ -367,3 +367,15 @@ SHA-256: `60dd76119b8079bf5c9ac731026cd4ced1893b36470816955008847e8bbb3db7`.
 `CompressibleNozzleAssetChecks` verifies the authentic digest and every original
 and upgraded replay boundary. Keep these original bytes. The Power! GPL license
 and Unity Linking Exception apply.
+
+## Compressible pump and needle v38
+
+`compressible-pump-needle-v38.powerasset` retains the v38 writer output from
+commit `f22508fb6d8be280404abe424dd4e25f4033ed2d`, copied before changing the
+encoder on 2026-11-17. It preserves the shaft, duct, physical needle and frozen
+compressible nozzle records before equilibrium transit and flux diagnostics.
+
+SHA-256: `b8469401c7a4469a603aa81ef34ca70d9fc98bbc7e56aa7877a4fa65a153e195`.
+`EquilibriumNozzleAssetChecks` verifies the authentic digest and every original
+and upgraded replay boundary. Keep these original bytes. The Power! GPL license
+and Unity Linking Exception apply.

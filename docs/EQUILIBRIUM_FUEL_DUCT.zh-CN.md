@@ -49,6 +49,6 @@ a_max = max_ports(abs(velocity)) + sqrt(max(K/rho0, (1+R/cv) R Tmax))
 
 参数仍为 `unverified`。须处于声明的温压范围内，并满足潜焓为正、两相共存比容分离及稀薄蒸气条件。这是采用瞬时均相平衡的刚性等截面水平管路，未包含有限速率成核、相间滑移、表面张力、重力、管壁弹性或真实流体临界行为。一阶数值扩散会抹平相变及声波前沿；守恒与回放不能证明空间精度或实测硬件有效性。实际 Unity 验收仍待完成。
 
-将喷嘴穿越扩展到平衡和有限速率相态模型，再加入解析喷雾及相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。
+在明确的停留时间和材料证据基础上增加有限速率相变弛豫，再加入解析喷雾和相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。
 
 [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf) · [MFEM: Rusanov flux](https://docs.mfem.org/html/classmfem_1_1RusanovFlux.html) · [Modelica: conservation balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html)
