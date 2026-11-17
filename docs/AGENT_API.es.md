@@ -76,7 +76,7 @@ Windows usa el mismo comando `dotnet` y una ruta absoluta a la DLL. Una conexió
 
 ## Herramientas y resultados
 
-En la API de agente versión 0.44.0, `get_example_model` acepta un `name` opcional, por defecto `electrothermal`. `get_capabilities.examples` enumera los 63 ejemplos, incluidos tanque finito y recirculación. CLI `list-labs` devuelve los 64 laboratorios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` es exclusivo de CLI por diseño. Las capacidades también anuncian componentes, fidelidad, límites del solver y entradas. Los exports usan `power.asset.v39`, conservando lectores v1-v38. La validación y creación de sesión devuelven canales y unidades. Los KPI aprobados no establecen un tren motriz completo o calibrado.
+En la API de agente versión 0.45.0, `get_example_model` acepta un `name` opcional, por defecto `electrothermal`. `get_capabilities.examples` enumera los 65 ejemplos, incluidos tanque finito y recirculación. CLI `list-labs` devuelve los 66 laboratorios como JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` es exclusivo de CLI por diseño. Las capacidades también anuncian componentes, fidelidad, límites del solver y entradas. Los exports usan `power.asset.v40`, conservando lectores v1-v39. La validación y creación de sesión devuelven canales y unidades. Los KPI aprobados no establecen un tren motriz completo o calibrado.
 
 | Herramienta | Finalidad |
 |---|---|
@@ -610,7 +610,7 @@ nuevo. Consulta [AT_HYDRAULIC_ACTUATION.es.md](AT_HYDRAULIC_ACTUATION.es.md).
 
 `at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
 
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v39 conserva rutas, ganancias y relojes y lee v1-v38.
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v40 conserva rutas, ganancias y relojes y lee v1-v39.
 
 Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
 
@@ -620,7 +620,7 @@ Son controles de investigación y los parámetros siguen `unverified`. Coordinac
 
 `liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
 
-v39 conserva enlaces y temperatura de fuente y lee v1-v38. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v40 conserva enlaces y temperatura de fuente y lee v1-v39. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
 Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
@@ -719,3 +719,11 @@ Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equili
 Presión y entropía específica determinan líquido estable, vapor o coexistencia. El cierre usa igualdad de potenciales químicos y límites térmicos/barométricos existentes. Los extremos térmicos solo admiten vecindades de redondeo binary64. Área, calor de pared, apertura y aguja real siguen el contrato común. El chorro se expande idealmente hasta el receptor; su impulso estacionario no añade fuerza axial ni trabajo mecánico.
 
 [Tránsito de combustible en equilibrio por toberas](EQUILIBRIUM_FUEL_NOZZLE.es.md)
+
+## Relajación de fase del combustible a velocidad finita
+
+Un nodo `relaxing_fuel` tiene una fracción másica de vapor independiente. Líquido y vapor comparten presión, temperatura y velocidad, pero el equilibrio químico requiere un tiempo finito declarado. Un `relaxing_fuel_duct` transporta masa, cantidad de movimiento, energía total y masa de vapor por celdas explícitas. La residencia depende de su geometría y velocidad real.
+
+Ejecute `relaxing-fuel-evaporation` o `relaxing-fuel-duct`. Observe fracciones real y de equilibrio, afinidad, entropía de fase, balances de vapor en puertos y residuo global. Los historiales de evaporación y condensación separan por signo la transferencia neta de fuente de cada paso aceptado; no cuentan intercambios microscópicos brutos. Se verifican la solución exponencial independiente, derivadas de entropía, acústica congelada, límite rígido de equilibrio, autorrefinamiento temporal y refinamiento espacial acústico lineal independiente. Transacciones, reproducción portátil y MCP real se comprueban aparte; los valores están en la evidencia de validación.
+
+[Relajación de fase del combustible a velocidad finita](RELAXING_FUEL.es.md)

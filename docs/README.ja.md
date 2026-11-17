@@ -31,13 +31,14 @@ flowchart LR
 | ドキュメント | 内容 |
 |---|---|
 | [エージェント API](AGENT_API.ja.md) | MCP ツール、リビジョン、エラー、操作シーケンス |
-| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v39 と、v1 から v38 までのリーダー |
+| [アセット形式](ASSET_FORMAT.ja.md) | `.powerasset` v40 と、v1 から v39 までのリーダー |
 | [蒸気質量分率を凍結した燃料流出と有限受容室](FUEL_DISCHARGE.ja.md) | 凍結蒸気分率のチョーク、有限液体排除、物理ポンプ/ニードル燃焼 |
 | [有限液体燃料管路の運動量](FUEL_INERTIAL_PIPE.ja.md) | 有限液体在庫、動的流量、熱混合、保存的管路仕事 |
 | [圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md) | 保存形の圧縮性二相輸送と平衡音響 |
 | [軸駆動の圧縮性燃料室](COMPRESSIBLE_FUEL_CHAMBER.ja.md) | 軸の圧力仕事と圧縮性燃料輸送の結合 |
 | [相分率を凍結した圧縮性燃料ノズル](COMPRESSIBLE_FUEL_NOZZLE.ja.md) | 凍結圧縮性チョーク、有限排出、実ニードル制御 |
 | [燃料ノズルの平衡相変化輸送](EQUILIBRIUM_FUEL_NOZZLE.ja.md) | 平衡フラッシュ、大域臨界流束包絡と実ニードル |
+| [有限速度の燃料相変化緩和](RELAXING_FUEL.ja.md) | 独立蒸気分率、有限速度相変化、保存型輸送 |
 | [液体入口の運動量参照](LIQUID_COLUMN.ja.md) | 単相入口慣性、摩擦熱、独立検証した二次運動量 |
 | [ネイティブ Zig 境界](NATIVE_ZIG.ja.md) | 保管された Zig プロトタイプと、バージョン付き ABI |
 

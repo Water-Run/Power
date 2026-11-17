@@ -14,7 +14,33 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version actuelle 39
+## Version actuelle 40
+
+Un nœud `relaxing_fuel` possède un titre massique de vapeur indépendant. Liquide et vapeur partagent pression, température et vitesse, mais l’équilibre chimique demande un temps fini déclaré. Un `relaxing_fuel_duct` transporte masse, quantité de mouvement, énergie totale et masse de vapeur dans des cellules explicites. Le temps de séjour dépend de leur géométrie et de la vitesse réelle.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_fuel | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| initial_vapor_mass_fraction | fraction, [0,1] |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| equilibrium_fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| relaxing_fuel_material_record_bytes | 180 |
+| relaxing_material_extension | uint64 phase_relaxation_time_ns, quantity initial_vapor_mass_fraction |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117 equilibrium_vapor_mass_fraction, 118 chemical_affinity, 119 vapor_mass_residual, 120 vapor_mass_at_a, 121 vapor_mass_at_b |
+| retained_asset_readers | power.asset.v1..v39 |
+
+[Relaxation de phase du carburant à vitesse finie](RELAXING_FUEL.fr.md)
+
+## Version conservée 39
 
 Régler `phase_mode` de `compressible_fuel_nozzle` sur `equilibrium` impose l’équilibre homogène instantané pendant le transit. Liquide et vapeur partagent pression, température et vitesse ; le titre change sur l’isentrope. La buse et les réservoirs finis utilisent le même potentiel liquide compressible et la même référence de vapeur idéale. `frozen` reste une hypothèse distincte prise en charge.
 

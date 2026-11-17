@@ -20,15 +20,17 @@ Un `compressible_fuel_nozzle` porta flusso unidirezionale tra serbatoi finiti `c
 
 Impostare `phase_mode` di `compressible_fuel_nozzle` su `equilibrium` per l’equilibrio omogeneo istantaneo durante il transito. Liquido e vapore condividono pressione, temperatura e velocità; il titolo cambia lungo l’isentropica. Ugello e serbatoi finiti usano lo stesso potenziale liquido comprimibile e riferimento di vapore ideale. `frozen` resta un’ipotesi distinta supportata. [Transito di combustibile all’equilibrio negli ugelli](EQUILIBRIUM_FUEL_NOZZLE.it.md)
 
+Un nodo `relaxing_fuel` ha una frazione massica di vapore indipendente. Liquido e vapore condividono pressione, temperatura e velocità, mentre l’equilibrio chimico richiede un tempo finito dichiarato. Un `relaxing_fuel_duct` trasporta massa, quantità di moto, energia totale e massa di vapore in celle esplicite. La permanenza dipende da geometria e velocità effettiva. [Rilassamento di fase del combustibile a velocità finita](RELAXING_FUEL.it.md)
+
 ## Prossimo incremento
 
-Aggiungere rilassamento finito con prove esplicite di residenza e materiale, poi spray risolto e ricevitore con combustione compatibile. Continuare accensione, aspirazione/scarico, perdite meccaniche, attuazione trasmissione ed ECU/TCU. Calibrazione e accettazione Unity restano separate. [Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md)
+Estendere le condizioni al contorno compatibili con velocità finita e ottenere misure di rilassamento del materiale, poi aggiungere spray risolto e ricevitori in combustione. Continuare accensione, aspirazione/scarico, perdite meccaniche, attuazione della trasmissione e coordinamento ECU/TCU. Calibrazione misurata e accettazione reale Unity restano separate. [Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md)
 
 ## Accettazione
 
 Richiedere riferimenti analitici/limite indipendenti, bilanci completi massa/energia e raffinamento appropriato. Conservare rollback del lotto, annullamento, rami, canali stabili, replay portabile e vecchi lettori. Continuare poi accensione, aspirazione/scarico, perdite meccaniche, trasmissione e coordinamento ECU/TCU.
 
-I parametri restano `unverified`. Rispettare gli intervalli dichiarati di temperatura e pressione, entalpia latente positiva, volumi di coesistenza separati e vapore diluito. Il condotto è rigido, orizzontale, a sezione costante e con equilibrio omogeneo istantaneo. Esclude nucleazione a velocità finita, scorrimento tra fasi, tensione superficiale, gravità, elasticità e comportamento critico reale. La diffusione di primo ordine può allargare i fronti; conservazione e riproduzione non dimostrano accuratezza spaziale o validità hardware misurata. L’accettazione Unity effettiva è ancora aperta.
+I parametri restano `unverified`. Dichiarare `initial_vapor_mass_fraction` in [0,1] e un tempo intero da 1 ns a un’ora. Rispettare temperatura e pressione positiva del materiale. Si assumono condotto rigido orizzontale a sezione costante, pseudofluido puro, dilatazione termica liquida nulla e vapore ideale. Mancano scorrimento fra le fasi, ritardo termico interfacciale, tensione superficiale, spray e gas vettore. Restano aperti gli accoppiamenti diretti del dominio rilassante con pompe, ugelli, camere mobili e ricevitori in combustione. Conservazione, riproduzione e raffinamento non attestano validità hardware misurata né accettazione reale Unity. Usare vapore diluito lontano dalla regione critica reale; il materiale deve mantenere entalpia latente positiva e volumi specifici di coesistenza distinti.
 
 [DEVELOPMENT_STATUS.it.md](DEVELOPMENT_STATUS.it.md) · [ROADMAP.it.md](ROADMAP.it.md) · [VALIDATION.it.md](VALIDATION.it.md)
 

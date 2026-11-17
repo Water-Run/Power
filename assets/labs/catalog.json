@@ -384,6 +384,18 @@
       "asset_name": "EquilibriumPumpNeedle",
       "display_name": "Equilibrium pump and physical needle laboratory",
       "agent_example": true
+    },
+    {
+      "name": "relaxing-fuel-evaporation",
+      "asset_name": "RelaxingFuelEvaporation",
+      "display_name": "Finite-rate isolated fuel evaporation laboratory",
+      "agent_example": true
+    },
+    {
+      "name": "relaxing-fuel-duct",
+      "asset_name": "RelaxingFuelDuct",
+      "display_name": "Finite-rate phase-relaxing fuel duct laboratory",
+      "agent_example": true
     }
   ]
 }

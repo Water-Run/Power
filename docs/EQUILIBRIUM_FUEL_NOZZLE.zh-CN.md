@@ -37,6 +37,6 @@ velocity_throat = c_equilibrium  (smooth interior maximum only)
 
 参数仍为 `unverified`。这一平衡极限采用单一纯伪流体、理想蒸气、零液体热膨胀和共同相速度，未包含有限成核与弛豫时间、相间滑移、喷雾、载气及燃烧接收腔耦合。数值包络使用声明的 binary64 裕量，不是形式化的定向舍入区间证明。临界过渡附近的喉部分类须结合通量包络解释。实测硬件有效性和实际 Unity 验收仍待完成。
 
-在明确的停留时间和材料证据基础上增加有限速率相变弛豫，再加入解析喷雾和相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。
+扩展兼容的有限速率边界耦合并取得材料弛豫实测数据，再加入解析喷雾和燃烧接收腔。继续点火、进排气、机械损失、变速器执行与 ECU/TCU 协同控制；实测标定和实际 Unity 验收分别推进。
 
 [NASA: injector flow and finite phase-transfer times](https://ntrs.nasa.gov/api/citations/20190001326/downloads/20190001326.pdf) · [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf)

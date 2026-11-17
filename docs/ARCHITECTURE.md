@@ -493,7 +493,7 @@ remain separate from AT feedback/control and measured valve-body acceptance.
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v39 retains routes, gains and clocks and reads v1-v38.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v40 retains routes, gains and clocks and reads v1-v39.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -503,7 +503,7 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v39 retains feed links and source temperature and reads v1-v38. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v40 retains feed links and source temperature and reads v1-v39. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -596,3 +596,11 @@ Positive equilibrium sound-speed squared gives increasing density along an isent
 Conservative first-order substeps transfer the same mass and enthalpy between reservoirs. Jet kinetic energy is divided between receiver and wall. Accepted substeps check both material states and total pair entropy. Each interval permits 4096 substeps with at most 64 halvings per candidate; the initial transfer bound is 0.1 times the smaller reservoir mass. Pressure closure allows 128 times binary64 epsilon times the largest bulk modulus or port pressure; reported pressures are not clamped. A failed interval rolls back the whole batch. Reduce the tick and inspect inventory, material bounds, needle travel and valve area.
 
 [Equilibrium fuel nozzle transit](EQUILIBRIUM_FUEL_NOZZLE.md)
+
+## Finite-rate fuel phase relaxation
+
+The closure retains the compressible liquid cold potential and ideal vapor of the equilibrium fuel model. Initial quality is explicit and is not projected to equilibrium. At fixed mass, volume and internal energy, quality approaches the equilibrium target exponentially with constant `phase_relaxation_time_ns`. Latent heat stays inside the energy balance. Chemical affinity is liquid minus vapor chemical potential; its product with phase transfer gives nonnegative entropy production divided by temperature. This is a research relaxation law, not a measured nucleation correlation.
+
+Conservative Rusanov fluxes advect four fields. Each global CFL interval applies half a local phase source, transport, then half a source. Shared reservoirs receive each source once, regardless of duct count. The source trajectory is exact for isolated fixed-volume states; the coupled method retains first-order transport error. CFL uses the frozen-quality acoustic bound. Local phase and duct entropy changes are checked separately. Out-of-range states reject the complete batch.
+
+[Finite-rate fuel phase relaxation](RELAXING_FUEL.md)

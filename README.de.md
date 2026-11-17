@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — Experimente ohne Oberfläche"]
     mcp["Power.Mcp — 12 MCP-Werkzeuge über stdio"]
-    assets["Power.Assets — .powerasset v39"]
+    assets["Power.Assets — .powerasset v40"]
     unity["Unity-6.6-Studio — 3D-Laboratorien"]
 
     model --> core
@@ -119,7 +119,7 @@ Der Dienst stellt zwölf Werkzeuge mit Eingabe- und Ausgabeschemas bereit:
 |---|---|
 | `get_capabilities` | Modelle, Grenzen, Zeit- und Revisionskonventionen entdecken. Hier beginnen. |
 | `get_model_schema` | JSON Schema 2020-12 für `power.model.v1` |
-| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (63 Beispiele) |
+| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (65 Beispiele) |
 | `validate_model` | Modell ohne Ausführung prüfen; strukturierte Reparaturdiagnosen |
 | `run_experiment` | Begrenzter Lauf ohne Oberfläche mit Batch-Replay, KPIs und Herkunft |
 | `export_model_asset` | Ein portables `.powerasset` exportieren |
@@ -147,7 +147,7 @@ Ein Ravigneaux-Forschungsgraph mit vier Bereichen ergänzt zusammengesetzte Plan
 > [!NOTE]
 > Alle Beispielparameter sind `unverified` — Forschungswerte, keine kalibrierten Messungen.
 
-Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v39`, Leser für ältere Assets bleiben erhalten.
+Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v40`, Leser für ältere Assets bleiben erhalten.
 
 Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampfanteil in einen befeuerten Empfänger mit endlichem Flüssigkeitsvolumen. Vollständige Inventare enthalten Phasenwechsel, Verdrängungsarbeit, Strahlenergie und Impuls an die ruhende Wand. [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](docs/FUEL_DISCHARGE.de.md) [Wellengetriebene phasenauflösende Kraftstoffpumpe](docs/FUEL_CHAMBER_PUMP.de.md)
 
@@ -161,8 +161,10 @@ Eine `compressible_fuel_nozzle` verbindet endliche `compressible_fuel`-Behälter
 
 `phase_mode` von `compressible_fuel_nozzle` auf `equilibrium` setzen, um sofortiges homogenes Phasengleichgewicht im Transit zu verwenden. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; der Dampfanteil ändert sich entlang der Isentrope. Düse und endliche Behälter nutzen dasselbe kompressible Flüssigkeitspotenzial und dieselbe ideale Dampfreferenz. `frozen` bleibt eine getrennte unterstützte Annahme. [Kraftstoffdüsentransit im Phasengleichgewicht](docs/EQUILIBRIUM_FUEL_NOZZLE.de.md)
 
+Ein `relaxing_fuel`-Knoten führt einen unabhängigen Dampfmassenanteil. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; chemisches Gleichgewicht benötigt eine erklärte endliche Zeit. Ein `relaxing_fuel_duct` transportiert Masse, Impuls, Gesamtenergie und Dampfmasse durch explizite Zellen. Die Verweilzeit folgt aus Geometrie und tatsächlicher Geschwindigkeit. [Kraftstoff-Phasenrelaxation mit endlicher Rate](docs/RELAXING_FUEL.de.md)
+
 <details>
-<summary>Verfügbare Laboratorien (64)</summary>
+<summary>Verfügbare Laboratorien (66)</summary>
 
 | Beispielname (`get_example_model`) | Laboratorium | Was es prüft |
 |---|---|---|
@@ -230,6 +232,8 @@ Eine `compressible_fuel_nozzle` verbindet endliche `compressible_fuel`-Behälter
 | `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Eingefrorene kritische Strömung, endlicher Austritt und reale Nadel |
 | `equilibrium-flashing-nozzle` | `assets/labs/equilibrium-flashing-nozzle.power.json` | Gleichgewichtsverdampfung, globale kritische Flussgrenzen und reale Nadel |
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | Gleichgewichtsverdampfung, globale kritische Flussgrenzen und reale Nadel |
+| `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | Unabhängiger Dampfanteil, endliche Phasenrate und konservativer Transport |
+| `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | Unabhängiger Dampfanteil, endliche Phasenrate und konservativer Transport |
 
 </details>
 

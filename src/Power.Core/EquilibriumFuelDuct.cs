@@ -12,27 +12,35 @@ public sealed record EquilibriumFuelDuctDefinition
     public Quantity QuadraticResistance { get; init; }
     public Quantity FluidHeatFraction { get; init; }
 }
-internal sealed record CompiledCompressibleFuel(int Node, CompressibleFuel Law, CompressibleFuelPoint Initial, double Velocity, double HeatingValue);
+internal sealed record CompiledCompressibleFuel(int Node, CompressibleFuel Law, CompressibleFuelPoint Initial, double Velocity, double HeatingValue)
+{internal RelaxingFuel? Relaxation {get;init;}}
 internal sealed record CompiledFuelDuct(int Component, int[] Ports, int Wall, double WallCapacity, double Area, double Linear, double Quadratic, double FluidFraction, double LineVolume);
-internal sealed class CompressibleFuelState(int nodes, int ducts, bool moving = false)
+internal sealed class CompressibleFuelState(int nodes, int ducts, bool moving = false, bool relaxing = false)
 {
     internal readonly double[] Mass = new double[nodes], MassCorrection = new double[nodes], Momentum = new double[nodes], MomentumCorrection = new double[nodes], Energy = new double[nodes], EnergyCorrection = new double[nodes];
     internal readonly double[]? Volume = moving ? new double[nodes] : null;
+    internal readonly double[]? VaporMass=relaxing?new double[nodes]:null,VaporCorrection=relaxing?new double[nodes]:null,PhaseTick=relaxing?new double[nodes]:null;
+    internal readonly double[,]? PhaseHistory=relaxing?new double[nodes,3]:null,PhaseCorrection=relaxing?new double[nodes,3]:null;
+    internal readonly double[,]? VaporPorts=relaxing?new double[ducts,2]:null,VaporPortCorrection=relaxing?new double[ducts,2]:null;
     // Histories: net mass at A/B, energy at A/B, friction/fluid/wall heat, entropy, wall impulse.
     internal readonly double[,] History = new double[ducts,9], Correction = new double[ducts,9];
     internal readonly double[] TickMass = new double[ducts], TickImpulse = new double[ducts];
     internal void CopyFrom(CompressibleFuelState other)
     {
         if (Volume is not null) Array.Copy(other.Volume!, Volume, nodes);
+        if(VaporMass is not null){Array.Copy(other.VaporMass!,VaporMass,nodes);Array.Copy(other.VaporCorrection!,VaporCorrection!,nodes);Array.Copy(other.PhaseTick!,PhaseTick!,nodes);Array.Copy(other.PhaseHistory!,PhaseHistory!,PhaseHistory!.Length);Array.Copy(other.PhaseCorrection!,PhaseCorrection!,PhaseCorrection!.Length);}
+        if(VaporPorts is not null){Array.Copy(other.VaporPorts!,VaporPorts,VaporPorts.Length);Array.Copy(other.VaporPortCorrection!,VaporPortCorrection!,VaporPortCorrection!.Length);}
         Array.Copy(other.Mass,Mass,nodes);Array.Copy(other.MassCorrection,MassCorrection,nodes);Array.Copy(other.Momentum,Momentum,nodes);Array.Copy(other.MomentumCorrection,MomentumCorrection,nodes);
         Array.Copy(other.Energy,Energy,nodes);Array.Copy(other.EnergyCorrection,EnergyCorrection,nodes);Array.Copy(other.History,History,History.Length);Array.Copy(other.Correction,Correction,Correction.Length);
         Array.Copy(other.TickMass,TickMass,ducts);Array.Copy(other.TickImpulse,TickImpulse,ducts);
     }
     internal void Add(int d,int field,double value)=>Numeric.Accumulate(value,ref History[d,field],ref Correction[d,field]);
-    internal void BeginTick(){Array.Clear(TickMass,0,ducts);Array.Clear(TickImpulse,0,ducts);}
-    internal bool EndTick(double seconds){for(int i=0;i<ducts;++i){TickMass[i]/=seconds;TickImpulse[i]/=seconds;}return Finite();}
+    internal void BeginTick(){Array.Clear(TickMass,0,ducts);Array.Clear(TickImpulse,0,ducts);if(PhaseTick is not null)Array.Clear(PhaseTick,0,nodes);}
+    internal bool EndTick(double seconds){if(PhaseTick is not null)for(int i=0;i<nodes;++i){int j=PhaseTick[i]>=0?0:1;Numeric.Accumulate(Math.Abs(PhaseTick[i]),ref PhaseHistory![i,j],ref PhaseCorrection![i,j]);PhaseTick[i]/=seconds;}for(int i=0;i<ducts;++i){TickMass[i]/=seconds;TickImpulse[i]/=seconds;}return Finite();}
     internal bool Finite()
     {
+        if(VaporMass is not null){for(int i=0;i<nodes;++i)if(!GearReference.Finite(VaporMass[i],VaporCorrection![i],PhaseTick![i],0)||VaporMass[i]<0||VaporMass[i]>Mass[i])return false;foreach(double x in PhaseHistory!)if(!Numeric.Finite(x))return false;foreach(double x in PhaseCorrection!)if(!Numeric.Finite(x))return false;}
+        if(VaporPorts is not null){foreach(double x in VaporPorts)if(!Numeric.Finite(x))return false;foreach(double x in VaporPortCorrection!)if(!Numeric.Finite(x))return false;}
         if (Volume is not null) foreach (double v in Volume) if (!Numeric.Finite(v) || v <= 0) return false;
         for(int i=0;i<nodes;++i)if(Mass[i]<=0||!GearReference.Finite(Mass[i],MassCorrection[i],Momentum[i],MomentumCorrection[i])||!GearReference.Finite(Energy[i],EnergyCorrection[i],0,0))return false;
         for(int i=0;i<ducts;++i){if(!GearReference.Finite(TickMass[i],TickImpulse[i],0,0))return false;for(int j=0;j<9;++j)if(!Numeric.Finite(History[i,j])||!Numeric.Finite(Correction[i,j]))return false;}
@@ -40,6 +48,8 @@ internal sealed class CompressibleFuelState(int nodes, int ducts, bool moving = 
     }
     internal ulong Hash(ulong hash)
     {
+        if(VaporMass is not null)for(int i=0;i<nodes;++i){hash=Numeric.Hash(hash,VaporMass[i]);hash=Numeric.Hash(hash,VaporCorrection![i]);hash=Numeric.Hash(hash,PhaseTick![i]);for(int j=0;j<3;++j){hash=Numeric.Hash(hash,PhaseHistory![i,j]);hash=Numeric.Hash(hash,PhaseCorrection![i,j]);}}
+        if(VaporPorts is not null)for(int i=0;i<ducts;++i)for(int j=0;j<2;++j){hash=Numeric.Hash(hash,VaporPorts[i,j]);hash=Numeric.Hash(hash,VaporPortCorrection![i,j]);}
         if (Volume is not null) foreach (double v in Volume) hash = Numeric.Hash(hash, v);
         for(int i=0;i<nodes;++i){hash=Numeric.Hash(hash,Mass[i]);hash=Numeric.Hash(hash,MassCorrection[i]);hash=Numeric.Hash(hash,Momentum[i]);hash=Numeric.Hash(hash,MomentumCorrection[i]);hash=Numeric.Hash(hash,Energy[i]);hash=Numeric.Hash(hash,EnergyCorrection[i]);}
         for(int i=0;i<ducts;++i){for(int j=0;j<9;++j){hash=Numeric.Hash(hash,History[i,j]);hash=Numeric.Hash(hash,Correction[i,j]);}hash=Numeric.Hash(hash,TickMass[i]);hash=Numeric.Hash(hash,TickImpulse[i]);}return hash;
@@ -52,13 +62,16 @@ public sealed partial class CompiledModel
     internal CompiledFuelDuct[] FuelDucts { get; private set; }=[];
     internal int[] CompressibleCellOwner { get; private set; }=[];
     internal int[] FuelDuctByComponent { get; private set; }=[];
-    public bool HasEquilibriumFuelDucts=>FuelDucts.Length!=0;
+    public bool HasEquilibriumFuelDucts=>FuelDucts.Any(d=>Components[d.Component].Kind==ComponentKind.EquilibriumFuelDuct);
+    internal int RelaxingFuelCount {get;private set;}
+    internal int RelaxingDuctCount {get;private set;}
+    public bool HasRelaxingFuel=>RelaxingFuelCount!=0;
     private void CompileCompressibleFuels(NodeDefinition[] definitions)
     {
         var result=new List<CompiledCompressibleFuel>();
         for(int i=0;i<Nodes.Length;++i)
         {
-            var n=Nodes[i];if(n.Domain!=Domain.CompressibleFuel)continue;var d=definitions[i].Fuel!;
+            var n=Nodes[i];if(n.Domain is not (Domain.CompressibleFuel or Domain.RelaxingFuel))continue;var d=definitions[i].Fuel!;
             double Q(Quantity q,Unit unit,string field)=>Convert(q,unit,n.Id,"fuel."+field);
             Require(d.Compliance==default,DiagnosticCode.Schema,n.Id,"fuel.compliance","Compressible fluid uses a liquid bulk modulus and rigid volume; omit wall compliance.");
             CompressibleFuel law;
@@ -71,25 +84,33 @@ public sealed partial class CompiledModel
             catch(ModelCompileException){throw;}
             catch(ArgumentException ex){throw new ModelCompileException(DiagnosticCode.Range,n.Id,"fuel",ex.Message);}
             double velocity=Q(definitions[i].InitialVelocity,Unit.MeterPerSecond,"initial_velocity"),heating=Q(d.LowerHeatingValue,Unit.JoulePerKilogram,"lower_heating_value");
-            Require(heating>0&&law.Evaluate(n.Position/n.Storage,n.Initial,out _),DiagnosticCode.Range,n.Id,"fuel.initial","Use positive finite mass and a valid equilibrium density/temperature inside declared bounds.");
-            law.Evaluate(n.Position/n.Storage,n.Initial,out var point);
+            CompressibleFuelPoint point;RelaxingFuel? relaxation=null;
+            if(n.Domain==Domain.RelaxingFuel)
+            {
+                double x=Q(definitions[i].InitialVaporMassFraction,Unit.Fraction,"initial_vapor_mass_fraction");
+                try{relaxation=new(law,d.PhaseRelaxationTimeNanoseconds);}catch(ArgumentException error){throw new ModelCompileException(DiagnosticCode.Range,n.Id,"fuel.phase_relaxation_time_ns",error.Message);}
+                Require(relaxation.Evaluate(n.Position/n.Storage,n.Initial,x,out _),DiagnosticCode.Range,n.Id,"fuel.initial","Use a representable fixed-quality density/temperature state within declared bounds.");
+                relaxation.Evaluate(n.Position/n.Storage,n.Initial,x,out var p);point=p.Fluid;
+            }
+            else{Require(d.PhaseRelaxationTimeNanoseconds==0,DiagnosticCode.Schema,n.Id,"fuel.phase_relaxation_time_ns","Finite relaxation requires relaxing_fuel domain.");Require(law.Evaluate(n.Position/n.Storage,n.Initial,out _),DiagnosticCode.Range,n.Id,"fuel.initial","Use valid equilibrium density and temperature.");law.Evaluate(n.Position/n.Storage,n.Initial,out point);}
+            Require(heating>0,DiagnosticCode.Range,n.Id,"fuel.lower_heating_value","Use positive heating value.");
             Require(GearReference.Finite(n.Position*velocity,n.Position*(point.SpecificInternalEnergyJoulesPerKilogram+.5*velocity*velocity),n.Position*heating,0),DiagnosticCode.Range,n.Id,"initial_velocity","Initial mass, energy and momentum must be representable.");
-            result.Add(new(i,law,point,velocity,heating));
+            result.Add(new(i,law,point,velocity,heating){Relaxation=relaxation});
         }
-        CompressibleFuels=result.ToArray();CompressibleCellOwner=new int[result.Count];Array.Fill(CompressibleCellOwner,-1);
+        CompressibleFuels=result.ToArray();RelaxingFuelCount=result.Count(f=>f.Relaxation is not null);CompressibleCellOwner=new int[result.Count];Array.Fill(CompressibleCellOwner,-1);
     }
     private void CompileFuelDucts(ComponentDefinition[] definitions)
     {
         FuelDuctByComponent=new int[Components.Length];Array.Fill(FuelDuctByComponent,-1);var result=new List<CompiledFuelDuct>();
         for(int i=0;i<Components.Length;++i)
         {
-            var c=Components[i];if(c.Kind!=ComponentKind.EquilibriumFuelDuct)continue;var d=definitions[i].FuelDuct!;
+            var c=Components[i];if(c.Kind is not (ComponentKind.EquilibriumFuelDuct or ComponentKind.RelaxingFuelDuct))continue;var d=definitions[i].FuelDuct!;var domain=c.Kind==ComponentKind.RelaxingFuelDuct?Domain.RelaxingFuel:Domain.CompressibleFuel;
             Require(d.Cells is not null&&d.Cells.Count is >=1 and <=24,DiagnosticCode.Capacity,c.Id,"fuel_duct.cells","Declare 1 through 24 ordered, distinct compressible fuel cells.");
             var ports=new int[d.Cells!.Count+2];ports[0]=Nodes[c.A].Index;ports[ports.Length-1]=Nodes[c.B].Index;double volume=0;
             for(int j=0;j<d.Cells.Count;++j)
             {
                 int node=Array.FindIndex(Nodes,n=>n.Id==d.Cells[j]);
-                Require(node>=0&&Nodes[node].Domain==Domain.CompressibleFuel&&node!=c.A&&node!=c.B,DiagnosticCode.Connection,c.Id,"fuel_duct.cells","Internal cells must be distinct compressible fuel nodes separate from both reservoirs.");
+                Require(node>=0&&Nodes[node].Domain==domain&&node!=c.A&&node!=c.B,DiagnosticCode.Connection,c.Id,"fuel_duct.cells","Internal cells must be distinct compressible fuel nodes separate from both reservoirs.");
                 int slot=Nodes[node].Index;Require(CompressibleCellOwner[slot]<0,DiagnosticCode.Connection,c.Id,"fuel_duct.cells","Each internal cell has exactly one duct owner.");CompressibleCellOwner[slot]=i;ports[j+1]=slot;volume+=Nodes[node].Storage;
             }
             var reference=CompressibleFuels[ports[0]];
@@ -98,7 +119,7 @@ public sealed partial class CompiledModel
             Require(area>0&&linear>=0&&quadratic>=0&&fraction is >=0 and <=1&&Numeric.Finite(volume/area),DiagnosticCode.Range,c.Id,"fuel_duct","Declare positive area, nonnegative resistance and heat fraction in [0,1].");
             FuelDuctByComponent[i]=result.Count;result.Add(new(i,ports,Nodes[c.Heat].Index,Nodes[c.Heat].Storage,area,linear,quadratic,fraction,volume));
         }
-        FuelDucts=result.ToArray();
+        FuelDucts=result.ToArray();RelaxingDuctCount=result.Count(d=>Components[d.Component].Kind==ComponentKind.RelaxingFuelDuct);
         foreach(var duct in FuelDucts)
         {
             Require(CompressibleCellOwner[duct.Ports[0]]<0&&CompressibleCellOwner[duct.Ports[duct.Ports.Length-1]]<0,DiagnosticCode.Connection,Components[duct.Component].Id,"fuel_duct.ports","A reservoir cannot also be an internal duct cell.");
@@ -117,11 +138,14 @@ public sealed partial class CompiledModel
 internal sealed class EquilibriumFuelDuctSolver(CompiledModel model)
 {
     private readonly CompressibleFuelPoint[] _point=new CompressibleFuelPoint[model.CompressibleFuels.Length];
+    private readonly double[] _dv=new double[model.CompressibleFuels.Length];
     private readonly double[] _dm=new double[model.CompressibleFuels.Length],_dp=new double[model.CompressibleFuels.Length],_de=new double[model.CompressibleFuels.Length];
     internal static bool Point(CompiledModel model,CompressibleFuelState s,int i,out CompressibleFuelPoint p)
     {
         var d=model.CompressibleFuels[i];double m=s.Mass[i];
-        return d.Law.Flash(m/model.CompressibleVolume(s,i),s.Energy[i]/m-.5*(s.Momentum[i]/m)*(s.Momentum[i]/m),out p);
+        double density=m/model.CompressibleVolume(s,i),energy=s.Energy[i]/m-.5*(s.Momentum[i]/m)*(s.Momentum[i]/m);
+        if(d.Relaxation is {} law){bool ok=law.Flash(density,energy,s.VaporMass![i]/m,out var q);p=q.Fluid;return ok;}
+        return d.Law.Flash(density,energy,out p);
     }
     internal bool Advance(CompressibleFuelState s,double[] wallTemperature,double duration)
     {
@@ -136,10 +160,10 @@ internal sealed class EquilibriumFuelDuctSolver(CompiledModel model)
                     if(!Point(model,s,i,out _point[i]))return false;
                     double velocity=s.Momentum[i]/s.Mass[i];speed=Math.Max(speed,Math.Abs(velocity)+model.CompressibleFuels[i].Law.AcousticSpeedBoundMetersPerSecond);
                     minVolume=Math.Min(minVolume,model.CompressibleVolume(s,i));entropyBefore+=s.Mass[i]*_point[i].SpecificEntropyJoulesPerKilogramKelvin;
-                    entropyScale+=s.Mass[i]*(_point[i].IsochoricHeatCapacityJoulesPerKilogramKelvin+Math.Abs(_point[i].SpecificEntropyJoulesPerKilogramKelvin));_dm[i]=_dp[i]=_de[i]=0;
+                    entropyScale+=s.Mass[i]*(_point[i].IsochoricHeatCapacityJoulesPerKilogramKelvin+Math.Abs(_point[i].SpecificEntropyJoulesPerKilogramKelvin));_dm[i]=_dp[i]=_de[i]=_dv[i]=0;
                 }
                 double h=Math.Min(remaining,.2*minVolume/(duct.Area*speed));if(!Numeric.Finite(h)||h<=0)return false;
-                double massA=0,massB=0,energyA=0,energyB=0,impulse=0;
+                double massA=0,massB=0,energyA=0,energyB=0,impulse=0,vaporA=0,vaporB=0;
                 for(int face=0;face<ports.Length-1;++face)
                 {
                     int a=ports[face],b=ports[face+1];double va=model.CompressibleVolume(s,a),vb=model.CompressibleVolume(s,b);
@@ -150,12 +174,14 @@ internal sealed class EquilibriumFuelDuctSolver(CompiledModel model)
                     double mass=h*duct.Area*fm,momentum=h*duct.Area*fp,energy=h*duct.Area*fe;
                     if(!GearReference.Finite(mass,momentum,energy,0))return false;
                     _dm[a]-=mass;_dm[b]+=mass;_de[a]-=energy;_de[b]+=energy;
+                    if(model.CompressibleFuels[a].Relaxation is not null){double vapor=h*duct.Area*(.5*(s.VaporMass![a]/va*ua+s.VaporMass[b]/vb*ub)-.5*speed*(s.VaporMass[b]/vb-s.VaporMass[a]/va));if(!Numeric.Finite(vapor))return false;_dv[a]-=vapor;_dv[b]+=vapor;if(face==0)vaporA=vapor;if(face==ports.Length-2)vaporB=vapor;}
                     if(face>0)_dp[a]-=momentum;else{massA=mass;energyA=energy;impulse-=momentum;}
                     if(face+1<ports.Length-1)_dp[b]+=momentum;else{massB=mass;energyB=energy;impulse+=momentum;}
                 }
                 foreach(int i in ports)
                 {
                     Numeric.Accumulate(_dm[i],ref s.Mass[i],ref s.MassCorrection[i]);Numeric.Accumulate(_dp[i],ref s.Momentum[i],ref s.MomentumCorrection[i]);Numeric.Accumulate(_de[i],ref s.Energy[i],ref s.EnergyCorrection[i]);
+                    if(model.CompressibleFuels[i].Relaxation is not null)Numeric.Accumulate(_dv[i],ref s.VaporMass![i],ref s.VaporCorrection![i]);
                     if(s.Mass[i]<=0||!Point(model,s,i,out _point[i]))return false;
                 }
                 double friction=0,wallHeat=0,oldWall=wallTemperature[duct.Wall];
@@ -175,6 +201,7 @@ internal sealed class EquilibriumFuelDuctSolver(CompiledModel model)
                 double entropy=entropyAfter-entropyBefore+duct.WallCapacity*Numeric.Log1p((wallTemperature[duct.Wall]-oldWall)/oldWall);
                 if(!Numeric.Finite(entropy)||entropy < -2048*GearReference.Epsilon*entropyScale)return false;
                 s.Add(index,0,massA);s.Add(index,1,massB);s.Add(index,2,energyA);s.Add(index,3,energyB);s.Add(index,4,friction);s.Add(index,5,friction-wallHeat);s.Add(index,6,wallHeat);s.Add(index,7,entropy);s.Add(index,8,impulse);
+                if(model.Components[duct.Component].Kind==ComponentKind.RelaxingFuelDuct){Numeric.Accumulate(vaporA,ref s.VaporPorts![index,0],ref s.VaporPortCorrection![index,0]);Numeric.Accumulate(vaporB,ref s.VaporPorts[index,1],ref s.VaporPortCorrection[index,1]);}
                 s.TickMass[index]+=massA;s.TickImpulse[index]+=impulse;remaining=h==remaining?0:remaining-h;
             }
         }

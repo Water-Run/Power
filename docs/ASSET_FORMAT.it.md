@@ -14,7 +14,33 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione attuale 39
+## Versione corrente 40
+
+Un nodo `relaxing_fuel` ha una frazione massica di vapore indipendente. Liquido e vapore condividono pressione, temperatura e velocità, mentre l’equilibrio chimico richiede un tempo finito dichiarato. Un `relaxing_fuel_duct` trasporta massa, quantità di moto, energia totale e massa di vapore in celle esplicite. La permanenza dipende da geometria e velocità effettiva.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_fuel | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| initial_vapor_mass_fraction | fraction, [0,1] |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| equilibrium_fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| relaxing_fuel_material_record_bytes | 180 |
+| relaxing_material_extension | uint64 phase_relaxation_time_ns, quantity initial_vapor_mass_fraction |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117 equilibrium_vapor_mass_fraction, 118 chemical_affinity, 119 vapor_mass_residual, 120 vapor_mass_at_a, 121 vapor_mass_at_b |
+| retained_asset_readers | power.asset.v1..v39 |
+
+[Rilassamento di fase del combustibile a velocità finita](RELAXING_FUEL.it.md)
+
+## Versione conservata 39
 
 Impostare `phase_mode` di `compressible_fuel_nozzle` su `equilibrium` per l’equilibrio omogeneo istantaneo durante il transito. Liquido e vapore condividono pressione, temperatura e velocità; il titolo cambia lungo l’isentropica. Ugello e serbatoi finiti usano lo stesso potenziale liquido comprimibile e riferimento di vapore ideale. `frozen` resta un’ipotesi distinta supportata.
 

@@ -36,6 +36,6 @@ Der bewegliche Behälter verwendet halben Transport, volle Wellenarbeit und halb
 
 Parameter bleiben `unverified`. Das reine Gleichgewichtspseudofluid nutzt kompressible Flüssigkeit ohne thermische Ausdehnung und idealen Dampf, eine gemischte Kammer und starre Zellen. Temperatur- und Druckgrenzen gelten. Die Kammer löst keine mittlere kinetische Energie auf und enthält kein automatisches Rückschlagventil. Endliche Keimbildung, Phasenschlupf, reales kritisches Verhalten, Messkalibrierung und tatsächliche Unity-Abnahme bleiben offen.
 
-Endliche Phasenrelaxation mit expliziter Verweilzeit- und Stoffdatenevidenz ergänzen, dann aufgelösten Spray und kompatible brennende Empfänger. Zündung, Ein-/Auslass, mechanische Verluste, Getriebebetätigung und ECU/TCU fortsetzen. Messkalibrierung und tatsächliche Unity-Abnahme bleiben getrennt.
+Kompatible Randkopplungen mit endlicher Rate erweitern und Relaxationsmessungen des Materials beschaffen, danach aufgelöstes Spray und brennende Empfänger ergänzen. Zündung, Ein-/Auslass, mechanische Verluste, Getriebeaktuierung und ECU/TCU-Koordination fortsetzen. Messkalibrierung und tatsächliche Unity-Abnahme bleiben getrennt.
 
 [Modelica: swept volume and pressure work](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [NIST: consistent thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html)

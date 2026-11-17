@@ -2,6 +2,95 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · **Русский** · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: Фазовая релаксация топлива с конечной скоростью
+
+Узел `relaxing_fuel` имеет независимую массовую долю пара. Жидкость и пар имеют общие давление, температуру и скорость, но химическое равновесие достигается за заданное конечное время. `relaxing_fuel_duct` переносит массу, импульс, полную энергию и массу пара через явные ячейки. Время пребывания определяется геометрией и фактической скоростью.
+
+Запустите `relaxing-fuel-evaporation` или `relaxing-fuel-duct`. Доступны фактическая и равновесная доли, сродство, фазовая энтропия, паровые балансы портов и глобальная невязка. Истории испарения и конденсации разделяют по знаку суммарный перенос источника за принятый шаг, а не микроскопические встречные потоки. Проверяются независимое экспоненциальное решение, производные энтропии, замороженная акустика, жёсткий равновесный предел, временное самосгущение и независимое линейно-акустическое сгущение сетки. Транзакции, переносимое воспроизведение и реальный MCP проверяются отдельно; числа приведены в доказательствах валидации.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 583/583 |
+| standard_checks_on_dotnet | 461/461 |
+| actual_mcp_groups | 70/70 |
+| laboratories | 66 |
+| agent_examples | 65 |
+| unchanged_laboratories | 64 |
+| identical_complete_sample_boundaries | 7619 |
+| all_sample_boundaries | 7641 |
+| new_core_groups | 13 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| global_cfl | 0.2 |
+| maximum_global_substeps | 4096 |
+| fixed_quality_flash_iterations | 80 |
+| asset_version | power.asset.v40 |
+| agent_api_version | 0.45.0 |
+| fingerprint_tag | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117..121 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| v39_fixture_sha256 | 95b49037e29e2f6be15291cbb45ea8c053e976aa9e3a0df9a9806a00725bcfac |
+| verification_log_sha256 | 11cf926daee32bb5f87e835d649a370fcd984390df9ad0664f4a2984b631a9b0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 66 |
+| schema_negative_cases | 15 |
+| documentation_locales | 10 |
+| documentation_files | 250 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| initial_quality | equilibrium_quality | quality_after_two_tau | specific_entropy_change_j_kg_k |
+|---|---|---|---|
+| 0.3 | 0.40689075997022106 | 0.3924246686942744 | 5.54875710970839 |
+| 0.1 | 0.022095016639203525 | 0.0326383096278805 | 21.749238363251123 |
+
+| temporal_self_refinement_step_ns | reference_step_ns | quality_absolute_error |
+|---|---|---|
+| 4000 | 50 | 4.841542071720717e-05 |
+| 2000 | 50 | 3.054656079609641e-05 |
+| 1000 | 50 | 1.4934826843782112e-05 |
+| 500 | 50 | 7.0868146199720705e-06 |
+
+| independent_linear_frozen_acoustic_cells | normalized_cell_average_error |
+|---|---|
+| 4 | 0.11807384309213376 |
+| 8 | 0.08979190596364788 |
+| 12 | 0.07380850723566255 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | maximum_sampled_vapor_mass_residual_kg | final_source_quality | final_source_phase_entropy_j_k |
+|---|---|---|---|---|---|---|---|
+| relaxing-fuel-evaporation | 91025ced0013231b | bea1aa00312ec239 | 11 | 0 | 3.3881317890172014e-21 | 0.39242466869427434 | 0.0014286807703571605 |
+| relaxing-fuel-duct | 18dcdf1a72d04529 | fc90c667851d977b | 11 | 1.4551915228366852e-11 | 1.1142290872151208e-20 | 0.2931345788652313 | 0.0003028266650770687 |
+
+- `artifacts/reports/relaxing-fuel-final-2026-11-17.log`
+- `artifacts/reports/relaxing-fuel-verify-exit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-evidence-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-baseline-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-schema-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-provenance-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-doc-audit-2026-11-17.json`
+
+Консервативные потоки Русанова переносят четыре поля. Каждый глобальный интервал CFL включает половину локального источника, перенос и вторую половину источника. Общий резервуар получает каждый источник один раз независимо от числа каналов. Источник точен для изолированного состояния постоянного объёма; связанный перенос остаётся первого порядка. CFL использует верхнюю границу замороженной скорости звука. Энтропия фазового перехода и канала проверяется раздельно. Выход за границы откатывает весь пакет.
+
+Параметры остаются `unverified`. Задайте `initial_vapor_mass_fraction` в [0,1] и целое время от 1 ns до одного часа. Соблюдайте температурные и положительные барические границы материала. Предполагаются жёсткий горизонтальный канал постоянного сечения, чистая псевдожидкость, нулевое тепловое расширение жидкости и идеальный пар. Нет скольжения фаз, задержки межфазного теплообмена, поверхностного натяжения, распыла и несущего газа. Прямое сопряжение релаксирующего домена с насосом, соплом, подвижной камерой и горящим приёмником ещё предстоит. Сохранение, воспроизведение и сгущение не доказывают достоверность оборудования или приёмку Unity. Используйте разреженный пар вдали от критической области реального флюида; материал должен сохранять положительную скрытую энтальпию и различные удельные объёмы сосуществующих фаз.
+
 ## 2026-11-17: Равновесное прохождение топлива через сопло
 
 Установите `phase_mode` компонента `compressible_fuel_nozzle` в `equilibrium` для мгновенного однородного равновесия при прохождении. Жидкость и пар имеют общие давление, температуру и скорость; паросодержание меняется вдоль изоэнтропы. Сопло и конечные резервуары используют одинаковый потенциал сжимаемой жидкости и опорный идеальный пар. `frozen` остаётся отдельным поддерживаемым предположением.

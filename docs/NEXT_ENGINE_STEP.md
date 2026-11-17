@@ -20,15 +20,17 @@ A `compressible_fuel_nozzle` carries one-way flow between finite `compressible_f
 
 Set `compressible_fuel_nozzle` `phase_mode` to `equilibrium` for instantaneous homogeneous phase equilibrium during transit. Liquid and vapor share pressure, temperature and velocity, and vapor quality changes along the isentrope. The same compressible liquid cold potential and ideal-vapor reference supply both nozzle and finite reservoirs. The `frozen` mode remains a separate supported assumption. [Equilibrium fuel nozzle transit](EQUILIBRIUM_FUEL_NOZZLE.md)
 
+A `relaxing_fuel` node carries independent vapor mass quality. Liquid and vapor share pressure, temperature and velocity, while chemical equilibrium takes a declared finite time. A `relaxing_fuel_duct` transports mass, momentum, total energy and vapor mass through explicit cells. Residence follows cell geometry and actual velocity. [Finite-rate fuel phase relaxation](RELAXING_FUEL.md)
+
 ## Next increment
 
-Add finite-rate phase relaxation with explicit residence and material evidence, then resolved spray and compatible fired receiver coupling. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
+Extend compatible finite-rate boundary coupling and obtain material relaxation measurements, then add resolved spray and fired receivers. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
 
 ## Acceptance
 
 Require independent analytic or limiting references, full mass/energy ledgers and step refinement appropriate to the new equations. Preserve batch rollback, cancellation, forks, stable channels, portable replay and prior asset readers. Then continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control.
 
-Parameters remain `unverified`. Stay inside the declared temperature and pressure range, with positive latent enthalpy, separated coexistence volumes and dilute vapor. This is a rigid constant-area horizontal duct with instantaneous homogeneous equilibrium. It omits finite-rate nucleation, phase slip, surface tension, gravity, pipe elasticity and real-fluid critical behavior. First-order numerical diffusion can smear phase and acoustic fronts; conservation and replay do not establish spatial accuracy or measured hardware validity. Actual Unity acceptance remains pending.
+Parameters remain `unverified`. Declare `initial_vapor_mass_fraction` in [0,1] and an integer relaxation time from 1 ns through one hour. Stay within the material temperature and positive-pressure bounds. The model assumes a rigid horizontal constant-area duct, one pure pseudo-fluid, zero liquid thermal expansion and ideal vapor. It omits phase slip, interfacial heat delay, surface tension, spray and carrier gas. Direct relaxing-domain pump, nozzle, moving chamber and fired receiver coupling remain open. Conservation, replay and refinement do not establish measured hardware validity or actual Unity acceptance. Use dilute vapor away from the real-fluid critical region; the material must retain positive latent enthalpy and separated coexistence volumes.
 
 [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) · [ROADMAP.md](ROADMAP.md) · [VALIDATION.md](VALIDATION.md)
 

@@ -37,6 +37,6 @@ velocity_throat = c_equilibrium  (smooth interior maximum only)
 
 매개변수는 `unverified`입니다. 순수 의사유체, 이상증기, 액체 열팽창 0, 공통 속도를 가정합니다. 유한 핵생성·완화 시간, 상간 미끄럼, 분무, 운반기체, 연소 수신 챔버는 포함하지 않습니다. 포락은 선언한 binary64 여유를 사용하며 방향 반올림에 의한 형식 구간 증명은 아닙니다. 임계 전이 부근 목 분류는 유속 포락과 함께 해석해야 합니다. 실측 타당성과 실제 Unity 검증은 남아 있습니다.
 
-체류 시간과 물성의 명시적 증거를 바탕으로 유한 속도 상완화를 추가하고 해상된 분무 및 호환 연소 수신 챔버를 연결합니다. 점화, 흡배기, 기계 손실, 변속기 구동, ECU/TCU 협조를 계속합니다. 실측 보정과 실제 Unity 검증은 별도로 수행합니다.
+호환되는 유한 속도 경계 결합을 확장하고 재료 완화 실측값을 확보한 뒤 해상된 분무와 연소 수신부를 추가합니다. 점화, 흡배기, 기계 손실, 변속기 작동과 ECU/TCU 협조 제어를 계속합니다. 실측 보정과 실제 Unity 인수는 별도로 진행합니다.
 
 [NASA: injector flow and finite phase-transfer times](https://ntrs.nasa.gov/api/citations/20190001326/downloads/20190001326.pdf) · [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf)

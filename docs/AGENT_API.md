@@ -76,7 +76,7 @@ Windows uses the same `dotnet` command and an absolute path to the DLL. A produc
 
 ## Tools and results
 
-In agent API version 0.44.0, `get_example_model` takes an optional `name`, defaulting to `electrothermal`. `get_capabilities.examples` lists all 63 available examples, including finite-tank and recirculating fuel models. CLI `list-labs` returns all 64 laboratories as [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON; `thermal-network` is CLI-only by design. Capabilities also advertise supported components, fidelity, solver limits and input bounds. Exports use `power.asset.v39`, with v1-v38 readers retained. Validation and session creation return output channels and units. Passing laboratory KPIs doesn't establish a complete or calibrated powertrain.
+In agent API version 0.45.0, `get_example_model` takes an optional `name`, defaulting to `electrothermal`. `get_capabilities.examples` lists all 65 available examples, including finite-tank and recirculating fuel models. CLI `list-labs` returns all 66 laboratories as [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON; `thermal-network` is CLI-only by design. Capabilities also advertise supported components, fidelity, solver limits and input bounds. Exports use `power.asset.v40`, with v1-v39 readers retained. Validation and session creation return output channels and units. Passing laboratory KPIs doesn't establish a complete or calibrated powertrain.
 
 | Tool | Purpose |
 |---|---|
@@ -610,7 +610,7 @@ format. See [AT_HYDRAULIC_ACTUATION.md](AT_HYDRAULIC_ACTUATION.md).
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v39 retains routes, gains and clocks and reads v1-v38.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v40 retains routes, gains and clocks and reads v1-v39.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -620,7 +620,7 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v39 retains feed links and source temperature and reads v1-v38. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v40 retains feed links and source temperature and reads v1-v39. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -719,3 +719,11 @@ Set `compressible_fuel_nozzle` `phase_mode` to `equilibrium` for instantaneous h
 Pressure and specific entropy determine the stable liquid, vapor or coexistence state. The closure uses chemical-potential equality and the existing temperature/pressure bounds. Inclusive temperature endpoints permit only binary64 rounding neighbourhoods. Area, wall heat routing, opening commands and physical needles follow the common nozzle contract. Jet energy describes ideal complete expansion to receiver pressure; stationary jet impulse adds no axial needle force or mechanical work.
 
 [Equilibrium fuel nozzle transit](EQUILIBRIUM_FUEL_NOZZLE.md)
+
+## Finite-rate fuel phase relaxation
+
+A `relaxing_fuel` node carries independent vapor mass quality. Liquid and vapor share pressure, temperature and velocity, while chemical equilibrium takes a declared finite time. A `relaxing_fuel_duct` transports mass, momentum, total energy and vapor mass through explicit cells. Residence follows cell geometry and actual velocity.
+
+Run `relaxing-fuel-evaporation` or `relaxing-fuel-duct`. Observe actual and equilibrium quality, chemical affinity, phase entropy, vapor port inventories and the global vapor residual. Evaporated/condensed histories split the net source transfer of each accepted tick by sign; they are not gross microscopic forward/reverse traffic. Checks cover the independent exponential solution, entropy derivatives, frozen acoustics, stiff equilibrium limit, temporal self-refinement and independent linear-acoustic mesh refinement. Transactions, portable replay and actual MCP are checked separately; numbers are recorded in validation evidence.
+
+[Finite-rate fuel phase relaxation](RELAXING_FUEL.md)

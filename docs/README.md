@@ -31,13 +31,14 @@ flowchart LR
 | Document | What it is |
 |---|---|
 | [Agent API](AGENT_API.md) | MCP tools, revisions, errors and the operation sequence |
-| [Asset format](ASSET_FORMAT.md) | `.powerasset` v39 and the readers for v1 through v38 |
+| [Asset format](ASSET_FORMAT.md) | `.powerasset` v40 and the readers for v1 through v39 |
 | [Frozen-quality fuel discharge and finite receivers](FUEL_DISCHARGE.md) | Frozen-quality choking, finite liquid displacement and physical pump/needle firing |
 | [Finite liquid fuel line momentum](FUEL_INERTIAL_PIPE.md) | Finite liquid inventory, dynamic flow, thermal mixing and conserving line work |
 | [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md) | Conservative compressible two-phase transport and equilibrium acoustics |
 | [Shaft-driven compressible fuel chambers](COMPRESSIBLE_FUEL_CHAMBER.md) | Shaft pressure work coupled to compressible fuel transport |
 | [Frozen compressible fuel nozzles](COMPRESSIBLE_FUEL_NOZZLE.md) | Frozen compressible choking, finite discharge and physical needle control |
 | [Equilibrium fuel nozzle transit](EQUILIBRIUM_FUEL_NOZZLE.md) | Equilibrium flashing, global critical-flux enclosure and actual needle delivery |
+| [Finite-rate fuel phase relaxation](RELAXING_FUEL.md) | Independent vapor quality, finite-rate phase change and conservative transport |
 | [Liquid inlet momentum reference](LIQUID_COLUMN.md) | Single-phase inlet inertia, friction heat and independently checked second-order momentum |
 | [Native Zig boundary](NATIVE_ZIG.md) | The archived Zig prototypes and the versioned ABI |
 

@@ -14,7 +14,33 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 39
+## 현재 버전 40
+
+`relaxing_fuel` 노드는 독립적인 증기 질량 분율을 가집니다. 액체와 증기는 압력, 온도, 속도를 공유하지만 화학 평형에는 명시된 유한 시간이 필요합니다. `relaxing_fuel_duct`는 명시적인 셀을 통해 질량, 운동량, 총에너지와 증기 질량을 수송합니다. 체류 시간은 셀 형상과 실제 속도에 따라 정해집니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_fuel | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| initial_vapor_mass_fraction | fraction, [0,1] |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| equilibrium_fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| relaxing_fuel_material_record_bytes | 180 |
+| relaxing_material_extension | uint64 phase_relaxation_time_ns, quantity initial_vapor_mass_fraction |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117 equilibrium_vapor_mass_fraction, 118 chemical_affinity, 119 vapor_mass_residual, 120 vapor_mass_at_a, 121 vapor_mass_at_b |
+| retained_asset_readers | power.asset.v1..v39 |
+
+[유한 속도 연료 상변화 완화](RELAXING_FUEL.ko.md)
+
+## 보존 버전 39
 
 `compressible_fuel_nozzle`의 `phase_mode`를 `equilibrium`으로 설정하면 통과 중 순간 균질 상평형을 가정합니다. 액체와 증기는 압력, 온도, 속도를 공유하며 증기분율은 등엔트로피선을 따라 변합니다. 노즐과 유한 저장조는 같은 압축성 액체 퍼텐셜과 이상증기 기준을 사용합니다. `frozen`도 별도의 지원 가정으로 유지됩니다.
 

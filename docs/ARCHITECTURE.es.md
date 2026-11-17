@@ -493,7 +493,7 @@ siguen separados de la realimentación y el control de la AT, y de la aceptació
 
 `at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
 
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v39 conserva rutas, ganancias y relojes y lee v1-v38.
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v40 conserva rutas, ganancias y relojes y lee v1-v39.
 
 Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
 
@@ -503,7 +503,7 @@ Son controles de investigación y los parámetros siguen `unverified`. Coordinac
 
 `liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
 
-v39 conserva enlaces y temperatura de fuente y lee v1-v38. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v40 conserva enlaces y temperatura de fuente y lee v1-v39. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
 Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
@@ -596,3 +596,11 @@ La velocidad del sonido de equilibrio al cuadrado positiva implica densidad crec
 Subpasos conservativos de primer orden transfieren igual masa y entalpía y reparten energía cinética entre fluido y pared. Se comprueban estados y entropía total de la pareja. Límites: 4096 subpasos, 64 reducciones a la mitad por candidato y transferencia inicial de hasta 0.1 de la menor masa. El cierre tolera 128 epsilon binary64 por el mayor módulo volumétrico o presión, sin recortar presiones informadas. Un fallo revierte todo el lote. Revise paso, inventario, límites, carrera y área.
 
 [Tránsito de combustible en equilibrio por toberas](EQUILIBRIUM_FUEL_NOZZLE.es.md)
+
+## Relajación de fase del combustible a velocidad finita
+
+El cierre conserva el potencial frío del líquido compresible y el vapor ideal del modelo de equilibrio. La fracción inicial es explícita y no se proyecta al equilibrio. Con masa, volumen y energía interna fijos, la fracción se aproxima exponencialmente al objetivo con `phase_relaxation_time_ns` constante. El calor latente permanece en el balance interno. La afinidad química es el potencial del líquido menos el del vapor; su producto por la transferencia de fase, dividido por la temperatura, produce entropía no negativa. Es una ley de investigación, no una correlación de nucleación medida.
+
+Los flujos conservativos de Rusanov transportan cuatro campos. Cada intervalo CFL global aplica media fuente local, transporte y media fuente. Los depósitos compartidos reciben cada fuente una vez, independientemente del número de conductos. La fuente es exacta para estados aislados a volumen fijo; el transporte acoplado mantiene error de primer orden. CFL usa la cota acústica de fracción congelada. Las entropías de fase y conducto se comprueban por separado. Un estado fuera de límites revierte todo el lote.
+
+[Relajación de fase del combustible a velocidad finita](RELAXING_FUEL.es.md)

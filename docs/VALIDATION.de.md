@@ -2,6 +2,95 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · **Deutsch** · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: Kraftstoff-Phasenrelaxation mit endlicher Rate
+
+Ein `relaxing_fuel`-Knoten führt einen unabhängigen Dampfmassenanteil. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; chemisches Gleichgewicht benötigt eine erklärte endliche Zeit. Ein `relaxing_fuel_duct` transportiert Masse, Impuls, Gesamtenergie und Dampfmasse durch explizite Zellen. Die Verweilzeit folgt aus Geometrie und tatsächlicher Geschwindigkeit.
+
+`relaxing-fuel-evaporation` oder `relaxing-fuel-duct` ausführen. Beobachtbar sind tatsächlicher und Gleichgewichtsanteil, Affinität, Phasenentropie, Dampfbilanzen an Ports und globales Dampfresiduum. Verdampfungs- und Kondensationshistorien trennen den Nettoquelltransfer jedes akzeptierten Takts nach Vorzeichen; sie zählen keine mikroskopischen Bruttoströme. Prüfungen umfassen die unabhängige Exponentiallösung, Entropieableitungen, eingefrorene Akustik, den steifen Gleichgewichtsgrenzfall, zeitliche Selbstverfeinerung und unabhängige linear-akustische Gitterverfeinerung. Transaktionen, portables Replay und tatsächliches MCP werden getrennt geprüft; Zahlen stehen in den Validierungsnachweisen.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 583/583 |
+| standard_checks_on_dotnet | 461/461 |
+| actual_mcp_groups | 70/70 |
+| laboratories | 66 |
+| agent_examples | 65 |
+| unchanged_laboratories | 64 |
+| identical_complete_sample_boundaries | 7619 |
+| all_sample_boundaries | 7641 |
+| new_core_groups | 13 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| global_cfl | 0.2 |
+| maximum_global_substeps | 4096 |
+| fixed_quality_flash_iterations | 80 |
+| asset_version | power.asset.v40 |
+| agent_api_version | 0.45.0 |
+| fingerprint_tag | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117..121 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| v39_fixture_sha256 | 95b49037e29e2f6be15291cbb45ea8c053e976aa9e3a0df9a9806a00725bcfac |
+| verification_log_sha256 | 11cf926daee32bb5f87e835d649a370fcd984390df9ad0664f4a2984b631a9b0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 66 |
+| schema_negative_cases | 15 |
+| documentation_locales | 10 |
+| documentation_files | 250 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| initial_quality | equilibrium_quality | quality_after_two_tau | specific_entropy_change_j_kg_k |
+|---|---|---|---|
+| 0.3 | 0.40689075997022106 | 0.3924246686942744 | 5.54875710970839 |
+| 0.1 | 0.022095016639203525 | 0.0326383096278805 | 21.749238363251123 |
+
+| temporal_self_refinement_step_ns | reference_step_ns | quality_absolute_error |
+|---|---|---|
+| 4000 | 50 | 4.841542071720717e-05 |
+| 2000 | 50 | 3.054656079609641e-05 |
+| 1000 | 50 | 1.4934826843782112e-05 |
+| 500 | 50 | 7.0868146199720705e-06 |
+
+| independent_linear_frozen_acoustic_cells | normalized_cell_average_error |
+|---|---|
+| 4 | 0.11807384309213376 |
+| 8 | 0.08979190596364788 |
+| 12 | 0.07380850723566255 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | maximum_sampled_vapor_mass_residual_kg | final_source_quality | final_source_phase_entropy_j_k |
+|---|---|---|---|---|---|---|---|
+| relaxing-fuel-evaporation | 91025ced0013231b | bea1aa00312ec239 | 11 | 0 | 3.3881317890172014e-21 | 0.39242466869427434 | 0.0014286807703571605 |
+| relaxing-fuel-duct | 18dcdf1a72d04529 | fc90c667851d977b | 11 | 1.4551915228366852e-11 | 1.1142290872151208e-20 | 0.2931345788652313 | 0.0003028266650770687 |
+
+- `artifacts/reports/relaxing-fuel-final-2026-11-17.log`
+- `artifacts/reports/relaxing-fuel-verify-exit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-evidence-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-baseline-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-schema-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-provenance-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-doc-audit-2026-11-17.json`
+
+Konservative Rusanov-Flüsse transportieren vier Felder. Jedes globale CFL-Intervall verwendet eine halbe lokale Phasenquelle, Transport und eine halbe Quelle. Gemeinsame Behälter erhalten jede Quelle einmal, unabhängig von der Kanalzahl. Der Quellverlauf ist für isolierte Zustände bei festem Volumen exakt; der gekoppelte Transport bleibt erster Ordnung. CFL nutzt die Schallgeschwindigkeitsgrenze bei eingefrorenem Anteil. Phasen- und Kanalentropie werden getrennt geprüft. Unzulässige Zustände setzen den gesamten Stapel zurück.
+
+Parameter bleiben `unverified`. `initial_vapor_mass_fraction` in [0,1] und eine ganzzahlige Zeit von 1 ns bis einer Stunde deklarieren. Temperatur- und positive Druckgrenzen des Materials einhalten. Das Modell setzt einen starren horizontalen Kanal konstanten Querschnitts, ein reines Pseudofluid, keine thermische Flüssigkeitsausdehnung und idealen Dampf voraus. Phasenschlupf, verzögerter Grenzflächenwärmetransport, Oberflächenspannung, Spray und Trägergas fehlen. Direkte Kopplungen der Relaxationsdomäne mit Pumpen, Düsen, bewegten Kammern und brennenden Empfängern bleiben offen. Erhaltung, Replay und Verfeinerung belegen weder gemessene Hardwaregültigkeit noch tatsächliche Unity-Abnahme. Verdünnten Dampf fern vom realen kritischen Bereich verwenden; positive latente Enthalpie und getrennte Koexistenzvolumina müssen erhalten bleiben.
+
 ## 2026-11-17: Kraftstoffdüsentransit im Phasengleichgewicht
 
 `phase_mode` von `compressible_fuel_nozzle` auf `equilibrium` setzen, um sofortiges homogenes Phasengleichgewicht im Transit zu verwenden. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; der Dampfanteil ändert sich entlang der Isentrope. Düse und endliche Behälter nutzen dasselbe kompressible Flüssigkeitspotenzial und dieselbe ideale Dampfreferenz. `frozen` bleibt eine getrennte unterstützte Annahme.

@@ -14,7 +14,33 @@ flowchart LR
     UNI --> RE[Decode, recompile, check fingerprint]
 ```
 
-## Current version 39
+## Current version 40
+
+A `relaxing_fuel` node carries independent vapor mass quality. Liquid and vapor share pressure, temperature and velocity, while chemical equilibrium takes a declared finite time. A `relaxing_fuel_duct` transports mass, momentum, total energy and vapor mass through explicit cells. Residence follows cell geometry and actual velocity.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_fuel | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| initial_vapor_mass_fraction | fraction, [0,1] |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| equilibrium_fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| relaxing_fuel_material_record_bytes | 180 |
+| relaxing_material_extension | uint64 phase_relaxation_time_ns, quantity initial_vapor_mass_fraction |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117 equilibrium_vapor_mass_fraction, 118 chemical_affinity, 119 vapor_mass_residual, 120 vapor_mass_at_a, 121 vapor_mass_at_b |
+| retained_asset_readers | power.asset.v1..v39 |
+
+[Finite-rate fuel phase relaxation](RELAXING_FUEL.md)
+
+## Retained version 39
 
 Set `compressible_fuel_nozzle` `phase_mode` to `equilibrium` for instantaneous homogeneous phase equilibrium during transit. Liquid and vapor share pressure, temperature and velocity, and vapor quality changes along the isentrope. The same compressible liquid cold potential and ideal-vapor reference supply both nozzle and finite reservoirs. The `frozen` mode remains a separate supported assumption.
 

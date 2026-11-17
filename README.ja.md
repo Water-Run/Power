@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — ヘッドレス実験"]
     mcp["Power.Mcp — 12 個の stdio MCP ツール"]
-    assets["Power.Assets — .powerasset v39"]
+    assets["Power.Assets — .powerasset v40"]
     unity["Unity 6.6 スタジオ — 3D ラボラトリー"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | モデル・制限・時間とリビジョンの規約を検索。ここから始めてください。 |
 | `get_model_schema` | `power.model.v1` の JSON Schema 2020-12 |
-| `get_example_model` | 編集可能な合成モデルと実験を取得(63 例) |
+| `get_example_model` | 編集可能な合成モデルと実験を取得(65 例) |
 | `validate_model` | 実行せずにモデルを検証。構造化された修復診断 |
 | `run_experiment` | 境界付きヘッドレス実行。バッチリプレイ・KPI・来歴付き |
 | `export_model_asset` | 移植可能な `.powerasset` をエクスポート |
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > すべてのサンプルパラメーターは `unverified` です。研究値であり、キャリブレーション測定ではありません。
 
-以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v39` を使い、旧アセットのリーダーは保持されます。
+以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v40` を使い、旧アセットのリーダーは保持されます。
 
 燃料域ポンプは物理ニードルと凍結蒸気質量分率の流出を介して、有限液体体積の燃焼受容室へ供給します。全在庫に相変化、排除仕事、噴流運動エネルギー、静止壁力積を含みます。 [蒸気質量分率を凍結した燃料流出と有限受容室](docs/FUEL_DISCHARGE.ja.md) [軸駆動の相変化燃料ポンプ](docs/FUEL_CHAMBER_PUMP.ja.md)
 
@@ -161,8 +161,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 `compressible_fuel_nozzle` の `phase_mode` を `equilibrium` にすると、通過中に瞬時の均質相平衡を仮定します。液体と蒸気は圧力、温度、速度を共有し、等エントロピー線に沿って蒸気分率が変化します。有限貯槽とノズルは同じ圧縮性液体ポテンシャルと理想蒸気基準を使います。`frozen` も独立した仮定として引き続き使えます。 [燃料ノズルの平衡相変化輸送](docs/EQUILIBRIUM_FUEL_NOZZLE.ja.md)
 
+`relaxing_fuel` ノードは独立した蒸気質量分率を持ちます。液体と蒸気は圧力、温度、速度を共有しますが、化学平衡には明示した有限時間を要します。`relaxing_fuel_duct` は明示セルで質量、運動量、全エネルギー、蒸気質量を輸送します。滞留時間はセル形状と実際の流速から決まります。 [有限速度の燃料相変化緩和](docs/RELAXING_FUEL.ja.md)
+
 <details>
-<summary>利用可能なラボラトリー(64)</summary>
+<summary>利用可能なラボラトリー(66)</summary>
 
 | 例名(`get_example_model`) | ラボラトリー | 検証内容 |
 |---|---|---|
@@ -230,6 +232,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | 凍結圧縮性チョーク、有限排出、実ニードル制御 |
 | `equilibrium-flashing-nozzle` | `assets/labs/equilibrium-flashing-nozzle.power.json` | 平衡フラッシュ、大域臨界流束包絡と実ニードル |
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | 平衡フラッシュ、大域臨界流束包絡と実ニードル |
+| `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | 独立蒸気分率、有限速度相変化、保存型輸送 |
+| `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | 独立蒸気分率、有限速度相変化、保存型輸送 |
 
 </details>
 

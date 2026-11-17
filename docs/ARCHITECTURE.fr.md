@@ -249,7 +249,7 @@ L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibl
 
 `at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
 
-Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v39 conserve routes, gains et horloges et lit v1-v38.
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v40 conserve routes, gains et horloges et lit v1-v39.
 
 Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
 
@@ -259,7 +259,7 @@ Ces commandes sont expérimentales et les paramètres restent `unverified`. Coor
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v39 conserve les liens et la température source et lit v1-v38. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v40 conserve les liens et la température source et lit v1-v39. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -352,3 +352,11 @@ Le carré positif de la vitesse du son d’équilibre donne une densité croissa
 Des sous-pas conservatifs du premier ordre échangent la même masse et enthalpie ; l’énergie cinétique du jet se répartit entre récepteur et paroi. Chaque acceptation vérifie les états et l’entropie totale de la paire. Limites : 4096 sous-pas, 64 réductions de moitié par candidat, transfert initial borné à 0.1 fois la plus petite masse. La fermeture tolère 128 fois epsilon binary64 multiplié par le plus grand module volumique ou la pression des ports, sans écrêter les pressions. Un échec restaure tout le lot. Réduire le pas et examiner inventaire, limites, course et section.
 
 [Transit de carburant à l’équilibre dans les buses](EQUILIBRIUM_FUEL_NOZZLE.fr.md)
+
+## Relaxation de phase du carburant à vitesse finie
+
+La fermeture conserve le potentiel froid du liquide compressible et la vapeur idéale du modèle d’équilibre. Le titre initial est explicite, sans projection à l’équilibre. À masse, volume et énergie interne fixes, le titre tend exponentiellement vers sa cible avec `phase_relaxation_time_ns` constant. La chaleur latente reste dans le bilan interne. L’affinité chimique est le potentiel du liquide moins celui de la vapeur ; son produit par le transfert de phase, divisé par la température, donne une production d’entropie non négative. Cette loi de recherche n’est pas une corrélation de nucléation mesurée.
+
+Les flux conservatifs de Rusanov transportent quatre champs. Chaque intervalle CFL global applique une demi-source locale, le transport puis une demi-source. Un réservoir partagé reçoit chaque source une seule fois, quel que soit le nombre de conduits. La source est exacte pour un état isolé à volume fixe ; le transport couplé reste du premier ordre. Le CFL utilise une borne acoustique à titre gelé. Les entropies de phase et du conduit sont vérifiées séparément. Un état hors limites annule le lot entier.
+
+[Relaxation de phase du carburant à vitesse finie](RELAXING_FUEL.fr.md)

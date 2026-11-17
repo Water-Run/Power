@@ -31,13 +31,14 @@ flowchart LR
 | Documento | Qué es |
 |---|---|
 | [API de agente](AGENT_API.es.md) | Herramientas MCP, revisiones, errores y la secuencia de operación |
-| [Formato de asset](ASSET_FORMAT.es.md) | `.powerasset` v39 y los lectores de v1 a v38 |
+| [Formato de asset](ASSET_FORMAT.es.md) | `.powerasset` v40 y los lectores de v1 a v39 |
 | [Descarga de combustible con calidad congelada y receptores finitos](FUEL_DISCHARGE.es.md) | Estrangulamiento de calidad congelada, desplazamiento finito y combustión con bomba/aguja físicas |
 | [Cantidad de movimiento en una línea finita de combustible líquido](FUEL_INERTIAL_PIPE.es.md) | Inventario líquido finito, caudal dinámico, mezcla térmica y trabajo conservativo |
 | [Conductos de combustible compresible en equilibrio](EQUILIBRIUM_FUEL_DUCT.es.md) | Transporte bifásico compresible conservativo y acústica de equilibrio |
 | [Cámaras de combustible compresible accionadas por eje](COMPRESSIBLE_FUEL_CHAMBER.es.md) | Trabajo de presión del eje acoplado al transporte compresible |
 | [Toberas de combustible compresible de calidad congelada](COMPRESSIBLE_FUEL_NOZZLE.es.md) | Bloqueo compresible congelado, descarga finita y aguja real |
 | [Tránsito de combustible en equilibrio por toberas](EQUILIBRIUM_FUEL_NOZZLE.es.md) | Vaporización en equilibrio, envolvente crítica global y aguja real |
+| [Relajación de fase del combustible a velocidad finita](RELAXING_FUEL.es.md) | Fracción de vapor independiente, fase a velocidad finita y transporte conservativo |
 | [Referencia de cantidad de movimiento en la entrada líquida](LIQUID_COLUMN.es.md) | Inercia de entrada monofásica, calor de fricción y cantidad de movimiento de segundo orden verificada |
 | [Frontera Zig nativa](NATIVE_ZIG.es.md) | Los prototipos Zig archivados y el ABI versionado |
 

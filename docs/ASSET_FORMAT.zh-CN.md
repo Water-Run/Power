@@ -14,7 +14,33 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 39
+## 当前版本 40
+
+`relaxing_fuel` 节点具有独立的蒸气质量分数。液体与蒸气共享压力、温度和速度，化学平衡则需要显式声明的有限时间。`relaxing_fuel_duct` 通过显式网格输运质量、动量、总能量和蒸气质量；停留时间由网格几何与实际流速决定。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_fuel | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| initial_vapor_mass_fraction | fraction, [0,1] |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| equilibrium_fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| relaxing_fuel_material_record_bytes | 180 |
+| relaxing_material_extension | uint64 phase_relaxation_time_ns, quantity initial_vapor_mass_fraction |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117 equilibrium_vapor_mass_fraction, 118 chemical_affinity, 119 vapor_mass_residual, 120 vapor_mass_at_a, 121 vapor_mass_at_b |
+| retained_asset_readers | power.asset.v1..v39 |
+
+[有限速率燃料相变弛豫](RELAXING_FUEL.zh-CN.md)
+
+## 保留版本 39
 
 将 `compressible_fuel_nozzle` 的 `phase_mode` 设为 `equilibrium`，即可在穿越过程中采用瞬时均相相平衡。液体与蒸气共享压力、温度和速度，蒸气质量分数沿等熵线变化。喷嘴与有限储腔使用相同的可压缩液体冷势能和理想蒸气参考。`frozen` 模式作为另一种明确假设继续支持。
 

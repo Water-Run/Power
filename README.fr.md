@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — expériences sans interface"]
     mcp["Power.Mcp — 12 outils MCP sur stdio"]
-    assets["Power.Assets — .powerasset v39"]
+    assets["Power.Assets — .powerasset v40"]
     unity["Studio Unity 6.6 — laboratoires 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Le service expose douze outils avec schémas d'entrée et de sortie :
 |---|---|
 | `get_capabilities` | Découvrir les modèles, les limites, les conventions de temps et de révision. Commencez ici. |
 | `get_model_schema` | JSON Schema 2020-12 pour `power.model.v1` |
-| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (63 exemples) |
+| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (65 exemples) |
 | `validate_model` | Valider un modèle sans l'exécuter ; diagnostics de réparation structurés |
 | `run_experiment` | Exécution sans interface bornée, avec rejeu par lots, KPI et provenance |
 | `export_model_asset` | Exporter un `.powerasset` portable |
@@ -147,7 +147,7 @@ Un graphe de recherche Ravigneaux à quatre plages ajoute des chemins planétair
 > [!NOTE]
 > Tous les paramètres d'exemple sont `unverified` — des valeurs de recherche, pas des mesures calibrées.
 
-Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v39`, avec conservation des lecteurs pour les assets antérieurs.
+Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v40`, avec conservation des lecteurs pour les assets antérieurs.
 
 La pompe du domaine carburant alimente désormais une aiguille physique et une décharge à titre figé dans un récepteur allumé à volume liquide fini. Les inventaires incluent changement de phase, travail de déplacement, énergie cinétique du jet et impulsion à la paroi immobile. [Décharge de carburant à titre figé et récepteurs finis](docs/FUEL_DISCHARGE.fr.md) [Pompe carburant diphasique entraînée par arbre](docs/FUEL_CHAMBER_PUMP.fr.md)
 
@@ -161,8 +161,10 @@ Un `compressible_fuel_nozzle` transporte le fluide dans un seul sens entre rése
 
 Régler `phase_mode` de `compressible_fuel_nozzle` sur `equilibrium` impose l’équilibre homogène instantané pendant le transit. Liquide et vapeur partagent pression, température et vitesse ; le titre change sur l’isentrope. La buse et les réservoirs finis utilisent le même potentiel liquide compressible et la même référence de vapeur idéale. `frozen` reste une hypothèse distincte prise en charge. [Transit de carburant à l’équilibre dans les buses](docs/EQUILIBRIUM_FUEL_NOZZLE.fr.md)
 
+Un nœud `relaxing_fuel` possède un titre massique de vapeur indépendant. Liquide et vapeur partagent pression, température et vitesse, mais l’équilibre chimique demande un temps fini déclaré. Un `relaxing_fuel_duct` transporte masse, quantité de mouvement, énergie totale et masse de vapeur dans des cellules explicites. Le temps de séjour dépend de leur géométrie et de la vitesse réelle. [Relaxation de phase du carburant à vitesse finie](docs/RELAXING_FUEL.fr.md)
+
 <details>
-<summary>Laboratoires disponibles (64)</summary>
+<summary>Laboratoires disponibles (66)</summary>
 
 | Nom d'exemple (`get_example_model`) | Laboratoire | Ce qu'il exerce |
 |---|---|---|
@@ -230,6 +232,8 @@ Régler `phase_mode` de `compressible_fuel_nozzle` sur `equilibrium` impose l’
 | `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Blocage compressible figé, décharge finie et aiguille réelle |
 | `equilibrium-flashing-nozzle` | `assets/labs/equilibrium-flashing-nozzle.power.json` | Vaporisation à l’équilibre, flux critique global et aiguille réelle |
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | Vaporisation à l’équilibre, flux critique global et aiguille réelle |
+| `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | Titre de vapeur indépendant, changement de phase fini et transport conservatif |
+| `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | Titre de vapeur indépendant, changement de phase fini et transport conservatif |
 
 </details>
 

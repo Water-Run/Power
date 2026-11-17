@@ -2,6 +2,95 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 有限速率燃料相变弛豫
+
+`relaxing_fuel` 节点具有独立的蒸气质量分数。液体与蒸气共享压力、温度和速度，化学平衡则需要显式声明的有限时间。`relaxing_fuel_duct` 通过显式网格输运质量、动量、总能量和蒸气质量；停留时间由网格几何与实际流速决定。
+
+运行 `relaxing-fuel-evaporation` 或 `relaxing-fuel-duct`。可观察实际与平衡质量分数、化学亲和势、相变熵、端口蒸气库存和全局蒸气残差。蒸发、凝结历史按每个已接受时间步的净源项转移量正负累计，不表示微观正反向总通量。检查覆盖独立指数解析解、熵导数、冻结声学、刚性平衡极限、时间自细化和独立线性声学网格细化。事务、可移植重放与真实 MCP 分别验证；数值记录在验证证据中。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 583/583 |
+| standard_checks_on_dotnet | 461/461 |
+| actual_mcp_groups | 70/70 |
+| laboratories | 66 |
+| agent_examples | 65 |
+| unchanged_laboratories | 64 |
+| identical_complete_sample_boundaries | 7619 |
+| all_sample_boundaries | 7641 |
+| new_core_groups | 13 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| global_cfl | 0.2 |
+| maximum_global_substeps | 4096 |
+| fixed_quality_flash_iterations | 80 |
+| asset_version | power.asset.v40 |
+| agent_api_version | 0.45.0 |
+| fingerprint_tag | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117..121 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| v39_fixture_sha256 | 95b49037e29e2f6be15291cbb45ea8c053e976aa9e3a0df9a9806a00725bcfac |
+| verification_log_sha256 | 11cf926daee32bb5f87e835d649a370fcd984390df9ad0664f4a2984b631a9b0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 66 |
+| schema_negative_cases | 15 |
+| documentation_locales | 10 |
+| documentation_files | 250 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| initial_quality | equilibrium_quality | quality_after_two_tau | specific_entropy_change_j_kg_k |
+|---|---|---|---|
+| 0.3 | 0.40689075997022106 | 0.3924246686942744 | 5.54875710970839 |
+| 0.1 | 0.022095016639203525 | 0.0326383096278805 | 21.749238363251123 |
+
+| temporal_self_refinement_step_ns | reference_step_ns | quality_absolute_error |
+|---|---|---|
+| 4000 | 50 | 4.841542071720717e-05 |
+| 2000 | 50 | 3.054656079609641e-05 |
+| 1000 | 50 | 1.4934826843782112e-05 |
+| 500 | 50 | 7.0868146199720705e-06 |
+
+| independent_linear_frozen_acoustic_cells | normalized_cell_average_error |
+|---|---|
+| 4 | 0.11807384309213376 |
+| 8 | 0.08979190596364788 |
+| 12 | 0.07380850723566255 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | maximum_sampled_vapor_mass_residual_kg | final_source_quality | final_source_phase_entropy_j_k |
+|---|---|---|---|---|---|---|---|
+| relaxing-fuel-evaporation | 91025ced0013231b | bea1aa00312ec239 | 11 | 0 | 3.3881317890172014e-21 | 0.39242466869427434 | 0.0014286807703571605 |
+| relaxing-fuel-duct | 18dcdf1a72d04529 | fc90c667851d977b | 11 | 1.4551915228366852e-11 | 1.1142290872151208e-20 | 0.2931345788652313 | 0.0003028266650770687 |
+
+- `artifacts/reports/relaxing-fuel-final-2026-11-17.log`
+- `artifacts/reports/relaxing-fuel-verify-exit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-evidence-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-baseline-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-schema-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-provenance-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-doc-audit-2026-11-17.json`
+
+守恒 Rusanov 通量输运四个场。每个全局 CFL 区间依次执行半步局部相变、输运和半步相变；共享储腔每次只接受一次源项，与连接管道数无关。孤立定容状态的源项轨迹为精确解，耦合方法仍具有一阶输运误差。CFL 使用冻结质量分数声速上界，局部相变与管道熵变分别检查；越界状态会回滚整个批次。
+
+参数仍为 `unverified`。`initial_vapor_mass_fraction` 必须在 [0,1] 内，弛豫时间必须为 1 ns 至一小时的整数。状态须处于材料温度范围和正压力边界内。模型假设刚性水平等截面管道、单一纯伪流体、液体零热膨胀与理想蒸气，未包含相间滑移、界面传热延迟、表面张力、喷雾或载气。弛豫域与泵、喷嘴、运动腔和燃烧接收腔的直接耦合仍待实现。守恒、重放和细化不证明实测硬件有效性或实际 Unity 验收。 仅适用于远离真实流体临界区的稀薄蒸气；材料需保持正潜焓及分离的两相共存比容。
+
 ## 2026-11-17: 平衡燃料喷嘴输运
 
 将 `compressible_fuel_nozzle` 的 `phase_mode` 设为 `equilibrium`，即可在穿越过程中采用瞬时均相相平衡。液体与蒸气共享压力、温度和速度，蒸气质量分数沿等熵线变化。喷嘴与有限储腔使用相同的可压缩液体冷势能和理想蒸气参考。`frozen` 模式作为另一种明确假设继续支持。

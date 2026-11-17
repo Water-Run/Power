@@ -14,7 +14,33 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現在のバージョン 39
+## 現行バージョン 40
+
+`relaxing_fuel` ノードは独立した蒸気質量分率を持ちます。液体と蒸気は圧力、温度、速度を共有しますが、化学平衡には明示した有限時間を要します。`relaxing_fuel_duct` は明示セルで質量、運動量、全エネルギー、蒸気質量を輸送します。滞留時間はセル形状と実際の流速から決まります。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_fuel | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| initial_vapor_mass_fraction | fraction, [0,1] |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| equilibrium_fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| relaxing_fuel_material_record_bytes | 180 |
+| relaxing_material_extension | uint64 phase_relaxation_time_ns, quantity initial_vapor_mass_fraction |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117 equilibrium_vapor_mass_fraction, 118 chemical_affinity, 119 vapor_mass_residual, 120 vapor_mass_at_a, 121 vapor_mass_at_b |
+| retained_asset_readers | power.asset.v1..v39 |
+
+[有限速度の燃料相変化緩和](RELAXING_FUEL.ja.md)
+
+## 保持バージョン 39
 
 `compressible_fuel_nozzle` の `phase_mode` を `equilibrium` にすると、通過中に瞬時の均質相平衡を仮定します。液体と蒸気は圧力、温度、速度を共有し、等エントロピー線に沿って蒸気分率が変化します。有限貯槽とノズルは同じ圧縮性液体ポテンシャルと理想蒸気基準を使います。`frozen` も独立した仮定として引き続き使えます。
 

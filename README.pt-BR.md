@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — experimentos sem interface"]
     mcp["Power.Mcp — 12 ferramentas MCP via stdio"]
-    assets["Power.Assets — .powerasset v39"]
+    assets["Power.Assets — .powerasset v40"]
     unity["Estúdio Unity 6.6 — laboratórios 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ O serviço expõe doze ferramentas com esquemas de entrada e saída:
 |---|---|
 | `get_capabilities` | Descobrir modelos, limites e convenções de tempo e revisão. Comece aqui. |
 | `get_model_schema` | JSON Schema 2020-12 para `power.model.v1` |
-| `get_example_model` | Obter um modelo sintético editável e seu experimento (63 exemplos) |
+| `get_example_model` | Obter um modelo sintético editável e seu experimento (65 exemplos) |
 | `validate_model` | Validar um modelo sem executá-lo; diagnósticos estruturados de reparo |
 | `run_experiment` | Execução sem interface e limitada, com replay em lote, KPIs e procedência |
 | `export_model_asset` | Exportar um `.powerasset` portátil |
@@ -147,7 +147,7 @@ Um grafo de pesquisa Ravigneaux de quatro faixas adiciona caminhos planetários 
 > [!NOTE]
 > Todos os parâmetros de exemplo são `unverified` — valores de pesquisa, não medidas calibradas.
 
-Os laboratórios abaixo compartilham definições entre importações JSON, CLI, MCP e Studio. As exportações usam `power.asset.v39`, mantendo leitores para assets anteriores.
+Os laboratórios abaixo compartilham definições entre importações JSON, CLI, MCP e Studio. As exportações usam `power.asset.v40`, mantendo leitores para assets anteriores.
 
 A bomba do domínio de combustível agora alimenta agulha física e descarga de título congelado em um receptor em combustão com volume líquido finito. Os inventários completos incluem mudança de fase, trabalho de deslocamento, energia cinética e impulso na parede imóvel. [Descarga de combustível com título congelado e receptores finitos](docs/FUEL_DISCHARGE.pt-BR.md) [Bomba de combustível com mudança de fase acionada por eixo](docs/FUEL_CHAMBER_PUMP.pt-BR.md)
 
@@ -161,8 +161,10 @@ Um `compressible_fuel_nozzle` leva fluxo unidirecional entre reservatórios fini
 
 Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equilíbrio homogêneo instantâneo durante o trânsito. Líquido e vapor compartilham pressão, temperatura e velocidade; o título muda na isentrópica. Bocal e reservatórios finitos usam o mesmo potencial líquido compressível e referência de vapor ideal. `frozen` permanece uma hipótese separada suportada. [Trânsito de combustível em equilíbrio nos bocais](docs/EQUILIBRIUM_FUEL_NOZZLE.pt-BR.md)
 
+Um nó `relaxing_fuel` tem fração mássica de vapor independente. Líquido e vapor compartilham pressão, temperatura e velocidade, mas o equilíbrio químico exige um tempo finito declarado. Um `relaxing_fuel_duct` transporta massa, quantidade de movimento, energia total e massa de vapor em células explícitas. A residência depende da geometria e da velocidade real. [Relaxação de fase do combustível com taxa finita](docs/RELAXING_FUEL.pt-BR.md)
+
 <details>
-<summary>Laboratórios disponíveis (64)</summary>
+<summary>Laboratórios disponíveis (66)</summary>
 
 | Nome do exemplo (`get_example_model`) | Laboratório | O que exercita |
 |---|---|---|
@@ -230,6 +232,8 @@ Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equil�
 | `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Bloqueio compressível congelado, descarga finita e agulha real |
 | `equilibrium-flashing-nozzle` | `assets/labs/equilibrium-flashing-nozzle.power.json` | Vaporização em equilíbrio, envoltória crítica global e agulha real |
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | Vaporização em equilíbrio, envoltória crítica global e agulha real |
+| `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | Fração de vapor independente, fase com taxa finita e transporte conservativo |
+| `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | Fração de vapor independente, fase com taxa finita e transporte conservativo |
 
 </details>
 

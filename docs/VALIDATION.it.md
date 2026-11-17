@@ -2,6 +2,95 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · **Italiano** · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: Rilassamento di fase del combustibile a velocità finita
+
+Un nodo `relaxing_fuel` ha una frazione massica di vapore indipendente. Liquido e vapore condividono pressione, temperatura e velocità, mentre l’equilibrio chimico richiede un tempo finito dichiarato. Un `relaxing_fuel_duct` trasporta massa, quantità di moto, energia totale e massa di vapore in celle esplicite. La permanenza dipende da geometria e velocità effettiva.
+
+Eseguire `relaxing-fuel-evaporation` o `relaxing-fuel-duct`. Osservare frazioni effettiva e di equilibrio, affinità, entropia di fase, bilanci di vapore alle porte e residuo globale. Le storie di evaporazione e condensazione separano per segno il trasferimento netto della sorgente di ogni passo accettato, senza contare i flussi microscopici lordi. Le prove includono soluzione esponenziale indipendente, derivate entropiche, acustica congelata, limite rigido di equilibrio, autoraffinamento temporale e raffinamento spaziale acustico lineare indipendente. Transazioni, riproduzione portatile e MCP reale sono verificati separatamente; i numeri sono nelle prove di validazione.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 583/583 |
+| standard_checks_on_dotnet | 461/461 |
+| actual_mcp_groups | 70/70 |
+| laboratories | 66 |
+| agent_examples | 65 |
+| unchanged_laboratories | 64 |
+| identical_complete_sample_boundaries | 7619 |
+| all_sample_boundaries | 7641 |
+| new_core_groups | 13 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| global_cfl | 0.2 |
+| maximum_global_substeps | 4096 |
+| fixed_quality_flash_iterations | 80 |
+| asset_version | power.asset.v40 |
+| agent_api_version | 0.45.0 |
+| fingerprint_tag | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117..121 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| v39_fixture_sha256 | 95b49037e29e2f6be15291cbb45ea8c053e976aa9e3a0df9a9806a00725bcfac |
+| verification_log_sha256 | 11cf926daee32bb5f87e835d649a370fcd984390df9ad0664f4a2984b631a9b0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 66 |
+| schema_negative_cases | 15 |
+| documentation_locales | 10 |
+| documentation_files | 250 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| initial_quality | equilibrium_quality | quality_after_two_tau | specific_entropy_change_j_kg_k |
+|---|---|---|---|
+| 0.3 | 0.40689075997022106 | 0.3924246686942744 | 5.54875710970839 |
+| 0.1 | 0.022095016639203525 | 0.0326383096278805 | 21.749238363251123 |
+
+| temporal_self_refinement_step_ns | reference_step_ns | quality_absolute_error |
+|---|---|---|
+| 4000 | 50 | 4.841542071720717e-05 |
+| 2000 | 50 | 3.054656079609641e-05 |
+| 1000 | 50 | 1.4934826843782112e-05 |
+| 500 | 50 | 7.0868146199720705e-06 |
+
+| independent_linear_frozen_acoustic_cells | normalized_cell_average_error |
+|---|---|
+| 4 | 0.11807384309213376 |
+| 8 | 0.08979190596364788 |
+| 12 | 0.07380850723566255 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | maximum_sampled_vapor_mass_residual_kg | final_source_quality | final_source_phase_entropy_j_k |
+|---|---|---|---|---|---|---|---|
+| relaxing-fuel-evaporation | 91025ced0013231b | bea1aa00312ec239 | 11 | 0 | 3.3881317890172014e-21 | 0.39242466869427434 | 0.0014286807703571605 |
+| relaxing-fuel-duct | 18dcdf1a72d04529 | fc90c667851d977b | 11 | 1.4551915228366852e-11 | 1.1142290872151208e-20 | 0.2931345788652313 | 0.0003028266650770687 |
+
+- `artifacts/reports/relaxing-fuel-final-2026-11-17.log`
+- `artifacts/reports/relaxing-fuel-verify-exit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-evidence-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-baseline-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-schema-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-provenance-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-doc-audit-2026-11-17.json`
+
+I flussi conservativi di Rusanov trasportano quattro campi. Ogni intervallo CFL globale applica mezza sorgente locale, trasporto e mezza sorgente. I serbatoi condivisi ricevono ogni sorgente una sola volta indipendentemente dal numero di condotti. La sorgente è esatta per stati isolati a volume fisso; il trasporto accoppiato mantiene errore del primo ordine. CFL usa il limite acustico a frazione congelata. Entropia di fase e del condotto sono verificate separatamente. Uno stato fuori limite annulla l’intero lotto.
+
+I parametri restano `unverified`. Dichiarare `initial_vapor_mass_fraction` in [0,1] e un tempo intero da 1 ns a un’ora. Rispettare temperatura e pressione positiva del materiale. Si assumono condotto rigido orizzontale a sezione costante, pseudofluido puro, dilatazione termica liquida nulla e vapore ideale. Mancano scorrimento fra le fasi, ritardo termico interfacciale, tensione superficiale, spray e gas vettore. Restano aperti gli accoppiamenti diretti del dominio rilassante con pompe, ugelli, camere mobili e ricevitori in combustione. Conservazione, riproduzione e raffinamento non attestano validità hardware misurata né accettazione reale Unity. Usare vapore diluito lontano dalla regione critica reale; il materiale deve mantenere entalpia latente positiva e volumi specifici di coesistenza distinti.
+
 ## 2026-11-17: Transito di combustibile all’equilibrio negli ugelli
 
 Impostare `phase_mode` di `compressible_fuel_nozzle` su `equilibrium` per l’equilibrio omogeneo istantaneo durante il transito. Liquido e vapore condividono pressione, temperatura e velocità; il titolo cambia lungo l’isentropica. Ugello e serbatoi finiti usano lo stesso potenziale liquido comprimibile e riferimento di vapore ideale. `frozen` resta un’ipotesi distinta supportata.

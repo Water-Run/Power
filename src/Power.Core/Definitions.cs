@@ -14,8 +14,8 @@ public enum Unit
     PascalSecondPerCubicMeter, PascalSecondSquaredPerCubicMeterSquared
 }
 
-public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6, Fuel = 7, CompressibleFuel = 8 }
-public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn, FuelRestriction, FuelHeatLink, FuelChamber, FuelCheckValve, FuelDischarge, FiniteFuelFilm, FuelInertialPipe, EquilibriumFuelDuct, CompressibleFuelChamber, CompressibleFuelNozzle }
+public enum Domain { Rotational = 1, Thermal = 2, Gas = 3, Hydraulic = 4, Battery = 5, Translational = 6, Fuel = 7, CompressibleFuel = 8, RelaxingFuel = 9 }
+public enum ComponentKind { Shaft = 1, DcMotor, TorqueSource, ThermalLink, SealedCylinder, GasOrifice, GasHeatLink, GasCylinder, PremixedCombustion, Clutch, IdealGear, PlanetaryGear, TorqueConverter, HydraulicResistance, HydraulicOrifice, HydraulicClutch, HydraulicPump, HydraulicRelief, PressureController, BatteryMotor, ResistiveLoad, PressureDutyController, LinearSpring, HydraulicPiston, PistonClutch, ForceSource, HydraulicSpoolValve, GasPiston, GasFuelInjector, FuelFilm, LiquidFuelInjector, Solenoid, TravelStop, NeedleDriver, DualClutchController, DoublePinionPlanetaryGear, CarrierGear, HydraulicAtController, LiquidRailFeed, LiquidFuelTank, LiquidRailReturn, FuelRestriction, FuelHeatLink, FuelChamber, FuelCheckValve, FuelDischarge, FiniteFuelFilm, FuelInertialPipe, EquilibriumFuelDuct, CompressibleFuelChamber, CompressibleFuelNozzle, RelaxingFuelDuct }
 public enum Field
 {
     Angle = 1, Speed, Temperature, Current, Twist, Torque,
@@ -24,7 +24,7 @@ public enum Field
     SourceWork = 16, HeatRejected, StoredEnergyChange, EnergyResidual,
     ReservoirEnthalpy = 20, MassResidual = 21,
     FuelMass = 22, FreshAirMass, ProductMass, ChemicalEnergy, FuelBurned, HeatReleased,
-    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower, SampledPressure, PressureError, IntegralVoltage, CommandVoltage, StateOfCharge, Charge, TerminalVoltage, PolarizationVoltage, BatteryCurrent, IntegralDuty, CommandDuty, Displacement, LinearSpeed, Force, RequestedFuelDose, DeliveredFuelDose, TotalFuelDelivered, EvaporatedFuelMass, FilmWallHeat, CopperHeat, PredictedFuelMass, PredictionTicks, DriverState, ClosingDelayTicks, RequestedGear, ActualGear, SelectedOddGear, SelectedEvenGear, ShiftPhase, SyncError, ControlFault, LockupState, ActuatorIntegralA, ActuatorIntegralB, ActuatorIntegralC, ActuatorIntegralD, ActuatorIntegralE, ActuatorIntegralF, TankState, FillFraction, CondensedFuelMass, VaporPartialPressure, SaturationPressure, CavitationMargin, VaporMass, VaporMassFraction, VaporVolumeFraction, ElasticEnergy, Entropy, SpecificEnthalpy, TransportEnergy, EntropyProduced, JetKineticEnergy, JetImpulse, ThroatPressure, ExitTemperature, ExitVelocity, Choked, ForwardVolume, ReverseVolume, KineticEnergy, EnergyAtA, EnergyAtB, Density, SoundSpeed, MassAtA, MassAtB, FluxRelativeUncertainty
+    FuelEnergyIn, FuelResidual, FreshAirResidual, BurnFrontier, SlipSpeed, ClutchMode, FrictionHeat, TorqueAtB, TorqueAtC, ConstraintError, FluidHeat, SpeedRatio, ConverterDrive, VolumeFlow, HydraulicVolumeIn, HydraulicVolumeResidual, HydraulicWork, ClampForce, StaticCapacity, SlidingCapacity, HydraulicPower, SampledPressure, PressureError, IntegralVoltage, CommandVoltage, StateOfCharge, Charge, TerminalVoltage, PolarizationVoltage, BatteryCurrent, IntegralDuty, CommandDuty, Displacement, LinearSpeed, Force, RequestedFuelDose, DeliveredFuelDose, TotalFuelDelivered, EvaporatedFuelMass, FilmWallHeat, CopperHeat, PredictedFuelMass, PredictionTicks, DriverState, ClosingDelayTicks, RequestedGear, ActualGear, SelectedOddGear, SelectedEvenGear, ShiftPhase, SyncError, ControlFault, LockupState, ActuatorIntegralA, ActuatorIntegralB, ActuatorIntegralC, ActuatorIntegralD, ActuatorIntegralE, ActuatorIntegralF, TankState, FillFraction, CondensedFuelMass, VaporPartialPressure, SaturationPressure, CavitationMargin, VaporMass, VaporMassFraction, VaporVolumeFraction, ElasticEnergy, Entropy, SpecificEnthalpy, TransportEnergy, EntropyProduced, JetKineticEnergy, JetImpulse, ThroatPressure, ExitTemperature, ExitVelocity, Choked, ForwardVolume, ReverseVolume, KineticEnergy, EnergyAtA, EnergyAtB, Density, SoundSpeed, MassAtA, MassAtB, FluxRelativeUncertainty, EquilibriumVaporMassFraction, ChemicalAffinity, VaporMassResidual, VaporMassAtA, VaporMassAtB
 }
 public enum SimulationStatus { Ok, InvalidTimeStep, InvalidInput, UnknownChannel, NumericalFailure, Busy, Cancelled, ControlledInput }
 public enum DiagnosticCode { Schema, Capacity, Id, Unit, Range, Connection, Channel, Solver }
@@ -77,6 +77,7 @@ public sealed record NodeDefinition(uint Id, Domain Domain, Quantity Storage, Qu
     public BatteryDefinition? Battery { get; init; }
     public EquilibriumFuelDefinition? Fuel { get; init; }
     public Quantity InitialVelocity { get; init; }
+    public Quantity InitialVaporMassFraction { get; init; }
 
     /// <summary>Pure fuel: storage is reference vessel volume, initial is temperature, position is total mass.</summary>
     public static NodeDefinition FuelVolume(uint id, double referenceVolume, double mass, double temperature, EquilibriumFuelDefinition material) =>
@@ -85,6 +86,8 @@ public sealed record NodeDefinition(uint Id, Domain Domain, Quantity Storage, Qu
     public static NodeDefinition CompressibleFuelVolume(uint id, double volume, double mass, double temperature, EquilibriumFuelDefinition material, double velocity = 0) =>
         new(id, Domain.CompressibleFuel, new(volume, Unit.CubicMeter), new(temperature, Unit.Kelvin), new(mass, Unit.Kilogram)) { Fuel = material, InitialVelocity = new(velocity, Unit.MeterPerSecond) };
 
+    public static NodeDefinition RelaxingFuelVolume(uint id,double volume,double mass,double temperature,EquilibriumFuelDefinition material,double vaporMassFraction,double velocity=0) =>
+        new(id,Domain.RelaxingFuel,new(volume,Unit.CubicMeter),new(temperature,Unit.Kelvin),new(mass,Unit.Kilogram)){Fuel=material,InitialVelocity=new(velocity,Unit.MeterPerSecond),InitialVaporMassFraction=new(vaporMassFraction,Unit.Fraction)};
     public static NodeDefinition Rotor(uint id, double inertia, double speed = 0, double angle = 0) =>
         new(id, Domain.Rotational, new(inertia, Unit.KilogramMeterSquared),
             new(speed, Unit.RadianPerSecond), new(angle, Unit.Radian));
@@ -415,6 +418,8 @@ public sealed record ComponentDefinition
         Id = id, Kind = ComponentKind.FuelDischarge, NodeA = source, NodeB = receiver, FuelDischarge = definition,
         Area = new(areaSquareMeters, Unit.SquareMeter), DischargeCoefficient = dischargeCoefficient, InputChannel = channel, InitialInput = new(opening, Unit.Fraction)
     };
+    public static ComponentDefinition RelaxingDuct(uint id,uint a,uint b,uint wall,EquilibriumFuelDuctDefinition definition) =>
+        new(){Id=id,Kind=ComponentKind.RelaxingFuelDuct,NodeA=a,NodeB=b,HeatNode=wall,FuelDuct=definition};
     public static ComponentDefinition CompressibleNozzleValve(uint id, uint a, uint b, uint wall, CompressibleFuelNozzleDefinition definition, ulong input = 0, double opening = 1) => new()
     { Id=id,Kind=ComponentKind.CompressibleFuelNozzle,NodeA=a,NodeB=b,HeatNode=wall,CompressibleNozzle=definition,InputChannel=input,InitialInput=new(opening,Unit.Fraction) };
     public static ComponentDefinition CompressibleChamber(uint id, uint shaft, uint fuel, FuelChamberDefinition geometry) => new()

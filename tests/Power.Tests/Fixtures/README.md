@@ -379,3 +379,15 @@ SHA-256: `b8469401c7a4469a603aa81ef34ca70d9fc98bbc7e56aa7877a4fa65a153e195`.
 `EquilibriumNozzleAssetChecks` verifies the authentic digest and every original
 and upgraded replay boundary. Keep these original bytes. The Power! GPL license
 and Unity Linking Exception apply.
+
+## Equilibrium pump and needle v39
+
+`equilibrium-pump-needle-v39.powerasset` retains the v39 writer output from
+commit `81f650101c1d455363d5146268494d03b60ee631`, copied before changing the
+encoder on 2026-11-17. It retains the equilibrium nozzle and global flux
+enclosure contract before independent vapor quality and finite phase relaxation.
+
+SHA-256: `95b49037e29e2f6be15291cbb45ea8c053e976aa9e3a0df9a9806a00725bcfac`.
+`RelaxingFuelAssetChecks` verifies its original digest, exact v39 bytes and all
+original/upgraded replay boundaries. Keep these original bytes. The Power! GPL
+license and Unity Linking Exception apply.

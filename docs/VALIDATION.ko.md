@@ -2,6 +2,95 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 유한 속도 연료 상변화 완화
+
+`relaxing_fuel` 노드는 독립적인 증기 질량 분율을 가집니다. 액체와 증기는 압력, 온도, 속도를 공유하지만 화학 평형에는 명시된 유한 시간이 필요합니다. `relaxing_fuel_duct`는 명시적인 셀을 통해 질량, 운동량, 총에너지와 증기 질량을 수송합니다. 체류 시간은 셀 형상과 실제 속도에 따라 정해집니다.
+
+`relaxing-fuel-evaporation` 또는 `relaxing-fuel-duct`를 실행합니다. 실제 및 평형 분율, 화학 친화도, 상변화 엔트로피, 포트 증기 수지와 전역 증기 잔차를 관찰합니다. 증발·응축 이력은 수락된 각 틱의 순 소스 이동을 부호별로 나누며 미시적인 정·역방향 총 이동은 아닙니다. 독립 지수 해, 엔트로피 미분, 동결 음향, 강성 평형 극한, 시간 자체 세분화와 독립 선형 음향 격자 세분화를 확인합니다. 트랜잭션, 이식 가능한 재생과 실제 MCP는 별도로 검증하며 수치는 검증 증거에 기록합니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 583/583 |
+| standard_checks_on_dotnet | 461/461 |
+| actual_mcp_groups | 70/70 |
+| laboratories | 66 |
+| agent_examples | 65 |
+| unchanged_laboratories | 64 |
+| identical_complete_sample_boundaries | 7619 |
+| all_sample_boundaries | 7641 |
+| new_core_groups | 13 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| global_cfl | 0.2 |
+| maximum_global_substeps | 4096 |
+| fixed_quality_flash_iterations | 80 |
+| asset_version | power.asset.v40 |
+| agent_api_version | 0.45.0 |
+| fingerprint_tag | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117..121 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| v39_fixture_sha256 | 95b49037e29e2f6be15291cbb45ea8c053e976aa9e3a0df9a9806a00725bcfac |
+| verification_log_sha256 | 11cf926daee32bb5f87e835d649a370fcd984390df9ad0664f4a2984b631a9b0 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 66 |
+| schema_negative_cases | 15 |
+| documentation_locales | 10 |
+| documentation_files | 250 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| initial_quality | equilibrium_quality | quality_after_two_tau | specific_entropy_change_j_kg_k |
+|---|---|---|---|
+| 0.3 | 0.40689075997022106 | 0.3924246686942744 | 5.54875710970839 |
+| 0.1 | 0.022095016639203525 | 0.0326383096278805 | 21.749238363251123 |
+
+| temporal_self_refinement_step_ns | reference_step_ns | quality_absolute_error |
+|---|---|---|
+| 4000 | 50 | 4.841542071720717e-05 |
+| 2000 | 50 | 3.054656079609641e-05 |
+| 1000 | 50 | 1.4934826843782112e-05 |
+| 500 | 50 | 7.0868146199720705e-06 |
+
+| independent_linear_frozen_acoustic_cells | normalized_cell_average_error |
+|---|---|
+| 4 | 0.11807384309213376 |
+| 8 | 0.08979190596364788 |
+| 12 | 0.07380850723566255 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | maximum_sampled_vapor_mass_residual_kg | final_source_quality | final_source_phase_entropy_j_k |
+|---|---|---|---|---|---|---|---|
+| relaxing-fuel-evaporation | 91025ced0013231b | bea1aa00312ec239 | 11 | 0 | 3.3881317890172014e-21 | 0.39242466869427434 | 0.0014286807703571605 |
+| relaxing-fuel-duct | 18dcdf1a72d04529 | fc90c667851d977b | 11 | 1.4551915228366852e-11 | 1.1142290872151208e-20 | 0.2931345788652313 | 0.0003028266650770687 |
+
+- `artifacts/reports/relaxing-fuel-final-2026-11-17.log`
+- `artifacts/reports/relaxing-fuel-verify-exit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-evidence-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-baseline-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-schema-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-provenance-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-fuel-doc-audit-2026-11-17.json`
+
+보존형 Rusanov 플럭스가 네 장을 수송합니다. 각 전역 CFL 구간에서 국소 상변화 반 단계, 수송, 반 단계를 적용합니다. 공유 저장조는 덕트 수와 무관하게 소스항을 한 번씩 받습니다. 고립된 정적 부피 상태의 소스 궤적은 정확하지만 결합 수송은 일차 오차를 가집니다. CFL은 동결 분율 음속 상한을 사용합니다. 상변화와 덕트 엔트로피를 별도로 검사하며 범위 이탈은 전체 배치를 롤백합니다.
+
+매개변수는 `unverified`입니다. `initial_vapor_mass_fraction`은 [0,1], 완화 시간은 1 ns부터 한 시간까지 정수로 선언합니다. 재료의 온도 및 양압 범위를 지켜야 합니다. 강체 수평 일정 단면 덕트, 단일 순수 유사 유체, 액체 열팽창 없음과 이상 증기를 가정합니다. 상간 미끄럼, 계면 열전달 지연, 표면 장력, 분무와 운반 가스는 제외합니다. 완화 도메인의 펌프, 노즐, 이동 챔버와 연소 수신부 직접 결합은 남아 있습니다. 보존, 재생과 세분화는 실측 장비 타당성이나 실제 Unity 인수를 입증하지 않습니다. 실제 유체 임계 영역에서 벗어난 희박 증기에 한하며, 재료는 양의 잠열 엔탈피와 구별되는 공존 비체적을 유지해야 합니다.
+
 ## 2026-11-17: 연료 노즐의 평형 상변화 수송
 
 `compressible_fuel_nozzle`의 `phase_mode`를 `equilibrium`으로 설정하면 통과 중 순간 균질 상평형을 가정합니다. 액체와 증기는 압력, 온도, 속도를 공유하며 증기분율은 등엔트로피선을 따라 변합니다. 노즐과 유한 저장조는 같은 압축성 액체 퍼텐셜과 이상증기 기준을 사용합니다. `frozen`도 별도의 지원 가정으로 유지됩니다.

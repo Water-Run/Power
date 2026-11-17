@@ -74,7 +74,7 @@ Windows verwendet denselben Befehl `dotnet` und einen absoluten Pfad zur DLL. Ei
 
 ## Werkzeuge und Ergebnisse
 
-In Agent-API-Version 0.44.0 akzeptiert `get_example_model` einen optionalen `name` mit Standardwert `electrothermal`. `get_capabilities.examples` listet alle 63 Beispiele einschließlich endlicher Tanks und Kraftstoffumlauf auf. CLI `list-labs` liefert alle 64 Labore als [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json)-JSON; `thermal-network` ist konstruktionsgemäß nur im CLI verfügbar. Die Fähigkeiten nennen auch Komponenten, Modelltreue, Solvergrenzen und Eingabegrenzen. Exporte nutzen `power.asset.v39` mit erhaltenen v1-v38-Lesern. Validierung und Sitzungserstellung liefern Ausgabekanäle und Einheiten. Bestandene Labor-KPIs belegen keinen vollständigen oder kalibrierten Antriebsstrang.
+In Agent-API-Version 0.45.0 akzeptiert `get_example_model` einen optionalen `name` mit Standardwert `electrothermal`. `get_capabilities.examples` listet alle 65 Beispiele einschließlich endlicher Tanks und Kraftstoffumlauf auf. CLI `list-labs` liefert alle 66 Labore als [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json)-JSON; `thermal-network` ist konstruktionsgemäß nur im CLI verfügbar. Die Fähigkeiten nennen auch Komponenten, Modelltreue, Solvergrenzen und Eingabegrenzen. Exporte nutzen `power.asset.v40` mit erhaltenen v1-v39-Lesern. Validierung und Sitzungserstellung liefern Ausgabekanäle und Einheiten. Bestandene Labor-KPIs belegen keinen vollständigen oder kalibrierten Antriebsstrang.
 
 | Werkzeug | Aufgabe |
 |---|---|
@@ -586,7 +586,7 @@ Verträge. Der Graph verwendet bestehende Datensätze von Asset v24, kein neues 
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v39 speichert Routen, Verstärkungen und Uhren und liest v1-v38.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v40 speichert Routen, Verstärkungen und Uhren und liest v1-v39.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -596,7 +596,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v39 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v38. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v40 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v39. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -695,3 +695,11 @@ Fläche, effektiven Flächenkoeffizienten und `wall_kinetic_fraction` mit endlic
 Druck und spezifische Entropie bestimmen stabile Flüssigkeit, Dampf oder Koexistenz. Die Schließung nutzt gleiche chemische Potenziale und bestehende Temperatur-/Druckgrenzen. Temperaturendpunkte erlauben nur binary64-Rundungsnachbarschaften. Fläche, Wandwärme, Öffnung und reale Nadel folgen dem gemeinsamen Vertrag. Der ideale Strahl expandiert vollständig zum Empfänger; stationärer Impuls fügt weder axiale Nadelkraft noch mechanische Arbeit hinzu.
 
 [Kraftstoffdüsentransit im Phasengleichgewicht](EQUILIBRIUM_FUEL_NOZZLE.de.md)
+
+## Kraftstoff-Phasenrelaxation mit endlicher Rate
+
+Ein `relaxing_fuel`-Knoten führt einen unabhängigen Dampfmassenanteil. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; chemisches Gleichgewicht benötigt eine erklärte endliche Zeit. Ein `relaxing_fuel_duct` transportiert Masse, Impuls, Gesamtenergie und Dampfmasse durch explizite Zellen. Die Verweilzeit folgt aus Geometrie und tatsächlicher Geschwindigkeit.
+
+`relaxing-fuel-evaporation` oder `relaxing-fuel-duct` ausführen. Beobachtbar sind tatsächlicher und Gleichgewichtsanteil, Affinität, Phasenentropie, Dampfbilanzen an Ports und globales Dampfresiduum. Verdampfungs- und Kondensationshistorien trennen den Nettoquelltransfer jedes akzeptierten Takts nach Vorzeichen; sie zählen keine mikroskopischen Bruttoströme. Prüfungen umfassen die unabhängige Exponentiallösung, Entropieableitungen, eingefrorene Akustik, den steifen Gleichgewichtsgrenzfall, zeitliche Selbstverfeinerung und unabhängige linear-akustische Gitterverfeinerung. Transaktionen, portables Replay und tatsächliches MCP werden getrennt geprüft; Zahlen stehen in den Validierungsnachweisen.
+
+[Kraftstoff-Phasenrelaxation mit endlicher Rate](RELAXING_FUEL.de.md)

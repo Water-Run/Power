@@ -20,15 +20,17 @@ Um `compressible_fuel_nozzle` leva fluxo unidirecional entre reservatórios fini
 
 Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equilíbrio homogêneo instantâneo durante o trânsito. Líquido e vapor compartilham pressão, temperatura e velocidade; o título muda na isentrópica. Bocal e reservatórios finitos usam o mesmo potencial líquido compressível e referência de vapor ideal. `frozen` permanece uma hipótese separada suportada. [Trânsito de combustível em equilíbrio nos bocais](EQUILIBRIUM_FUEL_NOZZLE.pt-BR.md)
 
+Um nó `relaxing_fuel` tem fração mássica de vapor independente. Líquido e vapor compartilham pressão, temperatura e velocidade, mas o equilíbrio químico exige um tempo finito declarado. Um `relaxing_fuel_duct` transporta massa, quantidade de movimento, energia total e massa de vapor em células explícitas. A residência depende da geometria e da velocidade real. [Relaxação de fase do combustível com taxa finita](RELAXING_FUEL.pt-BR.md)
+
 ## Próximo incremento
 
-Adicionar relaxação finita com evidência explícita de residência e material, depois spray resolvido e receptor com combustão compatível. Continuar ignição, admissão/escape, perdas mecânicas, atuação da transmissão e ECU/TCU. Calibração medida e aceitação real no Unity ficam separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
+Ampliar acoplamentos de contorno compatíveis com taxa finita e obter medições de relaxação do material, depois incluir spray resolvido e receptores com combustão. Continuar ignição, admissão/escape, perdas mecânicas, atuação da transmissão e controle ECU/TCU coordenado. Calibração medida e aceitação real do Unity seguem separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
 
 ## Aceitação
 
 Exigir referências analíticas/limite independentes, balanços completos de massa/energia e refinamento apropriado. Preservar rollback do lote, cancelamento, ramos, canais estáveis, replay portável e leitores antigos. Continuar depois ignição, admissão/escape, perdas mecânicas, transmissão e coordenação ECU/TCU.
 
-Os parâmetros continuam `unverified`. Respeite as faixas declaradas de temperatura e pressão, entalpia latente positiva, volumes de coexistência separados e vapor diluído. O duto é rígido, horizontal, de seção constante e equilíbrio homogêneo instantâneo. Não inclui nucleação com taxa finita, deslizamento, tensão superficial, gravidade, elasticidade ou comportamento crítico real. A difusão de primeira ordem pode alargar frentes; conservação e reprodução não demonstram precisão espacial nem validade de hardware medido. A aceitação real no Unity permanece pendente.
+Os parâmetros continuam `unverified`. Declare `initial_vapor_mass_fraction` em [0,1] e tempo inteiro de 1 ns a uma hora. Respeite temperatura e pressão positiva do material. O modelo pressupõe duto rígido horizontal de área constante, pseudofluido puro, expansão térmica líquida nula e vapor ideal. Não inclui deslizamento de fases, atraso térmico interfacial, tensão superficial, spray ou gás portador. Acoplamentos diretos do domínio relaxante com bombas, bocais, câmaras móveis e receptores com combustão continuam pendentes. Conservação, reprodução e refinamento não comprovam validade experimental nem aceitação real do Unity. Use vapor diluído longe da região crítica real; o material deve manter entalpia latente positiva e volumes específicos de coexistência separados.
 
 [DEVELOPMENT_STATUS.pt-BR.md](DEVELOPMENT_STATUS.pt-BR.md) · [ROADMAP.pt-BR.md](ROADMAP.pt-BR.md) · [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md)
 

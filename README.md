@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — headless experiments"]
     mcp["Power.Mcp — 12 stdio MCP tools"]
-    assets["Power.Assets — .powerasset v39"]
+    assets["Power.Assets — .powerasset v40"]
     unity["Unity 6.6 studio — 3D laboratories"]
 
     model --> core
@@ -119,7 +119,7 @@ The service exposes twelve tools with input and output schemas:
 |---|---|
 | `get_capabilities` | Discover models, limits, time and revision conventions. Start here. |
 | `get_model_schema` | JSON Schema 2020-12 for `power.model.v1` |
-| `get_example_model` | Get an editable synthetic model and experiment (63 examples) |
+| `get_example_model` | Get an editable synthetic model and experiment (65 examples) |
 | `validate_model` | Validate a model without running it; structured repair diagnostics |
 | `run_experiment` | Bounded headless run with batch replay, KPIs, and provenance |
 | `export_model_asset` | Export a portable `.powerasset` |
@@ -147,7 +147,7 @@ A four-range Ravigneaux research graph adds compound planetary paths and a conve
 > [!NOTE]
 > All sample parameters are `unverified` — research values, not calibrated measurements.
 
-The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v39`, with readers for earlier assets retained.
+The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v40`, with readers for earlier assets retained.
 
 The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse. [Frozen-quality fuel discharge and finite receivers](docs/FUEL_DISCHARGE.md) [Shaft-driven phase-resolving fuel pump](docs/FUEL_CHAMBER_PUMP.md)
 
@@ -161,8 +161,10 @@ A `compressible_fuel_nozzle` carries one-way flow between finite `compressible_f
 
 Set `compressible_fuel_nozzle` `phase_mode` to `equilibrium` for instantaneous homogeneous phase equilibrium during transit. Liquid and vapor share pressure, temperature and velocity, and vapor quality changes along the isentrope. The same compressible liquid cold potential and ideal-vapor reference supply both nozzle and finite reservoirs. The `frozen` mode remains a separate supported assumption. [Equilibrium fuel nozzle transit](docs/EQUILIBRIUM_FUEL_NOZZLE.md)
 
+A `relaxing_fuel` node carries independent vapor mass quality. Liquid and vapor share pressure, temperature and velocity, while chemical equilibrium takes a declared finite time. A `relaxing_fuel_duct` transports mass, momentum, total energy and vapor mass through explicit cells. Residence follows cell geometry and actual velocity. [Finite-rate fuel phase relaxation](docs/RELAXING_FUEL.md)
+
 <details>
-<summary>Available laboratories (64)</summary>
+<summary>Available laboratories (66)</summary>
 
 | Example name (`get_example_model`) | Laboratory | What it exercises |
 |---|---|---|
@@ -230,6 +232,8 @@ Set `compressible_fuel_nozzle` `phase_mode` to `equilibrium` for instantaneous h
 | `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Frozen compressible choking, finite discharge and physical needle control |
 | `equilibrium-flashing-nozzle` | `assets/labs/equilibrium-flashing-nozzle.power.json` | Equilibrium flashing, global critical-flux enclosure and actual needle delivery |
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | Equilibrium flashing, global critical-flux enclosure and actual needle delivery |
+| `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | Independent vapor quality, finite-rate phase change and conservative transport |
+| `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | Independent vapor quality, finite-rate phase change and conservative transport |
 
 </details>
 

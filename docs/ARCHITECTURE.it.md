@@ -250,7 +250,7 @@ L'[assemblaggio di azionamento AT](AT_HYDRAULIC_ACTUATION.it.md) abbassa i bersa
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v39 conserva percorsi, guadagni e clock e legge v1-v38.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v40 conserva percorsi, guadagni e clock e legge v1-v39.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -260,7 +260,7 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v39 conserva collegamenti e temperatura sorgente e legge v1-v38. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v40 conserva collegamenti e temperatura sorgente e legge v1-v39. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
@@ -353,3 +353,11 @@ Il quadrato positivo del suono d’equilibrio dà densità crescente con pressio
 Sottopassi conservativi del primo ordine trasferiscono la stessa massa ed entalpia e dividono l’energia cinetica fra fluido e parete. Si verificano stati ed entropia totale della coppia. Limiti: 4096 sottopassi, 64 dimezzamenti per candidato, trasferimento iniziale entro 0.1 della massa minore. La chiusura tollera 128 epsilon binary64 per il massimo modulo volumetrico o pressione senza limitare i valori riportati. Un errore annulla l’intero lotto. Controllare passo, inventario, limiti, corsa e area.
 
 [Transito di combustibile all’equilibrio negli ugelli](EQUILIBRIUM_FUEL_NOZZLE.it.md)
+
+## Rilassamento di fase del combustibile a velocità finita
+
+La chiusura mantiene il potenziale freddo del liquido comprimibile e il vapore ideale del modello di equilibrio. La frazione iniziale è esplicita e non proiettata all’equilibrio. A massa, volume ed energia interna fissi, tende esponenzialmente al valore di equilibrio con `phase_relaxation_time_ns` costante. Il calore latente resta nel bilancio interno. L’affinità chimica è il potenziale del liquido meno quello del vapore; il prodotto con il trasferimento di fase, diviso per la temperatura, dà produzione entropica non negativa. È una legge di ricerca, non una correlazione di nucleazione misurata.
+
+I flussi conservativi di Rusanov trasportano quattro campi. Ogni intervallo CFL globale applica mezza sorgente locale, trasporto e mezza sorgente. I serbatoi condivisi ricevono ogni sorgente una sola volta indipendentemente dal numero di condotti. La sorgente è esatta per stati isolati a volume fisso; il trasporto accoppiato mantiene errore del primo ordine. CFL usa il limite acustico a frazione congelata. Entropia di fase e del condotto sono verificate separatamente. Uno stato fuori limite annulla l’intero lotto.
+
+[Rilassamento di fase del combustibile a velocità finita](RELAXING_FUEL.it.md)

@@ -248,7 +248,7 @@ A [montagem de acionamento da AT](AT_HYDRAULIC_ACTUATION.pt-BR.md) reduz 1..6 al
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v39 preserva rotas, ganhos e relógios e lê v1-v38.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v40 preserva rotas, ganhos e relógios e lê v1-v39.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -258,7 +258,7 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v39 preserva conexões e temperatura da fonte e lê v1-v38. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v40 preserva conexões e temperatura da fonte e lê v1-v39. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
@@ -351,3 +351,11 @@ O quadrado positivo do som de equilíbrio implica densidade crescente com press�
 Subpassos conservativos de primeira ordem transferem igual massa e entalpia e dividem a energia cinética entre fluido e parede. Verificam-se estados e entropia total do par. Limites: 4096 subpassos, 64 reduções à metade por candidato e transferência inicial de até 0.1 da menor massa. O fechamento permite 128 epsilon binary64 vezes o maior módulo volumétrico ou pressão, sem limitar pressões informadas. Falhas revertem todo o lote. Examine passo, inventário, limites, curso e área.
 
 [Trânsito de combustível em equilíbrio nos bocais](EQUILIBRIUM_FUEL_NOZZLE.pt-BR.md)
+
+## Relaxação de fase do combustível com taxa finita
+
+O fechamento mantém o potencial frio do líquido compressível e o vapor ideal do modelo de equilíbrio. A fração inicial é explícita e não é projetada ao equilíbrio. Com massa, volume e energia interna fixos, a fração converge exponencialmente ao alvo com `phase_relaxation_time_ns` constante. O calor latente permanece no balanço interno. A afinidade química é o potencial do líquido menos o do vapor; seu produto pela transferência de fase, dividido pela temperatura, gera entropia não negativa. É uma lei de pesquisa, não uma correlação de nucleação medida.
+
+Fluxos conservativos de Rusanov transportam quatro campos. Cada intervalo CFL global aplica meia fonte local, transporte e meia fonte. Reservatórios compartilhados recebem cada fonte uma vez, independentemente do número de dutos. A fonte é exata para estados isolados de volume fixo; o transporte acoplado mantém erro de primeira ordem. CFL usa o limite acústico de fração congelada. Entropias de fase e duto são verificadas separadamente. Estados fora dos limites revertem o lote inteiro.
+
+[Relaxação de fase do combustível com taxa finita](RELAXING_FUEL.pt-BR.md)

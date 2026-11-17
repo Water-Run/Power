@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — esperimenti senza interfaccia"]
     mcp["Power.Mcp — 12 strumenti MCP via stdio"]
-    assets["Power.Assets — .powerasset v39"]
+    assets["Power.Assets — .powerasset v40"]
     unity["Studio Unity 6.6 — laboratori 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Il servizio espone dodici strumenti con schemi di input e output:
 |---|---|
 | `get_capabilities` | Scopre modelli, limiti e convenzioni di tempo e revisione. Inizia qui. |
 | `get_model_schema` | JSON Schema 2020-12 per `power.model.v1` |
-| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (63 esempi) |
+| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (65 esempi) |
 | `validate_model` | Valida un modello senza eseguirlo; diagnostica di riparazione strutturata |
 | `run_experiment` | Esecuzione senza interfaccia e limitata, con replay batch, KPI e provenienza |
 | `export_model_asset` | Esporta un `.powerasset` portabile |
@@ -147,7 +147,7 @@ Un grafo di ricerca Ravigneaux a quattro gamme aggiunge percorsi planetari compo
 > [!NOTE]
 > Tutti i parametri di esempio sono `unverified`: valori di ricerca, non misure calibrate.
 
-I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v39`, mantenendo i lettori per gli asset precedenti.
+I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v40`, mantenendo i lettori per gli asset precedenti.
 
 La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo congelato in un ricevitore acceso con volume liquido finito. Gli inventari comprendono cambio fase, lavoro di spostamento, energia cinetica del getto e impulso sulla parete ferma. [Scarico carburante a titolo congelato e ricevitori finiti](docs/FUEL_DISCHARGE.it.md) [Pompa carburante a cambio di fase azionata da albero](docs/FUEL_CHAMBER_PUMP.it.md)
 
@@ -161,8 +161,10 @@ Un `compressible_fuel_nozzle` porta flusso unidirezionale tra serbatoi finiti `c
 
 Impostare `phase_mode` di `compressible_fuel_nozzle` su `equilibrium` per l’equilibrio omogeneo istantaneo durante il transito. Liquido e vapore condividono pressione, temperatura e velocità; il titolo cambia lungo l’isentropica. Ugello e serbatoi finiti usano lo stesso potenziale liquido comprimibile e riferimento di vapore ideale. `frozen` resta un’ipotesi distinta supportata. [Transito di combustibile all’equilibrio negli ugelli](docs/EQUILIBRIUM_FUEL_NOZZLE.it.md)
 
+Un nodo `relaxing_fuel` ha una frazione massica di vapore indipendente. Liquido e vapore condividono pressione, temperatura e velocità, mentre l’equilibrio chimico richiede un tempo finito dichiarato. Un `relaxing_fuel_duct` trasporta massa, quantità di moto, energia totale e massa di vapore in celle esplicite. La permanenza dipende da geometria e velocità effettiva. [Rilassamento di fase del combustibile a velocità finita](docs/RELAXING_FUEL.it.md)
+
 <details>
-<summary>Laboratori disponibili (64)</summary>
+<summary>Laboratori disponibili (66)</summary>
 
 | Nome esempio (`get_example_model`) | Laboratorio | Cosa esercita |
 |---|---|---|
@@ -230,6 +232,8 @@ Impostare `phase_mode` di `compressible_fuel_nozzle` su `equilibrium` per l’eq
 | `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Blocco comprimibile congelato, scarico finito e ago reale |
 | `equilibrium-flashing-nozzle` | `assets/labs/equilibrium-flashing-nozzle.power.json` | Vaporizzazione d’equilibrio, involucro critico globale e ago reale |
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | Vaporizzazione d’equilibrio, involucro critico globale e ago reale |
+| `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | Frazione di vapore indipendente, fase a velocità finita e trasporto conservativo |
+| `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | Frazione di vapore indipendente, fase a velocità finita e trasporto conservativo |
 
 </details>
 

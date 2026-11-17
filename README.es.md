@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — experimentos sin interfaz"]
     mcp["Power.Mcp — 12 herramientas MCP por stdio"]
-    assets["Power.Assets — .powerasset v39"]
+    assets["Power.Assets — .powerasset v40"]
     unity["Estudio Unity 6.6 — laboratorios 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ El servicio expone doce herramientas con esquemas de entrada y salida:
 |---|---|
 | `get_capabilities` | Descubrir modelos, límites y convenciones de tiempo y revisión. Empieza aquí. |
 | `get_model_schema` | JSON Schema 2020-12 para `power.model.v1` |
-| `get_example_model` | Obtener un modelo sintético editable y su experimento (63 ejemplos) |
+| `get_example_model` | Obtener un modelo sintético editable y su experimento (65 ejemplos) |
 | `validate_model` | Validar un modelo sin ejecutarlo; diagnóstico de reparación estructurado |
 | `run_experiment` | Ejecución sin interfaz y acotada, con repetición por lotes, KPIs y procedencia |
 | `export_model_asset` | Exportar un `.powerasset` portátil |
@@ -147,7 +147,7 @@ Un grafo de investigación Ravigneaux de cuatro rangos añade caminos planetario
 > [!NOTE]
 > Todos los parámetros de ejemplo son `unverified`: valores de investigación, no mediciones calibradas.
 
-Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v39`, con lectores para assets anteriores conservados.
+Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v40`, con lectores para assets anteriores conservados.
 
 La bomba del dominio de combustible alimenta ahora una aguja física y descarga con calidad congelada en un receptor encendido con volumen líquido finito. Los inventarios completos incluyen cambio de fase, trabajo de desplazamiento, energía cinética e impulso sobre pared inmóvil. [Descarga de combustible con calidad congelada y receptores finitos](docs/FUEL_DISCHARGE.es.md) [Bomba de combustible con cambio de fase impulsada por eje](docs/FUEL_CHAMBER_PUMP.es.md)
 
@@ -161,8 +161,10 @@ Una `compressible_fuel_nozzle` transporta flujo unidireccional entre depósitos 
 
 Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equilibrio homogéneo instantáneo durante el tránsito. Líquido y vapor comparten presión, temperatura y velocidad; la calidad cambia sobre la isentrópica. Tobera y depósitos finitos usan el mismo potencial líquido compresible y referencia de vapor ideal. `frozen` sigue siendo una hipótesis independiente admitida. [Tránsito de combustible en equilibrio por toberas](docs/EQUILIBRIUM_FUEL_NOZZLE.es.md)
 
+Un nodo `relaxing_fuel` tiene una fracción másica de vapor independiente. Líquido y vapor comparten presión, temperatura y velocidad, pero el equilibrio químico requiere un tiempo finito declarado. Un `relaxing_fuel_duct` transporta masa, cantidad de movimiento, energía total y masa de vapor por celdas explícitas. La residencia depende de su geometría y velocidad real. [Relajación de fase del combustible a velocidad finita](docs/RELAXING_FUEL.es.md)
+
 <details>
-<summary>Laboratorios disponibles (64)</summary>
+<summary>Laboratorios disponibles (66)</summary>
 
 | Nombre de ejemplo (`get_example_model`) | Laboratorio | Qué ejercita |
 |---|---|---|
@@ -230,6 +232,8 @@ Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equili
 | `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Bloqueo compresible congelado, descarga finita y aguja real |
 | `equilibrium-flashing-nozzle` | `assets/labs/equilibrium-flashing-nozzle.power.json` | Vaporización en equilibrio, envolvente crítica global y aguja real |
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | Vaporización en equilibrio, envolvente crítica global y aguja real |
+| `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | Fracción de vapor independiente, fase a velocidad finita y transporte conservativo |
+| `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | Fracción de vapor independiente, fase a velocidad finita y transporte conservativo |
 
 </details>
 

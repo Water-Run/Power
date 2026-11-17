@@ -42,7 +42,7 @@ Windows 使用同一条 `dotnet` 命令,以及指向 DLL 的绝对路径。生�
 
 ## 工具与结果
 
-智能体 API 版本 0.44.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 63 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 64 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v39`，并保留 v1-v38 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
+智能体 API 版本 0.45.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 65 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 66 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v40`，并保留 v1-v39 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
 
 | 工具 | 作用 |
 |---|---|
@@ -292,7 +292,7 @@ flowchart TD
 
 `at_controller` 接受 [-1,4] 范围内的整数目标挡位；零表示空挡。它管理五组充油/泄压阀以及可选的变矩器锁止支路。支路顺序为行星架输入、小太阳轮输入、大太阳轮输入、行星架制动、大太阳轮制动，最后是锁止。
 
-示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v39 保留支路、增益和时钟，并可读取 v1-v38。
+示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v40 保留支路、增益和时钟，并可读取 v1-v39。
 
 这是研究控制，参数仍为 `unverified`。协调 ECU 扭矩融合、详细传感器/阀模型、完整车辆故障及 OEM 标定仍待完成。托管和 Standard 检查不能证明实际 Unity Editor/Play/Player/IL2CPP 验收。
 
@@ -302,7 +302,7 @@ flowchart TD
 
 `liquid_rail_feed` 将液体喷射器与现有排量泵及显式质量/热边界配对。液压出口节点必须与燃轨的顺应性和初始绝对压力一致。配对泵和喷射器管理该压力节点；其他未计入的流体路径会被拒绝。
 
-资产 v39 保留补给连接和源温度，并读取 v1-v38。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
+资产 v40 保留补给连接和源温度，并读取 v1-v39。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
 
 该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、真实流体混合物热力学、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
 
@@ -401,3 +401,11 @@ flowchart TD
 压力与比熵共同确定稳定液体、蒸气或两相共存状态。闭合关系使用化学势相等条件及既有温压边界；温度端点只允许 binary64 舍入邻域。面积、壁面热分配、开度指令和实际针阀沿用共同喷嘴契约。喷流能量表示完全膨胀到接收腔压力的理想状态；静止喷流冲量不额外产生针阀轴向力或机械功。
 
 [平衡燃料喷嘴输运](EQUILIBRIUM_FUEL_NOZZLE.zh-CN.md)
+
+## 有限速率燃料相变弛豫
+
+`relaxing_fuel` 节点具有独立的蒸气质量分数。液体与蒸气共享压力、温度和速度，化学平衡则需要显式声明的有限时间。`relaxing_fuel_duct` 通过显式网格输运质量、动量、总能量和蒸气质量；停留时间由网格几何与实际流速决定。
+
+运行 `relaxing-fuel-evaporation` 或 `relaxing-fuel-duct`。可观察实际与平衡质量分数、化学亲和势、相变熵、端口蒸气库存和全局蒸气残差。蒸发、凝结历史按每个已接受时间步的净源项转移量正负累计，不表示微观正反向总通量。检查覆盖独立指数解析解、熵导数、冻结声学、刚性平衡极限、时间自细化和独立线性声学网格细化。事务、可移植重放与真实 MCP 分别验证；数值记录在验证证据中。
+
+[有限速率燃料相变弛豫](RELAXING_FUEL.zh-CN.md)

@@ -20,15 +20,17 @@ Eine `compressible_fuel_nozzle` verbindet endliche `compressible_fuel`-Behälter
 
 `phase_mode` von `compressible_fuel_nozzle` auf `equilibrium` setzen, um sofortiges homogenes Phasengleichgewicht im Transit zu verwenden. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; der Dampfanteil ändert sich entlang der Isentrope. Düse und endliche Behälter nutzen dasselbe kompressible Flüssigkeitspotenzial und dieselbe ideale Dampfreferenz. `frozen` bleibt eine getrennte unterstützte Annahme. [Kraftstoffdüsentransit im Phasengleichgewicht](EQUILIBRIUM_FUEL_NOZZLE.de.md)
 
+Ein `relaxing_fuel`-Knoten führt einen unabhängigen Dampfmassenanteil. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; chemisches Gleichgewicht benötigt eine erklärte endliche Zeit. Ein `relaxing_fuel_duct` transportiert Masse, Impuls, Gesamtenergie und Dampfmasse durch explizite Zellen. Die Verweilzeit folgt aus Geometrie und tatsächlicher Geschwindigkeit. [Kraftstoff-Phasenrelaxation mit endlicher Rate](RELAXING_FUEL.de.md)
+
 ## Nächster Schritt
 
-Endliche Phasenrelaxation mit expliziter Verweilzeit- und Stoffdatenevidenz ergänzen, dann aufgelösten Spray und kompatible brennende Empfänger. Zündung, Ein-/Auslass, mechanische Verluste, Getriebebetätigung und ECU/TCU fortsetzen. Messkalibrierung und tatsächliche Unity-Abnahme bleiben getrennt. [Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md)
+Kompatible Randkopplungen mit endlicher Rate erweitern und Relaxationsmessungen des Materials beschaffen, danach aufgelöstes Spray und brennende Empfänger ergänzen. Zündung, Ein-/Auslass, mechanische Verluste, Getriebeaktuierung und ECU/TCU-Koordination fortsetzen. Messkalibrierung und tatsächliche Unity-Abnahme bleiben getrennt. [Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md)
 
 ## Abnahme
 
 Unabhängige analytische/Grenzreferenzen, vollständige Masse/Energie und passende Schrittverfeinerung verlangen. Batch-Rollback, Abbruch, Zweige, stabile Kanäle, portables Replay und alte Leser erhalten. Danach Zündung, Einlass/Auslass, mechanische Verluste, Getriebeaktuation und ECU/TCU-Koordination fortsetzen.
 
-Parameter bleiben `unverified`. Temperatur- und Druckgrenzen, positive latente Enthalpie, getrennte Koexistenzvolumina und verdünnter Dampf sind einzuhalten. Der Kanal ist starr, horizontal und querschnittskonstant mit sofortigem homogenem Gleichgewicht. Endliche Keimbildungsrate, Phasenschlupf, Oberflächenspannung, Schwerkraft, Rohrelastizität und reales kritisches Verhalten fehlen. Diffusion erster Ordnung kann Fronten verschmieren; Erhaltung und Wiedergabe belegen weder räumliche Genauigkeit noch gemessene Hardwaregültigkeit. Tatsächliche Unity-Abnahme steht aus.
+Parameter bleiben `unverified`. `initial_vapor_mass_fraction` in [0,1] und eine ganzzahlige Zeit von 1 ns bis einer Stunde deklarieren. Temperatur- und positive Druckgrenzen des Materials einhalten. Das Modell setzt einen starren horizontalen Kanal konstanten Querschnitts, ein reines Pseudofluid, keine thermische Flüssigkeitsausdehnung und idealen Dampf voraus. Phasenschlupf, verzögerter Grenzflächenwärmetransport, Oberflächenspannung, Spray und Trägergas fehlen. Direkte Kopplungen der Relaxationsdomäne mit Pumpen, Düsen, bewegten Kammern und brennenden Empfängern bleiben offen. Erhaltung, Replay und Verfeinerung belegen weder gemessene Hardwaregültigkeit noch tatsächliche Unity-Abnahme. Verdünnten Dampf fern vom realen kritischen Bereich verwenden; positive latente Enthalpie und getrennte Koexistenzvolumina müssen erhalten bleiben.
 
 [DEVELOPMENT_STATUS.de.md](DEVELOPMENT_STATUS.de.md) · [ROADMAP.de.md](ROADMAP.de.md) · [VALIDATION.de.md](VALIDATION.de.md)
 

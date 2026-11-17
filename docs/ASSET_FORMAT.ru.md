@@ -14,7 +14,33 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 39
+## Текущая версия 40
+
+Узел `relaxing_fuel` имеет независимую массовую долю пара. Жидкость и пар имеют общие давление, температуру и скорость, но химическое равновесие достигается за заданное конечное время. `relaxing_fuel_duct` переносит массу, импульс, полную энергию и массу пара через явные ячейки. Время пребывания определяется геометрией и фактической скоростью.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_fuel | 45 |
+| relaxing_fuel_domain | 9 |
+| relaxing_fuel_duct_kind | 52 |
+| phase_relaxation_time_ns | 1..3600000000000 |
+| initial_vapor_mass_fraction | fraction, [0,1] |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| equilibrium_fuel_material_record_bytes | 148 |
+| compressible_fuel_material_record_bytes | 160 |
+| relaxing_fuel_material_record_bytes | 180 |
+| relaxing_material_extension | uint64 phase_relaxation_time_ns, quantity initial_vapor_mass_fraction |
+| fuel_duct_record_bytes | 56 + 4 * cell_count |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_fields | 117 equilibrium_vapor_mass_fraction, 118 chemical_affinity, 119 vapor_mass_residual, 120 vapor_mass_at_a, 121 vapor_mass_at_b |
+| retained_asset_readers | power.asset.v1..v39 |
+
+[Фазовая релаксация топлива с конечной скоростью](RELAXING_FUEL.ru.md)
+
+## Сохранённая версия 39
 
 Установите `phase_mode` компонента `compressible_fuel_nozzle` в `equilibrium` для мгновенного однородного равновесия при прохождении. Жидкость и пар имеют общие давление, температуру и скорость; паросодержание меняется вдоль изоэнтропы. Сопло и конечные резервуары используют одинаковый потенциал сжимаемой жидкости и опорный идеальный пар. `frozen` остаётся отдельным поддерживаемым предположением.
 

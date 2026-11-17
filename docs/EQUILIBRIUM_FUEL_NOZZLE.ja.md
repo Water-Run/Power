@@ -37,6 +37,6 @@ velocity_throat = c_equilibrium  (smooth interior maximum only)
 
 パラメータは `unverified` です。純疑似流体、理想蒸気、液体熱膨張ゼロ、共通速度を仮定します。有限の核生成・緩和時間、相間滑り、噴霧、キャリアガス、燃焼受入室は含みません。包絡は宣言した binary64 余裕を用い、方向付き丸めによる形式的区間証明ではありません。臨界遷移付近の喉部分類は流束包絡と併せて読みます。実測妥当性と実 Unity 受入検証は未完了です。
 
-滞留時間と物性の明示的な証拠を伴う有限速度相緩和を追加し、その後に解像した噴霧と互換性のある燃焼受入室を接続します。点火、吸排気、機械損失、変速機駆動、ECU/TCU 協調を続けます。実測校正と実 Unity 検証は別に行います。
+有限速度と整合する境界結合を拡張し、材料の緩和実測値を取得してから、解像された噴霧と燃焼受入室を追加します。点火、吸排気、機械損失、変速機作動、ECU/TCU 協調制御を続けます。実測校正と実 Unity 検収は別々に進めます。
 
 [NASA: injector flow and finite phase-transfer times](https://ntrs.nasa.gov/api/citations/20190001326/downloads/20190001326.pdf) · [NIST: thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html) · [Lund: two-phase relaxation hierarchy](https://www.sintef.no/globalassets/project/co2-dynamics/publications/lund_two-phase_relaxation_hierarchy.pdf)

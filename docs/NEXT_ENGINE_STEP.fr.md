@@ -20,15 +20,17 @@ Un `compressible_fuel_nozzle` transporte le fluide dans un seul sens entre rése
 
 Régler `phase_mode` de `compressible_fuel_nozzle` sur `equilibrium` impose l’équilibre homogène instantané pendant le transit. Liquide et vapeur partagent pression, température et vitesse ; le titre change sur l’isentrope. La buse et les réservoirs finis utilisent le même potentiel liquide compressible et la même référence de vapeur idéale. `frozen` reste une hypothèse distincte prise en charge. [Transit de carburant à l’équilibre dans les buses](EQUILIBRIUM_FUEL_NOZZLE.fr.md)
 
+Un nœud `relaxing_fuel` possède un titre massique de vapeur indépendant. Liquide et vapeur partagent pression, température et vitesse, mais l’équilibre chimique demande un temps fini déclaré. Un `relaxing_fuel_duct` transporte masse, quantité de mouvement, énergie totale et masse de vapeur dans des cellules explicites. Le temps de séjour dépend de leur géométrie et de la vitesse réelle. [Relaxation de phase du carburant à vitesse finie](RELAXING_FUEL.fr.md)
+
 ## Prochaine étape
 
-Ajouter une relaxation de phase à vitesse finie avec preuves explicites de temps de séjour et de matériau, puis pulvérisation résolue et récepteur avec combustion compatible. Continuer allumage, admission/échappement, pertes mécaniques, actionnement de transmission et ECU/TCU. Étalonnage mesuré et acceptation Unity restent distincts. [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md)
+Étendre les conditions aux limites compatibles avec la relaxation finie et obtenir des mesures du matériau, puis ajouter spray résolu et récepteurs en combustion. Poursuivre allumage, admission/échappement, pertes mécaniques, actionnement de transmission et contrôle ECU/TCU coordonné. L’étalonnage mesuré et l’acceptation Unity restent distincts. [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md)
 
 ## Acceptation
 
 Exiger références analytiques ou limites indépendantes, bilans complets masse/énergie et raffinement du pas adapté. Préserver retour arrière complet, annulation, branches, canaux stables, rejeu portable et anciens lecteurs. Continuer ensuite allumage, admission/échappement, pertes mécaniques, transmission et coordination ECU/TCU.
 
-Les paramètres restent `unverified`. Respecter les bornes de température et pression, une enthalpie latente positive, des volumes de coexistence séparés et une vapeur diluée. La conduite est horizontale, rigide, de section constante et à équilibre homogène instantané. Nucléation à vitesse finie, glissement, tension superficielle, gravité, élasticité et comportement critique réel sont omis. La diffusion du premier ordre peut étaler les fronts ; conservation et relecture ne prouvent ni précision spatiale ni validité matérielle mesurée. L’acceptation Unity réelle reste à réaliser.
+Les paramètres restent `unverified`. Déclarer `initial_vapor_mass_fraction` dans [0,1] et un temps entier de 1 ns à une heure. Respecter les bornes de température et de pression positive du matériau. Le modèle suppose un conduit rigide horizontal de section constante, un pseudo-fluide pur, un liquide sans dilatation thermique et une vapeur idéale. Il omet glissement, retard thermique interfacial, tension superficielle, spray et gaz porteur. Le couplage direct du domaine relaxant aux pompes, buses, chambres mobiles et récepteurs en combustion reste à faire. Conservation, rejeu et raffinement ne valident ni le matériel mesuré ni Unity réel. Utiliser une vapeur diluée loin de la région critique réelle ; le matériau doit conserver une enthalpie latente positive et des volumes spécifiques de coexistence distincts.
 
 [DEVELOPMENT_STATUS.fr.md](DEVELOPMENT_STATUS.fr.md) · [ROADMAP.fr.md](ROADMAP.fr.md) · [VALIDATION.fr.md](VALIDATION.fr.md)
 
