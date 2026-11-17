@@ -9,6 +9,7 @@
 // model lab for the libpower C ABI, its test suite, and a Python-semantics JSON
 // DOM shared by those tools.
 #:property AllowUnsafeBlocks=true
+#:property PublishAot=false
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;

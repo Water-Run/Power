@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — esperimenti senza interfaccia"]
     mcp["Power.Mcp — 12 strumenti MCP via stdio"]
-    assets["Power.Assets — .powerasset v37"]
+    assets["Power.Assets — .powerasset v38"]
     unity["Studio Unity 6.6 — laboratori 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Il servizio espone dodici strumenti con schemi di input e output:
 |---|---|
 | `get_capabilities` | Scopre modelli, limiti e convenzioni di tempo e revisione. Inizia qui. |
 | `get_model_schema` | JSON Schema 2020-12 per `power.model.v1` |
-| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (59 esempi) |
+| `get_example_model` | Ottiene un modello sintetico modificabile e il suo esperimento (61 esempi) |
 | `validate_model` | Valida un modello senza eseguirlo; diagnostica di riparazione strutturata |
 | `run_experiment` | Esecuzione senza interfaccia e limitata, con replay batch, KPI e provenienza |
 | `export_model_asset` | Esporta un `.powerasset` portabile |
@@ -147,7 +147,7 @@ Un grafo di ricerca Ravigneaux a quattro gamme aggiunge percorsi planetari compo
 > [!NOTE]
 > Tutti i parametri di esempio sono `unverified`: valori di ricerca, non misure calibrate.
 
-I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v37`, mantenendo i lettori per gli asset precedenti.
+I laboratori seguenti condividono le definizioni tra import JSON, CLI, MCP e Studio. Le esportazioni usano `power.asset.v38`, mantenendo i lettori per gli asset precedenti.
 
 La pompa del dominio carburante alimenta ora ago fisico e scarico a titolo congelato in un ricevitore acceso con volume liquido finito. Gli inventari comprendono cambio fase, lavoro di spostamento, energia cinetica del getto e impulso sulla parete ferma. [Scarico carburante a titolo congelato e ricevitori finiti](docs/FUEL_DISCHARGE.it.md) [Pompa carburante a cambio di fase azionata da albero](docs/FUEL_CHAMBER_PUMP.it.md)
 
@@ -157,8 +157,10 @@ Un `equilibrium_fuel_duct` trasporta massa, quantità di moto ed energia totale 
 
 Una `compressible_fuel_chamber` collega un albero a un serbatoio finito `compressible_fuel`. Il movimento cambia il volume; lo stesso lavoro di pressione cambia energia del fluido e coppia. Il serbatoio può alimentare o ricevere un `equilibrium_fuel_duct`, con vaporizzazione e condensazione all’equilibrio. [Camere di combustibile comprimibile azionate da albero](docs/COMPRESSIBLE_FUEL_CHAMBER.it.md)
 
+Un `compressible_fuel_nozzle` porta flusso unidirezionale tra serbatoi finiti `compressible_fuel`, incluse camere azionate da albero. Compressione liquida e vapore ideale condividono il materiale. Dichiarare `phase_mode` come `frozen`: il titolo massico resta costante nel transito, mentre i serbatoi si riequilibrano. [Ugelli di combustibile comprimibile a titolo congelato](docs/COMPRESSIBLE_FUEL_NOZZLE.it.md)
+
 <details>
-<summary>Laboratori disponibili (60)</summary>
+<summary>Laboratori disponibili (62)</summary>
 
 | Nome esempio (`get_example_model`) | Laboratorio | Cosa esercita |
 |---|---|---|
@@ -222,6 +224,8 @@ Una `compressible_fuel_chamber` collega un albero a un serbatoio finito `compres
 | `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | Il liquido del condotto vaporizza verso serbatoi bifase finiti |
 | `compressible-fuel-chamber-duct` | `assets/labs/compressible-fuel-chamber-duct.power.json` | Lavoro di pressione d’albero accoppiato al trasporto comprimibile |
 | `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | Lavoro di pressione d’albero accoppiato al trasporto comprimibile |
+| `compressible-fuel-nozzle` | `assets/labs/compressible-fuel-nozzle.power.json` | Blocco comprimibile congelato, scarico finito e ago reale |
+| `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Blocco comprimibile congelato, scarico finito e ago reale |
 
 </details>
 

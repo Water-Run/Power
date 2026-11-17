@@ -188,7 +188,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
             Object(c, ["id", "kind", "node_a"], "node_b", "node_c", "heat_node", "input_channel", "initial_input", "parameters", "valve_timing", "reservoir_fractions");
             var kind = Text(c.GetProperty("kind")) switch
             {
-                "fuel_chamber" => ComponentKind.FuelChamber, "compressible_fuel_chamber" => ComponentKind.CompressibleFuelChamber, "fuel_check_valve" => ComponentKind.FuelCheckValve, "fuel_restriction" => ComponentKind.FuelRestriction, "fuel_heat_link" => ComponentKind.FuelHeatLink,
+                "fuel_chamber" => ComponentKind.FuelChamber, "compressible_fuel_chamber" => ComponentKind.CompressibleFuelChamber, "compressible_fuel_nozzle" => ComponentKind.CompressibleFuelNozzle, "fuel_check_valve" => ComponentKind.FuelCheckValve, "fuel_restriction" => ComponentKind.FuelRestriction, "fuel_heat_link" => ComponentKind.FuelHeatLink,
                 "fuel_discharge" => ComponentKind.FuelDischarge, "finite_fuel_film" => ComponentKind.FiniteFuelFilm,
                 "fuel_inertial_pipe" => ComponentKind.FuelInertialPipe, "equilibrium_fuel_duct" => ComponentKind.EquilibriumFuelDuct,
                 "hydraulic_resistance" => ComponentKind.HydraulicResistance, "hydraulic_orifice" => ComponentKind.HydraulicOrifice,
@@ -207,6 +207,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 _ => throw new ArgumentException("Unknown component kind.")
             };
             if (kind is ComponentKind.FuelRestriction or ComponentKind.FuelCheckValve) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel");
+            else if (kind == ComponentKind.CompressibleFuelNozzle) Object(c,["id","kind","node_a","node_b","heat_node","initial_input","parameters"],"input_channel");
             else if (kind == ComponentKind.FuelDischarge) Object(c, ["id", "kind", "node_a", "node_b", "initial_input", "parameters"], "input_channel", "valve_timing");
             else if (kind is ComponentKind.FuelHeatLink or ComponentKind.FuelChamber or ComponentKind.CompressibleFuelChamber) Object(c, ["id", "kind", "node_a", "node_b", "parameters"]);
             else if (kind is ComponentKind.FuelInertialPipe or ComponentKind.EquilibriumFuelDuct) Object(c, ["id", "kind", "node_a", "node_b", "heat_node", "parameters"]);
@@ -245,6 +246,14 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
                 InputChannel = c.TryGetProperty("input_channel", out var channel) ? Integer(channel, long.MaxValue) : 0,
                 InitialInput = c.TryGetProperty("initial_input", out var initial) ? Quantity(initial) : default
             };
+            if(kind==ComponentKind.CompressibleFuelNozzle)
+            {
+                var p=c.GetProperty("parameters");Object(p,["area","discharge_coefficient","phase_mode","wall_kinetic_fraction"],"needle_node","closed_position","full_open_position");
+                if(Text(p.GetProperty("phase_mode"))!="frozen")throw new ArgumentException("Declare frozen compressible nozzle transit explicitly.");
+                bool needle=p.TryGetProperty("needle_node",out _);if(needle!=p.TryGetProperty("closed_position",out _)||needle!=p.TryGetProperty("full_open_position",out _))throw new ArgumentException("Declare nozzle needle node and both positions together.");
+                return result with{CompressibleNozzle=new(){Area=Quantity(p.GetProperty("area")),DischargeCoefficient=Number(p.GetProperty("discharge_coefficient")),PhaseModel=FuelDischargePhaseModel.Frozen,WallKineticFraction=Quantity(p.GetProperty("wall_kinetic_fraction")),
+                    Needle=needle?new(){NeedleNode=Id(p,"needle_node"),ClosedPosition=Quantity(p.GetProperty("closed_position")),FullOpenPosition=Quantity(p.GetProperty("full_open_position"))}:null}};
+            }
             if(kind==ComponentKind.EquilibriumFuelDuct)
             {
                 var duct=c.GetProperty("parameters");Object(duct,["cells","area","linear_resistance","quadratic_resistance","fluid_heat_fraction"]);

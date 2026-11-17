@@ -16,9 +16,11 @@ Un `equilibrium_fuel_duct` transporte masse, quantité de mouvement et énergie 
 
 Un `compressible_fuel_chamber` relie un arbre à un réservoir fini `compressible_fuel`. Le mouvement change son volume ; le même travail de pression modifie l’énergie du fluide et le couple. Le réservoir peut alimenter ou recevoir un `equilibrium_fuel_duct`, avec vaporisation éclair et condensation à l’équilibre. [Chambres de carburant compressible entraînées par arbre](COMPRESSIBLE_FUEL_CHAMBER.fr.md)
 
+Un `compressible_fuel_nozzle` transporte le fluide dans un seul sens entre réservoirs finis `compressible_fuel`, y compris les chambres entraînées par arbre. Compression liquide et vapeur idéale partagent leur matériau. Déclarer `phase_mode` comme `frozen` : la qualité massique reste fixe pendant le transit, puis les réservoirs se rééquilibrent. [Buses de carburant compressible à qualité figée](COMPRESSIBLE_FUEL_NOZZLE.fr.md)
+
 ## Prochaine étape
 
-Ajouter des frontières compatibles de distributeur et d’aiguille/buse compressibles, avec enthalpie, énergie cinétique et hypothèses de phase explicites. Poursuivre relaxation/glissement, allumage, admission/échappement, pertes mécaniques et coordination ECU/TCU. Étalonnage mesuré et acceptation Unity réelle restent distincts. [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md)
+Étendre le transit aux modèles de phase à l’équilibre et à vitesse finie, puis ajouter pulvérisation résolue et récepteur avec combustion compatible. Poursuivre allumage, admission/échappement, pertes mécaniques, actionnement de transmission et coordination ECU/TCU. Étalonnage mesuré et acceptation Unity restent distincts. [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md)
 
 ## Acceptation
 

@@ -493,7 +493,7 @@ remain separate from AT feedback/control and measured valve-body acceptance.
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v37 retains routes, gains and clocks and reads v1-v36.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v38 retains routes, gains and clocks and reads v1-v37.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -503,7 +503,7 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v37 retains feed links and source temperature and reads v1-v36. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v38 retains feed links and source temperature and reads v1-v37. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -580,3 +580,11 @@ The closed work step holds mass and entropy fixed. Liquid cold compression energ
 A moving reservoir uses half duct transport, full shaft work, then half transport. Transport remains first order with numerical diffusion; symmetric splitting does not raise its order. Closed smooth liquid shaft motion has second-order refinement. Angular increments are limited to 0.25 rad per mechanical interval. Duct CFL, material bounds, full rollback, cancellation and independent branches still apply. Stationary port/housing impulse is separate from piston pressure work.
 
 [Shaft-driven compressible fuel chambers](COMPRESSIBLE_FUEL_CHAMBER.md)
+
+## Frozen compressible fuel nozzles
+
+The frozen phases share pressure, temperature and velocity; phase mass transfer is suppressed. Their entropy relation and liquid cold energy give the isentropic enthalpy drop. The unique mass-flux maximum uses frozen sound speed, which differs from equilibrium sound speed. The coefficient scales effective area. At choking, reported exit energy describes an ideal jet fully expanded to receiver pressure. Donor stagnation enthalpy supplies receiver energy and explicit finite-wall jet heat once. Jet impulse measures stationary thermalization, not total housing thrust or axial needle force.
+
+Conservative first-order substeps transfer the same mass and enthalpy between reservoirs. Jet kinetic energy is divided between receiver and wall. Accepted substeps check both material states and total pair entropy. Each interval permits 4096 substeps with at most 64 halvings per candidate; the initial transfer bound is 0.1 times the smaller reservoir mass. Pressure closure allows 128 times binary64 epsilon times the largest bulk modulus or port pressure; reported pressures are not clamped. A failed interval rolls back the whole batch. Reduce the tick and inspect inventory, material bounds, needle travel and valve area.
+
+[Frozen compressible fuel nozzles](COMPRESSIBLE_FUEL_NOZZLE.md)

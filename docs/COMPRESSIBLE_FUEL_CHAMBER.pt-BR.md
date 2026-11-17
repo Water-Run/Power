@@ -36,6 +36,6 @@ Execute `compressible-fuel-chamber-duct` ou `electric-compressible-fuel-duct`. L
 
 Os parâmetros continuam `unverified`. O pseudofluido puro em equilíbrio usa líquido compressível sem expansão térmica e vapor ideal, câmara misturada e células rígidas. Respeite limites térmicos e de pressão. A câmara não resolve energia cinética média nem inclui válvula de retenção automática. Nucleação com taxa finita, deslizamento, comportamento crítico real, calibração medida e aceitação real no Unity permanecem abertos.
 
-Adicionar fronteiras compatíveis de válvula direcional e agulha/bocal compressíveis, com entalpia, energia cinética e hipóteses de fase explícitas. Depois avançar relaxação/deslizamento, ignição, admissão/escape, perdas mecânicas e coordenação ECU/TCU. Calibração medida e aceitação real no Unity permanecem separadas.
+Estender o trânsito com modelos de fase em equilíbrio e com taxas finitas, depois acrescentar spray resolvido e receptor com combustão compatível. Continuar ignição, admissão/escape, perdas mecânicas, atuação de transmissão e coordenação ECU/TCU. Calibração medida e aceitação real no Unity permanecem separadas.
 
 [Modelica: swept volume and pressure work](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [NIST: consistent thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html)

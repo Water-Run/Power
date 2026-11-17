@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — ヘッドレス実験"]
     mcp["Power.Mcp — 12 個の stdio MCP ツール"]
-    assets["Power.Assets — .powerasset v37"]
+    assets["Power.Assets — .powerasset v38"]
     unity["Unity 6.6 スタジオ — 3D ラボラトリー"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | モデル・制限・時間とリビジョンの規約を検索。ここから始めてください。 |
 | `get_model_schema` | `power.model.v1` の JSON Schema 2020-12 |
-| `get_example_model` | 編集可能な合成モデルと実験を取得(59 例) |
+| `get_example_model` | 編集可能な合成モデルと実験を取得(61 例) |
 | `validate_model` | 実行せずにモデルを検証。構造化された修復診断 |
 | `run_experiment` | 境界付きヘッドレス実行。バッチリプレイ・KPI・来歴付き |
 | `export_model_asset` | 移植可能な `.powerasset` をエクスポート |
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > すべてのサンプルパラメーターは `unverified` です。研究値であり、キャリブレーション測定ではありません。
 
-以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v37` を使い、旧アセットのリーダーは保持されます。
+以下のラボラトリーは JSON・CLI・MCP・Studio インポート間で定義を共有します。エクスポートは `power.asset.v38` を使い、旧アセットのリーダーは保持されます。
 
 燃料域ポンプは物理ニードルと凍結蒸気質量分率の流出を介して、有限液体体積の燃焼受容室へ供給します。全在庫に相変化、排除仕事、噴流運動エネルギー、静止壁力積を含みます。 [蒸気質量分率を凍結した燃料流出と有限受容室](docs/FUEL_DISCHARGE.ja.md) [軸駆動の相変化燃料ポンプ](docs/FUEL_CHAMBER_PUMP.ja.md)
 
@@ -157,8 +157,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 `compressible_fuel_chamber` は回転軸と有限の `compressible_fuel` 貯槽を結びます。軸の運動で容積が変わり、同じ圧力仕事が流体エネルギーと軸トルクを変えます。貯槽は `equilibrium_fuel_duct` と燃料を交換し、平衡フラッシュ蒸発や凝縮を扱えます。 [軸駆動の圧縮性燃料室](docs/COMPRESSIBLE_FUEL_CHAMBER.ja.md)
 
+`compressible_fuel_nozzle` は軸駆動室を含む有限の `compressible_fuel` 貯槽間に一方向の流れを与えます。液体圧縮エネルギーと理想蒸気は貯槽と同じ物性を使います。`phase_mode` を `frozen` と明示し、通過中の蒸気質量分率を一定に保ち、貯槽は再平衡させます。 [相分率を凍結した圧縮性燃料ノズル](docs/COMPRESSIBLE_FUEL_NOZZLE.ja.md)
+
 <details>
-<summary>利用可能なラボラトリー(60)</summary>
+<summary>利用可能なラボラトリー(62)</summary>
 
 | 例名(`get_example_model`) | ラボラトリー | 検証内容 |
 |---|---|---|
@@ -222,6 +224,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | 管内液体が有限二相貯槽へフラッシュ蒸発 |
 | `compressible-fuel-chamber-duct` | `assets/labs/compressible-fuel-chamber-duct.power.json` | 軸の圧力仕事と圧縮性燃料輸送の結合 |
 | `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | 軸の圧力仕事と圧縮性燃料輸送の結合 |
+| `compressible-fuel-nozzle` | `assets/labs/compressible-fuel-nozzle.power.json` | 凍結圧縮性チョーク、有限排出、実ニードル制御 |
+| `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | 凍結圧縮性チョーク、有限排出、実ニードル制御 |
 
 </details>
 

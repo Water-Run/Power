@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[디코드, 재컴파일, 지문 검사]
 ```
 
-## 현재 버전 37
+## 현재 버전 38
+
+`compressible_fuel_nozzle`는 축 구동 챔버를 포함한 유한 `compressible_fuel` 저장조 사이에 단방향 유동을 제공합니다. 액체 압축 에너지와 이상증기는 저장조 물성을 공유합니다. `phase_mode`를 `frozen`으로 명시하여 통과 중 증기 질량분율을 유지하고 저장조는 다시 평형을 이루게 합니다.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_record_count | count(kind == compressible_fuel_nozzle) |
+| compressible_nozzle_record_order | component_index, area, discharge_coefficient, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| compressible_nozzle_quantity_fields | 4 |
+| compressible_nozzle_phase_mode_frozen | 1 |
+| absent_needle | needle_node=0; positions=default quantities |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| additional_reported_states_per_nozzle | 13 |
+| retained_asset_readers | power.asset.v1..v37 |
+
+[상분율을 동결한 압축성 연료 노즐](COMPRESSIBLE_FUEL_NOZZLE.ko.md)
+
+
+## 보존 버전 37
 
 `compressible_fuel_chamber`는 회전축을 유한한 `compressible_fuel` 저장조에 연결합니다. 축 운동이 체적을 바꾸며 동일한 압력 일이 유체 에너지와 축 토크를 바꿉니다. 저장조는 `equilibrium_fuel_duct`에 연료를 공급하거나 받으며 평형 플래시 증발과 응축을 처리합니다.
 

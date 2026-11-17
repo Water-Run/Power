@@ -16,9 +16,11 @@ An `equilibrium_fuel_duct` transports mass, momentum and total energy through ex
 
 A `compressible_fuel_chamber` connects a rotational shaft to a finite `compressible_fuel` reservoir. Shaft motion changes its volume, while the same pressure work changes fluid energy and shaft torque. The reservoir can supply or receive an `equilibrium_fuel_duct`, including equilibrium flashing and condensation. [Shaft-driven compressible fuel chambers](COMPRESSIBLE_FUEL_CHAMBER.md)
 
+A `compressible_fuel_nozzle` carries one-way flow between finite `compressible_fuel` reservoirs, including shaft-driven chambers. Liquid compression energy and ideal vapor share the reservoir material. Declare `phase_mode` as `frozen`: mass quality stays constant during transit while bulk reservoirs re-equilibrate. [Frozen compressible fuel nozzles](COMPRESSIBLE_FUEL_NOZZLE.md)
+
 ## Next increment
 
-Add compatible compressible directional-valve and needle/nozzle boundaries with explicit enthalpy, kinetic energy and phase assumptions. Then continue phase relaxation/slip, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
+Extend nozzle transit with equilibrium and finite-rate phase models, then add resolved spray and compatible fired receiver coupling. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
 
 ## Acceptance
 

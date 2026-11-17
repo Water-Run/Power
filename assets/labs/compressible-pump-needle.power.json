@@ -1,0 +1,825 @@
+{
+  "schema": "power.model.v1",
+  "description": "Unverified frozen-quality isentropic compressible fuel nozzle between finite equilibrium reservoirs. Liquid cold work, ideal vapor, frozen sonic choking and finite-wall jet thermalization share explicit energy and entropy checks. Phase conversion is suppressed only during transit; no calibrated spray, finite-rate nucleation or measured nozzle geometry. A finite supply and resolved duct feed a shaft-driven chamber through a one-way inlet; its outlet is metered by an actual solenoid, spring and elastic-stop needle. Shaft inertia and electrical work remain explicit.",
+  "step_ns": 10000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 1.1224174381096273e-07,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 8.419253203260314e-05,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 2,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 1e-06,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 0.00075015,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 3,
+      "domain": "thermal",
+      "storage": {
+        "value": 1,
+        "unit": "j_k"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      }
+    },
+    {
+      "id": 100,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 2.5e-08,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 1.8753749999999996e-05,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 101,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 2.5e-08,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 1.8753749999999996e-05,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 102,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 2.5e-08,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 1.8753749999999996e-05,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 103,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 2.5e-08,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 1.8753749999999996e-05,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 4,
+      "domain": "rotational",
+      "storage": {
+        "value": 1e-05,
+        "unit": "kg_m2"
+      },
+      "initial": {
+        "value": 500,
+        "unit": "rad_s"
+      },
+      "position": {
+        "value": 0.5,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": 5,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 0.001,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 0.75015,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 6,
+      "domain": "compressible_fuel",
+      "storage": {
+        "value": 0.0001,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 0.075025,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 350,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        }
+      }
+    },
+    {
+      "id": 7,
+      "domain": "translational",
+      "storage": {
+        "value": 0.002,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "position": {
+        "value": 0.001,
+        "unit": "m"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 10,
+      "kind": "equilibrium_fuel_duct",
+      "node_a": 5,
+      "node_b": 2,
+      "heat_node": 3,
+      "parameters": {
+        "cells": [
+          100,
+          101,
+          102,
+          103
+        ],
+        "area": {
+          "value": 1e-06,
+          "unit": "m2"
+        },
+        "linear_resistance": {
+          "value": 0,
+          "unit": "pa_s_m3"
+        },
+        "quadratic_resistance": {
+          "value": 0,
+          "unit": "pa_s2_m6"
+        },
+        "fluid_heat_fraction": {
+          "value": 0.5,
+          "unit": "fraction"
+        }
+      }
+    },
+    {
+      "id": 12,
+      "kind": "compressible_fuel_chamber",
+      "node_a": 4,
+      "node_b": 1,
+      "parameters": {
+        "minimum_reference_volume": {
+          "value": 1e-07,
+          "unit": "m3"
+        },
+        "swept_volume": {
+          "value": 2e-07,
+          "unit": "m3"
+        },
+        "phase": {
+          "value": 0,
+          "unit": "rad"
+        }
+      }
+    },
+    {
+      "id": 20,
+      "kind": "compressible_fuel_nozzle",
+      "node_a": 2,
+      "node_b": 1,
+      "heat_node": 3,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "area": {
+          "value": 4e-06,
+          "unit": "m2"
+        },
+        "discharge_coefficient": 0.7,
+        "phase_mode": "frozen",
+        "wall_kinetic_fraction": {
+          "value": 0.4,
+          "unit": "fraction"
+        }
+      }
+    },
+    {
+      "id": 21,
+      "kind": "compressible_fuel_nozzle",
+      "node_a": 1,
+      "node_b": 6,
+      "heat_node": 3,
+      "initial_input": {
+        "value": 1,
+        "unit": "fraction"
+      },
+      "parameters": {
+        "area": {
+          "value": 2e-06,
+          "unit": "m2"
+        },
+        "discharge_coefficient": 0.7,
+        "phase_mode": "frozen",
+        "wall_kinetic_fraction": {
+          "value": 0.4,
+          "unit": "fraction"
+        },
+        "needle_node": 7,
+        "closed_position": {
+          "value": 0,
+          "unit": "m"
+        },
+        "full_open_position": {
+          "value": 0.001,
+          "unit": "m"
+        }
+      },
+      "input_channel": 210
+    },
+    {
+      "id": 30,
+      "kind": "linear_spring",
+      "node_a": 7,
+      "heat_node": 3,
+      "parameters": {
+        "stiffness": {
+          "value": 1000,
+          "unit": "n_m"
+        },
+        "damping": {
+          "value": 0.2,
+          "unit": "n_s_m"
+        },
+        "rest_angle": {
+          "value": 0,
+          "unit": "m"
+        },
+        "ratio": 1
+      }
+    },
+    {
+      "id": 31,
+      "kind": "solenoid",
+      "node_a": 7,
+      "heat_node": 3,
+      "input_channel": 220,
+      "initial_input": {
+        "value": 2,
+        "unit": "v"
+      },
+      "parameters": {
+        "resistance": {
+          "value": 2,
+          "unit": "ohm"
+        },
+        "inductance": {
+          "value": 0.02,
+          "unit": "h"
+        },
+        "inductance_gradient": {
+          "value": 4,
+          "unit": "h_m"
+        },
+        "reference_position": {
+          "value": 0,
+          "unit": "m"
+        },
+        "initial_current": {
+          "value": 1,
+          "unit": "a"
+        }
+      }
+    },
+    {
+      "id": 32,
+      "kind": "travel_stop",
+      "node_a": 7,
+      "parameters": {
+        "minimum_position": {
+          "value": 0,
+          "unit": "m"
+        },
+        "maximum_position": {
+          "value": 0.001,
+          "unit": "m"
+        },
+        "stiffness": {
+          "value": 10000,
+          "unit": "n_m"
+        }
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 20000000,
+    "sample_every_ns": 2000000,
+    "events": [],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 2e-07
+      },
+      {
+        "object_id": 0,
+        "field": "mass_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "fuel_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 20,
+        "field": "total_fuel_delivered",
+        "min": 1e-12
+      },
+      {
+        "object_id": 21,
+        "field": "total_fuel_delivered",
+        "min": 1e-12
+      }
+    ]
+  }
+}

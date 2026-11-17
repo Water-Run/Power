@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version actuelle 37
+## Version actuelle 38
+
+Un `compressible_fuel_nozzle` transporte le fluide dans un seul sens entre réservoirs finis `compressible_fuel`, y compris les chambres entraînées par arbre. Compression liquide et vapeur idéale partagent leur matériau. Déclarer `phase_mode` comme `frozen` : la qualité massique reste fixe pendant le transit, puis les réservoirs se rééquilibrent.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_record_count | count(kind == compressible_fuel_nozzle) |
+| compressible_nozzle_record_order | component_index, area, discharge_coefficient, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| compressible_nozzle_quantity_fields | 4 |
+| compressible_nozzle_phase_mode_frozen | 1 |
+| absent_needle | needle_node=0; positions=default quantities |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| additional_reported_states_per_nozzle | 13 |
+| retained_asset_readers | power.asset.v1..v37 |
+
+[Buses de carburant compressible à qualité figée](COMPRESSIBLE_FUEL_NOZZLE.fr.md)
+
+
+## Version conservée 37
 
 Un `compressible_fuel_chamber` relie un arbre à un réservoir fini `compressible_fuel`. Le mouvement change son volume ; le même travail de pression modifie l’énergie du fluide et le couple. Le réservoir peut alimenter ou recevoir un `equilibrium_fuel_duct`, avec vaporisation éclair et condensation à l’équilibre.
 

@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 37
+## Aktuelle Version 38
+
+Eine `compressible_fuel_nozzle` verbindet endliche `compressible_fuel`-Behälter, auch wellengetriebene Kammern, mit gerichteter Strömung. Flüssigkeitskompression und idealer Dampf teilen deren Stoffdaten. `phase_mode` muss `frozen` sein: Der Dampfmassenanteil bleibt im Durchgang konstant, die Behälter stellen Gleichgewicht wieder her.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_record_count | count(kind == compressible_fuel_nozzle) |
+| compressible_nozzle_record_order | component_index, area, discharge_coefficient, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| compressible_nozzle_quantity_fields | 4 |
+| compressible_nozzle_phase_mode_frozen | 1 |
+| absent_needle | needle_node=0; positions=default quantities |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| additional_reported_states_per_nozzle | 13 |
+| retained_asset_readers | power.asset.v1..v37 |
+
+[Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil](COMPRESSIBLE_FUEL_NOZZLE.de.md)
+
+
+## Beibehaltene Version 37
 
 Eine `compressible_fuel_chamber` verbindet eine Welle mit einem endlichen `compressible_fuel`-Behälter. Die Bewegung ändert sein Volumen; dieselbe Druckarbeit ändert Fluidenergie und Wellendrehmoment. Der Behälter kann einen `equilibrium_fuel_duct` speisen oder aufnehmen, einschließlich Gleichgewichtsverdampfung und Kondensation.
 

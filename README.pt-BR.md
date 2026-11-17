@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — experimentos sem interface"]
     mcp["Power.Mcp — 12 ferramentas MCP via stdio"]
-    assets["Power.Assets — .powerasset v37"]
+    assets["Power.Assets — .powerasset v38"]
     unity["Estúdio Unity 6.6 — laboratórios 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ O serviço expõe doze ferramentas com esquemas de entrada e saída:
 |---|---|
 | `get_capabilities` | Descobrir modelos, limites e convenções de tempo e revisão. Comece aqui. |
 | `get_model_schema` | JSON Schema 2020-12 para `power.model.v1` |
-| `get_example_model` | Obter um modelo sintético editável e seu experimento (59 exemplos) |
+| `get_example_model` | Obter um modelo sintético editável e seu experimento (61 exemplos) |
 | `validate_model` | Validar um modelo sem executá-lo; diagnósticos estruturados de reparo |
 | `run_experiment` | Execução sem interface e limitada, com replay em lote, KPIs e procedência |
 | `export_model_asset` | Exportar um `.powerasset` portátil |
@@ -147,7 +147,7 @@ Um grafo de pesquisa Ravigneaux de quatro faixas adiciona caminhos planetários 
 > [!NOTE]
 > Todos os parâmetros de exemplo são `unverified` — valores de pesquisa, não medidas calibradas.
 
-Os laboratórios abaixo compartilham definições entre importações JSON, CLI, MCP e Studio. As exportações usam `power.asset.v37`, mantendo leitores para assets anteriores.
+Os laboratórios abaixo compartilham definições entre importações JSON, CLI, MCP e Studio. As exportações usam `power.asset.v38`, mantendo leitores para assets anteriores.
 
 A bomba do domínio de combustível agora alimenta agulha física e descarga de título congelado em um receptor em combustão com volume líquido finito. Os inventários completos incluem mudança de fase, trabalho de deslocamento, energia cinética e impulso na parede imóvel. [Descarga de combustível com título congelado e receptores finitos](docs/FUEL_DISCHARGE.pt-BR.md) [Bomba de combustível com mudança de fase acionada por eixo](docs/FUEL_CHAMBER_PUMP.pt-BR.md)
 
@@ -157,8 +157,10 @@ Um `equilibrium_fuel_duct` transporta massa, quantidade de movimento e energia t
 
 Uma `compressible_fuel_chamber` conecta um eixo a um reservatório finito `compressible_fuel`. O movimento muda o volume; o mesmo trabalho de pressão muda energia do fluido e torque. O reservatório pode alimentar ou receber um `equilibrium_fuel_duct`, com vaporização súbita e condensação em equilíbrio. [Câmaras de combustível compressível acionadas por eixo](docs/COMPRESSIBLE_FUEL_CHAMBER.pt-BR.md)
 
+Um `compressible_fuel_nozzle` leva fluxo unidirecional entre reservatórios finitos `compressible_fuel`, incluindo câmaras acionadas por eixo. Compressão líquida e vapor ideal compartilham o material. Declare `phase_mode` como `frozen`: o título mássico fica constante no trânsito e os reservatórios se reequilibram. [Bocais de combustível compressível com título congelado](docs/COMPRESSIBLE_FUEL_NOZZLE.pt-BR.md)
+
 <details>
-<summary>Laboratórios disponíveis (60)</summary>
+<summary>Laboratórios disponíveis (62)</summary>
 
 | Nome do exemplo (`get_example_model`) | Laboratório | O que exercita |
 |---|---|---|
@@ -222,6 +224,8 @@ Uma `compressible_fuel_chamber` conecta um eixo a um reservatório finito `compr
 | `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | O líquido do duto vaporiza para reservatórios bifásicos finitos |
 | `compressible-fuel-chamber-duct` | `assets/labs/compressible-fuel-chamber-duct.power.json` | Trabalho de pressão do eixo acoplado ao transporte compressível |
 | `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | Trabalho de pressão do eixo acoplado ao transporte compressível |
+| `compressible-fuel-nozzle` | `assets/labs/compressible-fuel-nozzle.power.json` | Bloqueio compressível congelado, descarga finita e agulha real |
+| `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Bloqueio compressível congelado, descarga finita e agulha real |
 
 </details>
 

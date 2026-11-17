@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 相分率を凍結した圧縮性燃料ノズル
+
+`compressible_fuel_nozzle` は軸駆動室を含む有限の `compressible_fuel` 貯槽間に一方向の流れを与えます。液体圧縮エネルギーと理想蒸気は貯槽と同じ物性を使います。`phase_mode` を `frozen` と明示し、通過中の蒸気質量分率を一定に保ち、貯槽は再平衡させます。
+
+`compressible-fuel-nozzle` は有限蒸気排出、`compressible-pump-needle` は管供給、軸、一方向入口、電磁ニードルを確認します。累積質量、エンタルピー、噴流運動エネルギー、壁熱、力積、エントロピーを読みます。平均流量と力は完全な刻みを覆い、喉部・出口・分率は最後に採用した通過状態です。厳密液体仕事、気体／液体の解析的チョーク、独立圧力求積、凍結エントロピーと音速微分、密な流束走査、解析的チョーク排出の細分化を比較します。保存、実運動、再生、分岐、取消、ロールバック、割り当て、asset と MCP は別々に検証します。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 552/552 |
+| standard_checks_on_dotnet | 434/434 |
+| actual_mcp_groups | 66/66 |
+| laboratories | 62 |
+| agent_examples | 61 |
+| unchanged_laboratories | 60 |
+| identical_complete_sample_boundaries | 7575 |
+| all_sample_boundaries | 7597 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_pressure_quadrature_panels | 4096 |
+| independent_flux_scan_intervals | 2000 |
+| asset_version | power.asset.v38 |
+| agent_api_version | 0.43.0 |
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| additional_reported_states_per_nozzle | 13 |
+| v37_fixture_sha256 | 60dd76119b8079bf5c9ac731026cd4ced1893b36470816955008847e8bbb3db7 |
+| verification_log_sha256 | 9599880293002adba43920747a1ef01b3de06594de3a943ae9ae51f7859f0528 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 62 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 230 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.939224007584049e-08, 2.469505587442971e-08, 1.2347262048278756e-08, 6.173564658260928e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k |
+|---|---|---|---|---|---|---|
+| compressible-fuel-nozzle | 65c49a0b6da4c438 | 9ae549d2dcea957d | 11 | 3.725290298461914e-09 | 2.5303190773661796e-09 | 5.815403443478657e-07 |
+| compressible-pump-needle | a238a7853adba1e9 | 996acf904f8b56de | 11 | 2.223414456367645e-08 | 2.0271463574203465e-05 | 0.00011595302227825816 |
+
+- `artifacts/reports/compressible-nozzle-final-2026-11-17.log`
+- `artifacts/reports/compressible-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-doc-audit-2026-11-17.json`
+
+保存的な一次サブステップが同じ質量とエンタルピーを移し、噴流運動エネルギーを流体と壁に配分します。物性状態と対全体のエントロピーを確認します。区間当たり最大 4096 ステップ、候補当たり 64 回の半減、初期移動量は小さい貯槽質量の 0.1 倍以下です。閉鎖判定には最大体積弾性率またはポート圧力の 128 binary64 epsilon 倍の丸め幅を許容し、出力圧力は切り詰めません。失敗はバッチ全体をロールバックします。刻み、在庫、物性範囲、行程、面積を確認してください。
+
+パラメータは `unverified` です。理想蒸気と熱膨張ゼロの圧縮性液体からなる純疑似流体です。理想噴流温度を含む指定温圧範囲を守ってください。凍結通過は過熱液体を保持できますが、実測の核生成や準安定限界は予測しません。有限速度緩和、相間滑り、解像した噴霧、不凝縮キャリアガス、燃焼受入室、実測マップ、実 Unity 受入検証は残っています。保存と再生は機器の妥当性を証明しません。
+
 ## 2026-10-26: 軸駆動の圧縮性燃料室
 
 `compressible_fuel_chamber` は回転軸と有限の `compressible_fuel` 貯槽を結びます。軸の運動で容積が変わり、同じ圧力仕事が流体エネルギーと軸トルクを変えます。貯槽は `equilibrium_fuel_duct` と燃料を交換し、平衡フラッシュ蒸発や凝縮を扱えます。

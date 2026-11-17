@@ -16,9 +16,11 @@ Um `equilibrium_fuel_duct` transporta massa, quantidade de movimento e energia t
 
 Uma `compressible_fuel_chamber` conecta um eixo a um reservatório finito `compressible_fuel`. O movimento muda o volume; o mesmo trabalho de pressão muda energia do fluido e torque. O reservatório pode alimentar ou receber um `equilibrium_fuel_duct`, com vaporização súbita e condensação em equilíbrio. [Câmaras de combustível compressível acionadas por eixo](COMPRESSIBLE_FUEL_CHAMBER.pt-BR.md)
 
+Um `compressible_fuel_nozzle` leva fluxo unidirecional entre reservatórios finitos `compressible_fuel`, incluindo câmaras acionadas por eixo. Compressão líquida e vapor ideal compartilham o material. Declare `phase_mode` como `frozen`: o título mássico fica constante no trânsito e os reservatórios se reequilibram. [Bocais de combustível compressível com título congelado](COMPRESSIBLE_FUEL_NOZZLE.pt-BR.md)
+
 ## Próximo incremento
 
-Adicionar fronteiras compatíveis de válvula direcional e agulha/bocal compressíveis, com entalpia, energia cinética e hipóteses de fase explícitas. Depois avançar relaxação/deslizamento, ignição, admissão/escape, perdas mecânicas e coordenação ECU/TCU. Calibração medida e aceitação real no Unity permanecem separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
+Estender o trânsito com modelos de fase em equilíbrio e com taxas finitas, depois acrescentar spray resolvido e receptor com combustão compatível. Continuar ignição, admissão/escape, perdas mecânicas, atuação de transmissão e coordenação ECU/TCU. Calibração medida e aceitação real no Unity permanecem separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
 
 ## Aceitação
 

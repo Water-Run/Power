@@ -16,9 +16,11 @@ Ein `equilibrium_fuel_duct` transportiert Masse, Impuls und Gesamtenergie durch 
 
 Eine `compressible_fuel_chamber` verbindet eine Welle mit einem endlichen `compressible_fuel`-Behälter. Die Bewegung ändert sein Volumen; dieselbe Druckarbeit ändert Fluidenergie und Wellendrehmoment. Der Behälter kann einen `equilibrium_fuel_duct` speisen oder aufnehmen, einschließlich Gleichgewichtsverdampfung und Kondensation. [Wellengetriebene kompressible Kraftstoffkammern](COMPRESSIBLE_FUEL_CHAMBER.de.md)
 
+Eine `compressible_fuel_nozzle` verbindet endliche `compressible_fuel`-Behälter, auch wellengetriebene Kammern, mit gerichteter Strömung. Flüssigkeitskompression und idealer Dampf teilen deren Stoffdaten. `phase_mode` muss `frozen` sein: Der Dampfmassenanteil bleibt im Durchgang konstant, die Behälter stellen Gleichgewicht wieder her. [Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil](COMPRESSIBLE_FUEL_NOZZLE.de.md)
+
 ## Nächster Schritt
 
-Kompatible kompressible Wegeventil- und Nadel-/Düsengrenzen mit expliziter Enthalpie, kinetischer Energie und Phasenannahmen ergänzen. Danach Relaxation/Schlupf, Zündung, Ein-/Auslass, mechanische Verluste und ECU/TCU-Koordination bearbeiten. Messkalibrierung und tatsächliche Unity-Abnahme bleiben getrennt. [Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md)
+Düsendurchgang um Gleichgewichts- und endliche Phasenratenmodelle erweitern, dann aufgelösten Spray und kompatible brennende Empfänger ergänzen. Zündung, Ein-/Auslass, mechanische Verluste, Getriebebetätigung und ECU/TCU-Koordination fortsetzen. Messkalibrierung und tatsächliche Unity-Abnahme bleiben getrennt. [Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md)
 
 ## Abnahme
 

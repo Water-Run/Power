@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, comprobar la huella]
 ```
 
-## Versión actual 37
+## Versión actual 38
+
+Una `compressible_fuel_nozzle` transporta flujo unidireccional entre depósitos finitos `compressible_fuel`, incluidas cámaras accionadas por eje. Compresión líquida y vapor ideal comparten el material. Declare `phase_mode` como `frozen`: la calidad másica permanece fija durante el tránsito y los depósitos se reequilibran.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_record_count | count(kind == compressible_fuel_nozzle) |
+| compressible_nozzle_record_order | component_index, area, discharge_coefficient, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| compressible_nozzle_quantity_fields | 4 |
+| compressible_nozzle_phase_mode_frozen | 1 |
+| absent_needle | needle_node=0; positions=default quantities |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| additional_reported_states_per_nozzle | 13 |
+| retained_asset_readers | power.asset.v1..v37 |
+
+[Toberas de combustible compresible de calidad congelada](COMPRESSIBLE_FUEL_NOZZLE.es.md)
+
+
+## Versión conservada 37
 
 Una `compressible_fuel_chamber` conecta un eje a un depósito finito `compressible_fuel`. Su movimiento cambia el volumen; el mismo trabajo de presión cambia energía del fluido y par del eje. El depósito puede alimentar o recibir un `equilibrium_fuel_duct`, con vaporización súbita y condensación en equilibrio.
 

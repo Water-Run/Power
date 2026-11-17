@@ -250,7 +250,7 @@ Die [Baugruppe der AT-Ansteuerung](AT_HYDRAULIC_ACTUATION.de.md) senkt 1..6 erkl
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v37 speichert Routen, Verstärkungen und Uhren und liest v1-v36.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v38 speichert Routen, Verstärkungen und Uhren und liest v1-v37.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -260,7 +260,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v37 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v36. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v38 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v37. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -337,3 +337,11 @@ Der geschlossene Arbeitsschritt hält Masse und Entropie konstant. Kalte Kompres
 Der bewegliche Behälter verwendet halben Transport, volle Wellenarbeit und halben Transport. Der Transport bleibt erster Ordnung mit numerischer Diffusion; symmetrische Aufteilung erhöht die Ordnung nicht. Glatte geschlossene Flüssigkeitsbewegung konvergiert zweiter Ordnung. Winkeländerungen sind auf 0.25 rad je mechanischem Intervall begrenzt. CFL, Stoffgrenzen, vollständige Rücknahme, Abbruch und unabhängige Zweige gelten weiterhin. Stationärer Anschluss-/Gehäuseimpuls ist von der Kolbendruckarbeit getrennt.
 
 [Wellengetriebene kompressible Kraftstoffkammern](COMPRESSIBLE_FUEL_CHAMBER.de.md)
+
+## Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil
+
+Beide Phasen teilen Druck, Temperatur und Geschwindigkeit; Phasenmassenübertragung ist unterdrückt. Entropiebeziehung und kalte Kompressionsenergie bestimmen den isentropen Enthalpieabfall. Das eindeutige Flussmaximum nutzt eingefrorene statt Gleichgewichtsschallgeschwindigkeit. Der Koeffizient skaliert die effektive Fläche. Bei kritischer Strömung beschreibt die Austrittsenergie einen ideal bis zum Empfängerdruck expandierten Strahl. Stagnationsenthalpie versorgt Empfänger und explizite Wandwärme genau einmal. Der Impuls bezeichnet stationäre Thermalisierung, nicht den gesamten Gehäuseschub oder axiale Nadelkraft.
+
+Konservative Teilschritte erster Ordnung übertragen dieselbe Masse und Enthalpie; Strahlenergie verteilt sich auf Fluid und Wand. Stoffzustände und gesamte Paarentropie werden geprüft. Grenzen: 4096 Teilschritte, 64 Halbierungen je Kandidat, anfänglich höchstens 0.1 der kleineren Behältermasse. Die Schließgrenze erlaubt 128 binary64 epsilon mal maximalen Kompressionsmodul oder Portdruck, ohne Ausgabedruck zu begrenzen. Fehler nehmen den ganzen Stapel zurück. Schritt, Bestand, Stoffgrenzen, Nadelhub und Fläche prüfen.
+
+[Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil](COMPRESSIBLE_FUEL_NOZZLE.de.md)

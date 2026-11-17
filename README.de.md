@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — Experimente ohne Oberfläche"]
     mcp["Power.Mcp — 12 MCP-Werkzeuge über stdio"]
-    assets["Power.Assets — .powerasset v37"]
+    assets["Power.Assets — .powerasset v38"]
     unity["Unity-6.6-Studio — 3D-Laboratorien"]
 
     model --> core
@@ -119,7 +119,7 @@ Der Dienst stellt zwölf Werkzeuge mit Eingabe- und Ausgabeschemas bereit:
 |---|---|
 | `get_capabilities` | Modelle, Grenzen, Zeit- und Revisionskonventionen entdecken. Hier beginnen. |
 | `get_model_schema` | JSON Schema 2020-12 für `power.model.v1` |
-| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (59 Beispiele) |
+| `get_example_model` | Ein editierbares synthetisches Modell samt Experiment holen (61 Beispiele) |
 | `validate_model` | Modell ohne Ausführung prüfen; strukturierte Reparaturdiagnosen |
 | `run_experiment` | Begrenzter Lauf ohne Oberfläche mit Batch-Replay, KPIs und Herkunft |
 | `export_model_asset` | Ein portables `.powerasset` exportieren |
@@ -147,7 +147,7 @@ Ein Ravigneaux-Forschungsgraph mit vier Bereichen ergänzt zusammengesetzte Plan
 > [!NOTE]
 > Alle Beispielparameter sind `unverified` — Forschungswerte, keine kalibrierten Messungen.
 
-Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v37`, Leser für ältere Assets bleiben erhalten.
+Die folgenden Laboratorien teilen Definitionen über JSON-, CLI-, MCP- und Studio-Importe. Exporte verwenden `power.asset.v38`, Leser für ältere Assets bleiben erhalten.
 
 Die Kraftstoffpumpe speist nun physische Nadel und Düse mit eingefrorenem Dampfanteil in einen befeuerten Empfänger mit endlichem Flüssigkeitsvolumen. Vollständige Inventare enthalten Phasenwechsel, Verdrängungsarbeit, Strahlenergie und Impuls an die ruhende Wand. [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](docs/FUEL_DISCHARGE.de.md) [Wellengetriebene phasenauflösende Kraftstoffpumpe](docs/FUEL_CHAMBER_PUMP.de.md)
 
@@ -157,8 +157,10 @@ Ein `equilibrium_fuel_duct` transportiert Masse, Impuls und Gesamtenergie durch 
 
 Eine `compressible_fuel_chamber` verbindet eine Welle mit einem endlichen `compressible_fuel`-Behälter. Die Bewegung ändert sein Volumen; dieselbe Druckarbeit ändert Fluidenergie und Wellendrehmoment. Der Behälter kann einen `equilibrium_fuel_duct` speisen oder aufnehmen, einschließlich Gleichgewichtsverdampfung und Kondensation. [Wellengetriebene kompressible Kraftstoffkammern](docs/COMPRESSIBLE_FUEL_CHAMBER.de.md)
 
+Eine `compressible_fuel_nozzle` verbindet endliche `compressible_fuel`-Behälter, auch wellengetriebene Kammern, mit gerichteter Strömung. Flüssigkeitskompression und idealer Dampf teilen deren Stoffdaten. `phase_mode` muss `frozen` sein: Der Dampfmassenanteil bleibt im Durchgang konstant, die Behälter stellen Gleichgewicht wieder her. [Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil](docs/COMPRESSIBLE_FUEL_NOZZLE.de.md)
+
 <details>
-<summary>Verfügbare Laboratorien (60)</summary>
+<summary>Verfügbare Laboratorien (62)</summary>
 
 | Beispielname (`get_example_model`) | Laboratorium | Was es prüft |
 |---|---|---|
@@ -222,6 +224,8 @@ Eine `compressible_fuel_chamber` verbindet eine Welle mit einem endlichen `compr
 | `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | Flüssiger Kanalinhalt verdampft in endliche Zweiphasenbehälter |
 | `compressible-fuel-chamber-duct` | `assets/labs/compressible-fuel-chamber-duct.power.json` | Wellendruckarbeit gekoppelt an kompressiblen Kraftstofftransport |
 | `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | Wellendruckarbeit gekoppelt an kompressiblen Kraftstofftransport |
+| `compressible-fuel-nozzle` | `assets/labs/compressible-fuel-nozzle.power.json` | Eingefrorene kritische Strömung, endlicher Austritt und reale Nadel |
+| `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Eingefrorene kritische Strömung, endlicher Austritt und reale Nadel |
 
 </details>
 

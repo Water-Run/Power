@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, conferir a impressão digital]
 ```
 
-## Versão atual 37
+## Versão atual 38
+
+Um `compressible_fuel_nozzle` leva fluxo unidirecional entre reservatórios finitos `compressible_fuel`, incluindo câmaras acionadas por eixo. Compressão líquida e vapor ideal compartilham o material. Declare `phase_mode` como `frozen`: o título mássico fica constante no trânsito e os reservatórios se reequilibram.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_record_count | count(kind == compressible_fuel_nozzle) |
+| compressible_nozzle_record_order | component_index, area, discharge_coefficient, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| compressible_nozzle_quantity_fields | 4 |
+| compressible_nozzle_phase_mode_frozen | 1 |
+| absent_needle | needle_node=0; positions=default quantities |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| additional_reported_states_per_nozzle | 13 |
+| retained_asset_readers | power.asset.v1..v37 |
+
+[Bocais de combustível compressível com título congelado](COMPRESSIBLE_FUEL_NOZZLE.pt-BR.md)
+
+
+## Versão preservada 37
 
 Uma `compressible_fuel_chamber` conecta um eixo a um reservatório finito `compressible_fuel`. O movimento muda o volume; o mesmo trabalho de pressão muda energia do fluido e torque. O reservatório pode alimentar ou receber um `equilibrium_fuel_duct`, com vaporização súbita e condensação em equilíbrio.
 

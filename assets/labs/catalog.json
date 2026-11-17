@@ -360,6 +360,18 @@
       "asset_name": "ElectricCompressibleFuelDuct",
       "display_name": "Electric compressible fuel duct laboratory",
       "agent_example": true
+    },
+    {
+      "name": "compressible-fuel-nozzle",
+      "asset_name": "CompressibleFuelNozzle",
+      "display_name": "Frozen compressible fuel nozzle laboratory",
+      "agent_example": true
+    },
+    {
+      "name": "compressible-pump-needle",
+      "asset_name": "CompressiblePumpNeedle",
+      "display_name": "Compressible pump and physical needle laboratory",
+      "agent_example": true
     }
   ]
 }

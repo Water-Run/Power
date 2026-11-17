@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 冻结相态可压缩燃料喷嘴
+
+`compressible_fuel_nozzle` 在有限 `compressible_fuel` 储腔之间提供单向流动，可连接轴驱动腔室。液体压缩能与理想蒸气使用同一储腔材料。显式声明 `phase_mode` 为 `frozen`：通过喷嘴时蒸气质量分数不变，主体储腔则重新达到相平衡。
+
+运行 `compressible-fuel-nozzle` 检查有限蒸气排放，或运行 `compressible-pump-needle` 检查管路供给、轴驱动泵、单向入口和电磁针阀输送。可读取累计质量、焓、喷流动能、壁面热、冲量和成对熵变。平均流量与力覆盖完整时间步，喉部、出口和相分数通道保留最近接受的穿越状态。检查对比精确液体功、气体／液体解析阻塞、独立压力积分、冻结熵和声速导数、稠密通量扫描及解析阻塞排空细化。守恒、实际针阀运动、回放、分支、回滚、取消、内存分配和资产／MCP 操作分别验证。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 552/552 |
+| standard_checks_on_dotnet | 434/434 |
+| actual_mcp_groups | 66/66 |
+| laboratories | 62 |
+| agent_examples | 61 |
+| unchanged_laboratories | 60 |
+| identical_complete_sample_boundaries | 7575 |
+| all_sample_boundaries | 7597 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_pressure_quadrature_panels | 4096 |
+| independent_flux_scan_intervals | 2000 |
+| asset_version | power.asset.v38 |
+| agent_api_version | 0.43.0 |
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| additional_reported_states_per_nozzle | 13 |
+| v37_fixture_sha256 | 60dd76119b8079bf5c9ac731026cd4ced1893b36470816955008847e8bbb3db7 |
+| verification_log_sha256 | 9599880293002adba43920747a1ef01b3de06594de3a943ae9ae51f7859f0528 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 62 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 230 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.939224007584049e-08, 2.469505587442971e-08, 1.2347262048278756e-08, 6.173564658260928e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k |
+|---|---|---|---|---|---|---|
+| compressible-fuel-nozzle | 65c49a0b6da4c438 | 9ae549d2dcea957d | 11 | 3.725290298461914e-09 | 2.5303190773661796e-09 | 5.815403443478657e-07 |
+| compressible-pump-needle | a238a7853adba1e9 | 996acf904f8b56de | 11 | 2.223414456367645e-08 | 2.0271463574203465e-05 | 0.00011595302227825816 |
+
+- `artifacts/reports/compressible-nozzle-final-2026-11-17.log`
+- `artifacts/reports/compressible-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-doc-audit-2026-11-17.json`
+
+守恒的一阶子步在储腔之间转移相同的质量和焓，并在接收流体与壁面之间分配喷流动能。接受子步前检查两端材料状态与总熵变。每个区间最多 4096 个子步，每个候选最多减半 64 次；初始转移量上限是较小储腔质量的 0.1 倍。闭阀压差允许 128 倍 binary64 epsilon 乘以最大体积模量或端口压力的舍入量，报告压力不作钳制。失败区间会回滚整个批次。应减小时间步并检查库存、材料边界、针阀行程及阀口面积。
+
+参数仍为 `unverified`。模型采用理想蒸气及可压缩、零热膨胀液体组成的纯伪流体。须遵守声明的温压范围，包括理想喷流温度。冻结穿越可保留过热液体，但不预测实测成核或亚稳态极限。有限速率弛豫、相间滑移、解析喷雾、不凝载气、燃烧接收腔耦合、实测特性图及实际 Unity 验收仍待完成。守恒与回放不能证明硬件有效性。
+
 ## 2026-10-26: 轴驱动可压缩燃料腔室
 
 `compressible_fuel_chamber` 将转轴连接到有限的 `compressible_fuel` 储腔。轴运动改变容积，同一压力功同时改变流体能量和轴转矩。储腔可通过 `equilibrium_fuel_duct` 供给或接收燃料，并发生平衡闪蒸与凝结。

@@ -31,11 +31,12 @@ flowchart LR
 | Document | De quoi il s'agit |
 |---|---|
 | [API agent](AGENT_API.fr.md) | Outils MCP, révisions, erreurs et la séquence d'opérations |
-| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v37 et les lecteurs de v1 à v36 |
+| [Format d'asset](ASSET_FORMAT.fr.md) | `.powerasset` v38 et les lecteurs de v1 à v37 |
 | [Décharge de carburant à titre figé et récepteurs finis](FUEL_DISCHARGE.fr.md) | Étranglement à titre figé, déplacement liquide fini et combustion avec pompe/aiguille physiques |
 | [Quantité de mouvement d'une ligne finie de carburant liquide](FUEL_INERTIAL_PIPE.fr.md) | Inventaire liquide fini, débit dynamique, mélange thermique et travail conservatif |
 | [Conduites de carburant compressible à l’équilibre](EQUILIBRIUM_FUEL_DUCT.fr.md) | Transport diphasique compressible conservatif et acoustique d’équilibre |
 | [Chambres de carburant compressible entraînées par arbre](COMPRESSIBLE_FUEL_CHAMBER.fr.md) | Travail de pression d’arbre couplé au transport compressible |
+| [Buses de carburant compressible à qualité figée](COMPRESSIBLE_FUEL_NOZZLE.fr.md) | Blocage compressible figé, décharge finie et aiguille réelle |
 | [Référence de quantité de mouvement à l'entrée liquide](LIQUID_COLUMN.fr.md) | Inertie d'entrée monophasique, chaleur de friction et quantité de mouvement au second ordre vérifiée |
 | [Frontière Zig native](NATIVE_ZIG.fr.md) | Les prototypes Zig archivés et l'ABI versionnée |
 

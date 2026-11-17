@@ -16,9 +16,11 @@
 
 `compressible_fuel_chamber` 将转轴连接到有限的 `compressible_fuel` 储腔。轴运动改变容积，同一压力功同时改变流体能量和轴转矩。储腔可通过 `equilibrium_fuel_duct` 供给或接收燃料，并发生平衡闪蒸与凝结。 [轴驱动可压缩燃料腔室](COMPRESSIBLE_FUEL_CHAMBER.zh-CN.md)
 
+`compressible_fuel_nozzle` 在有限 `compressible_fuel` 储腔之间提供单向流动，可连接轴驱动腔室。液体压缩能与理想蒸气使用同一储腔材料。显式声明 `phase_mode` 为 `frozen`：通过喷嘴时蒸气质量分数不变，主体储腔则重新达到相平衡。 [冻结相态可压缩燃料喷嘴](COMPRESSIBLE_FUEL_NOZZLE.zh-CN.md)
+
 ## 下一步开发
 
-增加相容的可压缩方向阀和针阀／喷嘴边界，明确焓、动能与相态假设。之后继续相变弛豫／滑移、点火、进排气、机械损失及 ECU/TCU 协同控制。实测标定和实际 Unity 验收分别开展。 [可压缩平衡燃料管路](EQUILIBRIUM_FUEL_DUCT.zh-CN.md)
+将喷嘴穿越扩展到平衡和有限速率相态模型，再加入解析喷雾及相容的燃烧接收腔耦合。继续点火、进排气、机械损失、变速器执行机构及 ECU/TCU 协同控制。实测标定与实际 Unity 验收分别开展。 [可压缩平衡燃料管路](EQUILIBRIUM_FUEL_DUCT.zh-CN.md)
 
 ## 验收
 

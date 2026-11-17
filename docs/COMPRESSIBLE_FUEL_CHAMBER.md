@@ -36,6 +36,6 @@ Run `compressible-fuel-chamber-duct` or `electric-compressible-fuel-duct`. Read 
 
 Parameters remain `unverified`. This is an equilibrium pure pseudo-fluid with a compressible zero-thermal-expansion liquid and ideal vapor, a mixed chamber and rigid duct cells. Enforce declared temperature and pressure bounds. The chamber has no resolved bulk kinetic energy or automatic check valve. Finite-rate nucleation, phase slip, real-fluid critical behavior, measured calibration and actual Unity acceptance remain open.
 
-Add compatible compressible directional-valve and needle/nozzle boundaries with explicit enthalpy, kinetic energy and phase assumptions. Then continue phase relaxation/slip, ignition, intake/exhaust, mechanical losses and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate.
+Extend nozzle transit with equilibrium and finite-rate phase models, then add resolved spray and compatible fired receiver coupling. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate.
 
 [Modelica: swept volume and pressure work](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [NIST: consistent thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html)

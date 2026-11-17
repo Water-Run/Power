@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — experimentos sin interfaz"]
     mcp["Power.Mcp — 12 herramientas MCP por stdio"]
-    assets["Power.Assets — .powerasset v37"]
+    assets["Power.Assets — .powerasset v38"]
     unity["Estudio Unity 6.6 — laboratorios 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ El servicio expone doce herramientas con esquemas de entrada y salida:
 |---|---|
 | `get_capabilities` | Descubrir modelos, límites y convenciones de tiempo y revisión. Empieza aquí. |
 | `get_model_schema` | JSON Schema 2020-12 para `power.model.v1` |
-| `get_example_model` | Obtener un modelo sintético editable y su experimento (59 ejemplos) |
+| `get_example_model` | Obtener un modelo sintético editable y su experimento (61 ejemplos) |
 | `validate_model` | Validar un modelo sin ejecutarlo; diagnóstico de reparación estructurado |
 | `run_experiment` | Ejecución sin interfaz y acotada, con repetición por lotes, KPIs y procedencia |
 | `export_model_asset` | Exportar un `.powerasset` portátil |
@@ -147,7 +147,7 @@ Un grafo de investigación Ravigneaux de cuatro rangos añade caminos planetario
 > [!NOTE]
 > Todos los parámetros de ejemplo son `unverified`: valores de investigación, no mediciones calibradas.
 
-Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v37`, con lectores para assets anteriores conservados.
+Los laboratorios siguientes comparten definiciones entre las importaciones JSON, CLI, MCP y Studio. Las exportaciones usan `power.asset.v38`, con lectores para assets anteriores conservados.
 
 La bomba del dominio de combustible alimenta ahora una aguja física y descarga con calidad congelada en un receptor encendido con volumen líquido finito. Los inventarios completos incluyen cambio de fase, trabajo de desplazamiento, energía cinética e impulso sobre pared inmóvil. [Descarga de combustible con calidad congelada y receptores finitos](docs/FUEL_DISCHARGE.es.md) [Bomba de combustible con cambio de fase impulsada por eje](docs/FUEL_CHAMBER_PUMP.es.md)
 
@@ -157,8 +157,10 @@ Un `equilibrium_fuel_duct` transporta masa, cantidad de movimiento y energía to
 
 Una `compressible_fuel_chamber` conecta un eje a un depósito finito `compressible_fuel`. Su movimiento cambia el volumen; el mismo trabajo de presión cambia energía del fluido y par del eje. El depósito puede alimentar o recibir un `equilibrium_fuel_duct`, con vaporización súbita y condensación en equilibrio. [Cámaras de combustible compresible accionadas por eje](docs/COMPRESSIBLE_FUEL_CHAMBER.es.md)
 
+Una `compressible_fuel_nozzle` transporta flujo unidireccional entre depósitos finitos `compressible_fuel`, incluidas cámaras accionadas por eje. Compresión líquida y vapor ideal comparten el material. Declare `phase_mode` como `frozen`: la calidad másica permanece fija durante el tránsito y los depósitos se reequilibran. [Toberas de combustible compresible de calidad congelada](docs/COMPRESSIBLE_FUEL_NOZZLE.es.md)
+
 <details>
-<summary>Laboratorios disponibles (60)</summary>
+<summary>Laboratorios disponibles (62)</summary>
 
 | Nombre de ejemplo (`get_example_model`) | Laboratorio | Qué ejercita |
 |---|---|---|
@@ -222,6 +224,8 @@ Una `compressible_fuel_chamber` conecta un eje a un depósito finito `compressib
 | `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | El líquido del conducto se vaporiza hacia depósitos bifásicos finitos |
 | `compressible-fuel-chamber-duct` | `assets/labs/compressible-fuel-chamber-duct.power.json` | Trabajo de presión del eje acoplado al transporte compresible |
 | `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | Trabajo de presión del eje acoplado al transporte compresible |
+| `compressible-fuel-nozzle` | `assets/labs/compressible-fuel-nozzle.power.json` | Bloqueo compresible congelado, descarga finita y aguja real |
+| `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Bloqueo compresible congelado, descarga finita y aguja real |
 
 </details>
 

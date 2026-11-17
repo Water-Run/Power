@@ -14,7 +14,31 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 37
+## Текущая версия 38
+
+`compressible_fuel_nozzle` обеспечивает односторонний поток между конечными резервуарами `compressible_fuel`, включая камеры с приводом от вала. Сжатие жидкости и идеальный пар используют материал резервуара. Явно задайте `phase_mode` как `frozen`: массовое паросодержание фиксировано при прохождении сопла, а резервуары возвращаются к равновесию.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_record_count | count(kind == compressible_fuel_nozzle) |
+| compressible_nozzle_record_order | component_index, area, discharge_coefficient, phase_mode, wall_kinetic_fraction, needle_node, closed_position, full_open_position |
+| compressible_nozzle_quantity_fields | 4 |
+| compressible_nozzle_phase_mode_frozen | 1 |
+| absent_needle | needle_node=0; positions=default quantities |
+| extension_table_order | fuel_material -> fuel_chamber -> fuel_discharge -> fuel_pipe -> fuel_duct -> compressible_nozzle -> inputs |
+| additional_reported_states_per_nozzle | 13 |
+| retained_asset_readers | power.asset.v1..v37 |
+
+[Сжимаемые топливные сопла с замороженным составом](COMPRESSIBLE_FUEL_NOZZLE.ru.md)
+
+
+## Сохранённая версия 37
 
 `compressible_fuel_chamber` соединяет вращающийся вал с конечным резервуаром `compressible_fuel`. Движение меняет объём, а одна и та же работа давления меняет энергию среды и момент вала. Резервуар связан с `equilibrium_fuel_duct`, включая равновесное вскипание и конденсацию.
 

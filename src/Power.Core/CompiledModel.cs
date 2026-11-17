@@ -19,9 +19,9 @@ public sealed partial class CompiledModel
     public ulong Fingerprint { get; }
     public int NodeCount => Nodes.Length;
     public int ComponentCount => Components.Length;
-    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length + 3 * EquilibriumTankCount + 2 * FuelVolumes.Length + 5 * FuelLinks.Length + 3 * FuelChambers.Length + 11 * FuelDischarges.Length + 13 * FuelPipes.Length + 3 * CompressibleFuels.Length + 11 * FuelDucts.Length + 4 * CompressibleChambers.Length;
+    public int StateCount => DynamicCount + ThermalCount + 2 * GasCount + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + HydraulicCount + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length + 3 * EquilibriumTankCount + 2 * FuelVolumes.Length + 5 * FuelLinks.Length + 3 * FuelChambers.Length + 11 * FuelDischarges.Length + 13 * FuelPipes.Length + 3 * CompressibleFuels.Length + 11 * FuelDucts.Length + 4 * CompressibleChambers.Length + 13 * CompressibleNozzles.Length;
     public int OutputCount => Outputs.Length;
-    public string Fidelity => HasCompressibleFuelChambers ? "shaft_driven_compressible_fuel" : HasEquilibriumFuelDucts ? "equilibrium_compressible_fuel_transport" : CompressibleFuels.Length != 0 ? "compressible_fuel_equilibrium" : HasFuelPipes ? "liquid_inertial_fuel_network" : HasFuelDischarge ? "finite_volume_fuel_discharge_powertrain" : HasFiniteFuelReceivers ? "finite_volume_equilibrium_fuel_receiver" : HasFuelChambers ? "shaft_driven_equilibrium_fuel_pump" : HasEquilibriumFuelNetwork ? "homogeneous_equilibrium_fuel_network" : HasEquilibriumTanks ? "equilibrium_tank_liquid_fuel_powertrain" : HasEquilibriumFuelFilms ? "equilibrium_liquid_fuel_powertrain" : HasTankHeadspaces ? "geometric_tank_liquid_fuel_powertrain" : HasLiquidReturns ? "recirculating_liquid_fuel_powertrain" : HasLiquidTanks ? "finite_tank_liquid_fuel_powertrain" : HasLiquidFeeds ? "pump_fed_liquid_fuel_powertrain" : AtControllers.Length != 0 ? "sampled_hydraulic_at_control" : DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
+    public string Fidelity => HasCompressibleFuelNozzles ? "frozen_compressible_fuel_nozzle_network" : HasCompressibleFuelChambers ? "shaft_driven_compressible_fuel" : HasEquilibriumFuelDucts ? "equilibrium_compressible_fuel_transport" : CompressibleFuels.Length != 0 ? "compressible_fuel_equilibrium" : HasFuelPipes ? "liquid_inertial_fuel_network" : HasFuelDischarge ? "finite_volume_fuel_discharge_powertrain" : HasFiniteFuelReceivers ? "finite_volume_equilibrium_fuel_receiver" : HasFuelChambers ? "shaft_driven_equilibrium_fuel_pump" : HasEquilibriumFuelNetwork ? "homogeneous_equilibrium_fuel_network" : HasEquilibriumTanks ? "equilibrium_tank_liquid_fuel_powertrain" : HasEquilibriumFuelFilms ? "equilibrium_liquid_fuel_powertrain" : HasTankHeadspaces ? "geometric_tank_liquid_fuel_powertrain" : HasLiquidReturns ? "recirculating_liquid_fuel_powertrain" : HasLiquidTanks ? "finite_tank_liquid_fuel_powertrain" : HasLiquidFeeds ? "pump_fed_liquid_fuel_powertrain" : AtControllers.Length != 0 ? "sampled_hydraulic_at_control" : DctControllers.Length != 0 ? "sampled_dual_clutch_control" : HasClosurePrediction ? (Burners.Any(b => b is not null) ? "closure_compensated_fired_powertrain" : "closure_compensated_liquid_delivery") : HasNeedleInjectors ? (Burners.Any(b => b is not null) ? "needle_actuated_fired_powertrain" : "needle_actuated_liquid_delivery") : HasSolenoids ? "electromagnetic_linear_actuation" : HasTravelStops ? "elastic_translational_contact" : HasLiquidFuelInjectors ? (Burners.Any(b => b is not null) ? "liquid_injected_fired_powertrain" : "finite_liquid_fuel_delivery") : HasFuelFilms ? (Burners.Any(b => b is not null) ? "film_evaporation_fired_powertrain" : "finite_liquid_film_evaporation") : HasFuelInjectors ? (Burners.Any(b => b is not null) ? "metered_fired_powertrain" : "cycle_fuel_metering") : HasGasPistons ? (HasHydraulics ? "gas_accumulator_powertrain" : "linear_gas_actuation") : HasSpoolValves ? "mechanically_regulated_hydraulics" : HasPistons ? "dynamic_piston_powertrain" : HasBatteries ? (HasPressureControllers ? "battery_pressure_control" : "battery_electromechanical") : HasPressureControllers ? "sampled_pressure_control" : HasPumps ? "shaft_driven_hydraulics" : HasHydraulics ? "compliant_hydraulic_powertrain" : HasConverters ? "quasisteady_converter_powertrain" : HasGears ? "constrained_gear_powertrain" : HasClutches ? "hybrid_clutch_powertrain" : Burners.Any(b => b is not null) ? "premixed_wiebe_combustion"
         : HasPremixedGas ? "premixed_gas_transport"
         : HasValveTiming ? "crank_timed_gas_exchange"
         : GasCylinders.Any(c => c is not null) ? "moving_cylinder_gas_exchange"
@@ -370,7 +370,7 @@ public sealed partial class CompiledModel
         {
             var c = cs[i];
             Require(c.Id != 0 && ids.Add(c.Id), DiagnosticCode.Id, c.Id, "id", "IDs must be nonzero and globally unique.");
-            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.CompressibleFuelChamber,
+            Require(c.Kind is >= ComponentKind.Shaft and <= ComponentKind.CompressibleFuelNozzle,
                 DiagnosticCode.Schema, c.Id, "kind", "Unknown component kind.");
             Require((c.Kind == ComponentKind.SealedCylinder) == (c.Cylinder is not null),
                 DiagnosticCode.Schema, c.Id, "cylinder", "Cylinder parameters are required only for sealed cylinders.");
@@ -383,6 +383,8 @@ public sealed partial class CompiledModel
             bool discharge = c.Kind == ComponentKind.FuelDischarge;
             bool fuelPipe = c.Kind == ComponentKind.FuelInertialPipe;
             bool fuelDuct = c.Kind == ComponentKind.EquilibriumFuelDuct;
+            bool compressibleNozzle = c.Kind == ComponentKind.CompressibleFuelNozzle;
+            Require(compressibleNozzle == (c.CompressibleNozzle is not null), DiagnosticCode.Schema, c.Id, "compressible_nozzle", "Nozzle parameters apply only to compressible fuel nozzles.");
             Require(fuelDuct == (c.FuelDuct is not null), DiagnosticCode.Schema, c.Id, "fuel_duct", "Duct properties apply only to equilibrium fuel ducts.");
             Require(fuelPipe == (c.FuelPipe is not null), DiagnosticCode.Schema, c.Id, "fuel_pipe", "Pipe properties apply only to inertial fuel pipes.");
             Require(discharge == (c.FuelDischarge is not null), DiagnosticCode.Schema, c.Id, "fuel_discharge", "Discharge properties apply only to fuel discharge components.");
@@ -454,24 +456,24 @@ public sealed partial class CompiledModel
             bool pair = fuelPipe || fuelRestriction || c.Kind is ComponentKind.Shaft or ComponentKind.LinearSpring or ComponentKind.ThermalLink || orifice || clutch || gear || converter || liquid;
             bool input = at || dct || solenoid || c.Kind is ComponentKind.DcMotor or ComponentKind.TorqueSource or ComponentKind.PressureController or ComponentKind.PressureDutyController or ComponentKind.BatteryMotor or ComponentKind.ForceSource;
             Domain domain = solenoid || stop || linearGasPiston || piston || linearSpring || c.Kind == ComponentKind.ForceSource ? Domain.Translational : c.Kind == ComponentKind.ThermalLink ? Domain.Thermal
-                : fuelDuct ? Domain.CompressibleFuel : fuelPipe || fuelRestriction || fuelHeat || discharge ? Domain.Fuel : orifice || wall || liquidInjector || feed || tank || liquidReturn ? Domain.Gas : liquid || controller ? Domain.Hydraulic : load ? Domain.Battery : Domain.Rotational;
+                : fuelDuct || compressibleNozzle ? Domain.CompressibleFuel : fuelPipe || fuelRestriction || fuelHeat || discharge ? Domain.Fuel : orifice || wall || liquidInjector || feed || tank || liquidReturn ? Domain.Gas : liquid || controller ? Domain.Hydraulic : load ? Domain.Battery : Domain.Rotational;
             int a = FindNode(c.NodeA), b = FindNode(c.NodeB), heat = FindNode(c.HeatNode);
             Require(a >= 0 && Nodes[a].Domain == domain, DiagnosticCode.Connection, c.Id, "node_a", "Missing node or wrong domain.");
-            Require(fuelDuct ? b >= 0 && b != a && Nodes[b].Domain == Domain.CompressibleFuel : discharge ? b >= 0 && Nodes[b].Domain == Domain.Gas : c.Kind == ComponentKind.CompressibleFuelChamber ? b >= 0 && Nodes[b].Domain == Domain.CompressibleFuel : c.Kind == ComponentKind.FuelChamber ? b >= 0 && Nodes[b].Domain == Domain.Fuel : piston ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : batteryMotor ? b >= 0 && Nodes[b].Domain == Domain.Battery : pump ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : moving || linearGasPiston || combustion ? b >= 0 && Nodes[b].Domain == Domain.Gas
+            Require(fuelDuct || compressibleNozzle ? b >= 0 && b != a && Nodes[b].Domain == Domain.CompressibleFuel : discharge ? b >= 0 && Nodes[b].Domain == Domain.Gas : c.Kind == ComponentKind.CompressibleFuelChamber ? b >= 0 && Nodes[b].Domain == Domain.CompressibleFuel : c.Kind == ComponentKind.FuelChamber ? b >= 0 && Nodes[b].Domain == Domain.Fuel : piston ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : batteryMotor ? b >= 0 && Nodes[b].Domain == Domain.Battery : pump ? b >= 0 && Nodes[b].Domain == Domain.Hydraulic : moving || linearGasPiston || combustion ? b >= 0 && Nodes[b].Domain == Domain.Gas
                          : gear || converter ? b >= 0 && b != a && Nodes[b].Domain == Domain.Rotational
                          : fuelPipe || fuelRestriction ? b >= 0 && b != a && Nodes[b].Domain == Domain.Fuel
                          : wall || fuelHeat ? b >= 0 && Nodes[b].Domain == Domain.Thermal
                          : c.NodeB == 0 || (pair && b >= 0 && b != a && Nodes[b].Domain == domain),
                 DiagnosticCode.Connection, c.Id, "node_b",
                 wall ? "A gas heat link requires a thermal node." : "Expected a distinct node of the matching domain.");
-            Require(c.HeatNode == 0 || (c.Kind is ComponentKind.Solenoid or ComponentKind.Shaft or ComponentKind.LinearSpring or ComponentKind.PistonClutch or ComponentKind.DcMotor or ComponentKind.BatteryMotor or ComponentKind.ResistiveLoad or ComponentKind.Clutch or ComponentKind.TorqueConverter or ComponentKind.HydraulicClutch or ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve or ComponentKind.FuelInertialPipe or ComponentKind.EquilibriumFuelDuct &&
+            Require(c.HeatNode == 0 || (c.Kind is ComponentKind.Solenoid or ComponentKind.Shaft or ComponentKind.LinearSpring or ComponentKind.PistonClutch or ComponentKind.DcMotor or ComponentKind.BatteryMotor or ComponentKind.ResistiveLoad or ComponentKind.Clutch or ComponentKind.TorqueConverter or ComponentKind.HydraulicClutch or ComponentKind.HydraulicResistance or ComponentKind.HydraulicOrifice or ComponentKind.HydraulicRelief or ComponentKind.HydraulicSpoolValve or ComponentKind.FuelInertialPipe or ComponentKind.EquilibriumFuelDuct or ComponentKind.CompressibleFuelNozzle &&
                     heat >= 0 && Nodes[heat].Domain == Domain.Thermal),
                 DiagnosticCode.Connection, c.Id, "heat_node", "Loss sinks must be thermal nodes.");
-            bool channelled = at || liquidInjector || injector || input || ((discharge || fuelRestriction || load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool)) && c.InputChannel != 0);
+            bool channelled = at || liquidInjector || injector || input || ((compressibleNozzle || discharge || fuelRestriction || load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool)) && c.InputChannel != 0);
             Require(channelled ? c.InputChannel > 0 && c.InputChannel < 0x8000000000000000UL && !InputIndices.ContainsKey(c.InputChannel)
                                : c.InputChannel == 0, DiagnosticCode.Channel, c.Id, "input_channel", "Invalid or duplicate input channel.");
             double initial = Convert(c.InitialInput, dct || at ? Unit.StateCode : injector || liquidInjector ? Unit.Kilogram : input ? (c.Kind == ComponentKind.ForceSource ? Unit.Newton : controller ? Unit.Pascal : batteryMotor ? Unit.Fraction : solenoid || c.Kind == ComponentKind.DcMotor ? Unit.Volt : Unit.NewtonMeter)
-                : discharge || fuelRestriction || load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool) ? Unit.Fraction : Unit.None, c.Id, "initial_input");
+                : compressibleNozzle || discharge || fuelRestriction || load || orifice || combustion || (clutch && !pressureClutch && !pistonClutch) || (liquid && !relief && !spool) ? Unit.Fraction : Unit.None, c.Id, "initial_input");
             Require(c.DischargeCoefficient == 1 || orifice || liquidInjector || discharge, DiagnosticCode.Schema, c.Id, "discharge_coefficient",
                 "A discharge coefficient applies only to a gas orifice.");
             bool reservoirMixture = orifice && b < 0 && NodeMixtures[a] is not null;
@@ -483,6 +485,10 @@ public sealed partial class CompiledModel
             int state = -1;
             switch (c.Kind)
             {
+                case ComponentKind.CompressibleFuelNozzle:
+                    Require(c.HeatNode != 0 && heat >= 0 && c.NodeC == 0 && c.Ratio == 1 && c.Stiffness == default && c.Damping == default && c.RestAngle == default && c.Resistance == default && c.Inductance == default && c.Coupling == default && c.InitialCurrent == default && c.Conductance == default && c.AmbientTemperature == default && c.Area == default && c.ReservoirPressure == default && initial is >=0 and <=1,
+                        DiagnosticCode.Schema,c.Id,"compressible_nozzle","Use distinct finite compressible reservoirs, finite thermal wall, explicit nozzle properties and opening in [0,1].");
+                    InputMinimum[i]=0;InputMaximum[i]=1;break;
                 case ComponentKind.FuelDischarge:
                     p0 = Convert(c.Area, Unit.SquareMeter, c.Id, "fuel_discharge.area"); p1 = c.DischargeCoefficient;
                     Require(p0 > 0 && Numeric.Finite(p1) && p1 > 0 && p1 <= 1 && initial is >= 0 and <= 1,
@@ -960,12 +966,13 @@ public sealed partial class CompiledModel
         CompileFuelPipes(cs);
         CompileFuelDucts(cs);
         CompileCompressibleChambers(cs);
+        CompileCompressibleNozzles(cs);
         CompileLiquidFeeds(cs);
         CompileLiquidReturns(cs);
         CompileTankHeadspaceRoutes(cs);
         EquilibriumFilmCount = FuelFilms.Count(film => film.Phase is not null);
         ValidateLiquidPhaseSources();
-        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length + 3 * EquilibriumTankCount + 2 * FuelVolumes.Length + 5 * FuelLinks.Length + 3 * FuelChambers.Length + 11 * FuelDischarges.Length + 13 * FuelPipes.Length + 3 * CompressibleFuels.Length + 11 * FuelDucts.Length + 4 * CompressibleChambers.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
+        Require(dynamics + thermal + 2 * gas + 3 * NodeMixtures.Count(m => m is not null) + Burners.Count(b => b is not null) + ClutchComponents.Length + GearComponents.Length + 4 * ConverterComponents.Length + hydraulic + 3 * HydraulicComponents.Length + 4 * PumpComponents.Length + 4 * PressureControllers.Length + 6 * FuelInjectors.Length + 5 * FuelFilms.Length + EquilibriumFilmCount + 9 * LiquidFuelInjectors.Length + 4 * Solenoids.Length + 3 * NeedleDrivers.Length + (HasClosurePrediction ? 5 * NeedleDrivers.Length : 0) + 9 * DctControllers.Length + 16 * AtControllers.Length + 8 * LiquidFeeds.Length + 4 * LiquidTanks.Length + 8 * LiquidReturns.Length + 2 * TankHeadspaces.Length + 3 * EquilibriumTankCount + 2 * FuelVolumes.Length + 5 * FuelLinks.Length + 3 * FuelChambers.Length + 11 * FuelDischarges.Length + 13 * FuelPipes.Length + 3 * CompressibleFuels.Length + 11 * FuelDucts.Length + 4 * CompressibleChambers.Length + 13 * CompressibleNozzles.Length <= MaxStates, DiagnosticCode.Capacity, 0, "states", "State capacity exceeded.");
         HasValveTiming = Valves.Any(v => v is not null);
         DynamicCount = dynamics; ThermalCount = thermal;
         CoordinateStates = new bool[dynamics];
@@ -1079,6 +1086,15 @@ public sealed partial class CompiledModel
                 Output(c.Id, Field.TransportEnergy, i, Unit.Joule, restriction ? "net_enthalpy_a_to_b" : "cumulative_heat_from_wall", true);
                 Output(c.Id, Field.EntropyProduced, i, Unit.JoulePerKelvin, "cumulative_pair_entropy_change", true);
                 continue;
+            }
+            if(c.Kind==ComponentKind.CompressibleFuelNozzle)
+            {
+                Output(c.Id,Field.TotalFuelDelivered,i,Unit.Kilogram,"cumulative_forward_fuel_mass",true);Output(c.Id,Field.TransportEnergy,i,Unit.Joule,"cumulative_stagnation_enthalpy",true);
+                Output(c.Id,Field.JetKineticEnergy,i,Unit.Joule,"cumulative_jet_kinetic_energy",true);Output(c.Id,Field.HeatRejected,i,Unit.Joule,"jet_heat_to_finite_wall",true);Output(c.Id,Field.FluidHeat,i,Unit.Joule,"jet_kinetic_energy_to_receiver",true);
+                Output(c.Id,Field.JetImpulse,i,Unit.NewtonSecond,"stationary_jet_thermalization_impulse",true);Output(c.Id,Field.EntropyProduced,i,Unit.JoulePerKelvin,"total_pair_entropy_change",true);
+                Output(c.Id,Field.MassFlow,i,Unit.KilogramPerSecond,"last_tick_mean_forward_mass_flow",true);Output(c.Id,Field.Force,i,Unit.Newton,"last_tick_mean_jet_momentum_rate",true);
+                Output(c.Id,Field.ThroatPressure,i,Unit.Pascal,"last_accepted_throat_pressure",true);Output(c.Id,Field.ExitTemperature,i,Unit.Kelvin,"last_accepted_frozen_exit_temperature",true);Output(c.Id,Field.ExitVelocity,i,Unit.MeterPerSecond,"last_accepted_frozen_exit_speed",true);
+                Output(c.Id,Field.Choked,i,Unit.StateCode,"last_accepted_frozen_choking_state",true);Output(c.Id,Field.VaporMassFraction,i,Unit.Fraction,"last_accepted_frozen_vapor_fraction",true);Output(c.Id,Field.Opening,i,Unit.Fraction,"instantaneous_command_times_physical_needle_opening",true);continue;
             }
             if(c.Kind==ComponentKind.EquilibriumFuelDuct)
             {
@@ -1505,6 +1521,7 @@ public sealed partial class CompiledModel
         if (HasFuelPipes) h = Numeric.Hash(h, 40UL);
         if (CompressibleFuels.Length != 0) h = Numeric.Hash(h, 41UL);
         if (HasCompressibleFuelChambers) h = Numeric.Hash(h, 42UL);
+        if (HasCompressibleFuelNozzles) h = Numeric.Hash(h, 43UL);
         if (HasMovingGas) h = Numeric.Hash(h, 5UL);
         if (HasValveTiming) h = Numeric.Hash(h, 6UL);
         if (HasPremixedGas) h = Numeric.Hash(h, 7UL);
@@ -1612,6 +1629,8 @@ public sealed partial class CompiledModel
             if (discharge.Needle is { } needle)
             { h = Numeric.Hash(h, (ulong)needle.Position); h = Numeric.Hash(h, needle.Closed); h = Numeric.Hash(h, needle.Open); }
         }
+        foreach (var n in CompressibleNozzles)
+        {h=Numeric.Hash(h,n.Law.AreaSquareMeters);h=Numeric.Hash(h,n.Law.DischargeCoefficient);h=Numeric.Hash(h,n.WallFraction);h=Numeric.Hash(h,(ulong)FuelDischargePhaseModel.Frozen);if(n.Needle is {} needle){h=Numeric.Hash(h,(ulong)needle.Position);h=Numeric.Hash(h,needle.Closed);h=Numeric.Hash(h,needle.Open);}}
         foreach (var chamber in CompressibleChambers)
         { h = Numeric.Hash(h, chamber.Geometry.MinimumReferenceVolumeCubicMeters); h = Numeric.Hash(h, chamber.Geometry.SweptVolumeCubicMeters); h = Numeric.Hash(h, chamber.Geometry.PhaseRadians); }
         foreach (var chamber in FuelChambers)

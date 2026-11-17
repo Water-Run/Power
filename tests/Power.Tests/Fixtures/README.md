@@ -355,3 +355,15 @@ SHA-256: `093420e1031206913600e1581ed717012194d303f60f8afec7595a324f789cc5`.
 `CompressibleChamberAssetChecks` verifies the authentic digest and every original
 and upgraded replay boundary. Keep these original bytes. The Power! GPL license
 and Unity Linking Exception apply.
+
+## Compressible chamber duct v37
+
+`compressible-fuel-chamber-duct-v37.powerasset` retains the v37 writer output
+from commit `7872d783a6432a029a43b99524e4277862fb3c94`, copied before changing
+the encoder on 2026-11-17. It preserves shaft-driven compressible chamber and
+duct records before the frozen compressible nozzle extension.
+
+SHA-256: `60dd76119b8079bf5c9ac731026cd4ced1893b36470816955008847e8bbb3db7`.
+`CompressibleNozzleAssetChecks` verifies the authentic digest and every original
+and upgraded replay boundary. Keep these original bytes. The Power! GPL license
+and Unity Linking Exception apply.

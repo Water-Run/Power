@@ -493,7 +493,7 @@ siguen separados de la realimentación y el control de la AT, y de la aceptació
 
 `at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
 
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v37 conserva rutas, ganancias y relojes y lee v1-v36.
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v38 conserva rutas, ganancias y relojes y lee v1-v37.
 
 Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
 
@@ -503,7 +503,7 @@ Son controles de investigación y los parámetros siguen `unverified`. Coordinac
 
 `liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
 
-v37 conserva enlaces y temperatura de fuente y lee v1-v36. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v38 conserva enlaces y temperatura de fuente y lee v1-v37. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
 Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
@@ -580,3 +580,11 @@ El paso de trabajo cerrado mantiene masa y entropía. Energía de compresión fr
 El depósito móvil usa medio transporte, trabajo completo del eje y medio transporte. El transporte sigue siendo de primer orden con difusión numérica; la separación simétrica no eleva su orden. El movimiento líquido cerrado y suave converge a segundo orden. Los incrementos angulares se limitan a 0.25 rad por intervalo mecánico. Siguen aplicándose CFL, límites materiales, reversión completa, cancelación y ramas independientes. El impulso estacionario de puertos/carcasa se separa del trabajo del pistón.
 
 [Cámaras de combustible compresible accionadas por eje](COMPRESSIBLE_FUEL_CHAMBER.es.md)
+
+## Toberas de combustible compresible de calidad congelada
+
+Las fases comparten presión, temperatura y velocidad; se suprime transferencia másica de fase. Entropía y compresión fría determinan la caída isentrópica de entalpía. El máximo único usa velocidad del sonido congelada, distinta de la de equilibrio. El coeficiente escala área efectiva. En bloqueo, la energía de salida describe un chorro ideal totalmente expandido a la presión receptora. La entalpía de remanso paga una vez energía receptora y calor explícito de pared. El impulso es de termalización estacionaria, no empuje total de carcasa ni fuerza axial de aguja.
+
+Subpasos conservativos de primer orden transfieren igual masa y entalpía y reparten energía cinética entre fluido y pared. Se comprueban estados y entropía total de la pareja. Límites: 4096 subpasos, 64 reducciones a la mitad por candidato y transferencia inicial de hasta 0.1 de la menor masa. El cierre tolera 128 epsilon binary64 por el mayor módulo volumétrico o presión, sin recortar presiones informadas. Un fallo revierte todo el lote. Revise paso, inventario, límites, carrera y área.
+
+[Toberas de combustible compresible de calidad congelada](COMPRESSIBLE_FUEL_NOZZLE.es.md)

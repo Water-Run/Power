@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · **Français** · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: Buses de carburant compressible à qualité figée
+
+Un `compressible_fuel_nozzle` transporte le fluide dans un seul sens entre réservoirs finis `compressible_fuel`, y compris les chambres entraînées par arbre. Compression liquide et vapeur idéale partagent leur matériau. Déclarer `phase_mode` comme `frozen` : la qualité massique reste fixe pendant le transit, puis les réservoirs se rééquilibrent.
+
+Exécuter `compressible-fuel-nozzle` pour la décharge finie ou `compressible-pump-needle` pour conduite, arbre, admission unidirectionnelle et aiguille électromagnétique. Lire masse, enthalpie, énergie cinétique, chaleur de paroi, impulsion et entropie cumulées. Débit et force sont moyennés sur le tick entier ; gorge, sortie et qualité gardent le dernier transit accepté. Les comparaisons couvrent travail liquide exact, blocage analytique gaz/liquide, quadrature indépendante, entropie et dérivée acoustique figées, balayage dense et raffinement de vidange critique analytique. Conservation, mouvement réel, relecture, branches, restauration, annulation, allocations, assets et MCP sont vérifiés séparément.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 552/552 |
+| standard_checks_on_dotnet | 434/434 |
+| actual_mcp_groups | 66/66 |
+| laboratories | 62 |
+| agent_examples | 61 |
+| unchanged_laboratories | 60 |
+| identical_complete_sample_boundaries | 7575 |
+| all_sample_boundaries | 7597 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_pressure_quadrature_panels | 4096 |
+| independent_flux_scan_intervals | 2000 |
+| asset_version | power.asset.v38 |
+| agent_api_version | 0.43.0 |
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| additional_reported_states_per_nozzle | 13 |
+| v37_fixture_sha256 | 60dd76119b8079bf5c9ac731026cd4ced1893b36470816955008847e8bbb3db7 |
+| verification_log_sha256 | 9599880293002adba43920747a1ef01b3de06594de3a943ae9ae51f7859f0528 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 62 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 230 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.939224007584049e-08, 2.469505587442971e-08, 1.2347262048278756e-08, 6.173564658260928e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k |
+|---|---|---|---|---|---|---|
+| compressible-fuel-nozzle | 65c49a0b6da4c438 | 9ae549d2dcea957d | 11 | 3.725290298461914e-09 | 2.5303190773661796e-09 | 5.815403443478657e-07 |
+| compressible-pump-needle | a238a7853adba1e9 | 996acf904f8b56de | 11 | 2.223414456367645e-08 | 2.0271463574203465e-05 | 0.00011595302227825816 |
+
+- `artifacts/reports/compressible-nozzle-final-2026-11-17.log`
+- `artifacts/reports/compressible-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-doc-audit-2026-11-17.json`
+
+Des sous-pas conservatifs du premier ordre échangent la même masse et enthalpie ; l’énergie cinétique du jet se répartit entre récepteur et paroi. Chaque acceptation vérifie les états et l’entropie totale de la paire. Limites : 4096 sous-pas, 64 réductions de moitié par candidat, transfert initial borné à 0.1 fois la plus petite masse. La fermeture tolère 128 fois epsilon binary64 multiplié par le plus grand module volumique ou la pression des ports, sans écrêter les pressions. Un échec restaure tout le lot. Réduire le pas et examiner inventaire, limites, course et section.
+
+Les paramètres restent `unverified`. Le pseudo-fluide pur associe vapeur idéale et liquide compressible sans dilatation thermique. Respecter pression et température déclarées, y compris celles du jet idéal. Le transit figé peut conserver du liquide surchauffé sans prédire une limite mesurée de nucléation ou métastabilité. Relaxation finie, glissement, pulvérisation résolue, gaz porteur non condensable, récepteur avec combustion, cartes mesurées et acceptation Unity réelle restent ouverts. Conservation et relecture ne prouvent pas la validité matérielle.
+
 ## 2026-10-26: Chambres de carburant compressible entraînées par arbre
 
 Un `compressible_fuel_chamber` relie un arbre à un réservoir fini `compressible_fuel`. Le mouvement change son volume ; le même travail de pression modifie l’énergie du fluide et le couple. Le réservoir peut alimenter ou recevoir un `equilibrium_fuel_duct`, avec vaporisation éclair et condensation à l’équilibre.

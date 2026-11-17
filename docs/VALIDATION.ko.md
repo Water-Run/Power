@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 상분율을 동결한 압축성 연료 노즐
+
+`compressible_fuel_nozzle`는 축 구동 챔버를 포함한 유한 `compressible_fuel` 저장조 사이에 단방향 유동을 제공합니다. 액체 압축 에너지와 이상증기는 저장조 물성을 공유합니다. `phase_mode`를 `frozen`으로 명시하여 통과 중 증기 질량분율을 유지하고 저장조는 다시 평형을 이루게 합니다.
+
+`compressible-fuel-nozzle`는 유한 증기 배출을, `compressible-pump-needle`는 관 공급, 축 펌핑, 단방향 입구, 솔레노이드 니들을 검사합니다. 누적 질량, 엔탈피, 제트 운동에너지, 벽열, 충격량, 엔트로피를 읽습니다. 평균 유량과 힘은 전체 틱에 해당하며 목·출구·상분율은 마지막 채택 통과 상태입니다. 정확한 액체 일, 기체/액체 해석 초킹, 독립 압력 구적, 동결 엔트로피와 음속 미분, 조밀 유속 탐색, 해석 초킹 배출 세분화를 비교합니다. 보존, 실제 운동, 재생, 분기, 롤백, 취소, 할당, asset과 MCP를 별도로 검증합니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 552/552 |
+| standard_checks_on_dotnet | 434/434 |
+| actual_mcp_groups | 66/66 |
+| laboratories | 62 |
+| agent_examples | 61 |
+| unchanged_laboratories | 60 |
+| identical_complete_sample_boundaries | 7575 |
+| all_sample_boundaries | 7597 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_pressure_quadrature_panels | 4096 |
+| independent_flux_scan_intervals | 2000 |
+| asset_version | power.asset.v38 |
+| agent_api_version | 0.43.0 |
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| additional_reported_states_per_nozzle | 13 |
+| v37_fixture_sha256 | 60dd76119b8079bf5c9ac731026cd4ced1893b36470816955008847e8bbb3db7 |
+| verification_log_sha256 | 9599880293002adba43920747a1ef01b3de06594de3a943ae9ae51f7859f0528 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 62 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 230 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.939224007584049e-08, 2.469505587442971e-08, 1.2347262048278756e-08, 6.173564658260928e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k |
+|---|---|---|---|---|---|---|
+| compressible-fuel-nozzle | 65c49a0b6da4c438 | 9ae549d2dcea957d | 11 | 3.725290298461914e-09 | 2.5303190773661796e-09 | 5.815403443478657e-07 |
+| compressible-pump-needle | a238a7853adba1e9 | 996acf904f8b56de | 11 | 2.223414456367645e-08 | 2.0271463574203465e-05 | 0.00011595302227825816 |
+
+- `artifacts/reports/compressible-nozzle-final-2026-11-17.log`
+- `artifacts/reports/compressible-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-doc-audit-2026-11-17.json`
+
+보존형 1차 하위 스텝이 같은 질량과 엔탈피를 전달하고 제트 운동에너지를 수신 유체와 벽에 배분합니다. 물성 상태와 쌍 전체 엔트로피를 확인합니다. 구간당 최대 4096 스텝, 후보당 최대 64회 반감, 초기 전달량은 작은 저장조 질량의 0.1배 이하입니다. 닫힘 판단은 최대 체적탄성률 또는 포트 압력의 128 binary64 epsilon배 반올림을 허용하며 출력 압력을 클램프하지 않습니다. 실패하면 전체 배치를 롤백합니다. 시간 간격, 재고, 물성 범위, 니들 행정과 면적을 확인하십시오.
+
+매개변수는 `unverified`입니다. 이상증기와 압축성·열팽창 0의 액체로 구성된 순수 의사유체입니다. 이상 제트 온도를 포함한 선언 범위를 지켜야 합니다. 동결 통과는 과열 액체를 유지할 수 있지만 실측 핵생성이나 준안정 한계는 예측하지 않습니다. 유한 속도 완화, 상간 미끄럼, 해상된 분무, 비응축 운반기체, 연소 수신 챔버, 실측 맵, 실제 Unity 인수 검증은 남아 있습니다. 보존과 재생은 하드웨어 타당성을 입증하지 않습니다.
+
 ## 2026-10-26: 축 구동 압축성 연료 챔버
 
 `compressible_fuel_chamber`는 회전축을 유한한 `compressible_fuel` 저장조에 연결합니다. 축 운동이 체적을 바꾸며 동일한 압력 일이 유체 에너지와 축 토크를 바꿉니다. 저장조는 `equilibrium_fuel_duct`에 연료를 공급하거나 받으며 평형 플래시 증발과 응축을 처리합니다.

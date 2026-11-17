@@ -2,6 +2,79 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · **Português**
 
+## 2026-11-17: Bocais de combustível compressível com título congelado
+
+Um `compressible_fuel_nozzle` leva fluxo unidirecional entre reservatórios finitos `compressible_fuel`, incluindo câmaras acionadas por eixo. Compressão líquida e vapor ideal compartilham o material. Declare `phase_mode` como `frozen`: o título mássico fica constante no trânsito e os reservatórios se reequilibram.
+
+Execute `compressible-fuel-nozzle` para descarga finita ou `compressible-pump-needle` para duto, eixo, entrada unidirecional e agulha solenoide. Leia massa, entalpia, energia cinética, calor, impulso e entropia acumulados. Fluxo e força médios abrangem o tick inteiro; garganta, saída e título retêm o último trânsito aceito. Comparam-se trabalho líquido exato, bloqueio analítico de gás/líquido, quadratura independente, entropia e derivada sonora congeladas, varredura densa e refinamento do esvaziamento crítico analítico. Conservação, movimento real, reprodução, ramos, reversão, cancelamento, alocações, assets e MCP são verificados separadamente.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 552/552 |
+| standard_checks_on_dotnet | 434/434 |
+| actual_mcp_groups | 66/66 |
+| laboratories | 62 |
+| agent_examples | 61 |
+| unchanged_laboratories | 60 |
+| identical_complete_sample_boundaries | 7575 |
+| all_sample_boundaries | 7597 |
+| new_core_groups | 10 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| transport_order | 1 |
+| independent_pressure_quadrature_panels | 4096 |
+| independent_flux_scan_intervals | 2000 |
+| asset_version | power.asset.v38 |
+| agent_api_version | 0.43.0 |
+| fingerprint_tag | 43 |
+| compressible_fuel_nozzle_kind | 51 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| compressible_nozzle_record_bytes | 68 |
+| compressible_nozzle_quantity_fields | 4 |
+| additional_reported_states_per_nozzle | 13 |
+| v37_fixture_sha256 | 60dd76119b8079bf5c9ac731026cd4ced1893b36470816955008847e8bbb3db7 |
+| verification_log_sha256 | 9599880293002adba43920747a1ef01b3de06594de3a943ae9ae51f7859f0528 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 62 |
+| schema_negative_cases | 14 |
+| documentation_locales | 10 |
+| documentation_files | 230 |
+| build_runner_native_aot_publish | false |
+| nuget_vulnerability_audit_disabled | false |
+| host_runtime_patched_by_task | false |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| reference | step_ns | normalized_mass_errors |
+|---|---|---|
+| analytic_choked_vapor_blowdown | 1000000, 500000, 250000, 125000 | 4.939224007584049e-08, 2.469505587442971e-08, 1.2347262048278756e-08, 6.173564658260928e-09 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | final_delivered_mass_kg | final_pair_entropy_change_j_k |
+|---|---|---|---|---|---|---|
+| compressible-fuel-nozzle | 65c49a0b6da4c438 | 9ae549d2dcea957d | 11 | 3.725290298461914e-09 | 2.5303190773661796e-09 | 5.815403443478657e-07 |
+| compressible-pump-needle | a238a7853adba1e9 | 996acf904f8b56de | 11 | 2.223414456367645e-08 | 2.0271463574203465e-05 | 0.00011595302227825816 |
+
+- `artifacts/reports/compressible-nozzle-final-2026-11-17.log`
+- `artifacts/reports/compressible-nozzle-verify-exit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-evidence-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-baseline-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-schema-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-provenance-audit-2026-11-17.json`
+- `artifacts/reports/compressible-nozzle-doc-audit-2026-11-17.json`
+
+Subpassos conservativos de primeira ordem transferem igual massa e entalpia e dividem a energia cinética entre fluido e parede. Verificam-se estados e entropia total do par. Limites: 4096 subpassos, 64 reduções à metade por candidato e transferência inicial de até 0.1 da menor massa. O fechamento permite 128 epsilon binary64 vezes o maior módulo volumétrico ou pressão, sem limitar pressões informadas. Falhas revertem todo o lote. Examine passo, inventário, limites, curso e área.
+
+Os parâmetros continuam `unverified`. O pseudofluido puro usa vapor ideal e líquido compressível sem expansão térmica. Respeite pressão e temperatura declaradas, incluindo o jato ideal. O trânsito congelado pode manter líquido superaquecido sem prever limites medidos de nucleação ou metaestabilidade. Relaxação finita, deslizamento, spray resolvido, gás portador não condensável, receptor com combustão, mapas medidos e Unity real permanecem abertos. Conservação e reprodução não demonstram validade de hardware.
+
 ## 2026-10-26: Câmaras de combustível compressível acionadas por eixo
 
 Uma `compressible_fuel_chamber` conecta um eixo a um reservatório finito `compressible_fuel`. O movimento muda o volume; o mesmo trabalho de pressão muda energia do fluido e torque. O reservatório pode alimentar ou receber um `equilibrium_fuel_duct`, com vaporização súbita e condensação em equilíbrio.

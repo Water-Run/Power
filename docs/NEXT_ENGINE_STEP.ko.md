@@ -16,9 +16,11 @@
 
 `compressible_fuel_chamber`는 회전축을 유한한 `compressible_fuel` 저장조에 연결합니다. 축 운동이 체적을 바꾸며 동일한 압력 일이 유체 에너지와 축 토크를 바꿉니다. 저장조는 `equilibrium_fuel_duct`에 연료를 공급하거나 받으며 평형 플래시 증발과 응축을 처리합니다. [축 구동 압축성 연료 챔버](COMPRESSIBLE_FUEL_CHAMBER.ko.md)
 
+`compressible_fuel_nozzle`는 축 구동 챔버를 포함한 유한 `compressible_fuel` 저장조 사이에 단방향 유동을 제공합니다. 액체 압축 에너지와 이상증기는 저장조 물성을 공유합니다. `phase_mode`를 `frozen`으로 명시하여 통과 중 증기 질량분율을 유지하고 저장조는 다시 평형을 이루게 합니다. [상분율을 동결한 압축성 연료 노즐](COMPRESSIBLE_FUEL_NOZZLE.ko.md)
+
 ## 다음 개발
 
-호환되는 압축성 방향 밸브와 니들/노즐 경계를 추가하고 엔탈피, 운동에너지, 상 가정을 명시합니다. 이후 상완화/미끄럼, 점화, 흡배기, 기계 손실, ECU/TCU 협조 제어를 진행합니다. 실측 보정과 실제 Unity 인수 검증은 별도로 수행합니다. [압축성 평형 연료 덕트](EQUILIBRIUM_FUEL_DUCT.ko.md)
+통과를 평형 및 유한 속도 상 모델로 확장하고 해상된 분무와 호환 연소 수신 챔버를 추가합니다. 점화, 흡배기, 기계 손실, 변속기 구동, ECU/TCU 협조를 계속합니다. 실측 보정과 실제 Unity 검증은 별도로 수행합니다. [압축성 평형 연료 덕트](EQUILIBRIUM_FUEL_DUCT.ko.md)
 
 ## 수용
 

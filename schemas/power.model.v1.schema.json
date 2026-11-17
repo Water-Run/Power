@@ -209,6 +209,9 @@
           },
           {
             "$ref": "#/$defs/compressible_fuel_chamber"
+          },
+          {
+            "$ref": "#/$defs/compressible_fuel_nozzle"
           }
         ]
       },
@@ -8459,6 +8462,177 @@
               }
             }
           }
+        }
+      }
+    },
+    "compressible_fuel_nozzle": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Finite fuel-domain source to finite-displacement film/gas receiver. Frozen-quality common-temperature nozzle transit, effective throat area Cd, sonic choking and ideal fully expanded jet reference. No finite-rate phase kinetics or local inlet inertia.",
+      "required": [
+        "id",
+        "kind",
+        "node_a",
+        "node_b",
+        "initial_input",
+        "parameters",
+        "heat_node"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/id"
+        },
+        "kind": {
+          "const": "compressible_fuel_nozzle"
+        },
+        "node_a": {
+          "$ref": "#/$defs/id"
+        },
+        "node_b": {
+          "$ref": "#/$defs/id"
+        },
+        "input_channel": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 9223372036854776000
+        },
+        "initial_input": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "value",
+            "unit"
+          ],
+          "properties": {
+            "value": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1
+            },
+            "unit": {
+              "enum": [
+                "fraction"
+              ]
+            }
+          }
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "phase_mode",
+            "wall_kinetic_fraction",
+            "area",
+            "discharge_coefficient"
+          ],
+          "properties": {
+            "area": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "exclusiveMinimum": 0
+                },
+                "unit": {
+                  "enum": [
+                    "m2",
+                    "mm2"
+                  ]
+                }
+              }
+            },
+            "discharge_coefficient": {
+              "type": "number",
+              "exclusiveMinimum": 0,
+              "maximum": 1
+            },
+            "phase_mode": {
+              "const": "frozen"
+            },
+            "wall_kinetic_fraction": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number",
+                  "minimum": 0,
+                  "maximum": 1
+                },
+                "unit": {
+                  "enum": [
+                    "fraction"
+                  ]
+                }
+              }
+            },
+            "needle_node": {
+              "$ref": "#/$defs/id"
+            },
+            "closed_position": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            },
+            "full_open_position": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "value",
+                "unit"
+              ],
+              "properties": {
+                "value": {
+                  "type": "number"
+                },
+                "unit": {
+                  "enum": [
+                    "m",
+                    "mm"
+                  ]
+                }
+              }
+            }
+          },
+          "dependentRequired": {
+            "needle_node": [
+              "closed_position",
+              "full_open_position"
+            ],
+            "closed_position": [
+              "needle_node",
+              "full_open_position"
+            ],
+            "full_open_position": [
+              "needle_node",
+              "closed_position"
+            ]
+          }
+        },
+        "heat_node": {
+          "$ref": "#/$defs/id"
         }
       }
     }

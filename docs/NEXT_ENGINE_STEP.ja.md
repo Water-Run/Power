@@ -16,9 +16,11 @@
 
 `compressible_fuel_chamber` は回転軸と有限の `compressible_fuel` 貯槽を結びます。軸の運動で容積が変わり、同じ圧力仕事が流体エネルギーと軸トルクを変えます。貯槽は `equilibrium_fuel_duct` と燃料を交換し、平衡フラッシュ蒸発や凝縮を扱えます。 [軸駆動の圧縮性燃料室](COMPRESSIBLE_FUEL_CHAMBER.ja.md)
 
+`compressible_fuel_nozzle` は軸駆動室を含む有限の `compressible_fuel` 貯槽間に一方向の流れを与えます。液体圧縮エネルギーと理想蒸気は貯槽と同じ物性を使います。`phase_mode` を `frozen` と明示し、通過中の蒸気質量分率を一定に保ち、貯槽は再平衡させます。 [相分率を凍結した圧縮性燃料ノズル](COMPRESSIBLE_FUEL_NOZZLE.ja.md)
+
 ## 次の開発
 
-互換性のある圧縮性方向弁とニードル／ノズル境界を追加し、エンタルピー、運動エネルギー、相の仮定を明示します。その後、相緩和／滑り、点火、吸排気、機械損失、ECU/TCU 協調制御を進めます。実測校正と実 Unity 受入検証は別に行います。 [圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md)
+通過を平衡および有限速度の相モデルへ拡張し、解像した噴霧と互換性のある燃焼受入室を追加します。点火、吸排気、機械損失、変速機駆動、ECU/TCU 協調を続けます。実測校正と実 Unity 受入検証は別に行います。 [圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md)
 
 ## 受け入れ
 

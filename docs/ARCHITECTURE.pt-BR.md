@@ -248,7 +248,7 @@ A [montagem de acionamento da AT](AT_HYDRAULIC_ACTUATION.pt-BR.md) reduz 1..6 al
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v37 preserva rotas, ganhos e relógios e lê v1-v36.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v38 preserva rotas, ganhos e relógios e lê v1-v37.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -258,7 +258,7 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v37 preserva conexões e temperatura da fonte e lê v1-v36. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v38 preserva conexões e temperatura da fonte e lê v1-v37. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
@@ -335,3 +335,11 @@ O passo fechado de trabalho mantém massa e entropia. Energia de compressão fri
 O reservatório móvel usa meio transporte, trabalho completo do eixo e meio transporte. O transporte continua de primeira ordem com difusão numérica; a separação simétrica não eleva a ordem. O movimento líquido fechado e suave converge em segunda ordem. Incrementos angulares são limitados a 0.25 rad por intervalo mecânico. CFL, limites materiais, reversão completa, cancelamento e ramificações independentes continuam válidos. O impulso estacionário das portas/carcaça é separado do trabalho do pistão.
 
 [Câmaras de combustível compressível acionadas por eixo](COMPRESSIBLE_FUEL_CHAMBER.pt-BR.md)
+
+## Bocais de combustível compressível com título congelado
+
+As fases compartilham pressão, temperatura e velocidade; a transferência mássica de fase é suprimida. Entropia e energia de compressão fria determinam a queda isentrópica de entalpia. O máximo único de fluxo usa som congelado, diferente do som de equilíbrio. O coeficiente escala área efetiva. No bloqueio, a energia de saída descreve um jato ideal totalmente expandido à pressão receptora. A entalpia de estagnação paga uma vez a energia receptora e o calor explícito da parede. O impulso mede termalização estacionária, não empuxo total da carcaça ou força axial na agulha.
+
+Subpassos conservativos de primeira ordem transferem igual massa e entalpia e dividem a energia cinética entre fluido e parede. Verificam-se estados e entropia total do par. Limites: 4096 subpassos, 64 reduções à metade por candidato e transferência inicial de até 0.1 da menor massa. O fechamento permite 128 epsilon binary64 vezes o maior módulo volumétrico ou pressão, sem limitar pressões informadas. Falhas revertem todo o lote. Examine passo, inventário, limites, curso e área.
+
+[Bocais de combustível compressível com título congelado](COMPRESSIBLE_FUEL_NOZZLE.pt-BR.md)

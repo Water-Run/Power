@@ -16,9 +16,11 @@ Un `equilibrium_fuel_duct` transporta masa, cantidad de movimiento y energía to
 
 Una `compressible_fuel_chamber` conecta un eje a un depósito finito `compressible_fuel`. Su movimiento cambia el volumen; el mismo trabajo de presión cambia energía del fluido y par del eje. El depósito puede alimentar o recibir un `equilibrium_fuel_duct`, con vaporización súbita y condensación en equilibrio. [Cámaras de combustible compresible accionadas por eje](COMPRESSIBLE_FUEL_CHAMBER.es.md)
 
+Una `compressible_fuel_nozzle` transporta flujo unidireccional entre depósitos finitos `compressible_fuel`, incluidas cámaras accionadas por eje. Compresión líquida y vapor ideal comparten el material. Declare `phase_mode` como `frozen`: la calidad másica permanece fija durante el tránsito y los depósitos se reequilibran. [Toberas de combustible compresible de calidad congelada](COMPRESSIBLE_FUEL_NOZZLE.es.md)
+
 ## Próximo incremento
 
-Añadir fronteras compatibles de válvula direccional y aguja/tobera compresibles, con entalpía, energía cinética e hipótesis de fase explícitas. Después abordar relajación/deslizamiento, encendido, admisión/escape, pérdidas mecánicas y coordinación ECU/TCU. Calibración medida y aceptación real de Unity siguen separadas. [Conductos de combustible compresible en equilibrio](EQUILIBRIUM_FUEL_DUCT.es.md)
+Extender el tránsito con equilibrio y tasas finitas de fase, después añadir pulverización resuelta y receptor con combustión compatible. Continuar encendido, admisión/escape, pérdidas mecánicas, actuación de transmisión y coordinación ECU/TCU. Calibración medida y aceptación real de Unity siguen separadas. [Conductos de combustible compresible en equilibrio](EQUILIBRIUM_FUEL_DUCT.es.md)
 
 ## Aceptación
 

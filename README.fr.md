@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — expériences sans interface"]
     mcp["Power.Mcp — 12 outils MCP sur stdio"]
-    assets["Power.Assets — .powerasset v37"]
+    assets["Power.Assets — .powerasset v38"]
     unity["Studio Unity 6.6 — laboratoires 3D"]
 
     model --> core
@@ -119,7 +119,7 @@ Le service expose douze outils avec schémas d'entrée et de sortie :
 |---|---|
 | `get_capabilities` | Découvrir les modèles, les limites, les conventions de temps et de révision. Commencez ici. |
 | `get_model_schema` | JSON Schema 2020-12 pour `power.model.v1` |
-| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (59 exemples) |
+| `get_example_model` | Obtenir un modèle synthétique modifiable et son expérience (61 exemples) |
 | `validate_model` | Valider un modèle sans l'exécuter ; diagnostics de réparation structurés |
 | `run_experiment` | Exécution sans interface bornée, avec rejeu par lots, KPI et provenance |
 | `export_model_asset` | Exporter un `.powerasset` portable |
@@ -147,7 +147,7 @@ Un graphe de recherche Ravigneaux à quatre plages ajoute des chemins planétair
 > [!NOTE]
 > Tous les paramètres d'exemple sont `unverified` — des valeurs de recherche, pas des mesures calibrées.
 
-Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v37`, avec conservation des lecteurs pour les assets antérieurs.
+Les laboratoires ci-dessous partagent leurs définitions entre imports JSON, CLI, MCP et Studio. Les exports utilisent `power.asset.v38`, avec conservation des lecteurs pour les assets antérieurs.
 
 La pompe du domaine carburant alimente désormais une aiguille physique et une décharge à titre figé dans un récepteur allumé à volume liquide fini. Les inventaires incluent changement de phase, travail de déplacement, énergie cinétique du jet et impulsion à la paroi immobile. [Décharge de carburant à titre figé et récepteurs finis](docs/FUEL_DISCHARGE.fr.md) [Pompe carburant diphasique entraînée par arbre](docs/FUEL_CHAMBER_PUMP.fr.md)
 
@@ -157,8 +157,10 @@ Un `equilibrium_fuel_duct` transporte masse, quantité de mouvement et énergie 
 
 Un `compressible_fuel_chamber` relie un arbre à un réservoir fini `compressible_fuel`. Le mouvement change son volume ; le même travail de pression modifie l’énergie du fluide et le couple. Le réservoir peut alimenter ou recevoir un `equilibrium_fuel_duct`, avec vaporisation éclair et condensation à l’équilibre. [Chambres de carburant compressible entraînées par arbre](docs/COMPRESSIBLE_FUEL_CHAMBER.fr.md)
 
+Un `compressible_fuel_nozzle` transporte le fluide dans un seul sens entre réservoirs finis `compressible_fuel`, y compris les chambres entraînées par arbre. Compression liquide et vapeur idéale partagent leur matériau. Déclarer `phase_mode` comme `frozen` : la qualité massique reste fixe pendant le transit, puis les réservoirs se rééquilibrent. [Buses de carburant compressible à qualité figée](docs/COMPRESSIBLE_FUEL_NOZZLE.fr.md)
+
 <details>
-<summary>Laboratoires disponibles (60)</summary>
+<summary>Laboratoires disponibles (62)</summary>
 
 | Nom d'exemple (`get_example_model`) | Laboratoire | Ce qu'il exerce |
 |---|---|---|
@@ -222,6 +224,8 @@ Un `compressible_fuel_chamber` relie un arbre à un réservoir fini `compressibl
 | `equilibrium-fuel-flashing-duct` | `assets/labs/equilibrium-fuel-flashing-duct.power.json` | Le liquide de la conduite se vaporise vers des réservoirs diphasiques finis |
 | `compressible-fuel-chamber-duct` | `assets/labs/compressible-fuel-chamber-duct.power.json` | Travail de pression d’arbre couplé au transport compressible |
 | `electric-compressible-fuel-duct` | `assets/labs/electric-compressible-fuel-duct.power.json` | Travail de pression d’arbre couplé au transport compressible |
+| `compressible-fuel-nozzle` | `assets/labs/compressible-fuel-nozzle.power.json` | Blocage compressible figé, décharge finie et aiguille réelle |
+| `compressible-pump-needle` | `assets/labs/compressible-pump-needle.power.json` | Blocage compressible figé, décharge finie et aiguille réelle |
 
 </details>
 

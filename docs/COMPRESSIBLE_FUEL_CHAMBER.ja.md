@@ -36,6 +36,6 @@ Delta_E_vapor = M cv (T_next-T_old)
 
 パラメータは `unverified` です。圧縮性で熱膨張ゼロの液体と理想蒸気からなる平衡純疑似流体、混合室、剛体セルを仮定します。温度・圧力範囲を守ってください。室のバルク運動エネルギーは解かず、逆止弁も自動では付きません。有限速度の核生成、相間滑り、実流体臨界挙動、実測校正、実 Unity 受入検証は残っています。
 
-互換性のある圧縮性方向弁とニードル／ノズル境界を追加し、エンタルピー、運動エネルギー、相の仮定を明示します。その後、相緩和／滑り、点火、吸排気、機械損失、ECU/TCU 協調制御を進めます。実測校正と実 Unity 受入検証は別に行います。
+通過を平衡および有限速度の相モデルへ拡張し、解像した噴霧と互換性のある燃焼受入室を追加します。点火、吸排気、機械損失、変速機駆動、ECU/TCU 協調を続けます。実測校正と実 Unity 受入検証は別に行います。
 
 [Modelica: swept volume and pressure work](https://doc.modelica.org/Modelica%204.0.0/Resources/helpWSM/Modelica/Modelica.Fluid.Machines.SweptVolume.html) · [NIST: consistent thermodynamic derivatives](https://pages.nist.gov/teqp-docs/en/latest/derivs/derivs.html)

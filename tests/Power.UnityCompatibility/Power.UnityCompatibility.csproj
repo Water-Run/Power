@@ -12,6 +12,9 @@ See COPYING.NOTICE, LICENSE, and UNITY-LINKING-EXCEPTION.md in the repository ro
     <Compile Include="../Power.Tests/LiquidColumnChecks.cs" Link="LiquidColumnChecks.cs" />
     <Compile Include="../Power.Tests/FuelPipeAssetChecks.cs" Link="FuelPipeAssetChecks.cs" />
     <Compile Include="../Power.Tests/FuelPipeChecks.cs" Link="FuelPipeChecks.cs" />
+    <Compile Include="../Power.Tests/FrozenCompressibleNozzleChecks.cs" Link="FrozenCompressibleNozzleChecks.cs" />
+    <Compile Include="../Power.Tests/CompressibleNozzleChecks.cs" Link="CompressibleNozzleChecks.cs" />
+    <Compile Include="../Power.Tests/CompressibleNozzleAssetChecks.cs" Link="CompressibleNozzleAssetChecks.cs" />
     <Compile Include="../Power.Tests/CompressibleChamberChecks.cs" Link="CompressibleChamberChecks.cs" />
     <Compile Include="../Power.Tests/CompressibleChamberAssetChecks.cs" Link="CompressibleChamberAssetChecks.cs" />
     <Compile Include="../Power.Tests/CompressibleFuelChecks.cs" Link="CompressibleFuelChecks.cs" />

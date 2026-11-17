@@ -249,7 +249,7 @@ L'[assemblage d'actionnement AT](AT_HYDRAULIC_ACTUATION.fr.md) abaisse 1..6 cibl
 
 `at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
 
-Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v37 conserve routes, gains et horloges et lit v1-v36.
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v38 conserve routes, gains et horloges et lit v1-v37.
 
 Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
 
@@ -259,7 +259,7 @@ Ces commandes sont expérimentales et les paramètres restent `unverified`. Coor
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v37 conserve les liens et la température source et lit v1-v36. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v38 conserve les liens et la température source et lit v1-v37. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -336,3 +336,11 @@ Le travail fermé conserve masse et entropie. Énergie de compression froide et 
 Le réservoir mobile utilise un demi-transport, le travail complet de l’arbre, puis un demi-transport. Le transport reste du premier ordre avec diffusion numérique ; la séparation symétrique n’augmente pas son ordre. Le mouvement liquide fermé et lisse converge au second ordre. L’incrément angulaire est limité à 0.25 rad par intervalle mécanique. CFL, limites matérielles, restauration complète, annulation et branches indépendantes s’appliquent. L’impulsion stationnaire des ports et du carter est distincte du travail du piston.
 
 [Chambres de carburant compressible entraînées par arbre](COMPRESSIBLE_FUEL_CHAMBER.fr.md)
+
+## Buses de carburant compressible à qualité figée
+
+Les phases figées partagent pression, température et vitesse ; le transfert massique entre phases est supprimé. Entropie et compression froide donnent la chute d’enthalpie isentropique. Le maximum unique de flux utilise le son figé, distinct du son d’équilibre. Le coefficient réduit la section effective. En régime critique, l’énergie de sortie décrit un jet idéal complètement détendu à la pression réceptrice. L’enthalpie d’arrêt alimente une seule fois récepteur et chaleur explicite de paroi. L’impulsion décrit la thermalisation stationnaire, pas la poussée totale du carter ni la force axiale de l’aiguille.
+
+Des sous-pas conservatifs du premier ordre échangent la même masse et enthalpie ; l’énergie cinétique du jet se répartit entre récepteur et paroi. Chaque acceptation vérifie les états et l’entropie totale de la paire. Limites : 4096 sous-pas, 64 réductions de moitié par candidat, transfert initial borné à 0.1 fois la plus petite masse. La fermeture tolère 128 fois epsilon binary64 multiplié par le plus grand module volumique ou la pression des ports, sans écrêter les pressions. Un échec restaure tout le lot. Réduire le pas et examiner inventaire, limites, course et section.
+
+[Buses de carburant compressible à qualité figée](COMPRESSIBLE_FUEL_NOZZLE.fr.md)
