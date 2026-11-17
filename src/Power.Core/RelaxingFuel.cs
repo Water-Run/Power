@@ -7,7 +7,7 @@ public readonly record struct RelaxingFuelPoint(CompressibleFuelPoint Fluid,doub
 public readonly record struct FuelPhaseRelaxation(RelaxingFuelPoint Fluid,double VaporMassFractionChange,double SpecificEntropyChangeJoulesPerKilogramKelvin,double EquilibriumVaporMassFraction);
 
 /// <summary>Mechanical/thermal equilibrium at prescribed phase quality, with chemical relaxation at fixed density and energy.</summary>
-public sealed class RelaxingFuel
+public sealed partial class RelaxingFuel
 {
     public CompressibleFuel Equilibrium {get;}
     public ulong RelaxationTimeNanoseconds {get;}

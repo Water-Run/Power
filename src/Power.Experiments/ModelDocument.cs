@@ -44,7 +44,7 @@ public sealed record ModelDocument(ModelDefinition Model, ulong DurationNanoseco
     };
     private static readonly Dictionary<string, Field> Fields = new(StringComparer.Ordinal)
     {
-        ["equilibrium_vapor_mass_fraction"]=Field.EquilibriumVaporMassFraction,["chemical_affinity"]=Field.ChemicalAffinity,["vapor_mass_residual"]=Field.VaporMassResidual,["vapor_mass_at_a"]=Field.VaporMassAtA,["vapor_mass_at_b"]=Field.VaporMassAtB, ["flux_relative_uncertainty"] = Field.FluxRelativeUncertainty, ["density"] = Field.Density, ["sound_speed"] = Field.SoundSpeed, ["mass_at_a"] = Field.MassAtA, ["mass_at_b"] = Field.MassAtB,
+        ["total_vapor_delivered"]=Field.TotalVaporDelivered,["equilibrium_vapor_mass_fraction"]=Field.EquilibriumVaporMassFraction,["chemical_affinity"]=Field.ChemicalAffinity,["vapor_mass_residual"]=Field.VaporMassResidual,["vapor_mass_at_a"]=Field.VaporMassAtA,["vapor_mass_at_b"]=Field.VaporMassAtB, ["flux_relative_uncertainty"] = Field.FluxRelativeUncertainty, ["density"] = Field.Density, ["sound_speed"] = Field.SoundSpeed, ["mass_at_a"] = Field.MassAtA, ["mass_at_b"] = Field.MassAtB,
         ["jet_kinetic_energy"] = Field.JetKineticEnergy, ["jet_impulse"] = Field.JetImpulse, ["throat_pressure"] = Field.ThroatPressure,
         ["exit_temperature"] = Field.ExitTemperature, ["exit_velocity"] = Field.ExitVelocity, ["choked"] = Field.Choked,
         ["forward_volume"] = Field.ForwardVolume, ["reverse_volume"] = Field.ReverseVolume, ["kinetic_energy"] = Field.KineticEnergy, ["energy_at_a"] = Field.EnergyAtA, ["energy_at_b"] = Field.EnergyAtB,

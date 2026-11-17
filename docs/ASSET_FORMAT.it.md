@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[Decodifica, ricompila, controlla l'impronta]
 ```
 
-## Versione corrente 40
+## Versione corrente 41
+
+Un `compressible_fuel_chamber` può controllare il volume di un serbatoio `relaxing_fuel`. Il lavoro reversibile dell’albero mantiene fissa la frazione di vapore; il rilassamento chimico è una sorgente separata che conserva energia. Un `compressible_fuel_nozzle` collega due serbatoi rilassanti con `phase_mode` su `frozen`, trasportando massa totale, vapore ed entalpia di ristagno. Un ago fisico con bobina, molla e battuta può dosare l’apertura.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_boundaries | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| relaxing_nozzle_phase_mode | 1 frozen |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| retained_asset_readers | power.asset.v1..v40 |
+
+[Pompe a combustibile con rilassamento e dosaggio congelato](RELAXING_FUEL_BOUNDARIES.it.md)
+
+## Versione conservata 40
 
 Un nodo `relaxing_fuel` ha una frazione massica di vapore indipendente. Liquido e vapore condividono pressione, temperatura e velocità, mentre l’equilibrio chimico richiede un tempo finito dichiarato. Un `relaxing_fuel_duct` trasporta massa, quantità di moto, energia totale e massa di vapore in celle esplicite. La permanenza dipende da geometria e velocità effettiva.
 

@@ -31,7 +31,7 @@ flowchart LR
 | Dokument | Worum es geht |
 |---|---|
 | [Agent-API](AGENT_API.de.md) | MCP-Werkzeuge, Revisionen, Fehler und die Operationsfolge |
-| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v40 und die Leser für v1 bis v39 |
+| [Asset-Format](ASSET_FORMAT.de.md) | `.powerasset` v41 und die Leser für v1 bis v40 |
 | [Kraftstoffaustritt mit eingefrorenem Dampfanteil und endliche Empfänger](FUEL_DISCHARGE.de.md) | Kritischer Fluss mit eingefrorenem Dampfanteil, Flüssigkeitsverdrängung und physische Pumpe/Nadel |
 | [Impuls einer endlichen Flüssigkraftstoffleitung](FUEL_INERTIAL_PIPE.de.md) | Endliches Flüssigkeitsinventar, dynamischer Fluss, Mischung und erhaltende Leitungsarbeit |
 | [Kompressible Kraftstoffkanäle im Gleichgewicht](EQUILIBRIUM_FUEL_DUCT.de.md) | Konservativer kompressibler Zweiphasentransport und Gleichgewichtsakustik |
@@ -39,6 +39,7 @@ flowchart LR
 | [Kompressible Kraftstoffdüsen mit eingefrorenem Dampfanteil](COMPRESSIBLE_FUEL_NOZZLE.de.md) | Eingefrorene kritische Strömung, endlicher Austritt und reale Nadel |
 | [Kraftstoffdüsentransit im Phasengleichgewicht](EQUILIBRIUM_FUEL_NOZZLE.de.md) | Gleichgewichtsverdampfung, globale kritische Flussgrenzen und reale Nadel |
 | [Kraftstoff-Phasenrelaxation mit endlicher Rate](RELAXING_FUEL.de.md) | Unabhängiger Dampfanteil, endliche Phasenrate und konservativer Transport |
+| [Relaxierende Kraftstoffpumpen und Dosierung bei eingefrorener Phase](RELAXING_FUEL_BOUNDARIES.de.md) | Relaxierende Behälter, reversible Wellenarbeit und konservative eingefrorene Dampfdosierung |
 | [Referenz für den Impuls am Flüssigkeitseinlass](LIQUID_COLUMN.de.md) | Einphasige Einlassträgheit, Reibungswärme und unabhängig geprüfter Impuls zweiter Ordnung |
 | [Native Zig-Grenze](NATIVE_ZIG.de.md) | Die archivierten Zig-Prototypen und das versionierte ABI |
 

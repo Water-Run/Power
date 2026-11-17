@@ -36,6 +36,6 @@ h_port = u + p/rho
 
 参数保持 `unverified`。遵守材料温压区间与压力修正的液态稳定条件。失败区间完整回滚；减小节拍并检查源耗尽、压力及相态边界。模型不包含变密度两相动量、空化、声波、重力、运动管形及解析热前沿。规定燃烧不证明详细化学平衡或反应熵准确性。
 
-扩展兼容的有限速率边界耦合并取得材料弛豫实测数据，再加入解析喷雾和燃烧接收腔。继续点火、进排气、机械损失、变速器执行与 ECU/TCU 协同控制；实测标定和实际 Unity 验收分别推进。 [可压缩平衡燃料管路](EQUILIBRIUM_FUEL_DUCT.zh-CN.md)
+在材料证据基础上解析喷嘴内部的有限速率停留过程，再加入解析喷雾和相容燃烧接收腔。继续点火、进排气、机械损失、变速器执行与 ECU/TCU 协同控制；实测标定和实际 Unity 验收分别推进。 [可压缩平衡燃料管路](EQUILIBRIUM_FUEL_DUCT.zh-CN.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: dynamic pipe boundaries](https://doc.modelica.org/om/Modelica.Fluid.Pipes.DynamicPipe.html) · [VALIDATION.md](VALIDATION.md)

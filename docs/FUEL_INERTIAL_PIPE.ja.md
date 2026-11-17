@@ -36,6 +36,6 @@ h_port = u + p/rho
 
 パラメーターは `unverified` です。材料の温度・圧力範囲と圧力補正した液相安定性を守ります。失敗区間は全て戻り、刻みを減らして供給枯渇・圧力・相を確認します。変密度二相運動量、キャビテーション、音波、重力、移動管形、解像熱前線は含みません。規定燃焼は詳細な化学平衡や反応エントロピー精度を示しません。
 
-有限速度と整合する境界結合を拡張し、材料の緩和実測値を取得してから、解像された噴霧と燃焼受入室を追加します。点火、吸排気、機械損失、変速機作動、ECU/TCU 協調制御を続けます。実測校正と実 Unity 検収は別々に進めます。 [圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md)
+材料証拠に基づく有限速度のノズル内滞留を解像し、続いて噴霧と整合する燃焼受入室を加えます。点火、吸排気、機械損失、変速機作動、ECU/TCU 協調制御を進めます。実測校正と実 Unity 検収は別々に扱います。 [圧縮性平衡燃料ダクト](EQUILIBRIUM_FUEL_DUCT.ja.md)
 
 [Modelica: momentum and energy balances](https://doc.modelica.org/Modelica%203.2.3/Resources/helpWSM/Modelica/Modelica.Fluid.UsersGuide.ComponentDefinition.BalanceEquations.html) · [Modelica: dynamic pipe boundaries](https://doc.modelica.org/om/Modelica.Fluid.Pipes.DynamicPipe.html) · [VALIDATION.md](VALIDATION.md)

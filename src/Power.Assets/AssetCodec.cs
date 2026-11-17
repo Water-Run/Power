@@ -14,8 +14,8 @@ public sealed class AssetFormatException(string message) : ArgumentException(mes
 /// <summary>Versioned little-endian model/experiment data, never executable code or serialized solver factors.</summary>
 public static class AssetCodec
 {
-    public const int FormatVersion = 40, MaxBytes = 1_048_576;
-    public const string FormatName = "power.asset.v40";
+    public const int FormatVersion = 41, MaxBytes = 1_048_576;
+    public const string FormatName = "power.asset.v41";
     private static readonly byte[] Magic = Encoding.ASCII.GetBytes("POWERAST");
     private static readonly UTF8Encoding Utf8 = new(false, true);
 
@@ -376,6 +376,11 @@ public static class AssetCodec
             int nozzles=cs.Count(c=>c.Kind==ComponentKind.CompressibleFuelNozzle);
             if(version<38&&nozzles!=0)throw new AssetFormatException("Compressible fuel nozzles require version 38.");
             int ducts = cs.Count(c => c.Kind is ComponentKind.EquilibriumFuelDuct or ComponentKind.RelaxingFuelDuct);
+            bool relaxingBoundary=cs.Any(c =>
+                c.Kind==ComponentKind.CompressibleFuelChamber && ns.Any(n=>n.Id==c.NodeB&&n.Domain==Domain.RelaxingFuel) ||
+                c.Kind==ComponentKind.CompressibleFuelNozzle && ns.Any(n=>(n.Id==c.NodeA||n.Id==c.NodeB)&&n.Domain==Domain.RelaxingFuel));
+            if(version<41&&relaxingBoundary)
+                throw new AssetFormatException("Relaxing moving chambers and frozen metering require version 41.");
             if(version<40&&cs.Any(c=>c.Kind==ComponentKind.RelaxingFuelDuct))throw new AssetFormatException("Relaxing fuel ducts require version 40.");
             if(version<36&&ducts!=0)throw new AssetFormatException("Equilibrium fuel ducts require version 36.");
             if (version < 35 && fuelPipes != 0) throw new AssetFormatException("Inertial liquid fuel lines require version 35.");

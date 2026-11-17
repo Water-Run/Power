@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — эксперименты без интерфейса"]
     mcp["Power.Mcp — 12 инструментов MCP через stdio"]
-    assets["Power.Assets — .powerasset v40"]
+    assets["Power.Assets — .powerasset v41"]
     unity["Студия Unity 6.6 — 3D-лаборатории"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | Узнать модели, ограничения, соглашения о времени и ревизиях. Начните отсюда. |
 | `get_model_schema` | JSON Schema 2020-12 для `power.model.v1` |
-| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (65 примера) |
+| `get_example_model` | Получить редактируемую синтетическую модель и эксперимент (67 примера) |
 | `validate_model` | Проверить модель без запуска; структурированная диагностика исправлений |
 | `run_experiment` | Ограниченный запуск без интерфейса с пакетным повтором, KPI и происхождением |
 | `export_model_asset` | Экспортировать переносимый `.powerasset` |
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > Все параметры образцов — `unverified`: исследовательские значения, а не калиброванные измерения.
 
-Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v40`, читатели прежних активов сохранены.
+Лаборатории ниже разделяют определения между импортом JSON, CLI, MCP и Studio. Экспорт использует `power.asset.v41`, читатели прежних активов сохранены.
 
 Насос топливного домена теперь питает физическую иглу и сопло с замороженным паросодержанием в работающий цилиндр с конечным объёмом жидкости. Полные запасы включают фазовый переход, работу вытеснения, кинетическую энергию и импульс неподвижной стенке. [Подача топлива с замороженным паросодержанием в конечный приёмник](docs/FUEL_DISCHARGE.ru.md) [Фазоразрешающий топливный насос с приводом от вала](docs/FUEL_CHAMBER_PUMP.ru.md)
 
@@ -163,8 +163,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 Узел `relaxing_fuel` имеет независимую массовую долю пара. Жидкость и пар имеют общие давление, температуру и скорость, но химическое равновесие достигается за заданное конечное время. `relaxing_fuel_duct` переносит массу, импульс, полную энергию и массу пара через явные ячейки. Время пребывания определяется геометрией и фактической скоростью. [Фазовая релаксация топлива с конечной скоростью](docs/RELAXING_FUEL.ru.md)
 
+`compressible_fuel_chamber` может задавать объём резервуара `relaxing_fuel`. Обратимая работа вала сохраняет массовую долю пара; химическая релаксация служит отдельным энергосохраняющим источником. `compressible_fuel_nozzle` соединяет два релаксирующих резервуара при `phase_mode` равном `frozen`, перенося общую массу, массу пара и энтальпию торможения. Физическая игла с катушкой, пружиной и упором регулирует открытие. [Релаксационные топливные насосы и дозирование с замороженной фазой](docs/RELAXING_FUEL_BOUNDARIES.ru.md)
+
 <details>
-<summary>Доступные лаборатории (66)</summary>
+<summary>Доступные лаборатории (68)</summary>
 
 | Имя образца (`get_example_model`) | Лаборатория | Что проверяет |
 |---|---|---|
@@ -234,6 +236,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | Равновесное вскипание, глобальные границы потока и реальная игла |
 | `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | Независимая доля пара, конечная фазовая скорость и консервативный перенос |
 | `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | Независимая доля пара, конечная фазовая скорость и консервативный перенос |
+| `relaxing-fuel-chamber` | `assets/labs/relaxing-fuel-chamber.power.json` | Релаксирующие резервуары, обратимая работа вала и консервативное дозирование пара |
+| `relaxing-pump-needle` | `assets/labs/relaxing-pump-needle.power.json` | Релаксирующие резервуары, обратимая работа вала и консервативное дозирование пара |
 
 </details>
 

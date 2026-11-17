@@ -2,6 +2,103 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · **日本語** · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 相変化緩和燃料ポンプと凍結相計量
+
+`compressible_fuel_chamber` は `relaxing_fuel` 貯槽の体積を制御できます。可逆な軸仕事では蒸気質量分率を固定し、化学緩和はエネルギー保存の独立源項として扱います。`compressible_fuel_nozzle` は `phase_mode` が `frozen` のとき二つの緩和貯槽を結び、全質量、蒸気質量、よどみエンタルピーを輸送します。実際のソレノイド、ばね、ストッパーを備えた物理針弁で開度を計量できます。
+
+`relaxing-fuel-chamber` または `relaxing-pump-needle` を実行します。体積と仕事、実際と平衡の分率、相変化エントロピー、`total_vapor_delivered`、ポート在庫、全体蒸気残差を観測します。純相断熱線、独立した分率固定の圧力積分、微小仕事、可逆サイクル、独立理想蒸気軸 ODE と比較します。有限速度結合の細分化、共有貯槽の源項時間、全収支、取消、ロールバック、分岐、割当、可搬再生、実 MCP は個別に検証し、数値は検証証拠に記録します。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 601/601 |
+| standard_checks_on_dotnet | 477/477 |
+| actual_mcp_groups | 72/72 |
+| laboratories | 68 |
+| agent_examples | 67 |
+| unchanged_laboratories | 66 |
+| identical_complete_sample_boundaries | 7641 |
+| all_sample_boundaries | 7663 |
+| new_core_groups | 14 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| coupled_transport_order | 1 |
+| ideal_vapor_mechanical_observed_order | 2 |
+| global_cfl | 0.2 |
+| nozzle_inventory_fraction | 0.02 |
+| maximum_global_substeps | 4096 |
+| frozen_work_inverse_iterations | 96 |
+| small_increment_expm1_terms | 20 |
+| asset_version | power.asset.v41 |
+| agent_api_version | 0.46.0 |
+| fingerprint_tag | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| v40_fixture_sha256 | 17d1ac4e78cb9835faa8f50b0bae30c4c6d84ecc86e7936ad03ab416e3978d39 |
+| verification_log_sha256 | 7a62b3ee6738412dd8a996cc76ee864e338f1c3ccb0661f477826464d379cd04 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 68 |
+| schema_negative_cases | 15 |
+| documentation_locales | 10 |
+| documentation_files | 260 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| independent_ideal_vapor_shaft_step_ns | absolute_speed_error_rad_s |
+|---|---|
+| 100000 | 2.867884063562087e-07 |
+| 50000 | 7.169742843871063e-08 |
+| 25000 | 1.7924008943737135e-08 |
+| 12500 | 4.4805972265749006e-09 |
+
+| coupled_temporal_self_refinement_step_ns | reference_step_ns | quality_absolute_error |
+|---|---|---|
+| 4000 | 50 | 3.3151840717060566e-09 |
+| 2000 | 50 | 1.5796856045469099e-09 |
+| 1000 | 50 | 7.557253156598165e-10 |
+| 500 | 50 | 3.546929971953716e-10 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | maximum_sampled_vapor_mass_residual_kg | final_work_on_fluid_j | final_chamber_quality |
+|---|---|---|---|---|---|---|---|
+| relaxing-fuel-chamber | e42f317dc73ba1bb | ef3d05f53148387c | 11 | 1.7763568394002505e-15 | 1.3234889800848443e-23 | -0.013348770030170752 | 0.5814118030618711 |
+| relaxing-pump-needle | c55dcb4161f444ee | b7e1f60030e41448 | 11 | 1.1004572683659397e-08 | 3.1707487240382657e-20 | 0.0043416095880151285 | 0.0005220656468952762 |
+
+| laboratory | final_outlet_mass_kg | final_outlet_vapor_mass_kg | final_nozzle_pair_entropy_j_k |
+|---|---|---|---|
+| relaxing-pump-needle | 5.92118672365094e-05 | 1.5650074303960157e-08 | 2.3206811723437562e-05 |
+
+- `artifacts/reports/relaxing-boundary-final-2026-11-17.log`
+- `artifacts/reports/relaxing-boundary-verify-exit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-evidence-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-baseline-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-schema-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-provenance-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-doc-audit-2026-11-17.json`
+
+質量分率固定のエントロピー関係から体積変化後の圧力と温度を求めます。仕事は液体の冷圧縮エネルギーを含み、小変位では安定した増分関数を使います。同じ離散仕事が軸トルクを与えます。各全体区間で保存型管路・凍結ノズル輸送の前後に各ノードの相変化源項を一度ずつ適用します。区間は管路 CFL と小さいポート在庫の 0.02 比率で制限し、最大 4096 区間です。機械仕事と源項は分離し、結合輸送は一次精度で時間細分化を要します。
+
+パラメータは `unverified` です。両ポートの領域と材料は同一とし、緩和ポートでは平衡通過を拒否します。貯槽の有限緩和は、ゼロ容積ノズル内部の化学変化や滞留時間を解像しません。相間滑り、液体負圧張力、核生成障壁則、噴霧、搬送ガス、燃焼受入室は含みません。移動貯槽は一様混合で平均速度ゼロ、管路内セルは剛体で所有者は一つです。臨界挙動から離れた希薄理想蒸気、宣言された正圧・温度範囲、正の潜熱エンタルピー、分離した共存比体積が必要です。初期蒸気分率は明示的な研究入力です。数値の一致は実測校正や実 Unity 検収を証明しません。
+
 ## 2026-11-17: 有限速度の燃料相変化緩和
 
 `relaxing_fuel` ノードは独立した蒸気質量分率を持ちます。液体と蒸気は圧力、温度、速度を共有しますが、化学平衡には明示した有限時間を要します。`relaxing_fuel_duct` は明示セルで質量、運動量、全エネルギー、蒸気質量を輸送します。滞留時間はセル形状と実際の流速から決まります。

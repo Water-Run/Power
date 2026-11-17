@@ -31,7 +31,7 @@ flowchart LR
 | 文档 | 内容 |
 |---|---|
 | [智能体 API](AGENT_API.zh-CN.md) | MCP 工具、修订号、错误与操作序列 |
-| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v40,以及 v1 至 v39 的读取器 |
+| [资产格式](ASSET_FORMAT.zh-CN.md) | `.powerasset` v41,以及 v1 至 v40 的读取器 |
 | [冻结汽相质量分数的燃油喷流与有限体积接收腔](FUEL_DISCHARGE.zh-CN.md) | 冻结汽相质量分数阻塞、有限液体排量与物理泵/针阀燃烧 |
 | [有限液体燃油管路动量](FUEL_INERTIAL_PIPE.zh-CN.md) | 有限液体库存、动态流动、热混合与守恒管路功 |
 | [可压缩平衡燃料管路](EQUILIBRIUM_FUEL_DUCT.zh-CN.md) | 守恒可压缩两相输运与平衡声学 |
@@ -39,6 +39,7 @@ flowchart LR
 | [冻结相态可压缩燃料喷嘴](COMPRESSIBLE_FUEL_NOZZLE.zh-CN.md) | 冻结相态可压缩阻塞、有限排放与实际针阀控制 |
 | [平衡燃料喷嘴输运](EQUILIBRIUM_FUEL_NOZZLE.zh-CN.md) | 平衡闪蒸、全局临界通量包络与实际针阀输送 |
 | [有限速率燃料相变弛豫](RELAXING_FUEL.zh-CN.md) | 独立蒸气质量分数、有限速率相变与守恒输运 |
+| [相变弛豫燃料泵与冻结相态计量](RELAXING_FUEL_BOUNDARIES.zh-CN.md) | 有限速率泵储腔、可逆轴功和守恒冻结蒸气计量 |
 | [液体入口动量参考](LIQUID_COLUMN.zh-CN.md) | 单相入口惯性、摩擦热及独立验证的二阶动量 |
 | [原生 Zig 边界](NATIVE_ZIG.zh-CN.md) | 归档的 Zig 原型与带版本的 ABI |
 

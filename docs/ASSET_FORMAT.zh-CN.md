@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[解码、重新编译、校验指纹]
 ```
 
-## 当前版本 40
+## 当前版本 41
+
+`compressible_fuel_chamber` 可以控制 `relaxing_fuel` 储腔的体积。可逆轴功保持蒸气质量分数不变，化学弛豫作为独立的能量守恒源项处理。`compressible_fuel_nozzle` 在 `phase_mode` 为 `frozen` 时连接两个弛豫储腔，同时输运总质量、蒸气质量与滞止焓；实际电磁线圈、弹簧和行程限位可通过物理针阀计量开度。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_boundaries | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| relaxing_nozzle_phase_mode | 1 frozen |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| retained_asset_readers | power.asset.v1..v40 |
+
+[相变弛豫燃料泵与冻结相态计量](RELAXING_FUEL_BOUNDARIES.zh-CN.md)
+
+## 保留版本 40
 
 `relaxing_fuel` 节点具有独立的蒸气质量分数。液体与蒸气共享压力、温度和速度，化学平衡则需要显式声明的有限时间。`relaxing_fuel_duct` 通过显式网格输运质量、动量、总能量和蒸气质量；停留时间由网格几何与实际流速决定。
 

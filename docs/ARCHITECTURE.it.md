@@ -250,7 +250,7 @@ L'[assemblaggio di azionamento AT](AT_HYDRAULIC_ACTUATION.it.md) abbassa i bersa
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v40 conserva percorsi, guadagni e clock e legge v1-v39.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v41 conserva percorsi, guadagni e clock e legge v1-v40.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -260,7 +260,7 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v40 conserva collegamenti e temperatura sorgente e legge v1-v39. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v41 conserva collegamenti e temperatura sorgente e legge v1-v40. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
@@ -361,3 +361,11 @@ La chiusura mantiene il potenziale freddo del liquido comprimibile e il vapore i
 I flussi conservativi di Rusanov trasportano quattro campi. Ogni intervallo CFL globale applica mezza sorgente locale, trasporto e mezza sorgente. I serbatoi condivisi ricevono ogni sorgente una sola volta indipendentemente dal numero di condotti. La sorgente è esatta per stati isolati a volume fisso; il trasporto accoppiato mantiene errore del primo ordine. CFL usa il limite acustico a frazione congelata. Entropia di fase e del condotto sono verificate separatamente. Uno stato fuori limite annulla l’intero lotto.
 
 [Rilassamento di fase del combustibile a velocità finita](RELAXING_FUEL.it.md)
+
+## Pompe a combustibile con rilassamento e dosaggio congelato
+
+Un `compressible_fuel_chamber` può controllare il volume di un serbatoio `relaxing_fuel`. Il lavoro reversibile dell’albero mantiene fissa la frazione di vapore; il rilassamento chimico è una sorgente separata che conserva energia. Un `compressible_fuel_nozzle` collega due serbatoi rilassanti con `phase_mode` su `frozen`, trasportando massa totale, vapore ed entalpia di ristagno. Un ago fisico con bobina, molla e battuta può dosare l’apertura.
+
+La relazione entropica a frazione fissa determina pressione e temperatura dopo la variazione di volume. Il lavoro include compressione fredda del liquido e funzioni incrementali stabili per piccoli movimenti. Lo stesso lavoro discreto determina la coppia all’albero. Ogni intervallo globale applica una volta la sorgente di ogni nodo attorno al trasporto conservativo in condotto e ugello congelato. CFL e 0.02 dell’inventario minore alle porte limitano gli intervalli, al massimo 4096. Lavoro e sorgente restano separati. Il trasporto accoppiato rimane del primo ordine e richiede raffinamento temporale.
+
+[Pompe a combustibile con rilassamento e dosaggio congelato](RELAXING_FUEL_BOUNDARIES.it.md)

@@ -493,7 +493,7 @@ siguen separados de la realimentación y el control de la AT, y de la aceptació
 
 `at_controller` acepta una marcha solicitada entera en [-1,4]; cero es punto muerto. Controla cinco pares de válvulas de llenado/vaciado y el bloqueo opcional del convertidor. El orden es entrada del portasatélites, solar pequeño, solar grande, freno del portasatélites, freno del solar grande y bloqueo.
 
-`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v40 conserva rutas, ganancias y relojes y lee v1-v39.
+`controlled-hydraulic-ravigneaux` y `controlled-fired-hydraulic-ravigneaux` usan canal 900 e ID 1400. Conservan 99 y 122 estados declarados dentro del límite sin cambios de 128. v41 conserva rutas, ganancias y relojes y lee v1-v40.
 
 Son controles de investigación y los parámetros siguen `unverified`. Coordinación de par ECU, sensores/válvulas detallados, fallos completos del vehículo y calibración OEM siguen pendientes. Las pruebas managed y Standard no acreditan Unity Editor/Play/Player/IL2CPP real.
 
@@ -503,7 +503,7 @@ Son controles de investigación y los parámetros siguen `unverified`. Coordinac
 
 `liquid_rail_feed` asocia un inyector líquido con una bomba de desplazamiento existente y una frontera explícita de materia/calor. El nodo de salida hidráulica debe coincidir con la compliancia y presión absoluta inicial del raíl. Bomba e inyector poseen ese nodo; otras rutas fluidas no contabilizadas se rechazan.
 
-v40 conserva enlaces y temperatura de fuente y lee v1-v39. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
+v41 conserva enlaces y temperatura de fuente y lee v1-v40. Intercambio analítico eje/presión, refinamiento ODE simultáneo independiente, mezcla térmica, balances masa/combustible/energía/volumen, retorno y rollback completo tienen verificaciones separadas.
 
 Tanque rígido mezclado, líquido incompresible y gas ideal. Oleaje/forma hidrostática, termodinámica de mezclas reales, cavitación, mapas medidos de bomba/válvula, calibración OEM y Unity Editor/Play/Player/IL2CPP real siguen abiertos. Parámetros `unverified`.
 
@@ -604,3 +604,11 @@ El cierre conserva el potencial frío del líquido compresible y el vapor ideal 
 Los flujos conservativos de Rusanov transportan cuatro campos. Cada intervalo CFL global aplica media fuente local, transporte y media fuente. Los depósitos compartidos reciben cada fuente una vez, independientemente del número de conductos. La fuente es exacta para estados aislados a volumen fijo; el transporte acoplado mantiene error de primer orden. CFL usa la cota acústica de fracción congelada. Las entropías de fase y conducto se comprueban por separado. Un estado fuera de límites revierte todo el lote.
 
 [Relajación de fase del combustible a velocidad finita](RELAXING_FUEL.es.md)
+
+## Bombas de combustible con relajación y dosificación congelada
+
+Un `compressible_fuel_chamber` puede controlar el volumen de un depósito `relaxing_fuel`. El trabajo reversible del eje mantiene fija la fracción de vapor; la relajación química es una fuente separada que conserva energía. Un `compressible_fuel_nozzle` conecta dos depósitos relajantes con `phase_mode` en `frozen`, transportando masa total, vapor y entalpía de remanso. Una aguja física con bobina, muelle y tope puede dosificar la apertura.
+
+La relación de entropía a fracción fija determina presión y temperatura tras cambiar el volumen. El trabajo incluye compresión fría del líquido y funciones incrementales estables para movimientos pequeños. El mismo trabajo discreto genera el par del eje. Cada intervalo global aplica una vez la fuente de cada nodo alrededor del transporte conservativo por conducto y tobera congelada. CFL y 0.02 del menor inventario de puerto limitan los intervalos, con máximo de 4096. Trabajo y fuente se separan. El transporte acoplado sigue siendo de primer orden y requiere refinamiento temporal.
+
+[Bombas de combustible con relajación y dosificación congelada](RELAXING_FUEL_BOUNDARIES.es.md)

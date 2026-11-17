@@ -31,7 +31,7 @@ flowchart LR
 | Documento | Che cos'è |
 |---|---|
 | [API agente](AGENT_API.it.md) | Strumenti MCP, revisioni, errori e la sequenza delle operazioni |
-| [Formato degli asset](ASSET_FORMAT.it.md) | `.powerasset` v40 e i lettori da v1 a v39 |
+| [Formato degli asset](ASSET_FORMAT.it.md) | `.powerasset` v41 e i lettori da v1 a v40 |
 | [Scarico carburante a titolo congelato e ricevitori finiti](FUEL_DISCHARGE.it.md) | Strozzamento a titolo congelato, spostamento liquido finito e pompa/ago fisici in combustione |
 | [Quantità di moto della linea finita di carburante liquido](FUEL_INERTIAL_PIPE.it.md) | Inventario liquido finito, portata dinamica, miscela termica e lavoro conservativo |
 | [Condotti di combustibile comprimibile in equilibrio](EQUILIBRIUM_FUEL_DUCT.it.md) | Trasporto bifase comprimibile conservativo e acustica d’equilibrio |
@@ -39,6 +39,7 @@ flowchart LR
 | [Ugelli di combustibile comprimibile a titolo congelato](COMPRESSIBLE_FUEL_NOZZLE.it.md) | Blocco comprimibile congelato, scarico finito e ago reale |
 | [Transito di combustibile all’equilibrio negli ugelli](EQUILIBRIUM_FUEL_NOZZLE.it.md) | Vaporizzazione d’equilibrio, involucro critico globale e ago reale |
 | [Rilassamento di fase del combustibile a velocità finita](RELAXING_FUEL.it.md) | Frazione di vapore indipendente, fase a velocità finita e trasporto conservativo |
+| [Pompe a combustibile con rilassamento e dosaggio congelato](RELAXING_FUEL_BOUNDARIES.it.md) | Serbatoi a rilassamento finito, lavoro reversibile e dosaggio conservativo di vapore congelato |
 | [Riferimento della quantità di moto all'ingresso liquido](LIQUID_COLUMN.it.md) | Inerzia d'ingresso monofase, calore d'attrito e quantità di moto del secondo ordine verificata |
 | [Confine Zig nativo](NATIVE_ZIG.it.md) | I prototipi Zig archiviati e l'ABI versionata |
 

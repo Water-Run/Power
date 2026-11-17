@@ -992,7 +992,8 @@
             "chemical_affinity",
             "vapor_mass_residual",
             "vapor_mass_at_a",
-            "vapor_mass_at_b"
+            "vapor_mass_at_b",
+            "total_vapor_delivered"
           ]
         },
         "min": {

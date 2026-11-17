@@ -22,15 +22,17 @@ Defina `phase_mode` de `compressible_fuel_nozzle` como `equilibrium` para equil�
 
 Um nó `relaxing_fuel` tem fração mássica de vapor independente. Líquido e vapor compartilham pressão, temperatura e velocidade, mas o equilíbrio químico exige um tempo finito declarado. Um `relaxing_fuel_duct` transporta massa, quantidade de movimento, energia total e massa de vapor em células explícitas. A residência depende da geometria e da velocidade real. [Relaxação de fase do combustível com taxa finita](RELAXING_FUEL.pt-BR.md)
 
+Um `compressible_fuel_chamber` pode controlar o volume de um reservatório `relaxing_fuel`. O trabalho reversível do eixo mantém a fração de vapor fixa; a relaxação química é uma fonte separada que conserva energia. Um `compressible_fuel_nozzle` conecta dois reservatórios relaxantes com `phase_mode` em `frozen`, transportando massa total, vapor e entalpia de estagnação. Uma agulha física com bobina, mola e batente pode dosar a abertura. [Bombas de combustível com relaxação e dosagem congelada](RELAXING_FUEL_BOUNDARIES.pt-BR.md)
+
 ## Próximo incremento
 
-Ampliar acoplamentos de contorno compatíveis com taxa finita e obter medições de relaxação do material, depois incluir spray resolvido e receptores com combustão. Continuar ignição, admissão/escape, perdas mecânicas, atuação da transmissão e controle ECU/TCU coordenado. Calibração medida e aceitação real do Unity seguem separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
+Resolver residência finita no bocal com evidências do material, depois adicionar spray resolvido e receptores com combustão compatíveis. Continuar ignição, admissão/escape, perdas mecânicas, atuação da transmissão e coordenação ECU/TCU. Calibração medida e aceitação real do Unity seguem separadas. [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md)
 
 ## Aceitação
 
 Exigir referências analíticas/limite independentes, balanços completos de massa/energia e refinamento apropriado. Preservar rollback do lote, cancelamento, ramos, canais estáveis, replay portável e leitores antigos. Continuar depois ignição, admissão/escape, perdas mecânicas, transmissão e coordenação ECU/TCU.
 
-Os parâmetros continuam `unverified`. Declare `initial_vapor_mass_fraction` em [0,1] e tempo inteiro de 1 ns a uma hora. Respeite temperatura e pressão positiva do material. O modelo pressupõe duto rígido horizontal de área constante, pseudofluido puro, expansão térmica líquida nula e vapor ideal. Não inclui deslizamento de fases, atraso térmico interfacial, tensão superficial, spray ou gás portador. Acoplamentos diretos do domínio relaxante com bombas, bocais, câmaras móveis e receptores com combustão continuam pendentes. Conservação, reprodução e refinamento não comprovam validade experimental nem aceitação real do Unity. Use vapor diluído longe da região crítica real; o material deve manter entalpia latente positiva e volumes específicos de coexistência separados.
+Os parâmetros continuam `unverified`. Ambas as portas exigem mesmo domínio e material; portas relaxantes rejeitam trânsito de equilíbrio. Relaxação finita nos reservatórios não resolve química ou residência dentro de um bocal sem volume. Não há deslizamento de fases, tensão líquida negativa, barreira de nucleação, spray, gás portador ou receptor com combustão. Reservatórios móveis são misturados com velocidade média nula; células internas continuam rígidas com um proprietário. Use vapor ideal diluído longe do crítico, limites declarados de pressão positiva e temperatura, entalpia latente positiva e volumes de coexistência separados. A fração inicial é entrada explícita de pesquisa. Concordância numérica não comprova calibração medida nem aceitação real do Unity.
 
 [DEVELOPMENT_STATUS.pt-BR.md](DEVELOPMENT_STATUS.pt-BR.md) · [ROADMAP.pt-BR.md](ROADMAP.pt-BR.md) · [VALIDATION.pt-BR.md](VALIDATION.pt-BR.md)
 

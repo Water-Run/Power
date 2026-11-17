@@ -42,7 +42,7 @@ Windows usa lo stesso comando `dotnet` e un percorso assoluto alla DLL. Una conn
 
 ## Strumenti e risultati
 
-Nell'API agente versione 0.45.0, `get_example_model` accetta un `name` facoltativo, predefinito `electrothermal`. `get_capabilities.examples` elenca tutti i 65 esempi, inclusi serbatoi finiti e ricircolo. CLI `list-labs` restituisce i 66 laboratori come JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` è riservato alla CLI per progettazione. Le capacità dichiarano anche componenti, fedeltà, limiti del solver e ingressi. Gli export usano `power.asset.v40` con lettori v1-v39 conservati. Validazione e creazione della sessione restituiscono canali e unità. KPI superati non attestano un powertrain completo o calibrato.
+Nell'API agente versione 0.46.0, `get_example_model` accetta un `name` facoltativo, predefinito `electrothermal`. `get_capabilities.examples` elenca tutti i 67 esempi, inclusi serbatoi finiti e ricircolo. CLI `list-labs` restituisce i 68 laboratori come JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json); `thermal-network` è riservato alla CLI per progettazione. Le capacità dichiarano anche componenti, fedeltà, limiti del solver e ingressi. Gli export usano `power.asset.v41` con lettori v1-v40 conservati. Validazione e creazione della sessione restituiscono canali e unità. KPI superati non attestano un powertrain completo o calibrato.
 
 | Strumento | Scopo |
 |---|---|
@@ -292,7 +292,7 @@ I report conservano pressione di linea/camera, corsa, capacità di contatto, lav
 
 `at_controller` accetta una marcia richiesta intera in [-1,4]; zero indica folle. Gestisce cinque coppie di valvole di riempimento/scarico e il blocco facoltativo del convertitore. L'ordine è ingresso del portasatelliti, solare piccolo, solare grande, freno del portasatelliti, freno del solare grande, poi blocco.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v40 conserva percorsi, guadagni e clock e legge v1-v39.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usano il canale 900 e l'ID 1400. Conservano 99 e 122 stati dichiarati entro il limite invariato di 128. v41 conserva percorsi, guadagni e clock e legge v1-v40.
 
 Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento della coppia ECU, sensori/valvole dettagliati, guasti completi del veicolo e calibrazione OEM restano aperti. Le verifiche managed e Standard non provano l'accettazione reale Unity Editor/Play/Player/IL2CPP.
 
@@ -302,7 +302,7 @@ Sono controlli di ricerca e i parametri restano `unverified`. Coordinamento dell
 
 `liquid_rail_feed` associa un iniettore liquido a una pompa volumetrica esistente e a un confine esplicito di materia/calore. Il nodo di uscita idraulica deve corrispondere alla cedevolezza e alla pressione assoluta iniziale del rail. Pompa e iniettore possiedono questo nodo; altri percorsi fluidi non contabilizzati sono rifiutati.
 
-v40 conserva collegamenti e temperatura sorgente e legge v1-v39. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
+v41 conserva collegamenti e temperatura sorgente e legge v1-v40. Scambio analitico albero/pressione, raffinamento ODE simultaneo indipendente, miscelazione termica, bilanci massa/combustibile/energia/volume, ritorno e rollback completo hanno verifiche separate.
 
 Serbatoio rigido miscelato, liquido incomprimibile e gas ideale. Sloshing/forma idrostatica, termodinamica delle miscele reali, cavitazione, mappe misurate pompa/valvola, calibrazione OEM e Unity Editor/Play/Player/IL2CPP reale restano aperti. Parametri `unverified`.
 
@@ -409,3 +409,11 @@ Un nodo `relaxing_fuel` ha una frazione massica di vapore indipendente. Liquido 
 Eseguire `relaxing-fuel-evaporation` o `relaxing-fuel-duct`. Osservare frazioni effettiva e di equilibrio, affinità, entropia di fase, bilanci di vapore alle porte e residuo globale. Le storie di evaporazione e condensazione separano per segno il trasferimento netto della sorgente di ogni passo accettato, senza contare i flussi microscopici lordi. Le prove includono soluzione esponenziale indipendente, derivate entropiche, acustica congelata, limite rigido di equilibrio, autoraffinamento temporale e raffinamento spaziale acustico lineare indipendente. Transazioni, riproduzione portatile e MCP reale sono verificati separatamente; i numeri sono nelle prove di validazione.
 
 [Rilassamento di fase del combustibile a velocità finita](RELAXING_FUEL.it.md)
+
+## Pompe a combustibile con rilassamento e dosaggio congelato
+
+Un `compressible_fuel_chamber` può controllare il volume di un serbatoio `relaxing_fuel`. Il lavoro reversibile dell’albero mantiene fissa la frazione di vapore; il rilassamento chimico è una sorgente separata che conserva energia. Un `compressible_fuel_nozzle` collega due serbatoi rilassanti con `phase_mode` su `frozen`, trasportando massa totale, vapore ed entalpia di ristagno. Un ago fisico con bobina, molla e battuta può dosare l’apertura.
+
+Eseguire `relaxing-fuel-chamber` o `relaxing-pump-needle`. Osservare volume/lavoro, frazioni effettiva e di equilibrio, entropia di fase, `total_vapor_delivered`, inventari alle porte e residuo globale di vapore. Si confrontano adiabatiche pure, quadratura indipendente della pressione a frazione fissa, lavoro infinitesimo, ciclo reversibile e ODE indipendente dell’albero con vapore ideale. Raffinamento accoppiato, tempo di sorgente condiviso, bilanci completi, annullamento, rollback, rami, allocazioni, riproduzione portatile e MCP reale sono verificati separatamente. I numeri sono nelle prove di validazione.
+
+[Pompe a combustibile con rilassamento e dosaggio congelato](RELAXING_FUEL_BOUNDARIES.it.md)

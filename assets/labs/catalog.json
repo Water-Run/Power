@@ -396,6 +396,18 @@
       "asset_name": "RelaxingFuelDuct",
       "display_name": "Finite-rate phase-relaxing fuel duct laboratory",
       "agent_example": true
+    },
+    {
+      "name": "relaxing-fuel-chamber",
+      "asset_name": "RelaxingFuelChamber",
+      "display_name": "Finite-rate shaft-driven fuel chamber laboratory",
+      "agent_example": true
+    },
+    {
+      "name": "relaxing-pump-needle",
+      "asset_name": "RelaxingPumpNeedle",
+      "display_name": "Finite-rate fuel pump and physical needle laboratory",
+      "agent_example": true
     }
   ]
 }

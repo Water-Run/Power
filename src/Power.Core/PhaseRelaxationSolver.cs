@@ -17,8 +17,22 @@ public sealed partial class Simulation
                 foreach(int slot in duct.Ports){speed=Math.Max(speed,Math.Abs(state.Momentum[slot]/state.Mass[slot])+_model.CompressibleFuels[slot].Law.AcousticSpeedBoundMetersPerSecond);volume=Math.Min(volume,_model.CompressibleVolume(state,slot));}
                 h=Math.Min(h,.2*volume/(duct.Area*speed));
             }
+            if(_model.HasRelaxingFuelBoundaries&&_compressibleNozzles is not null)
+            {
+                foreach(var nozzle in _model.CompressibleNozzles)
+                {
+                    double opening=CompressibleNozzleSolver.Opening(nozzle,s.Inputs,s.X);if(opening==0)continue;
+                    if(!EquilibriumFuelDuctSolver.Point(_model,state,nozzle.A,out var a)||!EquilibriumFuelDuctSolver.Point(_model,state,nozzle.B,out var b))return false;
+                    double pressureRounding=128*GearReference.Epsilon*Math.Max(nozzle.Law.Law.LiquidBulkModulusPascals,Math.Max(a.PressurePascals,b.PressurePascals));
+                    if(a.PressurePascals-b.PressurePascals<=pressureRounding)continue;
+                    if(nozzle.Evaluate(a,b.PressurePascals,opening,out var flow,out _)!=FuelNozzleStatus.Success)return false;
+                    if(flow.MassFlowKilogramsPerSecond>0)h=Math.Min(h,.02*Math.Min(state.Mass[nozzle.A],state.Mass[nozzle.B])/flow.MassFlowKilogramsPerSecond);
+                }
+            }
             if(!Numeric.Finite(h)||h<=0||remaining-h==remaining||!AdvancePhaseRelaxation(s,h/2))return false;
+            if(_model.HasRelaxingFuelBoundaries&&_compressibleNozzles is not null&&!_compressibleNozzles.Advance(s.CompressibleNozzles!,state,s.Temperature,s.X,s.Inputs,h/2))return false;
             if(_fuelDucts is not null&&!_fuelDucts.Advance(state,s.Temperature,h))return false;
+            if(_model.HasRelaxingFuelBoundaries&&_compressibleNozzles is not null&&!_compressibleNozzles.Advance(s.CompressibleNozzles!,state,s.Temperature,s.X,s.Inputs,h/2,reverse:true))return false;
             if(!AdvancePhaseRelaxation(s,h/2))return false;
             remaining=h==remaining?0:remaining-h;
         }

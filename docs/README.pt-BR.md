@@ -31,7 +31,7 @@ flowchart LR
 | Documento | O que é |
 |---|---|
 | [API de agente](AGENT_API.pt-BR.md) | Ferramentas MCP, revisões, erros e a sequência de operação |
-| [Formato de asset](ASSET_FORMAT.pt-BR.md) | `.powerasset` v40 e os leitores de v1 a v39 |
+| [Formato de asset](ASSET_FORMAT.pt-BR.md) | `.powerasset` v41 e os leitores de v1 a v40 |
 | [Descarga de combustível com título congelado e receptores finitos](FUEL_DISCHARGE.pt-BR.md) | Estrangulamento com título congelado, deslocamento líquido finito e bomba/agulha físicas em combustão |
 | [Quantidade de movimento da linha finita de combustível líquido](FUEL_INERTIAL_PIPE.pt-BR.md) | Inventário líquido finito, vazão dinâmica, mistura térmica e trabalho conservativo |
 | [Dutos de combustível compressível em equilíbrio](EQUILIBRIUM_FUEL_DUCT.pt-BR.md) | Transporte bifásico compressível conservativo e acústica de equilíbrio |
@@ -39,6 +39,7 @@ flowchart LR
 | [Bocais de combustível compressível com título congelado](COMPRESSIBLE_FUEL_NOZZLE.pt-BR.md) | Bloqueio compressível congelado, descarga finita e agulha real |
 | [Trânsito de combustível em equilíbrio nos bocais](EQUILIBRIUM_FUEL_NOZZLE.pt-BR.md) | Vaporização em equilíbrio, envoltória crítica global e agulha real |
 | [Relaxação de fase do combustível com taxa finita](RELAXING_FUEL.pt-BR.md) | Fração de vapor independente, fase com taxa finita e transporte conservativo |
+| [Bombas de combustível com relaxação e dosagem congelada](RELAXING_FUEL_BOUNDARIES.pt-BR.md) | Reservatórios com relaxação finita, trabalho reversível e dosagem conservativa de vapor congelado |
 | [Referência de quantidade de movimento na entrada líquida](LIQUID_COLUMN.pt-BR.md) | Inércia de entrada monofásica, calor de atrito e quantidade de movimento de segunda ordem verificada |
 | [Fronteira Zig nativa](NATIVE_ZIG.pt-BR.md) | Os protótipos Zig arquivados e o ABI versionado |
 

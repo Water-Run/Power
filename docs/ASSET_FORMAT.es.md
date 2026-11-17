@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[Decodificar, recompilar, comprobar la huella]
 ```
 
-## Versión actual 40
+## Versión actual 41
+
+Un `compressible_fuel_chamber` puede controlar el volumen de un depósito `relaxing_fuel`. El trabajo reversible del eje mantiene fija la fracción de vapor; la relajación química es una fuente separada que conserva energía. Un `compressible_fuel_nozzle` conecta dos depósitos relajantes con `phase_mode` en `frozen`, transportando masa total, vapor y entalpía de remanso. Una aguja física con bobina, muelle y tope puede dosificar la apertura.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_boundaries | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| relaxing_nozzle_phase_mode | 1 frozen |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| retained_asset_readers | power.asset.v1..v40 |
+
+[Bombas de combustible con relajación y dosificación congelada](RELAXING_FUEL_BOUNDARIES.es.md)
+
+## Versión conservada 40
 
 Un nodo `relaxing_fuel` tiene una fracción másica de vapor independiente. Líquido y vapor comparten presión, temperatura y velocidad, pero el equilibrio químico requiere un tiempo finito declarado. Un `relaxing_fuel_duct` transporta masa, cantidad de movimiento, energía total y masa de vapor por celdas explícitas. La residencia depende de su geometría y velocidad real.
 

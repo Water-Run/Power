@@ -391,3 +391,15 @@ SHA-256: `95b49037e29e2f6be15291cbb45ea8c053e976aa9e3a0df9a9806a00725bcfac`.
 `RelaxingFuelAssetChecks` verifies its original digest, exact v39 bytes and all
 original/upgraded replay boundaries. Keep these original bytes. The Power! GPL
 license and Unity Linking Exception apply.
+
+## Relaxing fuel duct v40
+
+`relaxing-fuel-duct-v40.powerasset` retains the v40 writer output from commit
+`dd26554d6926d6fd51bea736c3d84685a2f5266a`, copied before changing the encoder
+on 2026-11-17. It retains explicit phase quality, relaxation time and conservative
+vapor transport before relaxing moving chambers and frozen metering boundaries.
+
+SHA-256: `17d1ac4e78cb9835faa8f50b0bae30c4c6d84ecc86e7936ad03ab416e3978d39`.
+`RelaxingBoundaryAssetChecks` verifies the authentic digest, original v40 bytes
+and every original/upgraded replay boundary. Keep these original bytes. The
+Power! GPL license and Unity Linking Exception apply.

@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[Dekodieren, neu kompilieren, Fingerabdruck prüfen]
 ```
 
-## Aktuelle Version 40
+## Aktuelle Version 41
+
+Ein `compressible_fuel_chamber` kann das Volumen eines `relaxing_fuel`-Behälters bestimmen. Reversible Wellenarbeit hält den Dampfmassenanteil fest; chemische Relaxation ist eine getrennte energieerhaltende Quelle. Ein `compressible_fuel_nozzle` verbindet zwei relaxierende Behälter mit `phase_mode` gleich `frozen` und transportiert Gesamtmasse, Dampfmasse und Stagnationsenthalpie. Eine physische Nadel mit Spule, Feder und Anschlag kann die Öffnung dosieren.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_boundaries | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| relaxing_nozzle_phase_mode | 1 frozen |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| retained_asset_readers | power.asset.v1..v40 |
+
+[Relaxierende Kraftstoffpumpen und Dosierung bei eingefrorener Phase](RELAXING_FUEL_BOUNDARIES.de.md)
+
+## Beibehaltene Version 40
 
 Ein `relaxing_fuel`-Knoten führt einen unabhängigen Dampfmassenanteil. Flüssigkeit und Dampf teilen Druck, Temperatur und Geschwindigkeit; chemisches Gleichgewicht benötigt eine erklärte endliche Zeit. Ein `relaxing_fuel_duct` transportiert Masse, Impuls, Gesamtenergie und Dampfmasse durch explizite Zellen. Die Verweilzeit folgt aus Geometrie und tatsächlicher Geschwindigkeit.
 

@@ -2,6 +2,103 @@
 
 [English](VALIDATION.md) · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · **한국어** · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 상변화 완화 연료 펌프와 동결 상 계량
+
+`compressible_fuel_chamber`는 `relaxing_fuel` 저장조의 부피를 제어할 수 있습니다. 가역 축 일은 증기 질량 분율을 고정하며 화학 완화는 별도의 에너지 보존 소스항입니다. `compressible_fuel_nozzle`은 `phase_mode`가 `frozen`일 때 두 완화 저장조를 연결하여 총질량, 증기 질량과 정체 엔탈피를 수송합니다. 실제 솔레노이드, 스프링과 스토퍼가 물리 니들을 통해 개도를 계량할 수 있습니다.
+
+`relaxing-fuel-chamber` 또는 `relaxing-pump-needle`를 실행합니다. 챔버 부피와 일, 실제 및 평형 분율, 상변화 엔트로피, `total_vapor_delivered`, 포트 재고와 전역 증기 잔차를 관찰합니다. 순수 상 단열선, 독립 분율 고정 압력 적분, 미소 일, 가역 사이클과 독립 이상 증기 축 ODE를 비교합니다. 유한 속도 결합 세분화, 공유 저장조 소스 시간, 전체 수지, 취소, 롤백, 분기, 할당, 이식 재생과 실제 MCP는 별도로 검증하며 수치는 검증 증거에 기록합니다.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 601/601 |
+| standard_checks_on_dotnet | 477/477 |
+| actual_mcp_groups | 72/72 |
+| laboratories | 68 |
+| agent_examples | 67 |
+| unchanged_laboratories | 66 |
+| identical_complete_sample_boundaries | 7641 |
+| all_sample_boundaries | 7663 |
+| new_core_groups | 14 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| coupled_transport_order | 1 |
+| ideal_vapor_mechanical_observed_order | 2 |
+| global_cfl | 0.2 |
+| nozzle_inventory_fraction | 0.02 |
+| maximum_global_substeps | 4096 |
+| frozen_work_inverse_iterations | 96 |
+| small_increment_expm1_terms | 20 |
+| asset_version | power.asset.v41 |
+| agent_api_version | 0.46.0 |
+| fingerprint_tag | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| v40_fixture_sha256 | 17d1ac4e78cb9835faa8f50b0bae30c4c6d84ecc86e7936ad03ab416e3978d39 |
+| verification_log_sha256 | 7a62b3ee6738412dd8a996cc76ee864e338f1c3ccb0661f477826464d379cd04 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 68 |
+| schema_negative_cases | 15 |
+| documentation_locales | 10 |
+| documentation_files | 260 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| independent_ideal_vapor_shaft_step_ns | absolute_speed_error_rad_s |
+|---|---|
+| 100000 | 2.867884063562087e-07 |
+| 50000 | 7.169742843871063e-08 |
+| 25000 | 1.7924008943737135e-08 |
+| 12500 | 4.4805972265749006e-09 |
+
+| coupled_temporal_self_refinement_step_ns | reference_step_ns | quality_absolute_error |
+|---|---|---|
+| 4000 | 50 | 3.3151840717060566e-09 |
+| 2000 | 50 | 1.5796856045469099e-09 |
+| 1000 | 50 | 7.557253156598165e-10 |
+| 500 | 50 | 3.546929971953716e-10 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | maximum_sampled_vapor_mass_residual_kg | final_work_on_fluid_j | final_chamber_quality |
+|---|---|---|---|---|---|---|---|
+| relaxing-fuel-chamber | e42f317dc73ba1bb | ef3d05f53148387c | 11 | 1.7763568394002505e-15 | 1.3234889800848443e-23 | -0.013348770030170752 | 0.5814118030618711 |
+| relaxing-pump-needle | c55dcb4161f444ee | b7e1f60030e41448 | 11 | 1.1004572683659397e-08 | 3.1707487240382657e-20 | 0.0043416095880151285 | 0.0005220656468952762 |
+
+| laboratory | final_outlet_mass_kg | final_outlet_vapor_mass_kg | final_nozzle_pair_entropy_j_k |
+|---|---|---|---|
+| relaxing-pump-needle | 5.92118672365094e-05 | 1.5650074303960157e-08 | 2.3206811723437562e-05 |
+
+- `artifacts/reports/relaxing-boundary-final-2026-11-17.log`
+- `artifacts/reports/relaxing-boundary-verify-exit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-evidence-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-baseline-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-schema-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-provenance-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-doc-audit-2026-11-17.json`
+
+분율 고정 엔트로피 관계로 부피 변화 후 압력과 온도를 구합니다. 일은 액체 냉압축 에너지를 포함하며 작은 변위에는 안정적인 증분 함수를 씁니다. 동일한 이산 일이 축 토크를 결정합니다. 각 전역 구간에서 보존 덕트 및 동결 노즐 수송 전후에 각 노드의 상변화 소스항을 한 번씩 적용합니다. 구간은 덕트 CFL과 더 작은 포트 재고의 0.02 비율로 제한하며 최대 4096개입니다. 기계 일과 소스는 분리합니다. 결합 수송은 일차이며 시간 세분화가 필요합니다.
+
+매개변수는 `unverified`입니다. 양쪽 포트는 동일한 도메인과 재료를 사용하며 완화 포트는 평형 통과를 거부합니다. 저장조의 유한 완화는 부피가 없는 노즐 내부의 화학 변화나 체류 시간을 해상하지 않습니다. 상간 미끄럼, 액체 음압 장력, 핵생성 장벽 법칙, 분무, 운반 가스와 연소 수신부는 없습니다. 이동 저장조는 균일 혼합 및 평균 속도 영이며 덕트 내부 셀은 강체이고 소유자는 하나입니다. 임계 거동에서 벗어난 희박 이상 증기, 선언된 양압·온도 범위, 양의 잠열 엔탈피와 분리된 공존 비체적이 필요합니다. 초기 증기 분율은 명시적인 연구 입력입니다. 수치 일치는 실측 보정이나 실제 Unity 인수를 입증하지 않습니다.
+
 ## 2026-11-17: 유한 속도 연료 상변화 완화
 
 `relaxing_fuel` 노드는 독립적인 증기 질량 분율을 가집니다. 액체와 증기는 압력, 온도, 속도를 공유하지만 화학 평형에는 명시된 유한 시간이 필요합니다. `relaxing_fuel_duct`는 명시적인 셀을 통해 질량, 운동량, 총에너지와 증기 질량을 수송합니다. 체류 시간은 셀 형상과 실제 속도에 따라 정해집니다.

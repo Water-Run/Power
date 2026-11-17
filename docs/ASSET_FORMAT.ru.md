@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[Декодирование, перекомпиляция, сверка отпечатка]
 ```
 
-## Текущая версия 40
+## Текущая версия 41
+
+`compressible_fuel_chamber` может задавать объём резервуара `relaxing_fuel`. Обратимая работа вала сохраняет массовую долю пара; химическая релаксация служит отдельным энергосохраняющим источником. `compressible_fuel_nozzle` соединяет два релаксирующих резервуара при `phase_mode` равном `frozen`, перенося общую массу, массу пара и энтальпию торможения. Физическая игла с катушкой, пружиной и упором регулирует открытие.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_boundaries | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| relaxing_nozzle_phase_mode | 1 frozen |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| retained_asset_readers | power.asset.v1..v40 |
+
+[Релаксационные топливные насосы и дозирование с замороженной фазой](RELAXING_FUEL_BOUNDARIES.ru.md)
+
+## Сохранённая версия 40
 
 Узел `relaxing_fuel` имеет независимую массовую долю пара. Жидкость и пар имеют общие давление, температуру и скорость, но химическое равновесие достигается за заданное конечное время. `relaxing_fuel_duct` переносит массу, импульс, полную энергию и массу пара через явные ячейки. Время пребывания определяется геометрией и фактической скоростью.
 

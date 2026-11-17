@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[デコード、再コンパイル、フィンガープリント検査]
 ```
 
-## 現行バージョン 40
+## 現行バージョン 41
+
+`compressible_fuel_chamber` は `relaxing_fuel` 貯槽の体積を制御できます。可逆な軸仕事では蒸気質量分率を固定し、化学緩和はエネルギー保存の独立源項として扱います。`compressible_fuel_nozzle` は `phase_mode` が `frozen` のとき二つの緩和貯槽を結び、全質量、蒸気質量、よどみエンタルピーを輸送します。実際のソレノイド、ばね、ストッパーを備えた物理針弁で開度を計量できます。
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_boundaries | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| relaxing_nozzle_phase_mode | 1 frozen |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| retained_asset_readers | power.asset.v1..v40 |
+
+[相変化緩和燃料ポンプと凍結相計量](RELAXING_FUEL_BOUNDARIES.ja.md)
+
+## 保持バージョン 40
 
 `relaxing_fuel` ノードは独立した蒸気質量分率を持ちます。液体と蒸気は圧力、温度、速度を共有しますが、化学平衡には明示した有限時間を要します。`relaxing_fuel_duct` は明示セルで質量、運動量、全エネルギー、蒸気質量を輸送します。滞留時間はセル形状と実際の流速から決まります。
 

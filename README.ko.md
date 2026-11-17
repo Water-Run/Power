@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 헤드리스 실험"]
     mcp["Power.Mcp — stdio MCP 도구 12개"]
-    assets["Power.Assets — .powerasset v40"]
+    assets["Power.Assets — .powerasset v41"]
     unity["Unity 6.6 스튜디오 — 3D 실험실"]
 
     model --> core
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 모든 샘플 매개변수는 `unverified`입니다. 연구 값이지 교정 측정값이 아닙니다.
 
-아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v40`를 사용하며 이전 자산의 판독기는 유지됩니다.
+아래 실험실은 JSON, CLI, MCP, Studio 가져오기 간에 정의를 공유합니다. 내보내기는 `power.asset.v41`를 사용하며 이전 자산의 판독기는 유지됩니다.
 
 연료 도메인 펌프는 이제 물리 니들과 증기 질량분율 동결 토출을 통해 유한 액체 체적 연소 수용실에 공급합니다. 전체 재고에는 상변화, 배제 일, 제트 운동에너지 및 정지 벽 충격량이 포함됩니다. [증기 질량분율 동결 연료 토출과 유한 수용실](docs/FUEL_DISCHARGE.ko.md) [축 구동 상변화 연료 펌프](docs/FUEL_CHAMBER_PUMP.ko.md)
 
@@ -163,8 +163,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 `relaxing_fuel` 노드는 독립적인 증기 질량 분율을 가집니다. 액체와 증기는 압력, 온도, 속도를 공유하지만 화학 평형에는 명시된 유한 시간이 필요합니다. `relaxing_fuel_duct`는 명시적인 셀을 통해 질량, 운동량, 총에너지와 증기 질량을 수송합니다. 체류 시간은 셀 형상과 실제 속도에 따라 정해집니다. [유한 속도 연료 상변화 완화](docs/RELAXING_FUEL.ko.md)
 
+`compressible_fuel_chamber`는 `relaxing_fuel` 저장조의 부피를 제어할 수 있습니다. 가역 축 일은 증기 질량 분율을 고정하며 화학 완화는 별도의 에너지 보존 소스항입니다. `compressible_fuel_nozzle`은 `phase_mode`가 `frozen`일 때 두 완화 저장조를 연결하여 총질량, 증기 질량과 정체 엔탈피를 수송합니다. 실제 솔레노이드, 스프링과 스토퍼가 물리 니들을 통해 개도를 계량할 수 있습니다. [상변화 완화 연료 펌프와 동결 상 계량](docs/RELAXING_FUEL_BOUNDARIES.ko.md)
+
 <details>
-<summary>사용 가능한 실험실 (66)</summary>
+<summary>사용 가능한 실험실 (68)</summary>
 
 | 예제 이름(`get_example_model`) | 실험실 | 다루는 내용 |
 |---|---|---|
@@ -234,6 +236,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | 평형 플래시, 전역 임계 유속 포락과 실제 니들 |
 | `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | 독립 증기 분율, 유한 속도 상변화와 보존 수송 |
 | `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | 독립 증기 분율, 유한 속도 상변화와 보존 수송 |
+| `relaxing-fuel-chamber` | `assets/labs/relaxing-fuel-chamber.power.json` | 유한 완화 저장조, 가역 축 일과 보존형 동결 증기 계량 |
+| `relaxing-pump-needle` | `assets/labs/relaxing-pump-needle.power.json` | 유한 완화 저장조, 가역 축 일과 보존형 동결 증기 계량 |
 
 </details>
 

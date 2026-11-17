@@ -11,6 +11,8 @@ public sealed partial class CompiledModel
     internal CompiledCompressibleChamber[] CompressibleChambers { get; private set; } = [];
     internal int[] CompressibleChamberByComponent { get; private set; } = [];
     public bool HasCompressibleFuelChambers => CompressibleChambers.Length != 0;
+    internal int RelaxingChamberCount { get; private set; }
+    public bool HasRelaxingFuelBoundaries => RelaxingChamberCount != 0 || RelaxingNozzleCount != 0;
     internal double CompressibleVolume(CompressibleFuelState state, int slot) => state.Volume is null ? Nodes[CompressibleFuels[slot].Node].Storage : state.Volume[slot];
 
     private void CompileCompressibleChambers(ComponentDefinition[] definitions)
@@ -34,6 +36,7 @@ public sealed partial class CompiledModel
             CompressibleChamberByComponent[i] = chambers.Count; chambers.Add(new(i, fuel, Nodes[c.A].Index, geometry));
         }
         CompressibleChambers = chambers.ToArray();
+        RelaxingChamberCount = chambers.Count(c => CompressibleFuels[c.Fuel].Relaxation is not null);
     }
     internal bool CompressibleChamberWork(int slot, CompressibleFuelState state, double oldAngle, double delta,
         out CompressibleFuelWorkTransfer work, out double torque, out double nextVolume)
@@ -43,7 +46,11 @@ public sealed partial class CompiledModel
             8 * GearReference.Epsilon * Math.Max(Math.Abs(oldAngle), Math.Abs(oldAngle + delta)) > CylinderSolver.MaxAngleStepRadians) return false;
         var chamber = CompressibleChambers[slot]; double previous = state.Volume![chamber.Fuel];
         nextVolume = delta == 0 ? previous : chamber.Geometry.ReferenceVolumeAt(oldAngle + delta);
-        if (CompressibleFuels[chamber.Fuel].Law.AdiabaticVolume(state.Mass[chamber.Fuel], state.Energy[chamber.Fuel], previous, nextVolume, out work) != FuelVolumeStatus.Success) return false;
+        var fuel = CompressibleFuels[chamber.Fuel];
+        FuelVolumeStatus status = fuel.Relaxation is {} relaxing
+            ? relaxing.AdiabaticVolume(state.Mass[chamber.Fuel], state.Energy[chamber.Fuel], previous, nextVolume, state.VaporMass![chamber.Fuel] / state.Mass[chamber.Fuel], out work)
+            : fuel.Law.AdiabaticVolume(state.Mass[chamber.Fuel], state.Energy[chamber.Fuel], previous, nextVolume, out work);
+        if (status != FuelVolumeStatus.Success) return false;
         torque = delta == 0 ? work.Fluid.PressurePascals * chamber.Geometry.VolumeDerivativeAt(oldAngle) : -work.EnergyChangeJoules / delta;
         return Numeric.Finite(torque);
     }

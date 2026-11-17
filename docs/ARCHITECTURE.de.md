@@ -250,7 +250,7 @@ Die [Baugruppe der AT-Ansteuerung](AT_HYDRAULIC_ACTUATION.de.md) senkt 1..6 erkl
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v40 speichert Routen, Verstärkungen und Uhren und liest v1-v39.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v41 speichert Routen, Verstärkungen und Uhren und liest v1-v40.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -260,7 +260,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v40 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v39. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v41 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v40. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -361,3 +361,11 @@ Der Abschluss übernimmt das Kaltpotential der kompressiblen Flüssigkeit und de
 Konservative Rusanov-Flüsse transportieren vier Felder. Jedes globale CFL-Intervall verwendet eine halbe lokale Phasenquelle, Transport und eine halbe Quelle. Gemeinsame Behälter erhalten jede Quelle einmal, unabhängig von der Kanalzahl. Der Quellverlauf ist für isolierte Zustände bei festem Volumen exakt; der gekoppelte Transport bleibt erster Ordnung. CFL nutzt die Schallgeschwindigkeitsgrenze bei eingefrorenem Anteil. Phasen- und Kanalentropie werden getrennt geprüft. Unzulässige Zustände setzen den gesamten Stapel zurück.
 
 [Kraftstoff-Phasenrelaxation mit endlicher Rate](RELAXING_FUEL.de.md)
+
+## Relaxierende Kraftstoffpumpen und Dosierung bei eingefrorener Phase
+
+Ein `compressible_fuel_chamber` kann das Volumen eines `relaxing_fuel`-Behälters bestimmen. Reversible Wellenarbeit hält den Dampfmassenanteil fest; chemische Relaxation ist eine getrennte energieerhaltende Quelle. Ein `compressible_fuel_nozzle` verbindet zwei relaxierende Behälter mit `phase_mode` gleich `frozen` und transportiert Gesamtmasse, Dampfmasse und Stagnationsenthalpie. Eine physische Nadel mit Spule, Feder und Anschlag kann die Öffnung dosieren.
+
+Die Entropiebeziehung bei festem Anteil bestimmt Druck und Temperatur nach der Volumenänderung. Die Arbeit enthält kalte Flüssigkeitskompression und nutzt stabile Inkrementfunktionen für kleine Bewegungen. Dieselbe diskrete Arbeit treibt das Wellenmoment. Jedes globale Intervall wendet die Phasenquelle jedes Knotens einmal um den konservativen Kanal- und eingefrorenen Düsentransport an. Kanal-CFL und 0.02 des kleineren Portinventars begrenzen Intervalle; höchstens 4096 sind erlaubt. Mechanische Arbeit und Quelle bleiben getrennt. Gekoppelter Transport bleibt erster Ordnung und benötigt zeitliche Verfeinerung.
+
+[Relaxierende Kraftstoffpumpen und Dosierung bei eingefrorener Phase](RELAXING_FUEL_BOUNDARIES.de.md)

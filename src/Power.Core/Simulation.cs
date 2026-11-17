@@ -122,7 +122,7 @@ public sealed partial class Simulation
                 FuelDischarges = model.HasFuelDischarge ? new(model.FuelDischarges.Length) : null,
                 FuelPipes = model.HasFuelPipes ? new(model.FuelPipes.Length) : null,
                 CompressibleFuel = model.CompressibleFuels.Length != 0 ? new(model.CompressibleFuels.Length, model.FuelDucts.Length, model.HasCompressibleFuelChambers,model.HasRelaxingFuel) : null,
-                CompressibleNozzles = model.HasCompressibleFuelNozzles ? new(model.CompressibleNozzles.Length,model.HasEquilibriumFuelNozzles) : null,
+                CompressibleNozzles = model.HasCompressibleFuelNozzles ? new(model.CompressibleNozzles.Length,model.HasEquilibriumFuelNozzles,model.RelaxingNozzleCount!=0) : null,
                 CompressibleChambers = model.HasCompressibleFuelChambers ? new(model.CompressibleChambers.Length) : null,
                 FuelChambers = model.HasFuelChambers ? new(model.FuelChambers.Length) : null,
                 Fuel = model.HasEquilibriumFuelNetwork ? new(model.FuelVolumes.Length, model.FuelLinks.Length, model.HasFuelChambers) : null,
@@ -483,8 +483,8 @@ public sealed partial class Simulation
     private bool Interval(State s, double dt, CancellationToken cancellation, out bool crossing)
     {
         crossing = false;
-        if (_compressibleNozzles is not null && !_compressibleNozzles.Advance(s.CompressibleNozzles!,s.CompressibleFuel!,s.Temperature,s.X,s.Inputs,dt/2)) return false;
-        if (_model.HasCompressibleFuelChambers && _fuelDucts is not null && !AdvanceDuctInterval(s,dt/2)) return false;
+        if (!_model.HasRelaxingFuelBoundaries && _compressibleNozzles is not null && !_compressibleNozzles.Advance(s.CompressibleNozzles!,s.CompressibleFuel!,s.Temperature,s.X,s.Inputs,dt/2)) return false;
+        if ((_model.HasRelaxingFuelBoundaries || _model.HasCompressibleFuelChambers && _fuelDucts is not null) && !AdvanceDuctInterval(s,dt/2)) return false;
         if ((_model.HasFuelChambers || _model.HasFuelPipes) && !_fuel!.Advance(s.Fuel!, s.Temperature, s.Inputs, dt / 2)) return false;
         if (_fuelPipes is not null && !_fuelPipes.Advance(s.FuelPipes!, s.Fuel!, s.Temperature, dt / 2)) return false;
         double work = 0, heat = 0;
@@ -757,8 +757,8 @@ public sealed partial class Simulation
         }
         if (_fuelPipes is not null && !_fuelPipes.Advance(s.FuelPipes!, s.Fuel!, s.Temperature, dt / 2, reverse: true)) return false;
         if (_fuel is not null && !_fuel.Advance(s.Fuel!, s.Temperature, s.Inputs, _model.HasFuelChambers || _model.HasFuelPipes ? dt / 2 : dt)) return false;
-        if((_fuelDucts is not null||_model.HasRelaxingFuel)&&!AdvanceDuctInterval(s,_model.HasCompressibleFuelChambers&&_fuelDucts is not null?dt/2:dt))return false;
-        if (_compressibleNozzles is not null && !_compressibleNozzles.Advance(s.CompressibleNozzles!,s.CompressibleFuel!,s.Temperature,s.X,s.Inputs,dt/2,reverse:true)) return false;
+        if((_fuelDucts is not null||_model.HasRelaxingFuel)&&!AdvanceDuctInterval(s,_model.HasRelaxingFuelBoundaries||_model.HasCompressibleFuelChambers&&_fuelDucts is not null?dt/2:dt))return false;
+        if (!_model.HasRelaxingFuelBoundaries && _compressibleNozzles is not null && !_compressibleNozzles.Advance(s.CompressibleNozzles!,s.CompressibleFuel!,s.Temperature,s.X,s.Inputs,dt/2,reverse:true)) return false;
         Numeric.Accumulate(work, ref s.Work, ref s.WorkCorrection);
         Numeric.Accumulate(heat, ref s.Heat, ref s.HeatCorrection);
         if (_gasSolver is not null)
@@ -1221,7 +1221,7 @@ public sealed partial class Simulation
                     var state=_state.CompressibleNozzles!;var d=_model.CompressibleNozzles[nozzleSlot];
                     int history=b.Field switch{Field.TotalFuelDelivered=>0,Field.TransportEnergy=>1,Field.JetKineticEnergy=>2,Field.HeatRejected=>3,Field.JetImpulse=>4,Field.EntropyProduced=>5,_=>-1};
                     int last=b.Field switch{Field.MassFlow=>0,Field.Force=>1,Field.ThroatPressure=>2,Field.ExitTemperature=>3,Field.ExitVelocity=>4,Field.Choked=>5,Field.VaporMassFraction=>6,_=>-1};
-                    value=b.Field==Field.FluxRelativeUncertainty?state.Uncertainty![nozzleSlot]:history>=0?state.History[nozzleSlot,history]:last>=0?state.Last[nozzleSlot,last]:b.Field==Field.FluidHeat?state.History[nozzleSlot,2]-state.History[nozzleSlot,3]:CompressibleNozzleSolver.Opening(d,_state.Inputs,_state.X);
+                    value=b.Field==Field.TotalVaporDelivered?state.VaporDelivered![nozzleSlot]:b.Field==Field.FluxRelativeUncertainty?state.Uncertainty![nozzleSlot]:history>=0?state.History[nozzleSlot,history]:last>=0?state.Last[nozzleSlot,last]:b.Field==Field.FluidHeat?state.History[nozzleSlot,2]-state.History[nozzleSlot,3]:CompressibleNozzleSolver.Opening(d,_state.Inputs,_state.X);
                     destination[i]=new(Channels.Output(b.ObjectId,b.Field),value);continue;
                 }
                 int compressibleChamber = b.IsComponent ? _model.CompressibleChamberByComponent[b.Index] : -1;

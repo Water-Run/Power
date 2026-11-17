@@ -493,7 +493,7 @@ remain separate from AT feedback/control and measured valve-body acceptance.
 
 `at_controller` accepts an integer requested range in [-1,4]; zero is neutral. It owns five fill/drain actuator pairs and optional converter lockup. Route order is carrier input, small-sun input, large-sun input, carrier brake, large-sun brake, then lockup.
 
-The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v40 retains routes, gains and clocks and reads v1-v39.
+The examples `controlled-hydraulic-ravigneaux` and `controlled-fired-hydraulic-ravigneaux` use request channel 900 and controller ID 1400. They retain 99 and 122 reported states within the unchanged 128-state limit. Asset v41 retains routes, gains and clocks and reads v1-v40.
 
 These are research controls and parameters remain `unverified`. Coordinated ECU torque blending, detailed sensors/valves, comprehensive vehicle faults and OEM calibration remain unfinished. Managed and Standard checks do not establish actual Unity Editor/Play/Player/IL2CPP acceptance.
 
@@ -503,7 +503,7 @@ These are research controls and parameters remain `unverified`. Coordinated ECU 
 
 `liquid_rail_feed` pairs a liquid injector with an existing displacement pump and explicit material/thermal boundary. The hydraulic outlet node must match the rail compliance and initial absolute pressure. The paired pump and injector own this pressure node; other untracked fluid paths are rejected.
 
-Asset v40 retains feed links and source temperature and reads v1-v39. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
+Asset v41 retains feed links and source temperature and reads v1-v40. Analytic shaft/pressure exchange, independent simultaneous ODE refinement, caloric mixing, mass/fuel/energy/volume ledgers, reverse return and complete rollback have separate checks.
 
 This is a rigid mixed tank with incompressible liquid and ideal gas. Slosh/hydrostatic shape, real-fluid mixture thermodynamics, cavitation, measured pump/valve maps, OEM calibration and actual Unity Editor/Play/Player/IL2CPP remain open. Parameters remain `unverified`.
 
@@ -604,3 +604,11 @@ The closure retains the compressible liquid cold potential and ideal vapor of th
 Conservative Rusanov fluxes advect four fields. Each global CFL interval applies half a local phase source, transport, then half a source. Shared reservoirs receive each source once, regardless of duct count. The source trajectory is exact for isolated fixed-volume states; the coupled method retains first-order transport error. CFL uses the frozen-quality acoustic bound. Local phase and duct entropy changes are checked separately. Out-of-range states reject the complete batch.
 
 [Finite-rate fuel phase relaxation](RELAXING_FUEL.md)
+
+## Relaxing fuel pumps and frozen metering
+
+A `compressible_fuel_chamber` can own the volume of a `relaxing_fuel` reservoir. Reversible shaft work holds vapor mass quality fixed; chemical relaxation is a separate energy-conserving source. A `compressible_fuel_nozzle` connects two relaxing reservoirs with `phase_mode` set to `frozen`, transporting total mass, vapor mass and stagnation enthalpy. An actual solenoid, spring and stop can meter its opening through a physical needle.
+
+The fixed-quality entropy relation determines pressure and temperature after a volume change. Work includes liquid cold compression energy and uses stable incremental functions for small motion. The identical discrete work drives shaft torque. Global intervals apply each node's phase source once around conservative duct and frozen nozzle transport. Duct CFL and a 0.02 fraction of the smaller nozzle-port inventory bound intervals; at most 4096 intervals are allowed. Mechanical work is separated from source evolution. Coupled transport remains first order and needs temporal refinement.
+
+[Relaxing fuel pumps and frozen metering](RELAXING_FUEL_BOUNDARIES.md)

@@ -2,6 +2,103 @@
 
 **English** · [简体中文](VALIDATION.zh-CN.md) · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: Relaxing fuel pumps and frozen metering
+
+A `compressible_fuel_chamber` can own the volume of a `relaxing_fuel` reservoir. Reversible shaft work holds vapor mass quality fixed; chemical relaxation is a separate energy-conserving source. A `compressible_fuel_nozzle` connects two relaxing reservoirs with `phase_mode` set to `frozen`, transporting total mass, vapor mass and stagnation enthalpy. An actual solenoid, spring and stop can meter its opening through a physical needle.
+
+Run `relaxing-fuel-chamber` or `relaxing-pump-needle`. Observe chamber volume/work, actual and equilibrium quality, phase entropy, `total_vapor_delivered`, port inventories and the global vapor residual. Checks compare pure-phase adiabats, independent fixed-quality pressure quadrature, infinitesimal work, a reversible cycle and an independent ideal-vapor shaft ODE. Coupled finite-rate refinement, shared-reservoir source time, complete ledgers, cancellation, rollback, branches, allocations, portable replay and actual MCP have separate checks. Numerical values are in validation evidence.
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 601/601 |
+| standard_checks_on_dotnet | 477/477 |
+| actual_mcp_groups | 72/72 |
+| laboratories | 68 |
+| agent_examples | 67 |
+| unchanged_laboratories | 66 |
+| identical_complete_sample_boundaries | 7641 |
+| all_sample_boundaries | 7663 |
+| new_core_groups | 14 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| coupled_transport_order | 1 |
+| ideal_vapor_mechanical_observed_order | 2 |
+| global_cfl | 0.2 |
+| nozzle_inventory_fraction | 0.02 |
+| maximum_global_substeps | 4096 |
+| frozen_work_inverse_iterations | 96 |
+| small_increment_expm1_terms | 20 |
+| asset_version | power.asset.v41 |
+| agent_api_version | 0.46.0 |
+| fingerprint_tag | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| v40_fixture_sha256 | 17d1ac4e78cb9835faa8f50b0bae30c4c6d84ecc86e7936ad03ab416e3978d39 |
+| verification_log_sha256 | 7a62b3ee6738412dd8a996cc76ee864e338f1c3ccb0661f477826464d379cd04 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 68 |
+| schema_negative_cases | 15 |
+| documentation_locales | 10 |
+| documentation_files | 260 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| independent_ideal_vapor_shaft_step_ns | absolute_speed_error_rad_s |
+|---|---|
+| 100000 | 2.867884063562087e-07 |
+| 50000 | 7.169742843871063e-08 |
+| 25000 | 1.7924008943737135e-08 |
+| 12500 | 4.4805972265749006e-09 |
+
+| coupled_temporal_self_refinement_step_ns | reference_step_ns | quality_absolute_error |
+|---|---|---|
+| 4000 | 50 | 3.3151840717060566e-09 |
+| 2000 | 50 | 1.5796856045469099e-09 |
+| 1000 | 50 | 7.557253156598165e-10 |
+| 500 | 50 | 3.546929971953716e-10 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | maximum_sampled_vapor_mass_residual_kg | final_work_on_fluid_j | final_chamber_quality |
+|---|---|---|---|---|---|---|---|
+| relaxing-fuel-chamber | e42f317dc73ba1bb | ef3d05f53148387c | 11 | 1.7763568394002505e-15 | 1.3234889800848443e-23 | -0.013348770030170752 | 0.5814118030618711 |
+| relaxing-pump-needle | c55dcb4161f444ee | b7e1f60030e41448 | 11 | 1.1004572683659397e-08 | 3.1707487240382657e-20 | 0.0043416095880151285 | 0.0005220656468952762 |
+
+| laboratory | final_outlet_mass_kg | final_outlet_vapor_mass_kg | final_nozzle_pair_entropy_j_k |
+|---|---|---|---|
+| relaxing-pump-needle | 5.92118672365094e-05 | 1.5650074303960157e-08 | 2.3206811723437562e-05 |
+
+- `artifacts/reports/relaxing-boundary-final-2026-11-17.log`
+- `artifacts/reports/relaxing-boundary-verify-exit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-evidence-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-baseline-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-schema-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-provenance-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-doc-audit-2026-11-17.json`
+
+The fixed-quality entropy relation determines pressure and temperature after a volume change. Work includes liquid cold compression energy and uses stable incremental functions for small motion. The identical discrete work drives shaft torque. Global intervals apply each node's phase source once around conservative duct and frozen nozzle transport. Duct CFL and a 0.02 fraction of the smaller nozzle-port inventory bound intervals; at most 4096 intervals are allowed. Mechanical work is separated from source evolution. Coupled transport remains first order and needs temporal refinement.
+
+Parameters remain `unverified`. Both nozzle ports must use the same domain and material; relaxing ports reject equilibrium transit. Finite bulk phase relaxation does not resolve chemical conversion or residence inside a zero-volume nozzle. The model has no phase slip, liquid tension, nucleation-barrier law, spray, carrier gas or fired receiver. Moving reservoirs are mixed with zero bulk velocity; internal duct cells remain rigid and have one owner. Use dilute ideal vapor away from critical behavior, declared positive-pressure/temperature bounds, positive latent enthalpy and separated coexistence volumes. Initial vapor quality is explicit research input. Numerical agreement does not establish measured calibration or actual Unity acceptance.
+
 ## 2026-11-17: Finite-rate fuel phase relaxation
 
 A `relaxing_fuel` node carries independent vapor mass quality. Liquid and vapor share pressure, temperature and velocity, while chemical equilibrium takes a declared finite time. A `relaxing_fuel_duct` transports mass, momentum, total energy and vapor mass through explicit cells. Residence follows cell geometry and actual velocity.

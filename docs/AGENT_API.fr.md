@@ -42,7 +42,7 @@ Windows utilise la même commande `dotnet` et un chemin absolu vers la DLL. Une 
 
 ## Outils et résultats
 
-Dans l'API agent version 0.45.0, `get_example_model` accepte un `name` optionnel, avec `electrothermal` par défaut. `get_capabilities.examples` liste les 65 exemples disponibles, dont les modèles à réservoir fini et recirculation. CLI `list-labs` retourne les 66 laboratoires en JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) ; `thermal-network` est réservé au CLI par conception. Les capacités annoncent aussi composants, fidélité, limites du solveur et bornes d'entrée. Les exports utilisent `power.asset.v40`, avec lecteurs v1-v39 conservés. Validation et création de session retournent les canaux et unités. Des KPI de laboratoire réussis ne constituent pas un groupe motopropulseur complet ou calibré.
+Dans l'API agent version 0.46.0, `get_example_model` accepte un `name` optionnel, avec `electrothermal` par défaut. `get_capabilities.examples` liste les 67 exemples disponibles, dont les modèles à réservoir fini et recirculation. CLI `list-labs` retourne les 68 laboratoires en JSON [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) ; `thermal-network` est réservé au CLI par conception. Les capacités annoncent aussi composants, fidélité, limites du solveur et bornes d'entrée. Les exports utilisent `power.asset.v41`, avec lecteurs v1-v40 conservés. Validation et création de session retournent les canaux et unités. Des KPI de laboratoire réussis ne constituent pas un groupe motopropulseur complet ou calibré.
 
 | Outil | Rôle |
 |---|---|
@@ -292,7 +292,7 @@ Les rapports conservent la pression de ligne/chambre, la course, la capacité de
 
 `at_controller` accepte un rapport demandé entier dans [-1,4] ; zéro désigne le point mort. Il commande cinq paires de vannes de remplissage/vidange et le verrouillage facultatif du convertisseur. L'ordre est entrée du porte-satellites, petit soleil, grand soleil, frein du porte-satellites, frein du grand soleil, puis verrouillage.
 
-Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v40 conserve routes, gains et horloges et lit v1-v39.
+Les exemples `controlled-hydraulic-ravigneaux` et `controlled-fired-hydraulic-ravigneaux` utilisent le canal 900 et l'ID 1400. Ils conservent 99 et 122 états déclarés dans la limite inchangée de 128. Le format v41 conserve routes, gains et horloges et lit v1-v40.
 
 Ces commandes sont expérimentales et les paramètres restent `unverified`. Coordination du couple ECU, capteurs/vannes détaillés, défauts véhicule complets et calibration OEM restent à réaliser. Les contrôles gérés et Standard ne valident pas Unity Editor/Play/Player/IL2CPP réel.
 
@@ -302,7 +302,7 @@ Ces commandes sont expérimentales et les paramètres restent `unverified`. Coor
 
 `liquid_rail_feed` associe un injecteur liquide à une pompe volumétrique existante et à une frontière matière/thermique explicite. Le nœud de sortie hydraulique doit correspondre à la compliance et à la pression absolue initiale de la rampe. Pompe et injecteur possèdent ce nœud ; les autres chemins fluides non suivis sont rejetés.
 
-Le format v40 conserve les liens et la température source et lit v1-v39. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
+Le format v41 conserve les liens et la température source et lit v1-v40. Échange analytique arbre/pression, raffinement ODE simultané indépendant, mélange calorique, bilans masse/carburant/énergie/volume, retour inverse et rollback complet ont des contrôles séparés.
 
 Réservoir rigide mélangé, liquide incompressible et gaz idéal. Ballottement/forme hydrostatique, thermodynamique des mélanges réels, cavitation, cartes pompe/vanne mesurées, calibration OEM et Unity Editor/Play/Player/IL2CPP réel restent ouverts. Paramètres `unverified`.
 
@@ -409,3 +409,11 @@ Un nœud `relaxing_fuel` possède un titre massique de vapeur indépendant. Liqu
 Exécuter `relaxing-fuel-evaporation` ou `relaxing-fuel-duct`. Observer les titres réel et d’équilibre, l’affinité, l’entropie de phase, les inventaires de vapeur aux ports et le résidu global. Les historiques d’évaporation et de condensation séparent par signe le transfert net de source de chaque pas accepté ; ils ne comptent pas les échanges microscopiques bruts. Les vérifications couvrent la solution exponentielle indépendante, les dérivées d’entropie, l’acoustique gelée, la limite raide d’équilibre, l’auto-raffinement temporel et un raffinement spatial acoustique linéaire indépendant. Transactions, rejeu portable et MCP réel sont vérifiés séparément ; les valeurs figurent dans les preuves de validation.
 
 [Relaxation de phase du carburant à vitesse finie](RELAXING_FUEL.fr.md)
+
+## Pompes à carburant relaxant et dosage à phase gelée
+
+Un `compressible_fuel_chamber` peut imposer le volume d’un réservoir `relaxing_fuel`. Le travail réversible de l’arbre conserve le titre massique de vapeur ; la relaxation chimique est une source séparée conservant l’énergie. Un `compressible_fuel_nozzle` relie deux réservoirs relaxants avec `phase_mode` réglé sur `frozen`, transportant masse totale, vapeur et enthalpie d’arrêt. Bobine, ressort et butée réels peuvent régler l’ouverture par une aiguille physique.
+
+Exécuter `relaxing-fuel-chamber` ou `relaxing-pump-needle`. Observer volume et travail, titres réel et d’équilibre, entropie de phase, `total_vapor_delivered`, inventaires des ports et résidu global de vapeur. Les essais comparent adiabatiques pures, quadrature de pression indépendante à titre fixe, travail infinitésimal, cycle réversible et ODE indépendante d’arbre à vapeur idéale. Raffinement couplé, temps de source des réservoirs partagés, bilans complets, annulation, retour arrière, branches, allocations, rejeu portable et MCP réel sont vérifiés séparément. Les valeurs figurent dans les preuves de validation.
+
+[Pompes à carburant relaxant et dosage à phase gelée](RELAXING_FUEL_BOUNDARIES.fr.md)

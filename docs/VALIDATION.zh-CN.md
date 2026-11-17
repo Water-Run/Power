@@ -2,6 +2,103 @@
 
 [English](VALIDATION.md) · **简体中文** · [Français](VALIDATION.fr.md) · [Русский](VALIDATION.ru.md) · [日本語](VALIDATION.ja.md) · [한국어](VALIDATION.ko.md) · [Deutsch](VALIDATION.de.md) · [Español](VALIDATION.es.md) · [Italiano](VALIDATION.it.md) · [Português](VALIDATION.pt-BR.md)
 
+## 2026-11-17: 相变弛豫燃料泵与冻结相态计量
+
+`compressible_fuel_chamber` 可以控制 `relaxing_fuel` 储腔的体积。可逆轴功保持蒸气质量分数不变，化学弛豫作为独立的能量守恒源项处理。`compressible_fuel_nozzle` 在 `phase_mode` 为 `frozen` 时连接两个弛豫储腔，同时输运总质量、蒸气质量与滞止焓；实际电磁线圈、弹簧和行程限位可通过物理针阀计量开度。
+
+运行 `relaxing-fuel-chamber` 或 `relaxing-pump-needle`。可观察腔体体积与功、实际及平衡质量分数、相变熵、`total_vapor_delivered`、端口库存和全局蒸气残差。检查对照纯相绝热线、独立固定质量分数压力积分、微小位移功、可逆循环及独立理想蒸气轴动力学 ODE；有限速率耦合细化、共享储腔源项时间、完整账本、取消、回滚、分支、分配、资产重放和真实 MCP 分别验证。数值记录在验证证据中。
+
+`dotnet run --file tools/Build.cs -- verify`
+
+| Identifier | Value |
+|---|---|
+| managed_checks | 601/601 |
+| standard_checks_on_dotnet | 477/477 |
+| actual_mcp_groups | 72/72 |
+| laboratories | 68 |
+| agent_examples | 67 |
+| unchanged_laboratories | 66 |
+| identical_complete_sample_boundaries | 7641 |
+| all_sample_boundaries | 7663 |
+| new_core_groups | 14 |
+| new_asset_groups | 2 |
+| new_integrated_groups | 2 |
+| new_actual_mcp_groups | 2 |
+| coupled_transport_order | 1 |
+| ideal_vapor_mechanical_observed_order | 2 |
+| global_cfl | 0.2 |
+| nozzle_inventory_fraction | 0.02 |
+| maximum_global_substeps | 4096 |
+| frozen_work_inverse_iterations | 96 |
+| small_increment_expm1_terms | 20 |
+| asset_version | power.asset.v41 |
+| agent_api_version | 0.46.0 |
+| fingerprint_tag | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| v40_fixture_sha256 | 17d1ac4e78cb9835faa8f50b0bae30c4c6d84ecc86e7936ad03ab416e3978d39 |
+| verification_log_sha256 | 7a62b3ee6738412dd8a996cc76ee864e338f1c3ccb0661f477826464d379cd04 |
+| zig_tests | 16/16 |
+| native_model_cs_groups | 6 |
+| original_baseline_values | 176 |
+| original_baseline_maximum_error | 0 |
+| native_library_sha256 | ad166e83ed17c6c5a397a6b904dc6e7d1ccf474c8f5a1d4a6a1fd003aee2e944 |
+| schema_laboratories | 68 |
+| schema_negative_cases | 15 |
+| documentation_locales | 10 |
+| documentation_files | 260 |
+| calibration | unverified |
+| actual_unity_editor_play_player_il2cpp | unverified |
+
+| independent_ideal_vapor_shaft_step_ns | absolute_speed_error_rad_s |
+|---|---|
+| 100000 | 2.867884063562087e-07 |
+| 50000 | 7.169742843871063e-08 |
+| 25000 | 1.7924008943737135e-08 |
+| 12500 | 4.4805972265749006e-09 |
+
+| coupled_temporal_self_refinement_step_ns | reference_step_ns | quality_absolute_error |
+|---|---|---|
+| 4000 | 50 | 3.3151840717060566e-09 |
+| 2000 | 50 | 1.5796856045469099e-09 |
+| 1000 | 50 | 7.557253156598165e-10 |
+| 500 | 50 | 3.546929971953716e-10 |
+
+| laboratory | fingerprint | final_state_hash | sample_boundaries | maximum_sampled_energy_residual_j | maximum_sampled_vapor_mass_residual_kg | final_work_on_fluid_j | final_chamber_quality |
+|---|---|---|---|---|---|---|---|
+| relaxing-fuel-chamber | e42f317dc73ba1bb | ef3d05f53148387c | 11 | 1.7763568394002505e-15 | 1.3234889800848443e-23 | -0.013348770030170752 | 0.5814118030618711 |
+| relaxing-pump-needle | c55dcb4161f444ee | b7e1f60030e41448 | 11 | 1.1004572683659397e-08 | 3.1707487240382657e-20 | 0.0043416095880151285 | 0.0005220656468952762 |
+
+| laboratory | final_outlet_mass_kg | final_outlet_vapor_mass_kg | final_nozzle_pair_entropy_j_k |
+|---|---|---|---|
+| relaxing-pump-needle | 5.92118672365094e-05 | 1.5650074303960157e-08 | 2.3206811723437562e-05 |
+
+- `artifacts/reports/relaxing-boundary-final-2026-11-17.log`
+- `artifacts/reports/relaxing-boundary-verify-exit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-evidence-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-baseline-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-schema-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-provenance-audit-2026-11-17.json`
+- `artifacts/reports/relaxing-boundary-doc-audit-2026-11-17.json`
+
+固定质量分数的熵关系确定体积变化后的压力与温度。做功包括液体冷压缩能，小位移采用稳定的增量函数计算，同一离散功用于轴转矩。每个全局区间在守恒管道及冻结喷嘴输运前后，对各节点仅施加一次相变源项。区间受管道 CFL 和喷嘴两端较小库存的 0.02 比例限制，最多允许 4096 个区间。机械做功与源项演化分开；耦合输运仍为一阶，需要时间细化检查。
+
+参数仍为 `unverified`。喷嘴两端必须具有相同域和材料，弛豫端口拒绝平衡输运模式。有限速率体相弛豫不表示已解析零容积喷嘴内部的化学转化或停留时间。模型不含相间滑移、液体负压张力、成核势垒定律、喷雾、载气或燃烧接收腔。运动储腔保持均匀混合且整体流速为零；管道内部单元仍为刚性且各有一个所有者。仅适用远离临界行为的稀薄理想蒸气，并须满足材料声明的正压、温度边界、正潜焓与分离的共存比容。初始蒸气质量分数是显式研究输入。数值吻合不证明实测标定或实际 Unity 验收。
+
 ## 2026-11-17: 有限速率燃料相变弛豫
 
 `relaxing_fuel` 节点具有独立的蒸气质量分数。液体与蒸气共享压力、温度和速度，化学平衡则需要显式声明的有限时间。`relaxing_fuel_duct` 通过显式网格输运质量、动量、总能量和蒸气质量；停留时间由网格几何与实际流速决定。

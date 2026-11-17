@@ -74,7 +74,7 @@ Windows verwendet denselben Befehl `dotnet` und einen absoluten Pfad zur DLL. Ei
 
 ## Werkzeuge und Ergebnisse
 
-In Agent-API-Version 0.45.0 akzeptiert `get_example_model` einen optionalen `name` mit Standardwert `electrothermal`. `get_capabilities.examples` listet alle 65 Beispiele einschließlich endlicher Tanks und Kraftstoffumlauf auf. CLI `list-labs` liefert alle 66 Labore als [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json)-JSON; `thermal-network` ist konstruktionsgemäß nur im CLI verfügbar. Die Fähigkeiten nennen auch Komponenten, Modelltreue, Solvergrenzen und Eingabegrenzen. Exporte nutzen `power.asset.v40` mit erhaltenen v1-v39-Lesern. Validierung und Sitzungserstellung liefern Ausgabekanäle und Einheiten. Bestandene Labor-KPIs belegen keinen vollständigen oder kalibrierten Antriebsstrang.
+In Agent-API-Version 0.46.0 akzeptiert `get_example_model` einen optionalen `name` mit Standardwert `electrothermal`. `get_capabilities.examples` listet alle 67 Beispiele einschließlich endlicher Tanks und Kraftstoffumlauf auf. CLI `list-labs` liefert alle 68 Labore als [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json)-JSON; `thermal-network` ist konstruktionsgemäß nur im CLI verfügbar. Die Fähigkeiten nennen auch Komponenten, Modelltreue, Solvergrenzen und Eingabegrenzen. Exporte nutzen `power.asset.v41` mit erhaltenen v1-v40-Lesern. Validierung und Sitzungserstellung liefern Ausgabekanäle und Einheiten. Bestandene Labor-KPIs belegen keinen vollständigen oder kalibrierten Antriebsstrang.
 
 | Werkzeug | Aufgabe |
 |---|---|
@@ -586,7 +586,7 @@ Verträge. Der Graph verwendet bestehende Datensätze von Asset v24, kein neues 
 
 `at_controller` akzeptiert einen ganzzahligen Sollgang in [-1,4]; null bedeutet Neutral. Er besitzt fünf Füll-/Ablassventilpaare und optional die Wandlerüberbrückung. Die Reihenfolge lautet Trägereingang, kleines Sonnenrad, großes Sonnenrad, Trägerbremse, große Sonnenradbremse, dann Überbrückung.
 
-`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v40 speichert Routen, Verstärkungen und Uhren und liest v1-v39.
+`controlled-hydraulic-ravigneaux` und `controlled-fired-hydraulic-ravigneaux` verwenden Wunschkanal 900 und Regler-ID 1400. Sie behalten 99 und 122 gemeldete Zustände innerhalb der unveränderten Grenze 128. v41 speichert Routen, Verstärkungen und Uhren und liest v1-v40.
 
 Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoordination, detaillierte Sensoren/Ventile, umfassende Fahrzeugfehler und OEM-Kalibrierung sind offen. Managed- und Standard-Prüfungen belegen keine tatsächliche Unity Editor/Play/Player/IL2CPP-Abnahme.
 
@@ -596,7 +596,7 @@ Diese Regelung ist Forschung; Parameter bleiben `unverified`. ECU-Drehmomentkoor
 
 `liquid_rail_feed` verbindet einen Flüssiginjektor mit einer bestehenden Verdrängerpumpe und expliziter Stoff-/Wärmegrenze. Der hydraulische Auslassknoten muss Schienenkompliance und anfänglichem Absolutdruck entsprechen. Pumpe und Injektor besitzen diesen Knoten; andere unbilanzierte Fluidpfade werden abgelehnt.
 
-v40 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v39. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
+v41 speichert Speiseverknüpfungen und Quellentemperatur und liest v1-v40. Analytischer Wellen-/Druckaustausch, unabhängige simultane ODE-Verfeinerung, Wärmemischung, Masse/Kraftstoff/Energie/Volumenbilanzen, Rückstrom und vollständiges rollback haben eigene Prüfungen.
 
 Starrer gemischter Tank, inkompressible Flüssigkeit und ideales Gas. Schwappen/hydrostatische Form, Thermodynamik realer Gemische, Kavitation, gemessene Pumpen/Ventilkennfelder, OEM-Kalibrierung und echte Unity Editor/Play/Player/IL2CPP bleiben offen. Parameter `unverified`.
 
@@ -703,3 +703,11 @@ Ein `relaxing_fuel`-Knoten führt einen unabhängigen Dampfmassenanteil. Flüssi
 `relaxing-fuel-evaporation` oder `relaxing-fuel-duct` ausführen. Beobachtbar sind tatsächlicher und Gleichgewichtsanteil, Affinität, Phasenentropie, Dampfbilanzen an Ports und globales Dampfresiduum. Verdampfungs- und Kondensationshistorien trennen den Nettoquelltransfer jedes akzeptierten Takts nach Vorzeichen; sie zählen keine mikroskopischen Bruttoströme. Prüfungen umfassen die unabhängige Exponentiallösung, Entropieableitungen, eingefrorene Akustik, den steifen Gleichgewichtsgrenzfall, zeitliche Selbstverfeinerung und unabhängige linear-akustische Gitterverfeinerung. Transaktionen, portables Replay und tatsächliches MCP werden getrennt geprüft; Zahlen stehen in den Validierungsnachweisen.
 
 [Kraftstoff-Phasenrelaxation mit endlicher Rate](RELAXING_FUEL.de.md)
+
+## Relaxierende Kraftstoffpumpen und Dosierung bei eingefrorener Phase
+
+Ein `compressible_fuel_chamber` kann das Volumen eines `relaxing_fuel`-Behälters bestimmen. Reversible Wellenarbeit hält den Dampfmassenanteil fest; chemische Relaxation ist eine getrennte energieerhaltende Quelle. Ein `compressible_fuel_nozzle` verbindet zwei relaxierende Behälter mit `phase_mode` gleich `frozen` und transportiert Gesamtmasse, Dampfmasse und Stagnationsenthalpie. Eine physische Nadel mit Spule, Feder und Anschlag kann die Öffnung dosieren.
+
+`relaxing-fuel-chamber` oder `relaxing-pump-needle` ausführen. Beobachtbar sind Kammervolumen/-arbeit, tatsächlicher und Gleichgewichtsanteil, Phasenentropie, `total_vapor_delivered`, Portinventare und globales Dampfresiduum. Prüfungen vergleichen reine Adiabaten, unabhängige Druckquadratur bei festem Anteil, infinitesimale Arbeit, reversiblen Zyklus und unabhängige Wellen-ODE mit idealem Dampf. Gekoppelte Verfeinerung, Quellzeit gemeinsamer Behälter, vollständige Bilanzen, Abbruch, Rücksetzung, Zweige, Allokationen, portables Replay und tatsächliches MCP werden getrennt geprüft. Zahlen stehen in den Validierungsnachweisen.
+
+[Relaxierende Kraftstoffpumpen und Dosierung bei eingefrorener Phase](RELAXING_FUEL_BOUNDARIES.de.md)

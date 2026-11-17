@@ -1,0 +1,152 @@
+{
+  "schema": "power.model.v1",
+  "description": "Unverified fixed-quality reversible shaft work coupled to finite chemical phase relaxation. Common phase pressure, temperature and velocity; compressible zero-thermal-expansion liquid and ideal vapor. Phase transfer preserves internal energy and is checked separately from entropy-preserving volume work. No measured nucleation law, liquid tension, spray, carrier gas or fired receiver.",
+  "step_ns": 10000,
+  "nodes": [
+    {
+      "id": 1,
+      "domain": "relaxing_fuel",
+      "storage": {
+        "value": 1e-07,
+        "unit": "m3"
+      },
+      "position": {
+        "value": 2.5747761924154393e-07,
+        "unit": "kg"
+      },
+      "initial": {
+        "value": 450,
+        "unit": "k"
+      },
+      "initial_velocity": {
+        "value": 0,
+        "unit": "m_s"
+      },
+      "initial_vapor_mass_fraction": {
+        "value": 0.3,
+        "unit": "fraction"
+      },
+      "fuel": {
+        "liquid_density": {
+          "value": 750,
+          "unit": "kg_m3"
+        },
+        "maximum_pressure": {
+          "value": 20000000.0,
+          "unit": "pa"
+        },
+        "gas_constant": {
+          "value": 287,
+          "unit": "j_kg_k"
+        },
+        "vapor_specific_heat": {
+          "value": 717.5,
+          "unit": "j_kg_k"
+        },
+        "liquid_specific_heat": {
+          "value": 2000,
+          "unit": "j_kg_k"
+        },
+        "reference_temperature": {
+          "value": 400,
+          "unit": "k"
+        },
+        "latent_internal_energy": {
+          "value": 300000,
+          "unit": "j_kg"
+        },
+        "reference_pressure": {
+          "value": 100000.0,
+          "unit": "pa"
+        },
+        "minimum_temperature": {
+          "value": 200,
+          "unit": "k"
+        },
+        "maximum_temperature": {
+          "value": 600,
+          "unit": "k"
+        },
+        "lower_heating_value": {
+          "value": 44000000.0,
+          "unit": "j_kg"
+        },
+        "liquid_bulk_modulus": {
+          "value": 1500000000.0,
+          "unit": "pa"
+        },
+        "phase_relaxation_time_ns": 1000000
+      }
+    },
+    {
+      "id": 4,
+      "domain": "rotational",
+      "storage": {
+        "value": 1e-05,
+        "unit": "kg_m2"
+      },
+      "position": {
+        "value": 0,
+        "unit": "rad"
+      },
+      "initial": {
+        "value": 100,
+        "unit": "rad_s"
+      }
+    }
+  ],
+  "components": [
+    {
+      "id": 12,
+      "kind": "compressible_fuel_chamber",
+      "node_a": 4,
+      "node_b": 1,
+      "parameters": {
+        "minimum_reference_volume": {
+          "value": 1e-07,
+          "unit": "m3"
+        },
+        "swept_volume": {
+          "value": 2e-07,
+          "unit": "m3"
+        },
+        "phase": {
+          "value": 0,
+          "unit": "rad"
+        }
+      }
+    }
+  ],
+  "experiment": {
+    "duration_ns": 20000000,
+    "sample_every_ns": 2000000,
+    "events": [],
+    "checks": [
+      {
+        "object_id": 0,
+        "field": "energy_residual",
+        "abs_max": 2e-07
+      },
+      {
+        "object_id": 0,
+        "field": "mass_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "fuel_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 0,
+        "field": "vapor_mass_residual",
+        "abs_max": 1e-14
+      },
+      {
+        "object_id": 1,
+        "field": "entropy_produced",
+        "min": 0
+      }
+    ]
+  }
+}

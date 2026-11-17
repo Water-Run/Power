@@ -42,7 +42,7 @@ Windows 使用同一条 `dotnet` 命令,以及指向 DLL 的绝对路径。生�
 
 ## 工具与结果
 
-智能体 API 版本 0.45.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 65 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 66 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v40`，并保留 v1-v39 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
+智能体 API 版本 0.46.0 的 `get_example_model` 接受可选 `name`，默认值为 `electrothermal`。`get_capabilities.examples` 列出全部 67 个示例，包括有限油箱和循环燃油模型。CLI `list-labs` 以 [`power.laboratory_catalog.v1`](../schemas/power.laboratory_catalog.v1.schema.json) JSON 返回全部 68 个实验室；`thermal-network` 按设计仅供 CLI 使用。能力还声明支持的元件、保真度、求解器限制和输入界限。导出采用 `power.asset.v41`，并保留 v1-v40 读取器。验证和会话创建返回输出通道及单位。实验室 KPI 通过不代表完整或已标定的动力总成。
 
 | 工具 | 作用 |
 |---|---|
@@ -292,7 +292,7 @@ flowchart TD
 
 `at_controller` 接受 [-1,4] 范围内的整数目标挡位；零表示空挡。它管理五组充油/泄压阀以及可选的变矩器锁止支路。支路顺序为行星架输入、小太阳轮输入、大太阳轮输入、行星架制动、大太阳轮制动，最后是锁止。
 
-示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v40 保留支路、增益和时钟，并可读取 v1-v39。
+示例 `controlled-hydraulic-ravigneaux` 和 `controlled-fired-hydraulic-ravigneaux` 使用请求通道 900、控制器 ID 1400。两者分别保留 99 和 122 个报告状态，未改变 128 状态上限。资产 v41 保留支路、增益和时钟，并可读取 v1-v40。
 
 这是研究控制，参数仍为 `unverified`。协调 ECU 扭矩融合、详细传感器/阀模型、完整车辆故障及 OEM 标定仍待完成。托管和 Standard 检查不能证明实际 Unity Editor/Play/Player/IL2CPP 验收。
 
@@ -302,7 +302,7 @@ flowchart TD
 
 `liquid_rail_feed` 将液体喷射器与现有排量泵及显式质量/热边界配对。液压出口节点必须与燃轨的顺应性和初始绝对压力一致。配对泵和喷射器管理该压力节点；其他未计入的流体路径会被拒绝。
 
-资产 v40 保留补给连接和源温度，并读取 v1-v39。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
+资产 v41 保留补给连接和源温度，并读取 v1-v40。泵轴/压力解析交换、独立联立 ODE 细化、热混合、质量/燃料/能量/体积账本、反向回输与完整回滚各有独立检查。
 
 该模型采用刚性混合油箱、不可压缩液体和理想气体。晃动/静液压形状、真实流体混合物热力学、空化、实测泵阀图谱、OEM 标定及实际 Unity Editor/Play/Player/IL2CPP 仍待完成。参数仍为 `unverified`。
 
@@ -409,3 +409,11 @@ flowchart TD
 运行 `relaxing-fuel-evaporation` 或 `relaxing-fuel-duct`。可观察实际与平衡质量分数、化学亲和势、相变熵、端口蒸气库存和全局蒸气残差。蒸发、凝结历史按每个已接受时间步的净源项转移量正负累计，不表示微观正反向总通量。检查覆盖独立指数解析解、熵导数、冻结声学、刚性平衡极限、时间自细化和独立线性声学网格细化。事务、可移植重放与真实 MCP 分别验证；数值记录在验证证据中。
 
 [有限速率燃料相变弛豫](RELAXING_FUEL.zh-CN.md)
+
+## 相变弛豫燃料泵与冻结相态计量
+
+`compressible_fuel_chamber` 可以控制 `relaxing_fuel` 储腔的体积。可逆轴功保持蒸气质量分数不变，化学弛豫作为独立的能量守恒源项处理。`compressible_fuel_nozzle` 在 `phase_mode` 为 `frozen` 时连接两个弛豫储腔，同时输运总质量、蒸气质量与滞止焓；实际电磁线圈、弹簧和行程限位可通过物理针阀计量开度。
+
+运行 `relaxing-fuel-chamber` 或 `relaxing-pump-needle`。可观察腔体体积与功、实际及平衡质量分数、相变熵、`total_vapor_delivered`、端口库存和全局蒸气残差。检查对照纯相绝热线、独立固定质量分数压力积分、微小位移功、可逆循环及独立理想蒸气轴动力学 ODE；有限速率耦合细化、共享储腔源项时间、完整账本、取消、回滚、分支、分配、资产重放和真实 MCP 分别验证。数值记录在验证证据中。
+
+[相变弛豫燃料泵与冻结相态计量](RELAXING_FUEL_BOUNDARIES.zh-CN.md)

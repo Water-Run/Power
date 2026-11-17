@@ -248,7 +248,7 @@ A [montagem de acionamento da AT](AT_HYDRAULIC_ACTUATION.pt-BR.md) reduz 1..6 al
 
 `at_controller` aceita uma marcha solicitada inteira em [-1,4]; zero indica neutro. Ele controla cinco pares de válvulas de enchimento/drenagem e o bloqueio opcional do conversor. A ordem é entrada do portasatélites, solar pequeno, solar grande, freio do portasatélites, freio do solar grande e bloqueio.
 
-`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v40 preserva rotas, ganhos e relógios e lê v1-v39.
+`controlled-hydraulic-ravigneaux` e `controlled-fired-hydraulic-ravigneaux` usam o canal 900 e o ID 1400. Preservam 99 e 122 estados relatados dentro do limite inalterado de 128. v41 preserva rotas, ganhos e relógios e lê v1-v40.
 
 São controles de pesquisa e os parâmetros continuam `unverified`. Coordenação de torque ECU, sensores/válvulas detalhados, falhas completas do veículo e calibração OEM permanecem pendentes. Verificações managed e Standard não comprovam aceitação real Unity Editor/Play/Player/IL2CPP.
 
@@ -258,7 +258,7 @@ São controles de pesquisa e os parâmetros continuam `unverified`. Coordenaçã
 
 `liquid_rail_feed` associa um injetor líquido a uma bomba volumétrica existente e a uma fronteira explícita de matéria/calor. O nó de saída hidráulica deve corresponder à complacência e pressão absoluta inicial do rail. Bomba e injetor possuem esse nó; outras rotas fluidas não contabilizadas são rejeitadas.
 
-v40 preserva conexões e temperatura da fonte e lê v1-v39. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
+v41 preserva conexões e temperatura da fonte e lê v1-v40. Troca analítica eixo/pressão, refinamento ODE simultâneo independente, mistura térmica, balanços massa/combustível/energia/volume, retorno e rollback completo têm verificações separadas.
 
 Tanque rígido misturado, líquido incompressível e gás ideal. Slosh/forma hidrostática, termodinâmica de misturas reais, cavitação, mapas medidos bomba/válvula, calibração OEM e Unity Editor/Play/Player/IL2CPP real seguem abertos. Parâmetros `unverified`.
 
@@ -359,3 +359,11 @@ O fechamento mantém o potencial frio do líquido compressível e o vapor ideal 
 Fluxos conservativos de Rusanov transportam quatro campos. Cada intervalo CFL global aplica meia fonte local, transporte e meia fonte. Reservatórios compartilhados recebem cada fonte uma vez, independentemente do número de dutos. A fonte é exata para estados isolados de volume fixo; o transporte acoplado mantém erro de primeira ordem. CFL usa o limite acústico de fração congelada. Entropias de fase e duto são verificadas separadamente. Estados fora dos limites revertem o lote inteiro.
 
 [Relaxação de fase do combustível com taxa finita](RELAXING_FUEL.pt-BR.md)
+
+## Bombas de combustível com relaxação e dosagem congelada
+
+Um `compressible_fuel_chamber` pode controlar o volume de um reservatório `relaxing_fuel`. O trabalho reversível do eixo mantém a fração de vapor fixa; a relaxação química é uma fonte separada que conserva energia. Um `compressible_fuel_nozzle` conecta dois reservatórios relaxantes com `phase_mode` em `frozen`, transportando massa total, vapor e entalpia de estagnação. Uma agulha física com bobina, mola e batente pode dosar a abertura.
+
+A relação de entropia com fração fixa determina pressão e temperatura após variar o volume. O trabalho inclui compressão fria do líquido e funções incrementais estáveis para pequenos movimentos. O mesmo trabalho discreto gera o torque do eixo. Cada intervalo global aplica uma vez a fonte de cada nó ao redor do transporte conservativo em duto e bocal congelado. CFL e 0.02 do menor inventário de porta limitam os intervalos, no máximo 4096. Trabalho e fonte ficam separados. O transporte acoplado continua de primeira ordem e exige refinamento temporal.
+
+[Bombas de combustível com relaxação e dosagem congelada](RELAXING_FUEL_BOUNDARIES.pt-BR.md)

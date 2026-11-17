@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — headless experiments"]
     mcp["Power.Mcp — 12 stdio MCP tools"]
-    assets["Power.Assets — .powerasset v40"]
+    assets["Power.Assets — .powerasset v41"]
     unity["Unity 6.6 studio — 3D laboratories"]
 
     model --> core
@@ -119,7 +119,7 @@ The service exposes twelve tools with input and output schemas:
 |---|---|
 | `get_capabilities` | Discover models, limits, time and revision conventions. Start here. |
 | `get_model_schema` | JSON Schema 2020-12 for `power.model.v1` |
-| `get_example_model` | Get an editable synthetic model and experiment (65 examples) |
+| `get_example_model` | Get an editable synthetic model and experiment (67 examples) |
 | `validate_model` | Validate a model without running it; structured repair diagnostics |
 | `run_experiment` | Bounded headless run with batch replay, KPIs, and provenance |
 | `export_model_asset` | Export a portable `.powerasset` |
@@ -147,7 +147,7 @@ A four-range Ravigneaux research graph adds compound planetary paths and a conve
 > [!NOTE]
 > All sample parameters are `unverified` — research values, not calibrated measurements.
 
-The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v40`, with readers for earlier assets retained.
+The laboratories below share definitions across JSON, CLI, MCP, and Studio imports. Exports use `power.asset.v41`, with readers for earlier assets retained.
 
 The fuel-domain pump now feeds a physical needle and frozen-quality discharge into a finite-liquid-volume fired receiver. Complete inventories include phase change, displacement work, jet kinetic energy and stationary-wall impulse. [Frozen-quality fuel discharge and finite receivers](docs/FUEL_DISCHARGE.md) [Shaft-driven phase-resolving fuel pump](docs/FUEL_CHAMBER_PUMP.md)
 
@@ -163,8 +163,10 @@ Set `compressible_fuel_nozzle` `phase_mode` to `equilibrium` for instantaneous h
 
 A `relaxing_fuel` node carries independent vapor mass quality. Liquid and vapor share pressure, temperature and velocity, while chemical equilibrium takes a declared finite time. A `relaxing_fuel_duct` transports mass, momentum, total energy and vapor mass through explicit cells. Residence follows cell geometry and actual velocity. [Finite-rate fuel phase relaxation](docs/RELAXING_FUEL.md)
 
+A `compressible_fuel_chamber` can own the volume of a `relaxing_fuel` reservoir. Reversible shaft work holds vapor mass quality fixed; chemical relaxation is a separate energy-conserving source. A `compressible_fuel_nozzle` connects two relaxing reservoirs with `phase_mode` set to `frozen`, transporting total mass, vapor mass and stagnation enthalpy. An actual solenoid, spring and stop can meter its opening through a physical needle. [Relaxing fuel pumps and frozen metering](docs/RELAXING_FUEL_BOUNDARIES.md)
+
 <details>
-<summary>Available laboratories (66)</summary>
+<summary>Available laboratories (68)</summary>
 
 | Example name (`get_example_model`) | Laboratory | What it exercises |
 |---|---|---|
@@ -234,6 +236,8 @@ A `relaxing_fuel` node carries independent vapor mass quality. Liquid and vapor 
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | Equilibrium flashing, global critical-flux enclosure and actual needle delivery |
 | `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | Independent vapor quality, finite-rate phase change and conservative transport |
 | `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | Independent vapor quality, finite-rate phase change and conservative transport |
+| `relaxing-fuel-chamber` | `assets/labs/relaxing-fuel-chamber.power.json` | Finite-rate pump reservoirs, reversible shaft work and conservative frozen vapor metering |
+| `relaxing-pump-needle` | `assets/labs/relaxing-pump-needle.power.json` | Finite-rate pump reservoirs, reversible shaft work and conservative frozen vapor metering |
 
 </details>
 

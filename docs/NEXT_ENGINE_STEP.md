@@ -22,15 +22,17 @@ Set `compressible_fuel_nozzle` `phase_mode` to `equilibrium` for instantaneous h
 
 A `relaxing_fuel` node carries independent vapor mass quality. Liquid and vapor share pressure, temperature and velocity, while chemical equilibrium takes a declared finite time. A `relaxing_fuel_duct` transports mass, momentum, total energy and vapor mass through explicit cells. Residence follows cell geometry and actual velocity. [Finite-rate fuel phase relaxation](RELAXING_FUEL.md)
 
+A `compressible_fuel_chamber` can own the volume of a `relaxing_fuel` reservoir. Reversible shaft work holds vapor mass quality fixed; chemical relaxation is a separate energy-conserving source. A `compressible_fuel_nozzle` connects two relaxing reservoirs with `phase_mode` set to `frozen`, transporting total mass, vapor mass and stagnation enthalpy. An actual solenoid, spring and stop can meter its opening through a physical needle. [Relaxing fuel pumps and frozen metering](RELAXING_FUEL_BOUNDARIES.md)
+
 ## Next increment
 
-Extend compatible finite-rate boundary coupling and obtain material relaxation measurements, then add resolved spray and fired receivers. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
+Add resolved finite-rate nozzle residence with material evidence, then resolved spray and compatible fired receivers. Continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control. Measured calibration and actual Unity acceptance remain separate. [Compressible equilibrium fuel ducts](EQUILIBRIUM_FUEL_DUCT.md)
 
 ## Acceptance
 
 Require independent analytic or limiting references, full mass/energy ledgers and step refinement appropriate to the new equations. Preserve batch rollback, cancellation, forks, stable channels, portable replay and prior asset readers. Then continue ignition, intake/exhaust, mechanical losses, transmission actuation and coordinated ECU/TCU control.
 
-Parameters remain `unverified`. Declare `initial_vapor_mass_fraction` in [0,1] and an integer relaxation time from 1 ns through one hour. Stay within the material temperature and positive-pressure bounds. The model assumes a rigid horizontal constant-area duct, one pure pseudo-fluid, zero liquid thermal expansion and ideal vapor. It omits phase slip, interfacial heat delay, surface tension, spray and carrier gas. Direct relaxing-domain pump, nozzle, moving chamber and fired receiver coupling remain open. Conservation, replay and refinement do not establish measured hardware validity or actual Unity acceptance. Use dilute vapor away from the real-fluid critical region; the material must retain positive latent enthalpy and separated coexistence volumes.
+Parameters remain `unverified`. Both nozzle ports must use the same domain and material; relaxing ports reject equilibrium transit. Finite bulk phase relaxation does not resolve chemical conversion or residence inside a zero-volume nozzle. The model has no phase slip, liquid tension, nucleation-barrier law, spray, carrier gas or fired receiver. Moving reservoirs are mixed with zero bulk velocity; internal duct cells remain rigid and have one owner. Use dilute ideal vapor away from critical behavior, declared positive-pressure/temperature bounds, positive latent enthalpy and separated coexistence volumes. Initial vapor quality is explicit research input. Numerical agreement does not establish measured calibration or actual Unity acceptance.
 
 [DEVELOPMENT_STATUS.md](DEVELOPMENT_STATUS.md) · [ROADMAP.md](ROADMAP.md) · [VALIDATION.md](VALIDATION.md)
 

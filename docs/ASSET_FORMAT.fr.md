@@ -14,7 +14,35 @@ flowchart LR
     UNI --> RE[Décoder, recompiler, vérifier l'empreinte]
 ```
 
-## Version actuelle 40
+## Version actuelle 41
+
+Un `compressible_fuel_chamber` peut imposer le volume d’un réservoir `relaxing_fuel`. Le travail réversible de l’arbre conserve le titre massique de vapeur ; la relaxation chimique est une source séparée conservant l’énergie. Un `compressible_fuel_nozzle` relie deux réservoirs relaxants avec `phase_mode` réglé sur `frozen`, transportant masse totale, vapeur et enthalpie d’arrêt. Bobine, ressort et butée réels peuvent régler l’ouverture par une aiguille physique.
+
+| Identifier | Value |
+|---|---|
+| fingerprint_tag_relaxing_boundaries | 46 |
+| relaxing_fuel_domain | 9 |
+| compressible_fuel_chamber_kind | 50 |
+| compressible_fuel_nozzle_kind | 51 |
+| relaxing_fuel_duct_kind | 52 |
+| relaxing_nozzle_phase_mode | 1 frozen |
+| count_table_int32 | 40 |
+| count_table_bytes | 160 |
+| header_bytes | 238 + UTF-8 name length |
+| relaxing_fuel_material_record_bytes | 180 |
+| fuel_chamber_record_bytes | 40 |
+| compressible_nozzle_record_bytes | 68 |
+| additional_binary_records | 0 |
+| reported_states_per_relaxing_node | 8 |
+| reported_states_per_relaxing_chamber | 4 |
+| reported_states_per_relaxing_nozzle | 14 |
+| reported_states_per_relaxing_duct | 13 |
+| additional_output_field | 122 total_vapor_delivered |
+| retained_asset_readers | power.asset.v1..v40 |
+
+[Pompes à carburant relaxant et dosage à phase gelée](RELAXING_FUEL_BOUNDARIES.fr.md)
+
+## Version conservée 40
 
 Un nœud `relaxing_fuel` possède un titre massique de vapeur indépendant. Liquide et vapeur partagent pression, température et vitesse, mais l’équilibre chimique demande un temps fini déclaré. Un `relaxing_fuel_duct` transporte masse, quantité de mouvement, énergie totale et masse de vapeur dans des cellules explicites. Le temps de séjour dépend de leur géométrie et de la vitesse réelle.
 

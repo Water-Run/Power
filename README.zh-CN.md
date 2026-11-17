@@ -19,7 +19,7 @@ flowchart LR
     end
     cli["Power.Cli — 无头实验"]
     mcp["Power.Mcp — 12 个 stdio MCP 工具"]
-    assets["Power.Assets — .powerasset v40"]
+    assets["Power.Assets — .powerasset v41"]
     unity["Unity 6.6 工作室 — 3D 实验室"]
 
     model --> core
@@ -119,7 +119,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 |---|---|
 | `get_capabilities` | 发现模型、限制、时间与修订约定。从这里开始。 |
 | `get_model_schema` | `power.model.v1` 的 JSON Schema 2020-12 |
-| `get_example_model` | 获取可编辑的合成模型与实验(65 个示例) |
+| `get_example_model` | 获取可编辑的合成模型与实验(67 个示例) |
 | `validate_model` | 不运行即校验模型;结构化修复诊断 |
 | `run_experiment` | 有界无头运行,含批量回放、KPI 与溯源 |
 | `export_model_asset` | 导出可移植的 `.powerasset` |
@@ -147,7 +147,7 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 > [!NOTE]
 > 所有示例参数均为 `unverified`——研究取值,不是标定测量值。
 
-下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v40`,并保留对更早资产的读取。
+下表实验室在 JSON、CLI、MCP 与 Studio 导入之间共享定义。导出使用 `power.asset.v41`,并保留对更早资产的读取。
 
 燃油域泵现在可向物理针阀和冻结汽相质量分数喷嘴供油，并进入有限液体体积的燃烧接收腔。完整库存包括相变、排量功、射流动能和静止壁面冲量。 [冻结汽相质量分数的燃油喷流与有限体积接收腔](docs/FUEL_DISCHARGE.zh-CN.md) [轴驱动相变燃料泵](docs/FUEL_CHAMBER_PUMP.zh-CN.md)
 
@@ -163,8 +163,10 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 
 `relaxing_fuel` 节点具有独立的蒸气质量分数。液体与蒸气共享压力、温度和速度，化学平衡则需要显式声明的有限时间。`relaxing_fuel_duct` 通过显式网格输运质量、动量、总能量和蒸气质量；停留时间由网格几何与实际流速决定。 [有限速率燃料相变弛豫](docs/RELAXING_FUEL.zh-CN.md)
 
+`compressible_fuel_chamber` 可以控制 `relaxing_fuel` 储腔的体积。可逆轴功保持蒸气质量分数不变，化学弛豫作为独立的能量守恒源项处理。`compressible_fuel_nozzle` 在 `phase_mode` 为 `frozen` 时连接两个弛豫储腔，同时输运总质量、蒸气质量与滞止焓；实际电磁线圈、弹簧和行程限位可通过物理针阀计量开度。 [相变弛豫燃料泵与冻结相态计量](docs/RELAXING_FUEL_BOUNDARIES.zh-CN.md)
+
 <details>
-<summary>可用实验室(66 个)</summary>
+<summary>可用实验室(68 个)</summary>
 
 | 示例名(`get_example_model`) | 实验室 | 验证内容 |
 |---|---|---|
@@ -234,6 +236,8 @@ dotnet /absolute/path/to/Power/src/Power.Mcp/bin/Release/net10.0/Power.Mcp.dll
 | `equilibrium-pump-needle` | `assets/labs/equilibrium-pump-needle.power.json` | 平衡闪蒸、全局临界通量包络与实际针阀输送 |
 | `relaxing-fuel-evaporation` | `assets/labs/relaxing-fuel-evaporation.power.json` | 独立蒸气质量分数、有限速率相变与守恒输运 |
 | `relaxing-fuel-duct` | `assets/labs/relaxing-fuel-duct.power.json` | 独立蒸气质量分数、有限速率相变与守恒输运 |
+| `relaxing-fuel-chamber` | `assets/labs/relaxing-fuel-chamber.power.json` | 有限速率泵储腔、可逆轴功和守恒冻结蒸气计量 |
+| `relaxing-pump-needle` | `assets/labs/relaxing-pump-needle.power.json` | 有限速率泵储腔、可逆轴功和守恒冻结蒸气计量 |
 
 </details>
 
